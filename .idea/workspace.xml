@@ -75,7 +75,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/org/demo/dao/IBaseDao.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0" vertical-offset="100" max-vertical-offset="684">
-              <caret line="33" column="39" selection-start-line="33" selection-start-column="39" selection-end-line="33" selection-end-column="39" />
+              <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -91,11 +91,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="web.xml" pinned="false" current-in-tab="true">
+      <file leaf-file-name="web.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.050704226" vertical-offset="540" max-vertical-offset="2268">
+            <state vertical-scroll-proportion="0.0" vertical-offset="540" max-vertical-offset="2268">
               <caret line="31" column="21" selection-start-line="31" selection-start-column="21" selection-end-line="31" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/pom.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.70309275" vertical-offset="3223" max-vertical-offset="3708">
+              <caret line="198" column="10" selection-start-line="198" selection-start-column="10" selection-end-line="198" selection-end-column="10" />
               <folding />
             </state>
           </provider>
@@ -152,11 +162,11 @@
         <option value="$PROJECT_DIR$/src/main/java/org/demo/action/LoginAction.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/demo/action/BaseAction.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/demo/action/UploadAction.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/org/demo/model/HwMenu.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/demo/model/HwPermission.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/demo/dao/IBaseDao.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/demo/dao/impl/BaseDao.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
   </component>
@@ -367,6 +377,32 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="hk" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="hk" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="demo" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
     </panes>
@@ -381,9 +417,9 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="recentsLimit" value="5" />
     <property name="restartRequiresConfirmation" value="true" />
-    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
-    <property name="project.structure.side.proportion" value="0.43268123" />
+    <property name="project.structure.side.proportion" value="0.42626727" />
     <property name="dynamic.classpath" value="false" />
     <property name="FullScreen" value="false" />
     <property name="last_opened_file_path" value="D:/tool/Workspaces/MyEclipse 10/struts2demo5" />
@@ -896,12 +932,12 @@
       <workItem from="1421720598281" duration="790000" />
       <workItem from="1421931590640" duration="689000" />
       <workItem from="1422023207817" duration="178000" />
-      <workItem from="1422085580776" duration="3736000" />
+      <workItem from="1422085580776" duration="6359000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="124883000" />
+    <option name="totallyTimeSpent" value="127506000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -924,7 +960,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -938,7 +974,7 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23529412" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13993949" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.37254903" sideWeight="0.5990923" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16013072" sideWeight="0.5990923" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27124184" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3267974" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -1299,14 +1335,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.8219178" vertical-offset="0" max-vertical-offset="3914">
-          <caret line="56" column="26" selection-start-line="56" selection-start-column="26" selection-end-line="56" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/demo/model/HwUser.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="3.9089317" vertical-offset="0" max-vertical-offset="2520">
@@ -1380,18 +1408,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/demo/dao/IBaseDao.java">
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="100" max-vertical-offset="684">
-          <caret line="33" column="39" selection-start-line="33" selection-start-column="39" selection-end-line="33" selection-end-column="39" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="540" max-vertical-offset="2268">
+          <caret line="31" column="21" selection-start-line="31" selection-start-column="21" selection-end-line="31" selection-end-column="21" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/demo/dao/IBaseDao.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.050704226" vertical-offset="540" max-vertical-offset="2268">
-          <caret line="31" column="21" selection-start-line="31" selection-start-column="21" selection-end-line="31" selection-end-column="21" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="100" max-vertical-offset="684">
+          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.70309275" vertical-offset="3223" max-vertical-offset="3708">
+          <caret line="198" column="10" selection-start-line="198" selection-start-column="10" selection-end-line="198" selection-end-column="10" />
           <folding />
         </state>
       </provider>
@@ -1406,8 +1442,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.43268123" />
-                <option value="0.5" />
+                <option value="0.42626727" />
               </list>
             </option>
           </splitter-proportions>
@@ -1415,11 +1450,11 @@
       </state>
       <state key="FacetStructureConfigurable.UI">
         <settings>
-          <last-edited>Spring (hk)|Spring</last-edited>
+          <last-edited>Web (hk)|Web</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.43268123" />
+                <option value="0.42626727" />
               </list>
             </option>
           </splitter-proportions>
@@ -1430,7 +1465,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.43268123" />
+                <option value="0.42626727" />
               </list>
             </option>
           </splitter-proportions>
@@ -1442,7 +1477,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.43268123" />
+                <option value="0.42626727" />
               </list>
             </option>
           </splitter-proportions>
@@ -1454,7 +1489,8 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.43268123" />
+                <option value="0.39010358" />
+                <option value="0.59546316" />
               </list>
             </option>
           </splitter-proportions>
@@ -1466,7 +1502,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.43268123" />
+                <option value="0.42626727" />
               </list>
             </option>
           </splitter-proportions>
