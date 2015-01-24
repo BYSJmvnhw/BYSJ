@@ -1,3 +1,4 @@
 # Windows:
-.idea/workspace.xml
-*.java
+./.idea/workspace.xml
+pom.xml
+*.class
