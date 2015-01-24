@@ -1,5 +1,5 @@
 ﻿
 .aaa
-workspace.xml
+.idea\
 *.class
 .gitignore.bak
