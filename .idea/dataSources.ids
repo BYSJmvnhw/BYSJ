@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="dataSourceStorage">
+  <data-source name="MySQL - homework@localhost" uuid="29ec05a7-f2ca-43f1-9938-a0835648494b">
+    <database-info product="MySQL" version="5.6.19" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.34 ( Revision: jess.balint@oracle.com-20141014163213-wqbwpf1ok2kvo1om )">
+      <extra-name-characters>#@</extra-name-characters>
+      <identifier-quote-string>`</identifier-quote-string>
+    </database-info>
+    <case-sensitivity plain-identifiers="lower" quoted-identifiers="lower"/>
+    <schema name="" catalog="homework"/>
+    <table name="hw_actioncolumn" schema="" catalog="homework" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="actioncolumn_name" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <exported-key name="FK_Reference_5" table="hw_permission" schema="" catalog="homework" columns="actioncolumn_id"/>
+    </table>
+    <table name="hw_college" schema="" catalog="homework" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="college_name" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="campus_no" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="campus_name" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <exported-key name="FK_Reference_12" table="hw_course" schema="" catalog="homework" columns="college_id"/>
+      <exported-key name="FK_Reference_6" table="hw_student" schema="" catalog="homework" columns="college_id"/>
+      <exported-key name="FK_Reference_7" table="hw_teacher" schema="" catalog="homework" columns="college_id"/>
+    </table>
+    <table name="hw_course" schema="" catalog="homework" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="course_no" sqlType="VARCHAR" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <column name="course_name" sqlType="VARCHAR" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <column name="college_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <foreign-key name="FK_Reference_12" columns="college_id" ref-table="hw_college" ref-schema="" ref-catalog="homework" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <exported-key name="FK_Reference_17" table="hw_course_student" schema="" catalog="homework" columns="course_id"/>
+      <exported-key name="FK_Reference_11" table="hw_course_teacher" schema="" catalog="homework" columns="course_id"/>
+      <exported-key name="FK_Reference_15" table="hw_homework" schema="" catalog="homework" columns="course_id"/>
+      <exported-key name="FK_Reference_13" table="hw_homework_info" schema="" catalog="homework" columns="course_id"/>
+      <index name="FK_Reference_12" unique="false" columns="college_id"/>
+      <index name="Index_2" unique="false" columns="course_no"/>
+    </table>
+    <table name="hw_course_student" schema="" catalog="homework" type="TABLE">
+      <column name="student_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="course_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <foreign-key name="FK_Reference_17" columns="course_id" ref-table="hw_course" ref-schema="" ref-catalog="homework" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_Reference_9" columns="student_id" ref-table="hw_student" ref-schema="" ref-catalog="homework" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="Index_1" unique="false" columns="student_id"/>
+      <index name="Index_2" unique="false" columns="course_id"/>
+    </table>
+    <table name="hw_course_teacher" schema="" catalog="homework" type="TABLE">
+      <column name="course_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="teacher_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <foreign-key name="FK_Reference_10" columns="teacher_id" ref-table="hw_teacher" ref-schema="" ref-catalog="homework" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_Reference_11" columns="course_id" ref-table="hw_course" ref-schema="" ref-catalog="homework" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_Reference_10" unique="false" columns="teacher_id"/>
+      <index name="FK_Reference_11" unique="false" columns="course_id"/>
+    </table>
+    <table name="hw_group" schema="" catalog="homework" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="group_info" sqlType="VARCHAR" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <column name="group_name" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="username" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="true_name" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="create_date" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <exported-key name="FK_Reference_1" table="hw_permission_group" schema="" catalog="homework" columns="group_id"/>
+      <exported-key name="FK_Reference_3" table="hw_user_group" schema="" catalog="homework" columns="group_id"/>
+    </table>
+    <table name="hw_homework" schema="" catalog="homework" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="hk_no" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="hk_title" sqlType="VARCHAR" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <column name="student_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="student_name" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="course_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="course_name" sqlType="VARCHAR" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <column name="submit_date" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="url" sqlType="VARCHAR" precision="1024" scale="0" nullable="false" jdbcType="12"/>
+      <column name="checked_flag" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
+      <column name="mark" sqlType="VARCHAR" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <column name="mark_date" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="comment" sqlType="VARCHAR" precision="1024" scale="0" nullable="true" jdbcType="12"/>
+      <column name="last_modify_date" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <foreign-key name="FK_Reference_16" columns="student_id" ref-table="hw_student" ref-schema="" ref-catalog="homework" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_Reference_15" columns="course_id" ref-table="hw_course" ref-schema="" ref-catalog="homework" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_Reference_15" unique="false" columns="course_id"/>
+      <index name="FK_Reference_16" unique="false" columns="student_id"/>
+    </table>
+    <table name="hw_homework_info" schema="" catalog="homework" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="hw_name" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="hw_desc" sqlType="VARCHAR" precision="1024" scale="0" nullable="true" jdbcType="12"/>
+      <column name="deadline" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="email" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="course_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="course_name" sqlType="VARCHAR" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <column name="user_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="true_name" sqlType="VARCHAR" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <column name="create_date" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <foreign-key name="FK_Reference_13" columns="course_id" ref-table="hw_course" ref-schema="" ref-catalog="homework" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_Reference_14" columns="user_id" ref-table="hw_user" ref-schema="" ref-catalog="homework" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_Reference_13" unique="false" columns="course_id"/>
+      <index name="FK_Reference_14" unique="false" columns="user_id"/>
+    </table>
+    <table name="hw_permission" schema="" catalog="homework" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="permission" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="permission_name" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="actioncolumn_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <foreign-key name="FK_Reference_5" columns="actioncolumn_id" ref-table="hw_actioncolumn" ref-schema="" ref-catalog="homework" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <exported-key name="FK_Reference_18" table="hw_permission_group" schema="" catalog="homework" columns="permission_id"/>
+      <index name="FK_Reference_5" unique="false" columns="actioncolumn_id"/>
+    </table>
+    <table name="hw_permission_group" schema="" catalog="homework" type="TABLE">
+      <column name="group_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="permission_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <foreign-key name="FK_Reference_1" columns="group_id" ref-table="hw_group" ref-schema="" ref-catalog="homework" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_Reference_18" columns="permission_id" ref-table="hw_permission" ref-schema="" ref-catalog="homework" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_Reference_1" unique="false" columns="group_id"/>
+      <index name="FK_Reference_18" unique="false" columns="permission_id"/>
+    </table>
+    <table name="hw_student" schema="" catalog="homework" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="student_no" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="name" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="sex" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="college_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="major" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="class" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="grade" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <foreign-key name="FK_Reference_6" columns="college_id" ref-table="hw_college" ref-schema="" ref-catalog="homework" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <exported-key name="FK_Reference_9" table="hw_course_student" schema="" catalog="homework" columns="student_id"/>
+      <exported-key name="FK_Reference_16" table="hw_homework" schema="" catalog="homework" columns="student_id"/>
+      <index name="Index_2" unique="true" columns="student_no"/>
+      <index name="UK_4sbspk1jf96x35lnu7wp02r07" unique="true" columns="student_no"/>
+      <index name="FK_Reference_6" unique="false" columns="college_id"/>
+    </table>
+    <table name="hw_teacher" schema="" catalog="homework" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="teacher_no" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="name" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="sex" sqlType="VARCHAR" precision="10" scale="0" nullable="false" jdbcType="12"/>
+      <column name="college_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <foreign-key name="FK_Reference_7" columns="college_id" ref-table="hw_college" ref-schema="" ref-catalog="homework" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <exported-key name="FK_Reference_10" table="hw_course_teacher" schema="" catalog="homework" columns="teacher_id"/>
+      <index name="FK_Reference_7" unique="false" columns="college_id"/>
+    </table>
+    <table name="hw_user" schema="" catalog="homework" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="username" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="password" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="true_name" sqlType="VARCHAR" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <column name="sex" sqlType="VARCHAR" precision="10" scale="0" nullable="true" jdbcType="12"/>
+      <column name="mobile" sqlType="VARCHAR" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <column name="email" sqlType="VARCHAR" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <column name="create_username" sqlType="VARCHAR" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <column name="create_true_name" sqlType="VARCHAR" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <column name="create_date" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <exported-key name="FK_Reference_14" table="hw_homework_info" schema="" catalog="homework" columns="user_id"/>
+      <exported-key name="FK_Reference_4" table="hw_user_group" schema="" catalog="homework" columns="user_id"/>
+      <index name="Index_1" unique="true" columns="id"/>
+      <index name="Index_2" unique="false" columns="username"/>
+    </table>
+    <table name="hw_user_group" schema="" catalog="homework" type="TABLE">
+      <column name="user_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="group_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <foreign-key name="FK_Reference_3" columns="group_id" ref-table="hw_group" ref-schema="" ref-catalog="homework" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_Reference_4" columns="user_id" ref-table="hw_user" ref-schema="" ref-catalog="homework" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_Reference_3" unique="false" columns="group_id"/>
+      <index name="FK_Reference_4" unique="false" columns="user_id"/>
+    </table>
+  </data-source>
+</component>

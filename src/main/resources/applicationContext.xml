@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+
+    <!-- 打开 spring annotation 注解   -->
+    <context:annotation-config />
+    <!-- 设置包扫描目录，该包内的所有POJO受 spring 管理   -->
+    <context:component-scan base-package="org.demo"/>
+
+    <!-- 导入jdbc数据库配置文件  -->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+
+    <!--配置c3p0数据源-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+          destroy-method="close">
+        <property name="driverClass" value="${driverClass}"/>
+        <property name="jdbcUrl" value="${jdbcUrl}"/>
+        <property name="user" value="${user}"/>
+        <property name="password" value="${password}"/>
+        <property name="maxPoolSize" value="${maxPoolSize}"/>
+        <property name="minPoolSize" value="${minPoolSize}"/>
+        <property name="initialPoolSize" value="${initialPoolSize}"/>
+        <property name="maxIdleTime" value="${maxIdleTime}"/>
+    </bean>
+
+    <!-- 第一步：创建Spring的sessionFactory  -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <!-- 注入数据源  -->
+        <property name="dataSource" ref="dataSource" />
+        <!-- 设置Spring去哪个包中查找相应的实体类   -->
+        <!--<property name="packagesToScan" >
+            <value></value>
+        </property>-->
+        <property name="packagesToScan" value="org.demo.model" />
+        <!-- 代替hibernate-config 文件中的设置   -->
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.format_sql">false</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- 配置spring的事务处理  -->
+    <!-- 第二步：配置事务管理器 -->
+    <bean id="txManager"
+          class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    <!--第三步：配置事务规则-->
+    <!-- 方法一：全注解配置法，打开注解功能, 然后用@Transactional对类或者方法进行标记，如果标记到类上，
+    那么此类中所有方法都进行事务回滚处理，在类中定义Transactional的时候，
+    它有propagation、rollbackFor、noRollbackFor等属性，此属性是用来定义事务规则，而定义到哪这个就是事务入口。-->
+    <!--<tx:annotation-driven transaction-manager="transactionManager" />-->
+    <!-- 方法二，xml方式 -->
+    <tx:advice id="txAdvice" transaction-manager="txManager">
+        <!-- 配置事务传播特性 -->
+        <tx:attributes>
+            <!-- 为了提高效率,可以把一些查询之类的方法设置为只读事务  -->
+            <tx:method name="*" propagation="REQUIRED"  read-only="true"/>
+            <tx:method name="add*" propagation="REQUIRED"/>
+            <tx:method name="del*" propagation="REQUIRED"/>
+            <tx:method name="update*" propagation="REQUIRED"/>
+            <tx:method name="save*" propagation="REQUIRED"/>
+            <tx:method name="get*"  propagation="REQUIRED"/>
+            <tx:method name="find*" propagation="REQUIRED"/>
+            <tx:method name="load*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+    <!-- 配置aop，Spring是通过aop来进行事务管理的  -->
+    <!-- 设置pointcut 表明哪些方法需要加入事务   -->
+    <!-- 以下的事务是声明在Dao中的，但是通常都会在Service来处理多个业务对象的逻辑关系
+    如删除、更新等，此时如果在执行一个步骤之后抛出异常，就会导致数据不完整，所以事务
+    不应该在Dao层 处理，应该在Service，使用spring的声明式事务。
+      -->
+    <aop:config>
+        <aop:pointcut id="allServiceMethod" expression="execution(* org.demo.service.*.*(..))" />
+        <aop:advisor pointcut-ref="allServiceMethod" advice-ref="txAdvice" />
+    </aop:config>
+
+</beans>

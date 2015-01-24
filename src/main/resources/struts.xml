@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+        "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+        <!-- url后缀  -->
+        <constant name="struts.action.extension" value="action,do" />
+        <!-- 自动重新加载修改后的 strut.xml s配置文件  -->
+        <constant name="struts.configuration.xml.reload" value="true" />
+        <!-- 上传文件最大size  -->
+        <constant name="struts.multipart.maxSize" value="10240000" />
+        <!-- 定义全局 国际化文件baseName，不仅限于包路径  -->
+       <!-- <constant name="struts.custom.i18n.resources" value="Message" />-->
+        <!--  设置页面样式模板  -->
+        <!-- <constant name="struts.ui.theme" value="simple" /> -->
+        <!--  表示beans通过spring来进行创建，可以直接使用spring的依赖注入  -->
+        <constant name="struts.objectFactory" value="org.apache.struts2.spring.StrutsSpringObjectFactory" />
+
+        <package name="default" namespace="/" extends="struts-default">
+                <global-results>
+                        <result name="error">/WEB-INF/jsp/error.jsp</result>
+                </global-results>
+
+                <action name="*_*" class="{1}Action" method="{2}">
+                        <result name="success">/WEB-INF/jsp/{1}/{2}.jsp</result>
+                        <result name="redirect" type="redirect">${url}</result>
+                        <result name="error">/WEB-INF/jsp/error.jsp</result>
+                </action>
+        </package>
+
+<!--        <package name="pageoffice" extends="struts-default">
+            <action name="openword" class="com.pageoffice.action.WordDemo" method="openword">
+                <result name="openword_success">/editword.jsp</result>
+            </action>
+
+            <action name="saveword" class="com.pageoffice.action.WordDemo" method="saveword">
+                <result name="saveword_success">/savefile.jsp</result>
+            </action>
+            <action name="openexcel" class="com.pageoffice.action.ExcelDemo" method="openexcel">
+                <result name="openexcel_success">/editexcel.jsp</result>
+            </action>
+
+            <action name="saveexcel" class="com.pageoffice.action.ExcelDemo" method="saveexcel">
+                <result name="saveexcel_success">/savefile.jsp</result>
+            </action>
+        </package>-->
+</struts>
