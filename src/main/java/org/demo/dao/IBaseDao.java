@@ -1,5 +1,7 @@
 package org.demo.dao;
 
+import org.demo.model.Page;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -32,4 +34,17 @@ public interface IBaseDao<T> {
     public T findObject(String hql);
 
     public T findObjectWithSql(String sql, Object[] args);
+
+    public T findObjectWithSql(String sql, Object arg);
+
+    public T findObjectWithSql(String sql);
+
+    public Page<T> findPage(String hql, Object[] args);
+
+    public Page<T> findPage(String hql, Object arg);
+
+    public Page<T> findPage(String hql);
+
+    /*  通过 hql 获取计数 hql */
+    public String  getCountHql(String hql);
 }

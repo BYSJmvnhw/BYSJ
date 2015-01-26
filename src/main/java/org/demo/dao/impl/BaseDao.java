@@ -1,6 +1,8 @@
 package org.demo.dao.impl;
 
 import org.demo.dao.IBaseDao;
+import org.demo.model.Page;
+import org.demo.model.SystemContext;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -130,8 +132,63 @@ public class BaseDao<T> implements IBaseDao<T> {
         return t;
     }
 
+    @Override
+    public T findObjectWithSql(String sql, Object arg) {
+        return this.findObjectWithSql(sql, new Object[] {arg});
+    }
 
+    @Override
+    public T findObjectWithSql(String sql) {
+        return this.findObjectWithSql(sql, null);
+    }
 
+    @Override
+    public Page<T> findPage(String hql, Object[] args) {
+        Page<T> page = new Page<T>();
+        int pageOffset = SystemContext.getPageOffset();
+        int pageSize = SystemContext.getPageSize();
+        Query q = getSession().createQuery(hql);
+        /*  获取计数hql */
+        Query cq = getSession().createQuery(getCountHql(hql));
+        if( args!=null ) {
+            for (int i = 0; i < args.length; i++) {
+                q.setParameter(i, args[i]);
+                cq.setParameter(i, args[i]);
+            }
+        }
+        /* 获取记录条数 */
+        long totalRecord =(Long) cq.uniqueResult();
+        q.setFirstResult(pageOffset);
+        q.setMaxResults(pageSize);
+        /* 获取分页数据 */
+        List data = q.list();
+        page.setData(data);
+        page.setPageOffsset(pageOffset);
+        page.setPageSize(pageSize);
+        page.setTotalRecord(totalRecord);
+        return page;
+    }
 
+    @Override
+    public Page<T> findPage(String hql, Object arg) {
+        return this.findPage(hql, new Object[] {arg});
+    }
+
+    @Override
+    public Page<T> findPage(String hql) {
+        return this.findPage(hql, null);
+    }
+
+    @Override
+    /*  通过 hql 获取计数 hql */
+    public String  getCountHql(String hql) {
+        String newhql;
+        String oldSub = hql.substring(0, hql.indexOf("from"));
+        if ( oldSub.trim().equals("") )
+            newhql = " select count(*) "  + hql;
+        else
+            newhql = hql.replace( oldSub, " select count(*) ");
+        return newhql;
+    }
 
 }

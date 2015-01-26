@@ -7,5 +7,5 @@ import org.demo.model.HwStudent;
  */
 public interface IStudentService {
 
-    public HwStudent findStudent(String truename);
+    public HwStudent findStudent(String studentNo);
 }

@@ -26,8 +26,6 @@ public class TestUserDao {
 
     private ApplicationContext ctx;
 
-
-
     private IUserDao userDao;
 
     @Test
@@ -38,13 +36,13 @@ public class TestUserDao {
         userDao = (UserDao)ctx.getBean("userDao");
         System.out.println(userDao);
         System.out.println("进入test");
-        HwUser u =  new HwUser("cjz","123","abc","我",new Timestamp(1));
+        //HwUser u =  new HwUser("cjz","123","abc","我",new Timestamp(1));
 
        /* u.setUsername("cjz");
         u.setTrueName("陈键钊");
         u.setPassword("11111");*/
-        System.out.println(u);
-        userDao.add(u);
+       //System.out.println(u);
+        //userDao.add(u);
     }
 
     public IUserDao getUserDao() {
