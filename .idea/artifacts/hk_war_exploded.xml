@@ -2,6 +2,7 @@
   <artifact type="exploded-war" name="hk:war exploded">
     <output-path>$PROJECT_DIR$/target/mvnhk</output-path>
     <root id="root">
+      <element id="module-output" name="hk" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
           <element id="module-output" name="hk" />
@@ -51,9 +52,9 @@
           <element id="library" level="project" name="Maven: org.aspectj:aspectjrt:1.8.4" />
           <element id="library" level="project" name="Maven: org.aspectj:aspectjweaver:1.8.4" />
           <element id="library" level="project" name="Maven: aopalliance:aopalliance:1.0" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-webmvc:4.1.3.RELEASE" />
         </element>
       </element>
-      <element id="module-output" name="hk" />
       <element id="directory" name="META-INF">
         <element id="file-copy" path="C:\Users\jzchen\IdeaProjects\hk\target/MANIFEST.MF" />
       </element>
