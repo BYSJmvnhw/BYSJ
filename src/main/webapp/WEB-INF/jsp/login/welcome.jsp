@@ -12,9 +12,16 @@
 </head>
 <body>
 <h1>${msg}</h1>
-欢迎你
-${loginUser.username}
-${loginUser.trueName}
+欢迎你!!
+
+账号：${loginUser.username}<br/><br/>
+姓名：${loginUser.trueName}<br/><br/>
+类型：${userType}<br/><br/>
+工号：${loginTeacher.teacherNo}<br/><br/>
+学号：${loginStudent.studentNo}<br/><br/>
+专业：${loginStudent.hwMajor.name}
+<br/><br/>
+退出：<a href="logout">登出</a>
 
 
 </body>

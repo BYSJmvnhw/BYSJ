@@ -1,11 +1,7 @@
 package org.demo.controller;
 
-import org.demo.dao.IRoleDao;
-import org.demo.dao.ITeacherDao;
-import org.demo.model.HwRole;
-import org.demo.model.HwStudent;
-import org.demo.model.HwTeacher;
-import org.demo.model.HwUser;
+import org.demo.model.*;
+import org.demo.service.IRoleService;
 import org.demo.service.IStudentService;
 import org.demo.service.ITeacherService;
 import org.demo.service.IUserService;
@@ -16,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -29,9 +23,19 @@ import java.util.Set;
 public class LoginController {
 
     private IUserService userService;
-    private IRoleDao roleDao;
+    private IRoleService roleService;
     private IStudentService studentService;
     private ITeacherService teacherService;
+    /*  枚举用户类型 */
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String logout(HttpServletRequest request) {
+        request.getSession().removeAttribute("loginUser");
+        request.getSession().removeAttribute("userType");
+        request.getSession().removeAttribute("loginTeacher");
+        request.getSession().removeAttribute("loginStudent");
+        return "redirect:/login/loginInput";
+    }
 
     @RequestMapping( value = "/loginInput", method = RequestMethod.GET)
     public String login() {
@@ -49,18 +53,27 @@ public class LoginController {
                 request.getSession().setAttribute("loginUser", user);
                 /*  获取角色集合 */
                 Set<HwRole> roleSet = user.getHwRoles();
-                List<HwRole> roleList = new ArrayList<HwRole>(roleSet);
+                //System.out.println(roleSet);
+                //List<HwRole> roleList = new ArrayList<HwRole>(roleSet);
                 /*  判断登录用户类型， */
-               if(roleSet.contains(roleDao.load(2)) ) {
+                UserType userType = UserType.STUDENT;
+                for( HwRole r : roleSet) {
+                    System.out.println( "进入 for " + r.getRoleName());
+                    if ( r.getId().equals(1) )
+                        userType = UserType.STUDENT;
+                    else
+                        userType = UserType.TEACHER;
+                }
+               if( userType == UserType.TEACHER ) {
                     System.out.println("角色：教师");
-                    request.getSession().setAttribute("userType", "教师");
+                    request.getSession().setAttribute("userType", UserType.TEACHER);
                     HwTeacher teacher = teacherService.findTeacher(user.getUsername());
                     System.out.println(teacher);
                     request.getSession().setAttribute("loginTeacher", teacher);
                 }
-               else if( roleSet.contains(roleDao.load(1)) ) {
+               else if( userType == UserType.STUDENT ) {
                    System.out.println("角色：学生");
-                   request.getSession().setAttribute("userType", "学生");
+                   request.getSession().setAttribute("userType", UserType.STUDENT);
                    HwStudent student = studentService.findStudent(user.getUsername());
                    System.out.println(student);
                    request.getSession().setAttribute("loginStudent", student);
@@ -87,14 +100,6 @@ public class LoginController {
         this.userService = userService;
     }
 
-    public IRoleDao getRoleDao() {
-        return roleDao;
-    }
-    @Resource
-    public void setRoleDao(IRoleDao roleDao) {
-        this.roleDao = roleDao;
-    }
-
     public IStudentService getStudentService() {
         return studentService;
     }
@@ -109,5 +114,13 @@ public class LoginController {
     @Resource
     public void setTeacherService(ITeacherService teacherService) {
         this.teacherService = teacherService;
+    }
+
+    public IRoleService getRoleService() {
+        return roleService;
+    }
+    @Resource
+    public void setRoleService(IRoleService roleService) {
+        this.roleService = roleService;
     }
 }

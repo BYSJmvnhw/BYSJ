@@ -9,6 +9,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 
 /**
@@ -42,5 +44,12 @@ public class TestProperties {
         else
             newhql = hql.replace( oldSub, " select count(*) ");
         System.out.println(newhql);
+    }
+
+    @Test
+    public void testDir () {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("YYYY");
+        System.out.println(sdf.format(new Date()));
     }
 }
