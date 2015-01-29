@@ -28,7 +28,7 @@ public class HwCourse implements java.io.Serializable {
 	private String courseNo;
 	private String courseName;
 	private Set<HwHomework> hwHomeworks = new HashSet<HwHomework>(0);
-	private Set<HwStudent> hwStudents = new HashSet<HwStudent>(0);
+	private Set<HwCourseSelecting> hwCourseSelectings = new HashSet<HwCourseSelecting>(0);
 	private Set<HwHomeworkInfo> hwHomeworkInfos = new HashSet<HwHomeworkInfo>(0);
 	private Set<HwTeacher> hwTeachers = new HashSet<HwTeacher>(0);
 
@@ -46,13 +46,13 @@ public class HwCourse implements java.io.Serializable {
 
 	/** full constructor */
 	public HwCourse(HwCollege hwCollege, String courseNo, String courseName,
-			Set<HwHomework> hwHomeworks, Set<HwStudent> hwStudents,
+			Set<HwHomework> hwHomeworks, Set<HwCourseSelecting> hwCourseSelectings,
 			Set<HwHomeworkInfo> hwHomeworkInfos, Set<HwTeacher> hwTeachers) {
 		this.hwCollege = hwCollege;
 		this.courseNo = courseNo;
 		this.courseName = courseName;
 		this.hwHomeworks = hwHomeworks;
-		this.hwStudents = hwStudents;
+		this.hwCourseSelectings = hwCourseSelectings;
 		this.hwHomeworkInfos = hwHomeworkInfos;
 		this.hwTeachers = hwTeachers;
 	}
@@ -106,13 +106,13 @@ public class HwCourse implements java.io.Serializable {
 		this.hwHomeworks = hwHomeworks;
 	}
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwCourses")
-	public Set<HwStudent> getHwStudents() {
-		return this.hwStudents;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwCourse")
+	public Set<HwCourseSelecting> getHwCourseSelectings() {
+		return this.hwCourseSelectings;
 	}
 
-	public void setHwStudents(Set<HwStudent> hwStudents) {
-		this.hwStudents = hwStudents;
+	public void setHwCourseSelectings(Set<HwCourseSelecting> hwCourseSelectings) {
+		this.hwCourseSelectings = hwCourseSelectings;
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwCourse")
@@ -132,5 +132,6 @@ public class HwCourse implements java.io.Serializable {
 	public void setHwTeachers(Set<HwTeacher> hwTeachers) {
 		this.hwTeachers = hwTeachers;
 	}
+
 
 }

@@ -35,7 +35,7 @@ public class HwStudent implements java.io.Serializable {
 	private String class_;
 	private String grade;
 	private String email;
-	private Set<HwCourse> hwCourses = new HashSet<HwCourse>(0);
+	private Set<HwCourseSelecting> hwCourseSelectings = new HashSet<HwCourseSelecting>(0);
 	private Set<HwHomework> hwHomeworks = new HashSet<HwHomework>(0);
 
 	// Constructors
@@ -55,10 +55,10 @@ public class HwStudent implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public HwStudent(HwUser hwUser, HwMajor hwMajor, HwCollege hwCollege,
-			String studentNo, String name, String sex, String class_,
-			String grade, String email, Set<HwCourse> hwCourses,
-			Set<HwHomework> hwHomeworks) {
+	public HwStudent(Integer id, HwUser hwUser, HwMajor hwMajor, HwCollege hwCollege,
+					 String studentNo, String name, String sex, String class_, String grade, String email,
+					 Set<HwCourseSelecting> hwCourseSelectings, Set<HwHomework> hwHomeworks) {
+		this.id = id;
 		this.hwUser = hwUser;
 		this.hwMajor = hwMajor;
 		this.hwCollege = hwCollege;
@@ -68,9 +68,11 @@ public class HwStudent implements java.io.Serializable {
 		this.class_ = class_;
 		this.grade = grade;
 		this.email = email;
-		this.hwCourses = hwCourses;
+		this.hwCourseSelectings = hwCourseSelectings;
 		this.hwHomeworks = hwHomeworks;
 	}
+
+
 
 	// Property accessors
 	@Id
@@ -168,14 +170,24 @@ public class HwStudent implements java.io.Serializable {
 		this.email = email;
 	}
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "hw_course_student", catalog = "homework", joinColumns = { @JoinColumn(name = "student_id", updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "course_id", updatable = false) })
+	//@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	//@JoinTable(name = "hw_course_student", catalog = "homework", joinColumns = { @JoinColumn(name = "student_id", updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "course_id", updatable = false) })
+	/*@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwCourses")
 	public Set<HwCourse> getHwCourses() {
 		return this.hwCourses;
 	}
 
 	public void setHwCourses(Set<HwCourse> hwCourses) {
 		this.hwCourses = hwCourses;
+	}*/
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwStudent")
+	public Set<HwCourseSelecting> getHwCourseSelectings() {
+		return hwCourseSelectings;
+	}
+
+	public void setHwCourseSelectings(Set<HwCourseSelecting> hwCourseSelectings) {
+		this.hwCourseSelectings = hwCourseSelectings;
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwStudent")
@@ -186,5 +198,6 @@ public class HwStudent implements java.io.Serializable {
 	public void setHwHomeworks(Set<HwHomework> hwHomeworks) {
 		this.hwHomeworks = hwHomeworks;
 	}
+
 
 }

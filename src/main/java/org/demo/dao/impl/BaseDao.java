@@ -157,6 +157,7 @@ public class BaseDao<T> implements IBaseDao<T> {
             }
         }
         /* 获取记录条数 */
+       // System.out.println(q.toString());
         long totalRecord =(Long) cq.uniqueResult();
         q.setFirstResult(pageOffset);
         q.setMaxResults(pageSize);

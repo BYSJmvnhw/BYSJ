@@ -79,7 +79,7 @@ public class LoginController {
                    request.getSession().setAttribute("loginStudent", student);
                }
 
-                model.addAttribute("msg", "登录成功");
+                model.addAttribute("msg", "登录成功！！！！！！！！！！");
                 return "login/welcome";
             }else {
                 model.addAttribute("msg", "密码错误");

@@ -2,6 +2,7 @@ package org.demo.service.impl;
 
 import org.demo.dao.IStudentDao;
 import org.demo.model.HwStudent;
+import org.demo.model.Page;
 import org.demo.service.IStudentService;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ public class StudentService implements IStudentService {
 
     @Override
     public HwStudent findStudent(String studentNo) {
+
         String hql  = "from HwStudent st where st.studentNo = ?";
         return studentDao.findObject(hql,studentNo);
     }
