@@ -2,7 +2,6 @@
   <artifact type="exploded-war" name="hk:war exploded">
     <output-path>$PROJECT_DIR$/target/mvnhk</output-path>
     <root id="root">
-      <element id="module-output" name="hk" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
           <element id="module-output" name="hk" />
@@ -60,6 +59,7 @@
           <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.13" />
         </element>
       </element>
+      <element id="module-output" name="hk" />
       <element id="directory" name="META-INF">
         <element id="file-copy" path="C:\Users\jzchen\IdeaProjects\hk\target/MANIFEST.MF" />
       </element>
