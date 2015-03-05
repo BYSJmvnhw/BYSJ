@@ -13,4 +13,6 @@ import java.util.List;
 public interface ICourseSelectingService {
 
     public Page<HwCourseSelecting> selectingCourses(HwStudent student, Integer startYear, Integer schoolTerm);
+
+    public HwCourseSelecting load(Integer courseSelectingId);
 }

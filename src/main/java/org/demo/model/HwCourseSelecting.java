@@ -1,19 +1,29 @@
 package org.demo.model;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 /**
  * Created by jzchen on 2015/1/27.
  */
 @Entity
 @Table(name = "hw_course_student" , catalog = "homework")
-public class HwCourseSelecting implements Serializable{
+/**
+ * 实体转Json时忽略下列属性
+ * */
+@JsonIgnoreProperties({"hwStudent","hwTeacher"})
+/*  自动检测 不检测类成员域和getter */
+//@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE)
+public class HwCourseSelecting implements java.io.Serializable{
 
     private Integer id;
     private HwStudent hwStudent;
+    /** 用于开启了Hibernation的延迟加载时，Json序列化时忽略代理类，注解在类成员域上 */
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private HwCourse hwCourse;
     private HwTeacher hwTeacher;
     private Integer startYear;
@@ -49,9 +59,10 @@ public class HwCourseSelecting implements Serializable{
     public void setId(Integer id) {
         this.id = id;
     }
-    //@JsonIgnore
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
+    //@JsonBackReference
     public HwStudent getHwStudent() {
         return hwStudent;
     }
@@ -59,7 +70,7 @@ public class HwCourseSelecting implements Serializable{
     public void setHwStudent(HwStudent hwStudent) {
         this.hwStudent = hwStudent;
     }
-    //@JsonIgnore
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     public HwCourse getHwCourse() {
@@ -69,7 +80,8 @@ public class HwCourseSelecting implements Serializable{
     public void setHwCourse(HwCourse hwCourse) {
         this.hwCourse = hwCourse;
     }
-    //@JsonIgnore
+
+    //@JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id")
     public HwTeacher getHwTeacher() {

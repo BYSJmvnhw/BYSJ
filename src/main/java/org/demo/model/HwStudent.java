@@ -1,5 +1,7 @@
 package org.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -21,6 +23,7 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "hw_student", catalog = "homework", uniqueConstraints = @UniqueConstraint(columnNames = "student_no"))
+@JsonIgnoreProperties({"hwUser","hwMajor","hwCollege","hwCourseSelectings","hwHomeworks"})
 public class HwStudent implements java.io.Serializable {
 
 	// Fields

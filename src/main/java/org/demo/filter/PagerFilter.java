@@ -21,13 +21,13 @@ public class PagerFilter implements Filter{
                          FilterChain chain) throws IOException, ServletException {
         try {
             try {
-                pageOffset = Integer.parseInt(request.getParameter("page.pageOffset"));
+                pageOffset = Integer.parseInt(request.getParameter("pageOffset"));
             } catch (NumberFormatException e) {
-                SystemContext.setPageOffset(pageOffset);
-                SystemContext.setPageSize(pageSize);
-
+                pageOffset=0;
             }
         } finally {
+            SystemContext.setPageOffset(pageOffset);
+            SystemContext.setPageSize(pageSize);
             chain.doFilter(request, response);
             SystemContext.removePageOffset();
             SystemContext.removePageSize();

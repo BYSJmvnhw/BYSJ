@@ -1,5 +1,8 @@
 package org.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,13 +22,15 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "hw_homework_info", catalog = "homework")
+@JsonIgnoreProperties({"hwHomeworks","hwCourseTeaching","hibernateLazyInitializer", "handler"})
+@JsonRootName("hwHomeworkInfo")
 public class HwHomeworkInfo implements java.io.Serializable {
 
 	// Fields
 
 	private Integer id;
-	private HwCourse hwCourse;
-	private HwTeacher hwTeacher;
+	//private HwCourse hwCourse;
+	//private HwTeacher hwTeacher;
 	private String title;
 	private String hwDesc;
 	private Timestamp deadline;
@@ -34,28 +39,35 @@ public class HwHomeworkInfo implements java.io.Serializable {
 	private Timestamp createDate;
 	private Boolean overtime;
 	private Set<HwHomework> hwHomeworks = new HashSet<HwHomework>(0);
+	private HwCourseTeaching hwCourseTeaching;
 
 	// Constructors
 
-	/** default constructor */
+	/**
+	 * default constructor
+	 */
 	public HwHomeworkInfo() {
 	}
 
-	/** minimal constructor */
+	/**
+	 * minimal constructor
+	 */
 	public HwHomeworkInfo(String title, Timestamp deadline, String email,
-			Timestamp createDate) {
+						  Timestamp createDate) {
 		this.title = title;
 		this.deadline = deadline;
 		this.email = email;
 		this.createDate = createDate;
 	}
 
-	/** full constructor */
-	public HwHomeworkInfo(HwCourse hwCourse, HwTeacher hwTeacher, String title,
-			String hwDesc, Timestamp deadline, String email, String courseName,
-			Timestamp createDate, Boolean overtime, Set<HwHomework> hwHomeworks) {
-		this.hwCourse = hwCourse;
-		this.hwTeacher = hwTeacher;
+	/**
+	 * full constructor
+	 */
+	public HwHomeworkInfo( /*HwCourse hwCourse, HwTeacher hwTeacher, */String title,
+						   String hwDesc, Timestamp deadline, String email, String courseName,
+						   Timestamp createDate, Boolean overtime, Set<HwHomework> hwHomeworks, HwCourseTeaching hwCourseTeaching) {
+		//this.hwCourse = hwCourse;
+		//this.hwTeacher = hwTeacher;
 		this.title = title;
 		this.hwDesc = hwDesc;
 		this.deadline = deadline;
@@ -64,6 +76,7 @@ public class HwHomeworkInfo implements java.io.Serializable {
 		this.createDate = createDate;
 		this.overtime = overtime;
 		this.hwHomeworks = hwHomeworks;
+		this.hwCourseTeaching = hwCourseTeaching;
 	}
 
 	// Property accessors
@@ -78,6 +91,7 @@ public class HwHomeworkInfo implements java.io.Serializable {
 		this.id = id;
 	}
 
+/*
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "course_id")
 	public HwCourse getHwCourse() {
@@ -97,6 +111,7 @@ public class HwHomeworkInfo implements java.io.Serializable {
 	public void setHwTeacher(HwTeacher hwTeacher) {
 		this.hwTeacher = hwTeacher;
 	}
+*/
 
 	@Column(name = "title", nullable = false, length = 50)
 	public String getTitle() {
@@ -167,7 +182,16 @@ public class HwHomeworkInfo implements java.io.Serializable {
 	}
 
 	public void setHwHomeworks(Set<HwHomework> hwHomeworks) {
-		this.hwHomeworks = hwHomeworks;
+		this.hwHomeworks=hwHomeworks;
 	}
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "course_teacher_id")
+	public HwCourseTeaching getHwCourseTeaching() {
+		return hwCourseTeaching;
+	}
+
+	public void setHwCourseTeaching(HwCourseTeaching hwCourseTeaching) {
+		this.hwCourseTeaching = hwCourseTeaching;
+	}
 }

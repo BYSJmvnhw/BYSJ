@@ -32,6 +32,11 @@ public class CourseSelectingService implements ICourseSelectingService {
 
     }
 
+    @Override
+    public HwCourseSelecting load(Integer courseSelectingId) {
+        return courseSeletingDao.load(courseSelectingId);
+    }
+
     public IStudentDao getStudentDao() {
         return studentDao;
     }
