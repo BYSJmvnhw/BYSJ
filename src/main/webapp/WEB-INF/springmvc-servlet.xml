@@ -18,7 +18,7 @@
        <mvc:annotation-driven/>
        <!-- 将静态文件指定到某个特殊的文件夹中统一处理  -->
        <!--  一个*表文件夹中内容，第二个星指子文件夹中的内容 -->
-      <!-- <mvc:resources location="/resources/" mapping="/resources/**" />-->
+       <mvc:resources location="/resources/" mapping="/resources/**" />
 
        <!-- 配置 ViewResolver  -->
        <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -30,4 +30,18 @@
        <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
               <property name="maxUploadSize" value="5000000" />
        </bean>
+
+    <!-- ②：启动Spring MVC的注解功能，完成请求和注解POJO的映射 -->
+    <bean
+            class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+    </bean>
+    <bean
+            class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <bean
+                        class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+            </list>
+        </property>
+    </bean>
 </beans>

@@ -1,6 +1,8 @@
 package org.demo.service;
 
 import org.demo.model.HwHomework;
+import org.demo.model.HwHomeworkInfo;
+import org.demo.model.Page;
 
 /**
  * Created by jzchen on 2015/1/14.
@@ -8,4 +10,6 @@ import org.demo.model.HwHomework;
 public interface IHomeworkService {
 
     public void add(HwHomework homework);
+
+    public Page<HwHomework> submittedHomeworkList(HwHomeworkInfo hwHomeworkInfo, boolean submited);
 }

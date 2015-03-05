@@ -1,5 +1,7 @@
 package org.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,12 +17,15 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "hw_homework", catalog = "homework")
+@JsonIgnoreProperties({"hwCourse","hwHomeworkInfo","hwTeacher"})
 public class HwHomework implements java.io.Serializable {
 
 	// Fields
 
 	private Integer id;
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	private HwCourse hwCourse;
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	private HwStudent hwStudent;
 	private HwHomeworkInfo hwHomeworkInfo;
 	private HwTeacher hwTeacher;

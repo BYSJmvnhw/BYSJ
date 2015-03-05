@@ -209,7 +209,8 @@
       <artifactId>jackson-annotations</artifactId>
       <version>2.5.0</version>
     </dependency>
-    <dependency>
+    <!--缺少如下两包无法正常序列化为json-->
+<!--    <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-core-asl</artifactId>
       <version>1.9.13</version>
@@ -218,6 +219,13 @@
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-asl</artifactId>
       <version>1.9.13</version>
+    </dependency>-->
+    <!--JsonObject 相关的jar包-->
+    <dependency>
+      <groupId>net.sf.json-lib</groupId>
+      <artifactId>json-lib</artifactId>
+      <version>2.4</version>
+      <classifier>jdk15</classifier>
     </dependency>
 
 
