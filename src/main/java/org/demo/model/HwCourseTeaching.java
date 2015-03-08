@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "hw_course_teacher" , catalog = "homework")
-@JsonIgnoreProperties({"hwTeacher"})
+@JsonIgnoreProperties({"hwTeacher","homeworkInfos"})
 public class HwCourseTeaching implements Serializable{
 
     private Integer id;
@@ -23,6 +23,7 @@ public class HwCourseTeaching implements Serializable{
     private HwTeacher hwTeacher;
     private Integer startYear;
     private Integer schoolTerm;
+    private String email;
     private Set<HwHomeworkInfo> homeworkInfos = new HashSet<HwHomeworkInfo>(0);
 
     /** default constructor */
@@ -102,5 +103,14 @@ public class HwCourseTeaching implements Serializable{
 
     public void setHomeworkInfos(Set<HwHomeworkInfo> homeworkInfos) {
         this.homeworkInfos = homeworkInfos;
+    }
+
+    @Column(name = "email", insertable = false, updatable= false )
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

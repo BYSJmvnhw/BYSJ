@@ -33,8 +33,9 @@ public class HwHomework implements java.io.Serializable {
 	private String title;
 	private String url;
 	private String studentName;
+	private String studentNo;
 	private Timestamp submitDate;
-	private String checkedFlag;
+	private Boolean checkedFlag;
 	private String mark;
 	private Timestamp markDate;
 	private String comment;
@@ -48,7 +49,7 @@ public class HwHomework implements java.io.Serializable {
 
 	/** minimal constructor */
 	public HwHomework(String hwNo, String url, Timestamp submitDate,
-			String checkedFlag, String mark, Timestamp markDate,
+					  Boolean checkedFlag, String mark, Timestamp markDate,
 			Timestamp lastModifyDate) {
 		this.hwNo = hwNo;
 		this.url = url;
@@ -63,7 +64,7 @@ public class HwHomework implements java.io.Serializable {
 	public HwHomework(HwCourse hwCourse, HwStudent hwStudent,
 			HwHomeworkInfo hwHomeworkInfo, HwTeacher hwTeacher, String hwNo,
 			String title, String url, String studentName, Timestamp submitDate,
-			String checkedFlag, String mark, Timestamp markDate,
+			Boolean checkedFlag, String mark, Timestamp markDate,
 			String comment, Timestamp lastModifyDate) {
 		this.hwCourse = hwCourse;
 		this.hwStudent = hwStudent;
@@ -133,7 +134,7 @@ public class HwHomework implements java.io.Serializable {
 		this.hwTeacher = hwTeacher;
 	}
 
-	@Column(name = "hw_no", nullable = false, length = 50)
+	@Column(name = "hw_no", length = 50)
 	public String getHwNo() {
 		return this.hwNo;
 	}
@@ -151,7 +152,7 @@ public class HwHomework implements java.io.Serializable {
 		this.title = title;
 	}
 
-	@Column(name = "url", nullable = false, length = 1024)
+	@Column(name = "url", length = 1024)
 	public String getUrl() {
 		return this.url;
 	}
@@ -169,7 +170,16 @@ public class HwHomework implements java.io.Serializable {
 		this.studentName = studentName;
 	}
 
-	@Column(name = "submit_date", nullable = false, length = 19)
+	@Column(name = "student_no", length = 50)
+	public String getStudentNo() {
+		return studentNo;
+	}
+
+	public void setStudentNo(String studentNo) {
+		this.studentNo = studentNo;
+	}
+
+	@Column(name = "submit_date", length = 19)
 	public Timestamp getSubmitDate() {
 		return this.submitDate;
 	}
@@ -179,15 +189,15 @@ public class HwHomework implements java.io.Serializable {
 	}
 
 	@Column(name = "checked_flag", nullable = false, length = 20)
-	public String getCheckedFlag() {
+	public Boolean getCheckedFlag() {
 		return this.checkedFlag;
 	}
 
-	public void setCheckedFlag(String checkedFlag) {
+	public void setCheckedFlag(Boolean checkedFlag) {
 		this.checkedFlag = checkedFlag;
 	}
 
-	@Column(name = "mark", nullable = false, length = 50)
+	@Column(name = "mark", length = 50)
 	public String getMark() {
 		return this.mark;
 	}
@@ -196,7 +206,7 @@ public class HwHomework implements java.io.Serializable {
 		this.mark = mark;
 	}
 
-	@Column(name = "mark_date", nullable = false, length = 19)
+	@Column(name = "mark_date", length = 19)
 	public Timestamp getMarkDate() {
 		return this.markDate;
 	}

@@ -1,5 +1,7 @@
 package org.demo.controller;
 
+import net.sf.json.JSON;
+import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.demo.dao.IHomeworkDao;
 import org.demo.model.*;
@@ -14,7 +16,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.NotDirectoryException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by jzchen on 2015/1/25.
@@ -30,6 +35,7 @@ public class HomeworkController {
     private IHomeworkInfoService homeworkInfoService;
     private ICourseService courseService;
     private IHomeworkService homeworkService;
+    private IStudentService studentService;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("YYYY");
 
@@ -144,16 +150,81 @@ public class HomeworkController {
         return homeworkService.submittedHomeworkList(hwInfo, submited);
     }
     /**
-     * 布置作业
+     * 请求布置作业,添加作业信息 jsp页面
+     *
      */
     @RequestMapping(value = "/addHomeworkInfo" ,method = RequestMethod.GET)
     public String addHomeworkInfoPage() {
         return "homework/addHomeworkInfo";
     }
 
-    @RequestMapping(value = "/addHomeworkInfo", method = RequestMethod.POST)
-    public void addHomeworkInfo(@RequestBody HwHomeworkInfo hwHomeworkInfo) {
-        System.out.println(hwHomeworkInfo.getId());
+    /**
+     * @param jsonObject 封装了参数信息Json字符串
+     * 前端必须传递JSON字符串而不能传递JSON对象，SpringMVC注解负责解析字符串
+     * */
+
+     @RequestMapping(value = "/addHomeworkInfo", method = RequestMethod.POST)
+     @ResponseBody
+         //public void addHomeworkInfo(@RequestBody HwHomeworkInfo hwHomeworkInfo) { /*用于直接封装成 HwHomeworkInfo对象 */
+    public String addHomeworkInfo(String jsonObject, HttpServletRequest request) {
+
+            /** 从Session获取当前登陆用户类型 */
+         HwTeacher teacher  = (HwTeacher) request.getSession().getAttribute("loginTeacher");
+         if( teacher == null ){
+             //登陆类型不是教师或者未登陆，返回登陆页面
+             return "../login/loginInput";
+         }
+
+         //System.out.println(jsonObject);
+         /** 将前端传递过来的json字符串解析成JsonObject对象 */
+         JSONObject jo = JSONObject.fromObject(jsonObject);
+         /** 构造一个新的HwHomeworkInfo对象 */
+         HwHomeworkInfo hwinfo = new HwHomeworkInfo();
+         /** 从前端传递过来的json中解析出参数 */
+         hwinfo.setTitle(jo.getString("title"));
+         hwinfo.setHwDesc(jo.getString("hwDesc"));
+         hwinfo.setCourseName(jo.getString("courseName"));
+         hwinfo.setDeadline( new java.sql.Timestamp( jo.getLong("deadline") ) );
+
+         /**查询出对应的courseTeaching*/
+         HwCourse course = courseService.load(jo.getInt("courseId"));
+         HwCourseTeaching courseTeaching = courseTeachingService.findCourseTeaching(course,teacher);
+
+         /**往HwHomeworkInfo填入其他信息*/
+         hwinfo.setCreateDate(new java.sql.Timestamp(System.currentTimeMillis()));
+         hwinfo.setEmail(courseTeaching.getEmail());
+         hwinfo.setHwCourseTeaching(courseTeaching);
+         hwinfo.setOvertime(false);
+         homeworkInfoService.add(hwinfo);
+
+         /**查询出所有选课的学生
+          * 初始化该次作业所有选课学生的作业。
+          * */
+          List<HwCourseSelecting> csList = courseSelectingService.selectingCourses(course, courseTeaching.getStartYear(), courseTeaching.getSchoolTerm());
+         for(HwCourseSelecting cs : csList) {
+             //构建一个新的作业对象
+             HwHomework hw = new HwHomework();
+             hw.setHwStudent(cs.getHwStudent());
+             hw.setHwCourse(course);
+             hw.setCheckedFlag(false);
+             hw.setHwHomeworkInfo(hwinfo);
+             hw.setHwTeacher(teacher);
+             hw.setStudentName(cs.getHwStudent().getName());
+             hw.setLastModifyDate(new java.sql.Timestamp(System.currentTimeMillis()));
+             homeworkService.add(hw);
+         }
+         return "showHomeworkInfoDetail";
+    }
+
+    /**
+     * 删除了
+     * @param id 需要删除的作业信息id
+     * */
+    @RequestMapping(value = "/deleteHomeworkInfo", method = RequestMethod.GET)
+    public String deleteHomeworkInfo(Integer id) {
+        homeworkInfoService.delete(id);
+        /**同时将级联删除该次作业信息对应的所有学生作业*/
+        return "redirect:showHomeworkInfo";
     }
 
 
@@ -249,5 +320,14 @@ public class HomeworkController {
     @Resource
     public void setHomeworkService(IHomeworkService homeworkService) {
         this.homeworkService = homeworkService;
+    }
+
+    public IStudentService getStudentService() {
+        return studentService;
+    }
+
+    @Resource
+    public void setStudentService(IStudentService studentService) {
+        this.studentService = studentService;
     }
 }

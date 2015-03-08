@@ -1,12 +1,14 @@
 package org.demo.service.impl;
 
 import org.demo.dao.IStudentDao;
+import org.demo.model.HwCourseSelecting;
 import org.demo.model.HwStudent;
 import org.demo.model.Page;
 import org.demo.service.IStudentService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Created by jzchen on 2015/1/14.

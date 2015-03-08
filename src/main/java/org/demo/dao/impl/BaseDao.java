@@ -31,8 +31,11 @@ public class BaseDao<T> implements IBaseDao<T> {
     }
 
     //获得session
-    protected Session getSession() {
+    /*protected Session getSession() {
         return sessionFactory.openSession();
+    }*/
+    protected Session getSession() {
+        return sessionFactory.getCurrentSession();
     }
 
     //通过反射获得泛型类型
@@ -56,8 +59,8 @@ public class BaseDao<T> implements IBaseDao<T> {
     }
 
     @Override
-    public void delete(Serializable id) {
-        getSession().delete(this.load(id));
+    public void delete(T t) {
+        getSession().delete(t);
     }
 
     @Override

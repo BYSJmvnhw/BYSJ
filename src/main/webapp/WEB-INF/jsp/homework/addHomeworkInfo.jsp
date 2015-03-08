@@ -12,37 +12,56 @@
   <script src="../resources/jquery-2.1.3.js"></script>
 </head>
 <body>
-<form>
+<form action="addHomeworkInfo" method="post">
   <br/><br/>
 
   <input type="text" name="title"> <br/><br/>
   <input type="text" name="hwDesc"><br/><br/>
   <input type="text" name="deadline"><br/><br/>
   <input type="text" name=""><br/><br/>
+  <%--<input type="submit" value="tiao"/>--%>
 </form>
   <button  id="b1" value="提交" >提交</button>
 
 <script>
     $("#b1").click(function(){
       alert("hahahah");
-      data =$.ajax({
-        type: 'POST',
-        url: "addHomeworkInfo" ,
-        data: {
-          //id:4,
-          title: "title1",
-          //hwDesc: "hwDesc1",
-          deadline: Date.parse(new Date()),
-            email:"email",
-            createDate: Date.parse(new Date()),
-            //overtime:false,
-          //courseName: "courseName1"
+      $.ajax({
 
-        } ,
-          contentType: "application/json; charset=gbk",
-          dataType: "json",
-        success: function(){
-          alert("成功");
+        type: 'POST',
+        url: 'addHomeworkInfo',
+/*        data: JSON.stringify(
+         {
+         title: "title1",
+         email: "email",
+         hwDesc: "hwDesc",
+
+         courseName:"courseName",
+         deadline: Date.parse(new Date()),
+         createDate: Date.parse(new Date())
+         }
+         ),*/
+        data: {
+          jsonObject: JSON.stringify(
+              {
+                  title: "123",
+                  hwDesc: "desc",
+                  deadline: Date.parse(new Date()),
+                  email: "623487211@qq.com",
+                  courseName: "courseName",
+                  courseId: 1
+              }
+          )
+        },
+          //contentType: "application/json; charset=utf-8",
+         //dataType: "json",
+        success: function(result){
+            alert( result );
+            console.log(result);
+            location.href = result;
+        },
+        error: function (e,r) {
+          console.log(r);
         }
       });
     });

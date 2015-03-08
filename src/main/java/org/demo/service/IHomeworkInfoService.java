@@ -14,5 +14,8 @@ public interface IHomeworkInfoService {
 
     public HwHomeworkInfo load(Integer id);
 
+    public void add(HwHomeworkInfo hwHomeworkInfo);
+
+    public void delete(Integer id);
 
 }

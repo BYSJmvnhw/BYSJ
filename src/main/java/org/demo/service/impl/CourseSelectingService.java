@@ -2,6 +2,7 @@ package org.demo.service.impl;
 
 import org.demo.dao.ICourseSeletingDao;
 import org.demo.dao.IStudentDao;
+import org.demo.model.HwCourse;
 import org.demo.model.HwCourseSelecting;
 import org.demo.model.HwStudent;
 import org.demo.model.Page;
@@ -9,6 +10,7 @@ import org.demo.service.ICourseSelectingService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Created by jzchen on 2015/1/26.
@@ -36,6 +38,15 @@ public class CourseSelectingService implements ICourseSelectingService {
     public HwCourseSelecting load(Integer courseSelectingId) {
         return courseSeletingDao.load(courseSelectingId);
     }
+
+    @Override
+    public  List<HwCourseSelecting> selectingCourses(HwCourse course, Integer startYear, Integer schoolTerm) {
+        String hql = "from HwCourseSelecting cs where cs.hwCourse = ? " +
+                "and startYear = ? " +
+                "and schoolTerm = ? ";
+        return courseSeletingDao.list(hql,new Object[] {course, startYear, schoolTerm});
+    }
+
 
     public IStudentDao getStudentDao() {
         return studentDao;

@@ -15,4 +15,6 @@ public interface ICourseSelectingService {
     public Page<HwCourseSelecting> selectingCourses(HwStudent student, Integer startYear, Integer schoolTerm);
 
     public HwCourseSelecting load(Integer courseSelectingId);
+
+    public List<HwCourseSelecting> selectingCourses(HwCourse course, Integer startYear, Integer schoolTerm);
 }

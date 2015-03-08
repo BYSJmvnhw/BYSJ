@@ -30,6 +30,16 @@ public class HomeworkInfoService implements IHomeworkInfoService {
         return homeworkInfoDao.load(id);
     }
 
+    @Override
+    public void add(HwHomeworkInfo hwHomeworkInfo) {
+        homeworkInfoDao.add(hwHomeworkInfo);
+    }
+
+    @Override
+    public void delete(Integer id) {
+        homeworkInfoDao.delete(homeworkInfoDao.get(id));
+    }
+
     public IHomeworkInfoDao getHomeworkInfoDao() {
         return homeworkInfoDao;
     }

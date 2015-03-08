@@ -13,7 +13,7 @@ import java.util.Objects;
 public interface IBaseDao<T> {
     public void add(T t);
 
-    public void delete(Serializable id);
+    public void delete(T t);
 
     public T get(Serializable id);
 
