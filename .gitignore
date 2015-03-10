@@ -1,5 +1,6 @@
 ﻿
 .aaa
 .idea/
+target/
 *.class
 .gitignore.bak

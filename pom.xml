@@ -243,13 +243,13 @@
       <scope>provided</scope>
     </dependency>-->
 
-    <dependency>
-      <groupId>com.zhuozhengsoft</groupId>
-      <artifactId>pageoffice</artifactId>
-      <version>1.0</version>
-      <scope>system</scope>
-      <systemPath>C:/Users/jzchen/IdeaProjects/hk/src/main/resources/pageoffice.jar</systemPath>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>com.zhuozhengsoft</groupId>-->
+      <!--<artifactId>pageoffice</artifactId>-->
+      <!--<version>1.0</version>-->
+      <!--<scope>system</scope>-->
+      <!--<systemPath>C:/Users/jzchen/IdeaProjects/hk/src/main/resources/pageoffice.jar</systemPath>-->
+    <!--</dependency>-->
   </dependencies>
 
 
