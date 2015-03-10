@@ -24,6 +24,7 @@ public class HwCourseTeaching implements Serializable{
     private Integer startYear;
     private Integer schoolTerm;
     private String email;
+    private String password;
     private Set<HwHomeworkInfo> homeworkInfos = new HashSet<HwHomeworkInfo>(0);
 
     /** default constructor */
@@ -39,12 +40,15 @@ public class HwCourseTeaching implements Serializable{
 
     /** full constructor */
     public HwCourseTeaching(Integer id, HwCourse hwCourse, HwTeacher hwTeacher, Integer startYear, Integer schoolTerm,
+                            String email, String password,
                             Set<HwHomeworkInfo> homeworkInfos) {
         this.id = id;
         this.hwCourse = hwCourse;
         this.hwTeacher = hwTeacher;
         this.startYear = startYear;
         this.schoolTerm = schoolTerm;
+        this.email = email;
+        this.password = password;
         this.homeworkInfos = homeworkInfos;
     }
 
@@ -112,5 +116,14 @@ public class HwCourseTeaching implements Serializable{
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Column(name = "password", insertable = false, updatable= false )
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

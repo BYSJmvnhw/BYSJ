@@ -104,7 +104,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.zhuozhengsoft:pageoffice:1.0">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/src/main/resources/pageoffice.jar!/" />
+          <root url="jar://$MODULE_DIR$/src/main/webapp/WEB-INF/lib/pageoffice.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

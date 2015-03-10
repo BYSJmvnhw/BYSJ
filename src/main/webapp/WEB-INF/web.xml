@@ -52,6 +52,10 @@
         <filter-name>PagerFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
+
+
+
     <!-- for spring mvc-->
     <servlet>
         <servlet-name>springmvc</servlet-name>
@@ -61,6 +65,19 @@
     <servlet-mapping>
         <servlet-name>springmvc</servlet-name>
         <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>poserver</servlet-name>
+        <servlet-class>com.zhuozhengsoft.pageoffice.poserver.Server</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>poserver</servlet-name>
+        <url-pattern>/homework/poserver.do</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>poserver</servlet-name>
+        <url-pattern>/posetup.exe</url-pattern>
     </servlet-mapping>
 
     <!-- for struts2 mvc-->

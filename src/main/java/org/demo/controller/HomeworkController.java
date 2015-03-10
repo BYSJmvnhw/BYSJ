@@ -195,6 +195,13 @@ public class HomeworkController {
          hwinfo.setEmail(courseTeaching.getEmail());
          hwinfo.setHwCourseTeaching(courseTeaching);
          hwinfo.setOvertime(false);
+         String url = "/" +  courseTeaching.getStartYear().toString()
+                        + "/" + courseTeaching.getSchoolTerm().toString()
+                        + "/" + course.getCourseNo()
+                        + "/" + teacher.getTeacherNo() + "/";
+                        //+ "/" + hwinfo.getId() + "/" ;
+
+         hwinfo.setUrl(url);
          homeworkInfoService.add(hwinfo);
 
          /**查询出所有选课的学生
@@ -210,6 +217,8 @@ public class HomeworkController {
              hw.setHwHomeworkInfo(hwinfo);
              hw.setHwTeacher(teacher);
              hw.setStudentName(cs.getHwStudent().getName());
+             hw.setStudentNo(cs.getHwStudent().getStudentNo());
+             hw.setTitle(hwinfo.getTitle());
              hw.setLastModifyDate(new java.sql.Timestamp(System.currentTimeMillis()));
              homeworkService.add(hw);
          }
@@ -232,34 +241,62 @@ public class HomeworkController {
     /**
     *  学生作业上传 Controller
     * */
-    @RequestMapping(value = "/{studentNo}/upload", method = RequestMethod.GET)
+    @RequestMapping(value = "/upload", method = RequestMethod.GET)
     public String upload() {
         return "homework/upload";
     }
 
-    @RequestMapping(value = "/{studentNo}/upload", method = RequestMethod.POST)
-    public String upload(@PathVariable String studentNo, @RequestParam MultipartFile hw, HttpServletRequest request) throws IOException {
+    @RequestMapping(value = "/upload", method = RequestMethod.POST)
+    public String upload(@RequestParam MultipartFile hw, Integer hwinfoId, HttpServletRequest request) throws IOException {
 /*        System.out.println(hw.getName()+" , "
                 + hw.getOriginalFilename()+" , "
                 + hw.getContentType()+ " , "
                 + hw.getSize() );*/
+        /**从session中获取当前登录的学生*/
+        HwStudent student = (HwStudent) request.getSession().getAttribute("loginStudent");
+        if(student == null) {
+           return "redirect:/login/loginInput";
+        }
+
+        HwHomeworkInfo hwinfo = homeworkInfoService.load(hwinfoId);
+        /**获取后缀*/
+        String hwName = student.getStudentNo() + "_" +student.getName() + hw.getOriginalFilename().substring
+                (hw.getOriginalFilename().lastIndexOf("."));
+        String baseUrl = hwinfo.getUrl();
+        String url = baseUrl + hwinfo.getId() + "/" + hwName;
+
+        HwCourseTeaching ct = hwinfo.getHwCourseTeaching();
+        String hwNo = ct.getStartYear().toString() + ct.getSchoolTerm().toString() +  ct.getHwCourse().getCourseNo()  + student.getStudentNo();
+        HwHomework homework = homeworkService.findHomework(hwinfoId,student);
+        homework.setTitle(hwinfo.getTitle());
+        homework.setUrl(url);
+        homework.setHwNo(hwNo);
+        homework.setSubmitDate(new java.sql.Timestamp(System.currentTimeMillis()));
+        homeworkService.update(homework);
+
+
+        /**判断预设的目录的是否存在，不存在则使用web应用路径下的默认目录*/
         try {
             System.out.println( "BaseDir" + homeworkBaseDir);
             /* 若指定目录不存在，则抛异常*/
             File dirname = new File(homeworkBaseDir);
             if ( !dirname.isDirectory() )
                 throw new NotDirectoryException( "homeworkDir" + homeworkBaseDir + " is not found."
-                        +"[ files were all putted into "+ request.getServletContext().getRealPath("/homework") + "]");
+                        +"[ files were all putted into "+ request.getServletContext().getRealPath("/doc") + "]");
         } catch (NotDirectoryException e ) {
-            homeworkBaseDir =request.getServletContext().getRealPath("/homework");
+            /**使用web应用路径下的默认目录*/
+            homeworkBaseDir =request.getServletContext().getRealPath("/doc");
             e.printStackTrace();
         }finally {
             //String finalDir = homeworkBaseDir + "/" + sdf.format(new Date()) ;
             System.out.println(homeworkBaseDir);
-            File f = new File( homeworkBaseDir + "/" + hw.getOriginalFilename() );
+            //File f = new File( homeworkBaseDir + "/" + hw.getOriginalFilename() );
+            File f = new File( homeworkBaseDir + "/doc/" + url );
             FileUtils.copyInputStreamToFile(hw.getInputStream(), f);
         }
-        return "";
+
+
+        return "redirect:showHomework";
     }
 
     public IHomeworkDao getHomeworkDao() {
