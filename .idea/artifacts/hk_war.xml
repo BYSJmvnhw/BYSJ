@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="hk:war">
-    <output-path>$PROJECT_DIR$/target</output-path>
-    <root id="archive" name="mvnhk.war">
-      <element id="artifact" artifact-name="hk:war exploded" />
-    </root>
-  </artifact>
-</component>
