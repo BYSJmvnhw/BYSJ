@@ -33,6 +33,7 @@ public class HwHomeworkInfo implements java.io.Serializable {
 	//private HwTeacher hwTeacher;
 	private String title;
 	private String hwDesc;
+	private String url;
 	private Timestamp deadline;
 	private String email;
 	private String courseName;
@@ -64,12 +65,13 @@ public class HwHomeworkInfo implements java.io.Serializable {
 	 * full constructor
 	 */
 	public HwHomeworkInfo( /*HwCourse hwCourse, HwTeacher hwTeacher, */String title,
-						   String hwDesc, Timestamp deadline, String email, String courseName,
+						   String hwDesc, String url, Timestamp deadline, String email, String courseName,
 						   Timestamp createDate, Boolean overtime, Set<HwHomework> hwHomeworks, HwCourseTeaching hwCourseTeaching) {
 		//this.hwCourse = hwCourse;
 		//this.hwTeacher = hwTeacher;
 		this.title = title;
 		this.hwDesc = hwDesc;
+		this.url = url;
 		this.deadline = deadline;
 		this.email = email;
 		this.courseName = courseName;
@@ -129,6 +131,15 @@ public class HwHomeworkInfo implements java.io.Serializable {
 
 	public void setHwDesc(String hwDesc) {
 		this.hwDesc = hwDesc;
+	}
+
+	@Column(name = "url", length = 1024)
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	@Column(name = "deadline", nullable = false, length = 19)

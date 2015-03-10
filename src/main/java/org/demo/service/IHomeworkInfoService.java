@@ -18,4 +18,6 @@ public interface IHomeworkInfoService {
 
     public void delete(Integer id);
 
+    public void update(HwHomeworkInfo hwHomeworkInfo);
+
 }

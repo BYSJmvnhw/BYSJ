@@ -248,7 +248,8 @@
       <artifactId>pageoffice</artifactId>
       <version>1.0</version>
       <scope>system</scope>
-      <systemPath>C:/Users/jzchen/IdeaProjects/hk/src/main/resources/pageoffice.jar</systemPath>
+      <!--<systemPath>C:/Users/jzchen/IdeaProjects/hk/src/main/resources/pageoffice.jar</systemPath>-->
+      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/pageoffice.jar</systemPath>
     </dependency>
   </dependencies>
 
