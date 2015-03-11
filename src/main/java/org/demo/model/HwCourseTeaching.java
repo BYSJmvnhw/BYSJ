@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "hw_course_teacher" , catalog = "homework")
-@JsonIgnoreProperties({"hwTeacher","homeworkInfos"})
+@JsonIgnoreProperties({"hwTeacher","hwHomeworkInfos","password","hwCourseSelectings"})
 public class HwCourseTeaching implements Serializable{
 
     private Integer id;
@@ -25,7 +25,8 @@ public class HwCourseTeaching implements Serializable{
     private Integer schoolTerm;
     private String email;
     private String password;
-    private Set<HwHomeworkInfo> homeworkInfos = new HashSet<HwHomeworkInfo>(0);
+    private Set<HwHomeworkInfo> hwHomeworkInfos= new HashSet<HwHomeworkInfo>(0);
+    private Set<HwCourseSelecting> hwCourseSelectings = new HashSet<HwCourseSelecting>(0);
 
     /** default constructor */
     public HwCourseTeaching() {
@@ -41,7 +42,7 @@ public class HwCourseTeaching implements Serializable{
     /** full constructor */
     public HwCourseTeaching(Integer id, HwCourse hwCourse, HwTeacher hwTeacher, Integer startYear, Integer schoolTerm,
                             String email, String password,
-                            Set<HwHomeworkInfo> homeworkInfos) {
+                            Set<HwHomeworkInfo> hwHomeworkInfos) {
         this.id = id;
         this.hwCourse = hwCourse;
         this.hwTeacher = hwTeacher;
@@ -49,7 +50,7 @@ public class HwCourseTeaching implements Serializable{
         this.schoolTerm = schoolTerm;
         this.email = email;
         this.password = password;
-        this.homeworkInfos = homeworkInfos;
+        this.hwHomeworkInfos = hwHomeworkInfos;
     }
 
     @Id
@@ -101,12 +102,12 @@ public class HwCourseTeaching implements Serializable{
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwCourseTeaching")
-    public Set<HwHomeworkInfo> getHomeworkInfos() {
-        return homeworkInfos;
+    public Set<HwHomeworkInfo> getHwHomeworkInfos() {
+        return hwHomeworkInfos;
     }
 
-    public void setHomeworkInfos(Set<HwHomeworkInfo> homeworkInfos) {
-        this.homeworkInfos = homeworkInfos;
+    public void setHwHomeworkInfos(Set<HwHomeworkInfo> hwHomeworkInfos) {
+        this.hwHomeworkInfos = hwHomeworkInfos;
     }
 
     @Column(name = "email", insertable = false, updatable= false )
@@ -125,5 +126,15 @@ public class HwCourseTeaching implements Serializable{
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwCourseTeaching")
+
+    public Set<HwCourseSelecting> getHwCourseSelectings() {
+        return hwCourseSelectings;
+    }
+
+    public void setHwCourseSelectings(Set<HwCourseSelecting> hwCourseSelectings) {
+        this.hwCourseSelectings = hwCourseSelectings;
     }
 }
