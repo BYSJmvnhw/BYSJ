@@ -28,8 +28,8 @@ public class CourseSelectingService implements ICourseSelectingService {
 
         String hql = "from HwCourseSelecting cs " +
                 "where cs.hwStudent = ? " +
-                "and cs.startYear = ? " +
-                "and cs.schoolTerm = ?";
+                "and cs.hwCourseTeaching.startYear = ? " +
+                "and cs.hwCourseTeaching.schoolTerm = ?";
         return courseSeletingDao.findPage(hql,new Object[] {student, startYear, schoolTerm});
 
     }

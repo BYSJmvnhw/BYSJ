@@ -86,7 +86,7 @@ public class HomeworkController {
     }
 
     /**
-     * @param cid 课程id
+     * @param cid 教师为授课关系id， 学生为选课关系id
      * @param request http请求
      * @return  学生返回布置作业列表，教师返回布置作业列表Json分页
      * */
@@ -98,14 +98,14 @@ public class HomeworkController {
         /** 学生返回布置作业列表 */
         if( userType == UserType.STUDENT ) {
             HwCourseSelecting cs = courseSelectingService.load(cid);
-            HwCourse course = cs.getHwCourse();
+            /*HwCourse course = cs.getHwCourse();
             HwTeacher teacher = cs.getHwTeacher();
-            HwCourseTeaching ct = courseTeachingService.findCourseTeaching(course, teacher);
-            return homeworkInfoService.assignedHomeworList(ct);
-         }else {
+            HwCourseTeaching ct = courseTeachingService.findCourseTeaching(course, teacher);*/
+            return homeworkInfoService.homeworListInfoList(cs.getHwCourseTeaching());
+        }else {
             /** 教师返回布置作业列表 */
             HwCourseTeaching ct = courseTeachingService.load(cid);
-            return homeworkInfoService.assignedHomeworList(ct);
+            return homeworkInfoService.homeworListInfoList(ct);
         }
     }
 

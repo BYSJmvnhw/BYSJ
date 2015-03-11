@@ -35,7 +35,7 @@ public class HwTeacher implements java.io.Serializable {
 	//private Set<HwHomeworkInfo> hwHomeworkInfos = new HashSet<HwHomeworkInfo>(0);
 	//private Set<HwCourse> hwCourses = new HashSet<HwCourse>(0);
 	private Set<HwHomework> hwHomeworks = new HashSet<HwHomework>(0);
-	private Set<HwCourseSelecting> hwCourseSelectings = new HashSet<HwCourseSelecting>(0);
+	//private Set<HwCourseSelecting> hwCourseSelectings = new HashSet<HwCourseSelecting>(0);
 	private Set<HwCourseTeaching> hwCourseTeachings = new HashSet<HwCourseTeaching>(0);
 
 	// Constructors
@@ -55,7 +55,7 @@ public class HwTeacher implements java.io.Serializable {
 	public HwTeacher(HwUser hwUser, HwMajor hwMajor, HwCollege hwCollege,
 			String teacherNo, String name, String sex, String email,
 			/*Set<HwHomeworkInfo> hwHomeworkInfos,*/ /*Set<HwCourse> hwCourses,*/
-			Set<HwHomework> hwHomeworks, Set<HwCourseSelecting>hwCourseSelectings) {
+			Set<HwHomework> hwHomeworks/*, Set<HwCourseSelecting>hwCourseSelectings*/) {
 		this.hwUser = hwUser;
 		this.hwMajor = hwMajor;
 		this.hwCollege = hwCollege;
@@ -66,7 +66,7 @@ public class HwTeacher implements java.io.Serializable {
 		//this.hwHomeworkInfos = hwHomeworkInfos;
 		//this.hwCourses = hwCourses;
 		this.hwHomeworks = hwHomeworks;
-		this.hwCourseSelectings = hwCourseSelectings;
+		//this.hwCourseSelectings = hwCourseSelectings;
 	}
 
 	// Property accessors
@@ -175,14 +175,14 @@ public class HwTeacher implements java.io.Serializable {
 		this.hwHomeworks = hwHomeworks;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwTeacher")
+/*	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwTeacher")
 	public Set<HwCourseSelecting> getHwCourseSelectings() {
 		return hwCourseSelectings;
 	}
 
 	public void setHwCourseSelectings(Set<HwCourseSelecting> hwCourseSelectings) {
 		this.hwCourseSelectings = hwCourseSelectings;
-	}
+	}*/
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwTeacher")
 	public Set<HwCourseTeaching> getHwCourseTeachings() {

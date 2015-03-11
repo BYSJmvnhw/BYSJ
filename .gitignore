@@ -1,7 +1,6 @@
 ﻿
-.aaa
 .idea/
-*.class
-.gitignore.bak
-target/
+
 .gitignore
+target/
+src/main/resources/log4j.properties
