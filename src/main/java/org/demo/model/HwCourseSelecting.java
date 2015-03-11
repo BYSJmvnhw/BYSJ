@@ -15,7 +15,7 @@ import javax.persistence.*;
 /**
  * 实体转Json时忽略下列属性
  * */
-@JsonIgnoreProperties({"hwStudent","hwTeacher"})
+@JsonIgnoreProperties({"hwStudent"/*,"hwTeacher"*/})
 /*  自动检测 不检测类成员域和getter */
 //@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE)
 public class HwCourseSelecting implements java.io.Serializable{
@@ -24,30 +24,17 @@ public class HwCourseSelecting implements java.io.Serializable{
     private HwStudent hwStudent;
     /** 用于开启了Hibernation的延迟加载时，Json序列化时忽略代理类，注解在类成员域上 */
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private HwCourse hwCourse;
-    private HwTeacher hwTeacher;
-    private Integer startYear;
-    private Integer schoolTerm;
+    private HwCourseTeaching hwCourseTeaching;
 
     /** default constructor */
     public HwCourseSelecting() {
     }
 
-    /** minimal constructor */
-    public HwCourseSelecting(Integer startYear, Integer schoolTerm) {
-        this.startYear = startYear;
-        this.schoolTerm = schoolTerm;
-    }
-
     /** full constructor */
-    public HwCourseSelecting(Integer id, HwStudent hwStudent, HwCourse hwCourse,
-                             HwTeacher hwTeacher, Integer startYear, Integer schoolTerm) {
+    public HwCourseSelecting(Integer id, HwStudent hwStudent, HwCourseTeaching courseTeaching) {
         this.id = id;
         this.hwStudent = hwStudent;
-        this.hwCourse = hwCourse;
-        this.hwTeacher = hwTeacher;
-        this.startYear = startYear;
-        this.schoolTerm = schoolTerm;
+       // this.courseTeaching = courseTeaching;
     }
 
     @Id
@@ -72,6 +59,15 @@ public class HwCourseSelecting implements java.io.Serializable{
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_teacher_id")
+    public HwCourseTeaching getHwCourseTeaching() {
+        return hwCourseTeaching;
+    }
+
+    public void setHwCourseTeaching(HwCourseTeaching hwCourseTeaching) {
+        this.hwCourseTeaching = hwCourseTeaching;
+    }
+/*    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     public HwCourse getHwCourse() {
         return hwCourse;
@@ -108,6 +104,6 @@ public class HwCourseSelecting implements java.io.Serializable{
 
     public void setSchoolTerm(Integer schoolTerm) {
         this.schoolTerm = schoolTerm;
-    }
+    }*/
 
 }

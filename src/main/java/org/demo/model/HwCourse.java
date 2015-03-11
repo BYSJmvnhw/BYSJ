@@ -34,7 +34,7 @@ public class HwCourse implements java.io.Serializable {
 	private String courseNo;
 	private String courseName;
 	private Set<HwHomework> hwHomeworks = new HashSet<HwHomework>(0);
-	private Set<HwCourseSelecting> hwCourseSelectings = new HashSet<HwCourseSelecting>(0);
+	//private Set<HwCourseSelecting> hwCourseSelectings = new HashSet<HwCourseSelecting>(0);
 	//private Set<HwHomeworkInfo> hwHomeworkInfos = new HashSet<HwHomeworkInfo>(0);
 	//private Set<HwTeacher> hwTeachers = new HashSet<HwTeacher>(0);
 	private Set<HwCourseTeaching> hwCourseTeachings = new HashSet<HwCourseTeaching>(0);
@@ -53,13 +53,13 @@ public class HwCourse implements java.io.Serializable {
 
 	/** full constructor */
 	public HwCourse(HwCollege hwCollege, String courseNo, String courseName,
-			Set<HwHomework> hwHomeworks, Set<HwCourseSelecting> hwCourseSelectings,
+			Set<HwHomework> hwHomeworks, /*Set<HwCourseSelecting> hwCourseSelectings,*/
 			/*Set<HwHomeworkInfo> hwHomeworkInfos,*/ Set<HwCourseTeaching> hwCourseTeachings) {
 		this.hwCollege = hwCollege;
 		this.courseNo = courseNo;
 		this.courseName = courseName;
 		this.hwHomeworks = hwHomeworks;
-		this.hwCourseSelectings = hwCourseSelectings;
+		//this.hwCourseSelectings = hwCourseSelectings;
 		//this.hwHomeworkInfos = hwHomeworkInfos;
 		this.hwCourseTeachings = hwCourseTeachings;
 	}
@@ -115,14 +115,14 @@ public class HwCourse implements java.io.Serializable {
 	}
 
 	//@JsonBackReference
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwCourse")
+/*	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwCourse")
 	public Set<HwCourseSelecting> getHwCourseSelectings() {
 		return this.hwCourseSelectings;
 	}
 
 	public void setHwCourseSelectings(Set<HwCourseSelecting> hwCourseSelectings) {
 		this.hwCourseSelectings = hwCourseSelectings;
-	}
+	}*/
 	//@JsonBackReference
 /*	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwCourse")
 	public Set<HwHomeworkInfo> getHwHomeworkInfos() {
