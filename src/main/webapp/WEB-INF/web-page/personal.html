@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head lang="zn">
+    <meta charset="UTF-8">
+    <title>个人信息</title>
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+    <script type="text/javascript" src="../resources/script-lib/underscore-min.js"></script>
+    <script type="text/javascript" src="../resources/script-lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../resources/script-lib/backbone-min.js"></script>
+</head>
+<body>
+    <nav>
+        <div class="nav-wrap" role="navigation">
+            <ul class="nav-main" role="menubar">
+                <li class="logo" role="logo">
+                    <a href="#"><img src="images/logo.jpg" alt="logo"></a>
+                </li>
+                <li class="active"><a href="#">首页</a></li>
+                <li><a href="#">个人中心</a></li>
+                <li><a href="#">作业管理</a></li>
+                <li><a href="#">帮助</a></li>
+            </ul>
+            <div class="welcome">
+                <span>您好，陈培峰</span>
+                <a href="#">退出</a>
+            </div>
+        </div>
+    </nav>
+    <header>
+        <div class="bg"></div>
+        <div class="info-b">
+            <span><!--button--></span>
+            <div id="info-tip" class="info-tip">
+                <div></div>
+                <ul>
+                    <li>最新作业<span>10</span></li>
+                    <li>未提交<span>5</span></li>
+                    <li>作业反馈<span>3</span></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <section class="main-content">
+        <div class="left-nav" role="navigation">
+            <div class="l-menu"><strong><span class="man"></span>个人中心</strong></div>
+            <ul>
+                <li class="l-active">个人信息</li>
+                <li>密码修改</li>
+                <li>设置邮箱</li>
+            </ul>
+            <div class="l-menu"><strong><span class="work"></span>作业管理</strong></div>
+            <ul>
+                <li>作业列表</li>
+                <li>密码修改</li>
+                <li>设置邮箱</li>
+            </ul>
+        </div>
+        <div class="content">
+            <div class="personal-info">
+                <div class="p-name">
+                    <label><strong>姓名</strong></label>
+                    <input type="text" value="陈培峰" readonly/>
+                </div>
+                <div class="p-name">
+                    <label><strong>学号</strong></label>
+                    <input type="text" value="20112100167" readonly/>
+                </div>
+                <div class="p-name">
+                    <label><strong>学院</strong></label>
+                    <input type="text" value="计算机学院" readonly/>
+                </div>
+                <div class="p-name">
+                    <label><strong>专业</strong></label>
+                    <input type="text" value="网络工程" readonly/>
+                </div>
+            </div>
+            <div class="personal-img">
+                <img src="images/man.jpg">
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="line"></div>
+        <div class="site-footer">
+            <p class="site-info">
+                <span>网站首页</span>|<span>关于我们</span>|<span>联系方式</span>|<span>版权声明</span>|<span>友情链接</span>
+            </p>
+            <p class="copyright">
+                <span>&copy;</span>Copyright 2015. All Rights Reserved 三脚猫
+            </p>
+            <p></p>
+        </div>
+    </footer>
+    <script type="text/javascript" src="script/common.js"></script>
+</body>
+</html>
