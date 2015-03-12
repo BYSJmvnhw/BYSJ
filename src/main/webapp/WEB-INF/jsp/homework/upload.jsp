@@ -13,7 +13,7 @@
 <body>
 <%--  此处通过ajax请求作业详细信息--%>
 <form method="post" enctype="multipart/form-data">
-  <input type="hidden" name="hwinfoId" value="36 ">
+  <input type="hidden" name="hwinfoId" value="40 ">
   <input type="file" name="hw"/> <br/><br/>
   <input type="submit"/>
 </form>

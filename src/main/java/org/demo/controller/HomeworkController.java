@@ -185,10 +185,12 @@ public class HomeworkController {
          hwinfo.setHwDesc(jo.getString("hwDesc"));
          hwinfo.setCourseName(jo.getString("courseName"));
          hwinfo.setDeadline( new java.sql.Timestamp( jo.getLong("deadline") ) );
+         Integer cid = jo.getInt("cid");
 
          /**查询出对应的courseTeaching*/
-         HwCourse course = courseService.load(jo.getInt("courseId"));
-         HwCourseTeaching courseTeaching = courseTeachingService.findCourseTeaching(course,teacher);
+         //HwCourse course = courseService.load(jo.getInt("courseId"));
+         //HwCourseTeaching courseTeaching = courseTeachingService.findCourseTeaching(course,teacher);
+         HwCourseTeaching courseTeaching = courseTeachingService.load(cid);
 
          /**往HwHomeworkInfo填入其他信息*/
          hwinfo.setCreateDate(new java.sql.Timestamp(System.currentTimeMillis()));
@@ -197,7 +199,7 @@ public class HomeworkController {
          hwinfo.setOvertime(false);
          String url = "/" +  courseTeaching.getStartYear().toString()
                         + "/" + courseTeaching.getSchoolTerm().toString()
-                        + "/" + course.getCourseNo()
+                        + "/" + courseTeaching.getHwCourse().getCourseNo()
                         + "/" + teacher.getTeacherNo() + "/";
                         //+ "/" + hwinfo.getId() + "/" ;
 
@@ -207,12 +209,12 @@ public class HomeworkController {
          /**查询出所有选课的学生
           * 初始化该次作业所有选课学生的作业。
           * */
-          List<HwCourseSelecting> csList = courseSelectingService.selectingCourses(course, courseTeaching.getStartYear(), courseTeaching.getSchoolTerm());
+         List<HwCourseSelecting> csList = courseSelectingService.selectingCourses(cid);
          for(HwCourseSelecting cs : csList) {
              //构建一个新的作业对象
              HwHomework hw = new HwHomework();
              hw.setHwStudent(cs.getHwStudent());
-             hw.setHwCourse(course);
+             hw.setHwCourse(cs.getHwCourseTeaching().getHwCourse());
              hw.setCheckedFlag(false);
              hw.setHwHomeworkInfo(hwinfo);
              hw.setHwTeacher(teacher);

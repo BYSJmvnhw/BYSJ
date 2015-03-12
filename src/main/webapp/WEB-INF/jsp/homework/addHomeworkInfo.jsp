@@ -49,7 +49,7 @@
                   deadline: Date.parse(new Date()),
                   email: "623487211@qq.com",
                   courseName: "courseName",
-                  courseId: 1
+                  cid: 1
               }
           )
         },

@@ -40,11 +40,9 @@ public class CourseSelectingService implements ICourseSelectingService {
     }
 
     @Override
-    public  List<HwCourseSelecting> selectingCourses(HwCourse course, Integer startYear, Integer schoolTerm) {
-        String hql = "from HwCourseSelecting cs where cs.hwCourse = ? " +
-                "and startYear = ? " +
-                "and schoolTerm = ? ";
-        return courseSeletingDao.list(hql,new Object[] {course, startYear, schoolTerm});
+    public  List<HwCourseSelecting> selectingCourses(Integer cid) {
+        String hql = "from HwCourseSelecting cs where cs.hwCourseTeaching.id = ?";
+        return courseSeletingDao.list(hql,cid);
     }
 
 
