@@ -10,7 +10,7 @@ import org.demo.model.Page;
  */
 public interface IHomeworkInfoService {
 
-    public Page<HwHomeworkInfo> homeworListInfoList(HwCourseTeaching hwCourseTeaching);
+    public Page<HwHomeworkInfo> homeworListInfoPage(HwCourseTeaching hwCourseTeaching);
 
     public HwHomeworkInfo load(Integer id);
 

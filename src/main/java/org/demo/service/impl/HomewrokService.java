@@ -27,7 +27,7 @@ public class HomewrokService implements IHomeworkService {
     }
 
     @Override
-    public Page<HwHomework> submittedHomeworkList(HwHomeworkInfo hwHomeworkInfo, boolean submited) {
+    public Page<HwHomework> submittedHomeworkPage(HwHomeworkInfo hwHomeworkInfo, boolean submited) {
         String hql = "from HwHomework hw " +
                 "where hw.hwHomeworkInfo = ? ";
         if(submited) {

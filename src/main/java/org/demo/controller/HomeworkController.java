@@ -65,14 +65,14 @@ public class HomeworkController {
         /** 学生返回选课列表 */
         if( userType == UserType.STUDENT ) {
             HwStudent student = (HwStudent) request.getSession().getAttribute("loginStudent");
-            Page page = courseSelectingService.selectingCourses(student, startYear, schoolTerm);
+            Page page = courseSelectingService.selectingCoursePage(student, startYear, schoolTerm);
             return page;
         }
         /** 教师返回授课列表 */
         else {
             HwTeacher teacher = (HwTeacher)request.getSession().getAttribute("loginTeacher");
             System.out.println(teacher.getName());
-            Page page = courseTeachingService.teachingCourseLsit(teacher, startYear, schoolTerm);
+            Page page = courseTeachingService.teachingCoursePage(teacher, startYear, schoolTerm);
              return page;
         }
     }
@@ -98,14 +98,11 @@ public class HomeworkController {
         /** 学生返回布置作业列表 */
         if( userType == UserType.STUDENT ) {
             HwCourseSelecting cs = courseSelectingService.load(cid);
-            /*HwCourse course = cs.getHwCourse();
-            HwTeacher teacher = cs.getHwTeacher();
-            HwCourseTeaching ct = courseTeachingService.findCourseTeaching(course, teacher);*/
-            return homeworkInfoService.homeworListInfoList(cs.getHwCourseTeaching());
+            return homeworkInfoService.homeworListInfoPage(cs.getHwCourseTeaching());
         }else {
             /** 教师返回布置作业列表 */
             HwCourseTeaching ct = courseTeachingService.load(cid);
-            return homeworkInfoService.homeworListInfoList(ct);
+            return homeworkInfoService.homeworListInfoPage(ct);
         }
     }
 
@@ -147,7 +144,7 @@ public class HomeworkController {
     public Page<HwHomework> homeworkList(Integer hwInfoId,boolean submited) {
         HwHomeworkInfo hwInfo = homeworkInfoService.load(hwInfoId);
         System.out.println(hwInfo.getHwDesc());
-        return homeworkService.submittedHomeworkList(hwInfo, submited);
+        return homeworkService.submittedHomeworkPage(hwInfo, submited);
     }
     /**
      * 请求布置作业,添加作业信息 jsp页面
@@ -209,7 +206,7 @@ public class HomeworkController {
          /**查询出所有选课的学生
           * 初始化该次作业所有选课学生的作业。
           * */
-         List<HwCourseSelecting> csList = courseSelectingService.selectingCourses(cid);
+         List<HwCourseSelecting> csList = courseSelectingService.selectingCourseList(cid);
          for(HwCourseSelecting cs : csList) {
              //构建一个新的作业对象
              HwHomework hw = new HwHomework();
