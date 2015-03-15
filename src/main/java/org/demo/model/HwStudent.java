@@ -29,7 +29,6 @@ public class HwStudent implements java.io.Serializable {
 	// Fields
 
 	private Integer id;
-	private HwUser hwUser;
 	private HwMajor hwMajor;
 	private HwCollege hwCollege;
 	private String studentNo;
@@ -58,11 +57,10 @@ public class HwStudent implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public HwStudent(Integer id, HwUser hwUser, HwMajor hwMajor, HwCollege hwCollege,
+	public HwStudent(Integer id, HwMajor hwMajor, HwCollege hwCollege,
 					 String studentNo, String name, String sex, String class_, String grade, String email,
 					 Set<HwCourseSelecting> hwCourseSelectings, Set<HwHomework> hwHomeworks) {
 		this.id = id;
-		this.hwUser = hwUser;
 		this.hwMajor = hwMajor;
 		this.hwCollege = hwCollege;
 		this.studentNo = studentNo;
@@ -87,16 +85,6 @@ public class HwStudent implements java.io.Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	public HwUser getHwUser() {
-		return this.hwUser;
-	}
-
-	public void setHwUser(HwUser hwUser) {
-		this.hwUser = hwUser;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
