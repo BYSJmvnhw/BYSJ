@@ -1,15 +1,20 @@
 package org.demo.controller;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 import org.apache.commons.io.FileUtils;
 import org.demo.dao.IHomeworkDao;
 import org.demo.model.*;
 import org.demo.service.*;
+import org.demo.tool.DateJsonValueProcessor;
+import org.demo.tool.ObjectJsonValueProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.AbstractJsonpResponseBodyAdvice;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +23,7 @@ import java.io.IOException;
 import java.nio.file.NotDirectoryException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,7 +33,23 @@ import java.util.List;
 @Controller
 @RequestMapping("/homework")
 public class HomeworkController {
+    /**
+     * 用于解决Jsonp跨域问题
+     */
+    @ControllerAdvice
+    private static class JsonpAdvice extends AbstractJsonpResponseBodyAdvice {
+        public JsonpAdvice() {
+            super("callback");
+        }
+    }
 
+/*    private JsonConfig setDefaultJsonConfig(String[] ) {
+            jsonConfig.setExcludes(new String[] {"hibernateLazyInitializer", "handler",});
+            jsonConfig.registerJsonValueProcessor(Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd HH:mm:ss"));
+        }
+    }
+
+    private static JsonConfig jsonConfig = new JsonConfig();*/
     private String homeworkBaseDir;
     private IHomeworkDao homeworkDao;
     private ICourseSelectingService courseSelectingService;
@@ -58,22 +80,41 @@ public class HomeworkController {
      */
     @RequestMapping(value = "/courseList", method = RequestMethod.GET, produces="application/json")
     @ResponseBody
-    public Page courseList(Integer startYear, Integer schoolTerm, HttpServletRequest request) {
-        //System.out.println("enter hwController"+ " , " + startYear+" , " +schoolTerm);
+    public JSONObject courseList(Integer startYear, Integer schoolTerm, HttpServletRequest request) {
         /** 获取用户类型，学生返回选课列表，教师返回授课列表*/
         UserType userType = (UserType) request.getSession().getAttribute("userType");
+        /**过滤配置*/
+        JsonConfig jsonConfig = new JsonConfig();
+        /**过滤简单属性*/
+        jsonConfig.setExcludes(new String[] {"hibernateLazyInitializer", "handler",
+                "hwTeacher","hwHomeworkInfos","password","hwCourseSelectings","email"});
+        /**过滤复杂属性*/
+        jsonConfig.registerJsonValueProcessor( HwCourse.class,
+                new ObjectJsonValueProcessor(new String[] {"id","courseNo","courseName"}, HwCourse.class) );
         /** 学生返回选课列表 */
         if( userType == UserType.STUDENT ) {
             HwStudent student = (HwStudent) request.getSession().getAttribute("loginStudent");
+            /**查找选课关系*/
             Page page = courseSelectingService.selectingCoursePage(student, startYear, schoolTerm);
-            return page;
+            Page newPage = new Page();
+            List<HwCourseTeaching> list = new ArrayList<HwCourseTeaching>();
+            /**获取选课关系中的授课关系，构造分页类*/
+            for(Object o : (List)page.getData() ) {
+                HwCourseSelecting cs =  (HwCourseSelecting) o;
+                list.add(cs.getHwCourseTeaching());
+            }
+            newPage.setData(list);
+            newPage.setPageSize(page.getPageSize());
+            newPage.setTotalRecord(page.getTotalRecord());
+            newPage.setPageOffsset(page.getPageOffsset());
+            return JSONObject.fromObject(newPage, jsonConfig);
         }
         /** 教师返回授课列表 */
         else {
             HwTeacher teacher = (HwTeacher)request.getSession().getAttribute("loginTeacher");
             System.out.println(teacher.getName());
             Page page = courseTeachingService.teachingCoursePage(teacher, startYear, schoolTerm);
-             return page;
+            return JSONObject.fromObject(page, jsonConfig) ;
         }
     }
 
@@ -92,18 +133,13 @@ public class HomeworkController {
      * */
     @RequestMapping(value = "/homeworkInfoList", method = RequestMethod.GET)
     @ResponseBody
-    public Page homeworkInfoList(Integer cid, HttpServletRequest request)  {
-        /** 获取用户类型，学生返回布置作业列表，教师返回布置作业列表*/
-        UserType userType = (UserType) request.getSession().getAttribute("userType");
-        /** 学生返回布置作业列表 */
-        if( userType == UserType.STUDENT ) {
-            HwCourseSelecting cs = courseSelectingService.load(cid);
-            return homeworkInfoService.homeworListInfoPage(cs.getHwCourseTeaching());
-        }else {
-            /** 教师返回布置作业列表 */
-            HwCourseTeaching ct = courseTeachingService.load(cid);
-            return homeworkInfoService.homeworListInfoPage(ct);
-        }
+    public JSONObject homeworkInfoList(Integer cid, HttpServletRequest request)  {
+        HwCourseTeaching ct = courseTeachingService.load(cid);
+        JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.setExcludes(new String[]{"hwHomeworks","hwCourseTeaching","hwDesc","email","courseName","createDate","url",
+                "hibernateLazyInitializer", "handler"});
+        jsonConfig.registerJsonValueProcessor(Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd HH:mm:ss"));
+        return JSONObject.fromObject(homeworkInfoService.homeworListInfoPage(ct),jsonConfig);
     }
 
     /*************************************************************************************************
@@ -113,15 +149,18 @@ public class HomeworkController {
     public String showHomeworkInfoDetail() {
         return "homework/showHomeworkInfoDetail";
     }
-
      /**
      *  @param hwInfoId 作业信息 id
      *  @return Json 作业要求详细信息
      * */
     @RequestMapping(value = "/homeworkInfoDetail", method = RequestMethod.GET)
     @ResponseBody
-     public HwHomeworkInfo homeworkInfoDetail(Integer hwInfoId) {
-        return homeworkInfoService.load(hwInfoId);
+     public JSONObject homeworkInfoDetail(Integer hwInfoId) {
+        JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.setExcludes(new String[]{"hwHomeworks","hwCourseTeaching","url",
+                "hibernateLazyInitializer", "handler"});
+        jsonConfig.registerJsonValueProcessor(Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd HH:mm:ss"));
+        return JSONObject.fromObject(homeworkInfoService.load(hwInfoId), jsonConfig);
     }
 
     /*************************************************************************************************
@@ -141,10 +180,12 @@ public class HomeworkController {
      * */
     @RequestMapping(value = "/homeworkList",  method = RequestMethod.GET)
     @ResponseBody
-    public Page<HwHomework> homeworkList(Integer hwInfoId,boolean submited) {
+    public JSONObject homeworkList(Integer hwInfoId,boolean submited) {
         HwHomeworkInfo hwInfo = homeworkInfoService.load(hwInfoId);
-        System.out.println(hwInfo.getHwDesc());
-        return homeworkService.submittedHomeworkPage(hwInfo, submited);
+        JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.setExcludes(new String[] { "hibernateLazyInitializer", "handler","hwCourse","hwHomeworkInfo","hwTeacher","hwStudent"});
+        jsonConfig.registerJsonValueProcessor(Timestamp.class, new DateJsonValueProcessor("yyyy-MM-dd HH:mm:ss"));
+        return JSONObject.fromObject(homeworkService.submittedHomeworkPage(hwInfo, submited), jsonConfig);
     }
     /**
      * 请求布置作业,添加作业信息 jsp页面

@@ -57,6 +57,14 @@ public class HomewrokService implements IHomeworkService {
         return homeworkDao.findObject(hql, new Object[] {hwinfoId, student});
     }
 
+    @Override
+    public Page<HwHomework> homeworkPage(Integer courseTeachingId, Integer studentId) {
+        String hql = "from HwHomework hw where " +
+                "hw.hwHomeworkInfo.hwCourseTeaching.id = ? " +
+                "and hw.hwStudent.id = ?";
+        return homeworkDao.findPage(hql, new Object[] {courseTeachingId, studentId});
+    }
+
     public IHomeworkDao getHomeworkDao() {
         return homeworkDao;
     }

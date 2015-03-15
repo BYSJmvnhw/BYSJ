@@ -24,7 +24,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "hw_course", catalog = "homework")
-@JsonIgnoreProperties({"hwCollege","hwHomeworks","hwCourseSelectings","hwCourseTeachings"})
+//@JsonIgnoreProperties({"hwCollege","hwHomeworks","hwCourseSelectings","hwCourseTeachings"})
 public class HwCourse implements java.io.Serializable {
 
 	// Fields

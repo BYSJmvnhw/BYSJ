@@ -22,7 +22,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "hw_homework_info", catalog = "homework")
-@JsonIgnoreProperties({"hwHomeworks","hwCourseTeaching","hibernateLazyInitializer", "handler"})
+//@JsonIgnoreProperties({"hwHomeworks","hwCourseTeaching","hibernateLazyInitializer", "handler"})
 //@JsonRootName("hwHomeworkInfo")
 public class HwHomeworkInfo implements java.io.Serializable {
 

@@ -13,12 +13,12 @@ import java.util.Set;
 
 @Entity
 @Table(name = "hw_course_teacher" , catalog = "homework")
-@JsonIgnoreProperties({"hwTeacher","hwHomeworkInfos","password","hwCourseSelectings"})
+//@JsonIgnoreProperties({"hwTeacher","hwHomeworkInfos","password","hwCourseSelectings"})
 public class HwCourseTeaching implements Serializable{
 
     private Integer id;
     /** 用于开启了Hibernation的延迟加载时，Json序列化时忽略代理类，注解在类成员域上 */
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+   // @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private HwCourse hwCourse;
     private HwTeacher hwTeacher;
     private Integer startYear;

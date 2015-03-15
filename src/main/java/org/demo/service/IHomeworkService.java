@@ -19,4 +19,6 @@ public interface IHomeworkService {
     public void update(HwHomework homework);
 
     public HwHomework findHomework(Integer hwinfoId, HwStudent student);
+
+    public Page<HwHomework> homeworkPage(Integer courseTeachingId, Integer studentId);
 }
