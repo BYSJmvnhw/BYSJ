@@ -18,7 +18,7 @@ import java.util.List;
  * Created by jzchen on 2014/12/25.
  */
 
-
+@Repository
 public class BaseDao<T> implements IBaseDao<T> {
 
     private SessionFactory sessionFactory;
