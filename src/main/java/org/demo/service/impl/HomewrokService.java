@@ -27,7 +27,7 @@ public class HomewrokService implements IHomeworkService {
     }
 
     @Override
-    public Page<HwHomework> submittedHomeworkList(HwHomeworkInfo hwHomeworkInfo, boolean submited) {
+    public Page<HwHomework> submittedHomeworkPage(HwHomeworkInfo hwHomeworkInfo, boolean submited) {
         String hql = "from HwHomework hw " +
                 "where hw.hwHomeworkInfo = ? ";
         if(submited) {
@@ -55,6 +55,14 @@ public class HomewrokService implements IHomeworkService {
                 "hw.hwHomeworkInfo.id = ? " +
                 "and hw.hwStudent = ?";
         return homeworkDao.findObject(hql, new Object[] {hwinfoId, student});
+    }
+
+    @Override
+    public Page<HwHomework> homeworkPage(Integer courseTeachingId, Integer studentId) {
+        String hql = "from HwHomework hw where " +
+                "hw.hwHomeworkInfo.hwCourseTeaching.id = ? " +
+                "and hw.hwStudent.id = ?";
+        return homeworkDao.findPage(hql, new Object[] {courseTeachingId, studentId});
     }
 
     public IHomeworkDao getHomeworkDao() {

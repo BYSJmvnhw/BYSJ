@@ -19,7 +19,7 @@ public class HomeworkInfoService implements IHomeworkInfoService {
     private IHomeworkInfoDao homeworkInfoDao;
 
     @Override
-    public Page<HwHomeworkInfo> homeworListInfoList(HwCourseTeaching hwCourseTeaching) {
+    public Page<HwHomeworkInfo> homeworListInfoPage(HwCourseTeaching hwCourseTeaching) {
         String hql = " from HwHomeworkInfo hi " +
                 "where hi.hwCourseTeaching = ? ";
         return homeworkInfoDao.findPage(hql, hwCourseTeaching);
