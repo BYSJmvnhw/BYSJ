@@ -5,13 +5,11 @@ import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import net.sf.json.util.CycleDetectionStrategy;
 import org.demo.model.*;
-import org.demo.service.ICourseSelectingService;
-import org.demo.service.ICourseTeachingService;
-import org.demo.service.IHomeworkInfoService;
-import org.demo.service.IHomeworkService;
+import org.demo.service.*;
 import org.demo.tool.DateJsonValueProcessor;
 import org.demo.tool.ObjectJsonValueProcessor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.AbstractJsonpResponseBodyAdvice;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 
 /**
@@ -41,6 +40,8 @@ public class StudentController {
     private ICourseTeachingService courseTeachingService;
     private IHomeworkInfoService homeworkInfoService;
     private IHomeworkService homeworkService;
+    private ICollegeService collegeService;
+    private IMajorService majorService;
     /**
      *
      * @param //cid 教师授课关系 courseTeaching id
@@ -87,6 +88,45 @@ public class StudentController {
     }
 
 
+    /********************************* 管理员功能 ***********************************
+     *
+     * @return
+     */
+    @RequestMapping(value = "/addStudent", method = RequestMethod.GET)
+    public String addStudent() {
+        return "student/addStudent";
+    }
+
+    public String addStudent( JSONObject jo, HttpServletRequest request) {
+        HwStudent student = new HwStudent();
+        student.setStudentNo(jo.getString("studentNo"));
+        student.setName(jo.getString("name"));
+        student.setSex(jo.getString("sex"));
+        student.setClass_(jo.getString("cla"));
+        student.setEmail(jo.getString("email"));
+        student.setGrade(jo.getString("grade"));
+        student.setHwCollege(collegeService.load(jo.getInt("collegeId")));
+        student.setHwMajor(majorService.load(jo.getInt("majorId")));
+
+        HwUser user = new HwUser();
+        user.setUsername(jo.getString("studentNo"));
+        user.setPassword(jo.getString("studentNo"));
+        user.setTrueName(jo.getString("name"));
+        user.setSex(jo.getString("sex"));
+        private String username;
+        private String password;
+        private String trueName;
+        private String sex;
+        private String mobile;
+        private String email;
+        private Integer createId;
+        private String createUsername;
+        private Timestamp createDate;
+        private UserType userType;
+        private Integer typeId;
+
+
+
     public ICourseSelectingService getCourseSelectingService() {
         return courseSelectingService;
     }
@@ -121,5 +161,23 @@ public class StudentController {
     @Resource
     public void setHomeworkService(IHomeworkService homeworkService) {
         this.homeworkService = homeworkService;
+    }
+
+    public ICollegeService getCollegeService() {
+        return collegeService;
+    }
+
+    @Resource
+    public void setCollegeService(ICollegeService collegeService) {
+        this.collegeService = collegeService;
+    }
+
+    public IMajorService getMajorService() {
+        return majorService;
+    }
+
+    @Resource
+    public void setMajorService(IMajorService majorService) {
+        this.majorService = majorService;
     }
 }
