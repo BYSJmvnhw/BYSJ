@@ -3,17 +3,7 @@ package org.demo.model;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * HwUser entity. @author MyEclipse Persistence Tools
@@ -34,9 +24,9 @@ public class HwUser implements java.io.Serializable {
 	private Integer createId;
 	private String createUsername;
 	private Timestamp createDate;
-	private Set<HwStudent> hwStudents = new HashSet<HwStudent>(0);
+    private UserType userType;
+    private Integer typeId;
 	private Set<HwRole> hwRoles = new HashSet<HwRole>(0);
-	private Set<HwTeacher> hwTeachers = new HashSet<HwTeacher>(0);
 
 	// Constructors
 
@@ -57,9 +47,7 @@ public class HwUser implements java.io.Serializable {
 	/** full constructor */
 	public HwUser(String username, String password, String trueName,
 			String sex, String mobile, String email, Integer createId,
-			String createUsername, Timestamp createDate,
-			Set<HwStudent> hwStudents, Set<HwRole> hwRoles,
-			Set<HwTeacher> hwTeachers) {
+			String createUsername, Timestamp createDate, Set<HwRole> hwRoles) {
 		this.username = username;
 		this.password = password;
 		this.trueName = trueName;
@@ -69,9 +57,7 @@ public class HwUser implements java.io.Serializable {
 		this.createId = createId;
 		this.createUsername = createUsername;
 		this.createDate = createDate;
-		this.hwStudents = hwStudents;
 		this.hwRoles = hwRoles;
-		this.hwTeachers = hwTeachers;
 	}
 
 	// Property accessors
@@ -167,15 +153,22 @@ public class HwUser implements java.io.Serializable {
 		this.createDate = createDate;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwUser")
-	public Set<HwStudent> getHwStudents() {
-		return this.hwStudents;
-	}
+    @Column(name = "user_type", nullable = false)
+    public UserType getUserType() {
+        return userType;
+    }
 
-	public void setHwStudents(Set<HwStudent> hwStudents) {
-		this.hwStudents = hwStudents;
-	}
+    public void setUserType(UserType userType) {
+        this.userType = userType;
+    }
+    @Column(name = "type_id", nullable = false)
+    public Integer getTypeId() {
+        return typeId;
+    }
 
+    public void setTypeId(Integer typeId) {
+        this.typeId = typeId;
+    }
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "hw_user_role", catalog = "homework", joinColumns = { @JoinColumn(name = "user_id", updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "role_id", updatable = false) })
 	public Set<HwRole> getHwRoles() {
@@ -184,15 +177,6 @@ public class HwUser implements java.io.Serializable {
 
 	public void setHwRoles(Set<HwRole> hwRoles) {
 		this.hwRoles = hwRoles;
-	}
-
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwUser")
-	public Set<HwTeacher> getHwTeachers() {
-		return this.hwTeachers;
-	}
-
-	public void setHwTeachers(Set<HwTeacher> hwTeachers) {
-		this.hwTeachers = hwTeachers;
 	}
 
 }

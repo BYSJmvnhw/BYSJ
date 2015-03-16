@@ -25,7 +25,6 @@ public class HwTeacher implements java.io.Serializable {
 	// Fields
 
 	private Integer id;
-	private HwUser hwUser;
 	private HwMajor hwMajor;
 	private HwCollege hwCollege;
 	private String teacherNo;
@@ -52,11 +51,10 @@ public class HwTeacher implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public HwTeacher(HwUser hwUser, HwMajor hwMajor, HwCollege hwCollege,
+	public HwTeacher(HwMajor hwMajor, HwCollege hwCollege,
 			String teacherNo, String name, String sex, String email,
 			/*Set<HwHomeworkInfo> hwHomeworkInfos,*/ /*Set<HwCourse> hwCourses,*/
 			Set<HwHomework> hwHomeworks/*, Set<HwCourseSelecting>hwCourseSelectings*/) {
-		this.hwUser = hwUser;
 		this.hwMajor = hwMajor;
 		this.hwCollege = hwCollege;
 		this.teacherNo = teacherNo;
@@ -79,16 +77,6 @@ public class HwTeacher implements java.io.Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	public HwUser getHwUser() {
-		return this.hwUser;
-	}
-
-	public void setHwUser(HwUser hwUser) {
-		this.hwUser = hwUser;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)

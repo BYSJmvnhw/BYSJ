@@ -12,11 +12,13 @@ public interface IHomeworkService {
 
     public void add(HwHomework homework);
 
-    public Page<HwHomework> submittedHomeworkList(HwHomeworkInfo hwHomeworkInfo, boolean submited);
+    public Page<HwHomework> submittedHomeworkPage(HwHomeworkInfo hwHomeworkInfo, boolean submited);
 
     public void load(Integer id);
 
     public void update(HwHomework homework);
 
     public HwHomework findHomework(Integer hwinfoId, HwStudent student);
+
+    public Page<HwHomework> homeworkPage(Integer courseTeachingId, Integer studentId);
 }

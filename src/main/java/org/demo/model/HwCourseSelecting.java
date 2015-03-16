@@ -4,6 +4,7 @@ package org.demo.model;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 import javax.persistence.*;
 
@@ -15,9 +16,10 @@ import javax.persistence.*;
 /**
  * 实体转Json时忽略下列属性
  * */
-@JsonIgnoreProperties({"hwStudent"/*,"hwTeacher"*/})
+//@JsonIgnoreProperties({"hwStudent"})
 /*  自动检测 不检测类成员域和getter */
 //@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonRootName("hwCourseSelecting")
 public class HwCourseSelecting implements java.io.Serializable{
 
     private Integer id;
@@ -31,10 +33,10 @@ public class HwCourseSelecting implements java.io.Serializable{
     }
 
     /** full constructor */
-    public HwCourseSelecting(Integer id, HwStudent hwStudent, HwCourseTeaching courseTeaching) {
+    public HwCourseSelecting(Integer id, HwStudent hwStudent, HwCourseTeaching hwCourseTeaching) {
         this.id = id;
         this.hwStudent = hwStudent;
-       // this.courseTeaching = courseTeaching;
+        this.hwCourseTeaching = hwCourseTeaching;
     }
 
     @Id

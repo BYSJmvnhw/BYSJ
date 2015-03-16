@@ -1,6 +1,5 @@
 ﻿
 .idea/
-
-.gitignore
 target/
 src/main/resources/log4j.properties
+src/main/resources/jdbc.properties

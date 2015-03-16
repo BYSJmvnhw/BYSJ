@@ -12,9 +12,11 @@ import java.util.List;
  */
 public interface ICourseSelectingService {
 
-    public Page<HwCourseSelecting> selectingCourses(HwStudent student, Integer startYear, Integer schoolTerm);
+    public Page<HwCourseSelecting> selectingCoursePage(HwStudent student, Integer startYear, Integer schoolTerm);
 
     public HwCourseSelecting load(Integer courseSelectingId);
 
-    public List<HwCourseSelecting> selectingCourses(HwCourse course, Integer startYear, Integer schoolTerm);
+    public List<HwCourseSelecting> selectingCourseList(Integer courseTeachingId);
+
+    public Page<HwCourseSelecting> selectingCoursePage(Integer courseTeachingId);
 }

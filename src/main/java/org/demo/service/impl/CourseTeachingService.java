@@ -20,7 +20,7 @@ public class CourseTeachingService implements ICourseTeachingService {
 
 
     @Override
-    public Page<HwCourseTeaching> teachingCourseLsit(HwTeacher teacher, Integer startYear, Integer schoolTerm) {
+    public Page<HwCourseTeaching> teachingCoursePage(HwTeacher teacher, Integer startYear, Integer schoolTerm) {
         String hql = "from HwCourseTeaching ct " +
                 "where ct.hwTeacher = ? " +
                 "and ct.startYear = ? " +

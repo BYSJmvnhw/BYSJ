@@ -22,7 +22,7 @@ public class CourseSelectingService implements ICourseSelectingService {
     private IStudentDao studentDao;
     private ICourseSeletingDao courseSeletingDao;
     @Override
-    public Page<HwCourseSelecting> selectingCourses(HwStudent student, Integer startYear, Integer schoolTerm) {
+    public Page<HwCourseSelecting> selectingCoursePage(HwStudent student, Integer startYear, Integer schoolTerm) {
 
         //HwStudent student = studentDao.load(studentId);
 
@@ -40,11 +40,15 @@ public class CourseSelectingService implements ICourseSelectingService {
     }
 
     @Override
-    public  List<HwCourseSelecting> selectingCourses(HwCourse course, Integer startYear, Integer schoolTerm) {
-        String hql = "from HwCourseSelecting cs where cs.hwCourse = ? " +
-                "and startYear = ? " +
-                "and schoolTerm = ? ";
-        return courseSeletingDao.list(hql,new Object[] {course, startYear, schoolTerm});
+    public  List<HwCourseSelecting> selectingCourseList(Integer courseTeachingId) {
+        String hql = "from HwCourseSelecting cs where cs.hwCourseTeaching.id = ?";
+        return courseSeletingDao.list(hql,courseTeachingId);
+    }
+
+    @Override
+    public Page<HwCourseSelecting> selectingCoursePage(Integer courseTeachingId) {
+        String hql = "from HwCourseSelecting cs where cs.hwCourseTeaching.id = ?";
+        return courseSeletingDao.findPage(hql, courseTeachingId);
     }
 
 

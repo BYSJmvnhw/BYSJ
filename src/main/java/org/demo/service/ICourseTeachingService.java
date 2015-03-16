@@ -7,7 +7,7 @@ import org.demo.model.*;
  */
 public interface ICourseTeachingService {
 
-    public Page<HwCourseTeaching> teachingCourseLsit(HwTeacher teacher, Integer startYear, Integer schoolTerm);
+    public Page<HwCourseTeaching> teachingCoursePage(HwTeacher teacher, Integer startYear, Integer schoolTerm);
 
     public HwCourseTeaching findCourseTeaching(HwCourse course, HwTeacher teacher);
 
