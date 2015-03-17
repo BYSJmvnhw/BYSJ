@@ -1,9 +1,5 @@
 package org.demo.service;
 
-import org.demo.model.HwHomework;
-import org.demo.service.impl.viewmodel;
-
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -16,5 +12,4 @@ public interface IEmailService {
                                   String recipientAddress, String emailSubject ,String text);
     public String sendSimpleEmails(String senderAddress, String senderPassword,
                                    List<String> recipientAddress, String emailSubject ,String text);
-    public viewmodel updatesome();
 }

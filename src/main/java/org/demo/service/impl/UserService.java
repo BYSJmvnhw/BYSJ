@@ -31,6 +31,19 @@ public class UserService implements IUserService {
         return userDao.findObject(hql, username);
     }
 
+    @Override
+    public void add(HwUser user) {
+        userDao.add(user);
+    }
+
+    @Override
+    public void deleteUser(Integer id) {
+
+        HwUser user = userDao.load(id);
+        user.setDeleteFlag(true);
+        userDao.update(user);
+    }
+
 
     public IUserDao getUserDao() {
         return userDao;

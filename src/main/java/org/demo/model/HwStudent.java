@@ -36,9 +36,10 @@ public class HwStudent implements java.io.Serializable {
 	private String sex;
 	private String class_;
 	private String grade;
-	private String email;
+	//private String email;
 	private Set<HwCourseSelecting> hwCourseSelectings = new HashSet<HwCourseSelecting>(0);
 	private Set<HwHomework> hwHomeworks = new HashSet<HwHomework>(0);
+	private Boolean deleteFlag;
 
 	// Constructors
 
@@ -58,7 +59,7 @@ public class HwStudent implements java.io.Serializable {
 
 	/** full constructor */
 	public HwStudent(Integer id, HwMajor hwMajor, HwCollege hwCollege,
-					 String studentNo, String name, String sex, String class_, String grade, String email,
+					 String studentNo, String name, String sex, String class_, String grade,
 					 Set<HwCourseSelecting> hwCourseSelectings, Set<HwHomework> hwHomeworks) {
 		this.id = id;
 		this.hwMajor = hwMajor;
@@ -68,7 +69,7 @@ public class HwStudent implements java.io.Serializable {
 		this.sex = sex;
 		this.class_ = class_;
 		this.grade = grade;
-		this.email = email;
+		//this.email = email;
 		this.hwCourseSelectings = hwCourseSelectings;
 		this.hwHomeworks = hwHomeworks;
 	}
@@ -152,24 +153,13 @@ public class HwStudent implements java.io.Serializable {
 		this.grade = grade;
 	}
 
-	@Column(name = "email", length = 50)
+/*	@Column(name = "email", length = 50)
 	public String getEmail() {
 		return this.email;
 	}
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	//@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	//@JoinTable(name = "hw_course_student", catalog = "homework", joinColumns = { @JoinColumn(name = "student_id", updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "course_id", updatable = false) })
-	/*@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwCourses")
-	public Set<HwCourse> getHwCourses() {
-		return this.hwCourses;
-	}
-
-	public void setHwCourses(Set<HwCourse> hwCourses) {
-		this.hwCourses = hwCourses;
 	}*/
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwStudent")
@@ -190,5 +180,13 @@ public class HwStudent implements java.io.Serializable {
 		this.hwHomeworks = hwHomeworks;
 	}
 
+	@Column(name = "delete_flag", nullable = false)
+	public Boolean getDeleteFlag() {
+		return deleteFlag;
+	}
+
+	public void setDeleteFlag(Boolean deleteFlag) {
+		this.deleteFlag = deleteFlag;
+	}
 
 }

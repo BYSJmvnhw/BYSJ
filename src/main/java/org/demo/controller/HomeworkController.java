@@ -1,16 +1,9 @@
 package org.demo.controller;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import net.sf.json.JSON;
+
 import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
-import org.apache.commons.io.FileUtils;
-import org.demo.dao.IHomeworkDao;
 import org.demo.model.*;
 import org.demo.service.*;
-import org.demo.tool.DateJsonValueProcessor;
-import org.demo.tool.ObjectJsonValueProcessor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,14 +11,8 @@ import org.springframework.web.servlet.mvc.method.annotation.AbstractJsonpRespon
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.NotDirectoryException;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by jzchen on 2015/1/25.
@@ -43,19 +30,7 @@ public class HomeworkController {
         }
     }
 
-/*    private JsonConfig setDefaultJsonConfig(String[] ) {
-            jsonConfig.setExcludes(new String[] {"hibernateLazyInitializer", "handler",});
-            jsonConfig.registerJsonValueProcessor(Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd HH:mm:ss"));
-        }
-    }
-
-    private static JsonConfig jsonConfig = new JsonConfig();*/
     private String homeworkBaseDir;
-    private IHomeworkDao homeworkDao;
-    private ICourseSelectingService courseSelectingService;
-    private ICourseTeachingService courseTeachingService;
-    private IHomeworkInfoService homeworkInfoService;
-    private ICourseService courseService;
     private IHomeworkService homeworkService;
     private IStudentService studentService;
 
@@ -83,38 +58,18 @@ public class HomeworkController {
     public JSONObject courseList(Integer startYear, Integer schoolTerm, HttpServletRequest request) {
         /** 获取用户类型，学生返回选课列表，教师返回授课列表*/
         UserType userType = (UserType) request.getSession().getAttribute("userType");
-        /**过滤配置*/
-        JsonConfig jsonConfig = new JsonConfig();
-        /**过滤简单属性*/
-        jsonConfig.setExcludes(new String[] {"hibernateLazyInitializer", "handler",
-                "hwTeacher","hwHomeworkInfos","password","hwCourseSelectings","email"});
-        /**过滤复杂属性*/
-        jsonConfig.registerJsonValueProcessor( HwCourse.class,
-                new ObjectJsonValueProcessor(new String[] {"id","courseNo","courseName"}, HwCourse.class) );
+
         /** 学生返回选课列表 */
         if( userType == UserType.STUDENT ) {
             HwStudent student = (HwStudent) request.getSession().getAttribute("loginStudent");
             /**查找选课关系*/
-            Page page = courseSelectingService.selectingCoursePage(student, startYear, schoolTerm);
-            Page newPage = new Page();
-            List<HwCourseTeaching> list = new ArrayList<HwCourseTeaching>();
-            /**获取选课关系中的授课关系，构造分页类*/
-            for(Object o : (List)page.getData() ) {
-                HwCourseSelecting cs =  (HwCourseSelecting) o;
-                list.add(cs.getHwCourseTeaching());
-            }
-            newPage.setData(list);
-            newPage.setPageSize(page.getPageSize());
-            newPage.setTotalRecord(page.getTotalRecord());
-            newPage.setPageOffsset(page.getPageOffsset());
-            return JSONObject.fromObject(newPage, jsonConfig);
+            return homeworkService.courseSelectingPage(student, startYear, schoolTerm);
         }
+
         /** 教师返回授课列表 */
         else {
             HwTeacher teacher = (HwTeacher)request.getSession().getAttribute("loginTeacher");
-            System.out.println(teacher.getName());
-            Page page = courseTeachingService.teachingCoursePage(teacher, startYear, schoolTerm);
-            return JSONObject.fromObject(page, jsonConfig) ;
+            return  homeworkService.courseTeachingPage(teacher, startYear, schoolTerm);
         }
     }
 
@@ -127,19 +82,14 @@ public class HomeworkController {
     }
 
     /**
-     * @param cid 教师为授课关系id， 学生为选课关系id
+     * @param cid 教师为授课关系id
      * @param request http请求
      * @return  学生返回布置作业列表，教师返回布置作业列表Json分页
      * */
     @RequestMapping(value = "/homeworkInfoList", method = RequestMethod.GET)
     @ResponseBody
     public JSONObject homeworkInfoList(Integer cid, HttpServletRequest request)  {
-        HwCourseTeaching ct = courseTeachingService.load(cid);
-        JsonConfig jsonConfig = new JsonConfig();
-        jsonConfig.setExcludes(new String[]{"hwHomeworks","hwCourseTeaching","hwDesc","email","courseName","createDate","url",
-                "hibernateLazyInitializer", "handler"});
-        jsonConfig.registerJsonValueProcessor(Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd HH:mm:ss"));
-        return JSONObject.fromObject(homeworkInfoService.homeworListInfoPage(ct),jsonConfig);
+        return homeworkService.homeworListInfoPage(cid);
     }
 
     /*************************************************************************************************
@@ -156,11 +106,7 @@ public class HomeworkController {
     @RequestMapping(value = "/homeworkInfoDetail", method = RequestMethod.GET)
     @ResponseBody
      public JSONObject homeworkInfoDetail(Integer hwInfoId) {
-        JsonConfig jsonConfig = new JsonConfig();
-        jsonConfig.setExcludes(new String[]{"hwHomeworks","hwCourseTeaching","url",
-                "hibernateLazyInitializer", "handler"});
-        jsonConfig.registerJsonValueProcessor(Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd HH:mm:ss"));
-        return JSONObject.fromObject(homeworkInfoService.load(hwInfoId), jsonConfig);
+        return homeworkService.homeworkInfoDetail(hwInfoId);
     }
 
     /*************************************************************************************************
@@ -181,11 +127,7 @@ public class HomeworkController {
     @RequestMapping(value = "/homeworkList",  method = RequestMethod.GET)
     @ResponseBody
     public JSONObject homeworkList(Integer hwInfoId,boolean submited) {
-        HwHomeworkInfo hwInfo = homeworkInfoService.load(hwInfoId);
-        JsonConfig jsonConfig = new JsonConfig();
-        jsonConfig.setExcludes(new String[] { "hibernateLazyInitializer", "handler","hwCourse","hwHomeworkInfo","hwTeacher","hwStudent"});
-        jsonConfig.registerJsonValueProcessor(Timestamp.class, new DateJsonValueProcessor("yyyy-MM-dd HH:mm:ss"));
-        return JSONObject.fromObject(homeworkService.submittedHomeworkPage(hwInfo, submited), jsonConfig);
+        return homeworkService.submittedHomeworkPage(hwInfoId, submited);
     }
     /**
      * 请求布置作业,添加作业信息 jsp页面
@@ -203,7 +145,6 @@ public class HomeworkController {
 
      @RequestMapping(value = "/addHomeworkInfo", method = RequestMethod.POST)
      @ResponseBody
-         //public void addHomeworkInfo(@RequestBody HwHomeworkInfo hwHomeworkInfo) { /*用于直接封装成 HwHomeworkInfo对象 */
     public String addHomeworkInfo(String jsonObject, HttpServletRequest request) {
 
             /** 从Session获取当前登陆用户类型 */
@@ -212,56 +153,7 @@ public class HomeworkController {
              //登陆类型不是教师或者未登陆，返回登陆页面
              return "../login/loginInput";
          }
-
-         //System.out.println(jsonObject);
-         /** 将前端传递过来的json字符串解析成JsonObject对象 */
-         JSONObject jo = JSONObject.fromObject(jsonObject);
-         /** 构造一个新的HwHomeworkInfo对象 */
-         HwHomeworkInfo hwinfo = new HwHomeworkInfo();
-         /** 从前端传递过来的json中解析出参数 */
-         hwinfo.setTitle(jo.getString("title"));
-         hwinfo.setHwDesc(jo.getString("hwDesc"));
-         hwinfo.setCourseName(jo.getString("courseName"));
-         hwinfo.setDeadline( new java.sql.Timestamp( jo.getLong("deadline") ) );
-         Integer cid = jo.getInt("cid");
-
-         /**查询出对应的courseTeaching*/
-         //HwCourse course = courseService.load(jo.getInt("courseId"));
-         //HwCourseTeaching courseTeaching = courseTeachingService.findCourseTeaching(course,teacher);
-         HwCourseTeaching courseTeaching = courseTeachingService.load(cid);
-
-         /**往HwHomeworkInfo填入其他信息*/
-         hwinfo.setCreateDate(new java.sql.Timestamp(System.currentTimeMillis()));
-         hwinfo.setEmail(courseTeaching.getEmail());
-         hwinfo.setHwCourseTeaching(courseTeaching);
-         hwinfo.setOvertime(false);
-         String url = "/" +  courseTeaching.getStartYear().toString()
-                        + "/" + courseTeaching.getSchoolTerm().toString()
-                        + "/" + courseTeaching.getHwCourse().getCourseNo()
-                        + "/" + teacher.getTeacherNo() + "/";
-                        //+ "/" + hwinfo.getId() + "/" ;
-
-         hwinfo.setUrl(url);
-         homeworkInfoService.add(hwinfo);
-
-         /**查询出所有选课的学生
-          * 初始化该次作业所有选课学生的作业。
-          * */
-         List<HwCourseSelecting> csList = courseSelectingService.selectingCourseList(cid);
-         for(HwCourseSelecting cs : csList) {
-             //构建一个新的作业对象
-             HwHomework hw = new HwHomework();
-             hw.setHwStudent(cs.getHwStudent());
-             hw.setHwCourse(cs.getHwCourseTeaching().getHwCourse());
-             hw.setCheckedFlag(false);
-             hw.setHwHomeworkInfo(hwinfo);
-             hw.setHwTeacher(teacher);
-             hw.setStudentName(cs.getHwStudent().getName());
-             hw.setStudentNo(cs.getHwStudent().getStudentNo());
-             hw.setTitle(hwinfo.getTitle());
-             hw.setLastModifyDate(new java.sql.Timestamp(System.currentTimeMillis()));
-             homeworkService.add(hw);
-         }
+        homeworkService.addHomeworkInfo(jsonObject, teacher);
          return "showHomeworkInfoDetail";
     }
 
@@ -271,7 +163,7 @@ public class HomeworkController {
      * */
     @RequestMapping(value = "/deleteHomeworkInfo", method = RequestMethod.GET)
     public String deleteHomeworkInfo(Integer id) {
-        homeworkInfoService.delete(id);
+        homeworkService.deleteHomeworkInfo(id);
         /**同时将级联删除该次作业信息对应的所有学生作业*/
         return "redirect:showHomeworkInfo";
     }
@@ -288,106 +180,15 @@ public class HomeworkController {
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public String upload(@RequestParam MultipartFile hw, Integer hwinfoId, HttpServletRequest request) throws IOException {
-/*        System.out.println(hw.getName()+" , "
-                + hw.getOriginalFilename()+" , "
-                + hw.getContentType()+ " , "
-                + hw.getSize() );*/
         /**从session中获取当前登录的学生*/
         HwStudent student = (HwStudent) request.getSession().getAttribute("loginStudent");
         if(student == null) {
            return "redirect:/login/loginInput";
         }
-
-        HwHomeworkInfo hwinfo = homeworkInfoService.load(hwinfoId);
-        /**获取后缀*/
-        String hwName = student.getStudentNo() + "_" +student.getName() + hw.getOriginalFilename().substring
-                (hw.getOriginalFilename().lastIndexOf("."));
-        String baseUrl = hwinfo.getUrl();
-        String url = baseUrl + hwinfo.getId() + "/" + hwName;
-
-        HwCourseTeaching ct = hwinfo.getHwCourseTeaching();
-        String hwNo = ct.getStartYear().toString() + ct.getSchoolTerm().toString() +  ct.getHwCourse().getCourseNo()  + student.getStudentNo();
-        HwHomework homework = homeworkService.findHomework(hwinfoId,student);
-        homework.setTitle(hwinfo.getTitle());
-        homework.setUrl(url);
-        homework.setHwNo(hwNo);
-        homework.setSubmitDate(new java.sql.Timestamp(System.currentTimeMillis()));
-        homeworkService.update(homework);
-
-
-        /**判断预设的目录的是否存在，不存在则使用web应用路径下的默认目录*/
-        try {
-            System.out.println( "BaseDir" + homeworkBaseDir);
-            /* 若指定目录不存在，则抛异常*/
-            File dirname = new File(homeworkBaseDir);
-            if ( !dirname.isDirectory() )
-                throw new NotDirectoryException( "homeworkDir" + homeworkBaseDir + " is not found."
-                        +"[ files were all putted into "+ request.getServletContext().getRealPath("/doc") + "]");
-        } catch (NotDirectoryException e ) {
-            /**使用web应用路径下的默认目录*/
-            homeworkBaseDir =request.getServletContext().getRealPath("/doc");
-            e.printStackTrace();
-        }finally {
-            //String finalDir = homeworkBaseDir + "/" + sdf.format(new Date()) ;
-            System.out.println(homeworkBaseDir);
-            //File f = new File( homeworkBaseDir + "/" + hw.getOriginalFilename() );
-            File f = new File( homeworkBaseDir + "/doc/" + url );
-            FileUtils.copyInputStreamToFile(hw.getInputStream(), f);
-        }
-
-
+        /**备用目录*/
+        String backupPath = request.getServletContext().getRealPath("/doc");
+        homeworkService.upload(hw, hwinfoId, student, backupPath);
         return "redirect:showHomework";
-    }
-
-    public IHomeworkDao getHomeworkDao() {
-        return homeworkDao;
-    }
-    @Resource
-    public void setHomeworkDao(IHomeworkDao homeworkDao) {
-        this.homeworkDao = homeworkDao;
-    }
-
-    public String getHomeworkBaseDir() {
-        return homeworkBaseDir;
-    }
-
-    @Value("${homeworkDir}")
-    public void setHomeworkBaseDir(String homeworkBaseDir) {
-        this.homeworkBaseDir = homeworkBaseDir;
-    }
-
-    public ICourseSelectingService getCourseSelectingService() {
-        return courseSelectingService;
-    }
-    @Resource
-    public void setCourseSelectingService(ICourseSelectingService courseSelectingService) {
-        this.courseSelectingService = courseSelectingService;
-    }
-
-    public ICourseTeachingService getCourseTeachingService() {
-        return courseTeachingService;
-    }
-    @Resource
-    public void setCourseTeachingService(ICourseTeachingService courseTeachingService) {
-        this.courseTeachingService = courseTeachingService;
-    }
-
-    public IHomeworkInfoService getHomeworkInfoService() {
-        return homeworkInfoService;
-    }
-
-    @Resource
-    public void setHomeworkInfoService(IHomeworkInfoService homeworkInfoService) {
-        this.homeworkInfoService = homeworkInfoService;
-    }
-
-    public ICourseService getCourseService() {
-        return courseService;
-    }
-
-    @Resource
-    public void setCourseService(ICourseService courseService) {
-        this.courseService = courseService;
     }
 
     public IHomeworkService getHomeworkService() {

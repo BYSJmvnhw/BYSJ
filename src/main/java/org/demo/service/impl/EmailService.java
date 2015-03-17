@@ -4,16 +4,10 @@ import net.sf.json.JSONObject;
 import org.demo.dao.IBaseDao;
 import org.demo.dao.IHomeworkDao;
 import org.demo.dao.IHomeworkInfoDao;
-import org.demo.dao.impl.HomeworkDao;
-import org.demo.dao.impl.HomeworkInfoDao;
 import org.demo.model.HwHomework;
 import org.demo.model.HwHomeworkInfo;
 import org.demo.service.IEmailService;
-import org.demo.service.IHomeworkService;
-import org.springframework.stereotype.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.mail.*;
@@ -21,7 +15,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeUtility;
 import javax.mail.search.*;
-import javax.servlet.http.HttpServletRequest;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.sql.Timestamp;
@@ -51,10 +44,6 @@ public class EmailService implements IEmailService {
     @Resource
     public void setBaseDao(IBaseDao baseDao) {
         this.baseDao = baseDao;
-    }
-    public viewmodel updatesome() {
-        String hql = "select new org.demo.service.impl.viewmodel(hw.hwCourse.courseNo) from HwHomework hw where hw.id = 1";
-        return (viewmodel)baseDao.findObject(hql);
     }
 
 

@@ -18,7 +18,7 @@ public class HwUser implements java.io.Serializable {
 	private String username;
 	private String password;
 	private String trueName;
-	private String sex;
+	//private String sex;
 	private String mobile;
 	private String email;
 	private Integer createId;
@@ -27,6 +27,7 @@ public class HwUser implements java.io.Serializable {
     private UserType userType;
     private Integer typeId;
 	private Set<HwRole> hwRoles = new HashSet<HwRole>(0);
+	private Boolean deleteFlag;
 
 	// Constructors
 
@@ -46,12 +47,12 @@ public class HwUser implements java.io.Serializable {
 
 	/** full constructor */
 	public HwUser(String username, String password, String trueName,
-			String sex, String mobile, String email, Integer createId,
+			/*String sex,*/ String mobile, String email, Integer createId,
 			String createUsername, Timestamp createDate, Set<HwRole> hwRoles) {
 		this.username = username;
 		this.password = password;
 		this.trueName = trueName;
-		this.sex = sex;
+		//this.sex = sex;
 		this.mobile = mobile;
 		this.email = email;
 		this.createId = createId;
@@ -99,14 +100,14 @@ public class HwUser implements java.io.Serializable {
 		this.trueName = trueName;
 	}
 
-	@Column(name = "sex", length = 10)
+/*	@Column(name = "sex", length = 10)
 	public String getSex() {
 		return this.sex;
 	}
 
 	public void setSex(String sex) {
 		this.sex = sex;
-	}
+	}*/
 
 	@Column(name = "mobile", length = 50)
 	public String getMobile() {
@@ -179,4 +180,12 @@ public class HwUser implements java.io.Serializable {
 		this.hwRoles = hwRoles;
 	}
 
+	@Column(name = "delete_flag", nullable = false)
+	public Boolean getDeleteFlag() {
+		return deleteFlag;
+	}
+
+	public void setDeleteFlag(Boolean deleteFlag) {
+		this.deleteFlag = deleteFlag;
+	}
 }
