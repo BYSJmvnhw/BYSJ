@@ -11,7 +11,15 @@ import org.springframework.stereotype.Repository;
 public class StudentDao extends BaseDao<HwStudent> implements IStudentDao {
     @Override
     public HwStudent findStudnetByStudentNo(String studentNo) {
-        String hql  = "from HwStudent st where st.studentNo = ?";
+        String hql  = "from HwStudent st where st.studentNo = ? " +
+                "and st.deleteFlag = false";
+        return findObject(hql,studentNo);
+    }
+
+    @Override
+    public HwStudent findDeleteStudnet(String studentNo) {
+        String hql  = "from HwStudent st where st.studentNo = ? " +
+                "and st.deleteFlag = true";
         return findObject(hql,studentNo);
     }
 }

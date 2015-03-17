@@ -8,4 +8,6 @@ import org.demo.model.HwStudent;
 public interface IStudentDao extends IBaseDao<HwStudent>{
 
     public HwStudent findStudnetByStudentNo(String studentNo);
+
+    public HwStudent findDeleteStudnet(String studentNo);
 }

@@ -1,15 +1,18 @@
 package org.demo.service.impl;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import org.demo.dao.*;
+import org.demo.dao.impl.StudentDao;
 import org.demo.model.*;
 import org.demo.service.IStudentService;
 import org.demo.tool.ObjectJsonValueProcessor;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by jzchen on 2015/1/14.
@@ -29,24 +32,27 @@ public class StudentService implements IStudentService {
         return studentDao.findStudnetByStudentNo(studentNo);
     }
 
-    @Override
-    public void add(HwStudent student) {
-        studentDao.add(student);
-    }
-
-    @Override
+/*    @Override
     public HwStudent load(Integer id) {
         return studentDao.load(id);
-    }
+    }*/
 
     @Override
-    public void delete(Integer id) {
-        studentDao.delete(studentDao.load(id));
-    }
-
-    @Override
-    public void update(HwStudent student) {
-        update(student);
+    public void updateStudnetAndUser(String json) {
+        JSONObject jsonObject = JSONObject.fromObject(json);
+        HwStudent student = studentDao.load(jsonObject.getInt("id"));
+        student.setStudentNo(jsonObject.getString("studentNo"));
+        student.setName(jsonObject.getString("name"));
+        student.setSex(jsonObject.getString("sex"));
+        student.setClass_(jsonObject.getString("cla"));
+        student.setGrade(jsonObject.getString("grade"));
+        student.setHwCollege(collegeDao.load(jsonObject.getInt("collegeId")));
+        student.setHwMajor(majorDao.load(jsonObject.getInt("majorId")));
+        studentDao.update(student);
+        HwUser user = userDao.findUserByTypeId(jsonObject.getInt("id"));
+        user.setUsername(jsonObject.getString("studentNo"));
+        user.setTrueName(jsonObject.getString("name"));
+        userDao.update(user);
     }
 
     @Override
@@ -61,8 +67,13 @@ public class StudentService implements IStudentService {
 
     @Override
     public void addStrdentAndUser(JSONObject jo, HwUser createUser) {
-
-        HwStudent student = new HwStudent();
+        HwStudent student;
+        HwStudent st = studentDao.findDeleteStudnet(jo.getString("studentNo"));
+        if( st != null ) {
+            student = st;
+        }else {
+            student = new HwStudent();
+        }
         student.setStudentNo(jo.getString("studentNo"));
         student.setName(jo.getString("name"));
         student.setSex(jo.getString("sex"));
@@ -72,20 +83,33 @@ public class StudentService implements IStudentService {
         student.setHwCollege(collegeDao.load(jo.getInt("collegeId")));
         student.setHwMajor(majorDao.load(jo.getInt("majorId")));
         student.setDeleteFlag(false);
-        studentDao.add(student);
+        if( st != null ) {
+            studentDao.update(student);
+        }else {
+            studentDao.add(student);
+        }
 
-        HwUser user = new HwUser();
+        HwUser user;
+        if( st != null ) {
+            user = userDao.findUserByTypeId(st.getId());
+        }else {
+            user = new HwUser();
+        }
         user.setUsername(jo.getString("studentNo"));
         user.setPassword(jo.getString("studentNo"));
         user.setTrueName(jo.getString("name"));
-        //user.setSex(jo.getString("sex"));
         user.setCreateDate(new java.sql.Timestamp(System.currentTimeMillis()));
         user.setUserType(UserType.STUDENT);
         user.setTypeId(student.getId());
         user.setCreateId(createUser.getId());
         user.setCreateUsername(createUser.getUsername());
         user.setDeleteFlag(false);
-        userDao.add(user);
+        if( st != null ) {
+            userDao.update(user);
+        }else {
+            userDao.add(user);
+        }
+
     }
 
     @Override
@@ -100,6 +124,35 @@ public class StudentService implements IStudentService {
                 new ObjectJsonValueProcessor(new  String[] {"id"},
                         HwCourseTeaching.class));
         return JSONObject.fromObject(cs, jsonConfig);
+    }
+
+    @Override
+    public JSONObject studentDetail(Integer id) {
+        HwStudent student = studentDao.load(id);
+        JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.setExcludes(new String[]{"hibernateLazyInitializer", "handler",
+                "hwCourseSelectings","hwHomeworks","deleteFlag"});
+        jsonConfig.registerJsonValueProcessor(HwMajor.class,
+                new ObjectJsonValueProcessor(new String[]{"id","name"}, HwMajor.class));
+        jsonConfig.registerJsonValueProcessor(HwCollege.class,
+                new ObjectJsonValueProcessor(new String[]{"id","collegeName"},HwCollege.class));
+        return JSONObject.fromObject(student, jsonConfig);
+    }
+
+    @Override
+    public JSONObject addCourseSelecting(String json) {
+        JSONArray jsonArray = JSONArray.fromObject(json);
+        System.out.println(jsonArray.toString());
+        for( Object o : jsonArray ) {
+            JSONObject jsonObject = (JSONObject)o;
+            System.out.println(jsonObject.getInt("cid"));
+            System.out.println(jsonObject.getInt("tid"));
+            HwCourseSelecting cs = new HwCourseSelecting();
+            cs.setHwStudent(studentDao.load(jsonObject.getInt("sid")));
+//            cs.setHwCourseTeaching();
+        }
+
+        return null;
     }
 
     public IStudentDao getStudentDao() {

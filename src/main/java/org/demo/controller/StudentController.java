@@ -62,6 +62,12 @@ public class StudentController {
         return homeworkService.homeworkPage(cid, sid);
     }
 
+    @RequestMapping(value = "/studentDetail", method = RequestMethod.GET)
+    @ResponseBody
+    public JSONObject studentDetail(Integer sid) {
+        return studentService.studentDetail(sid);
+    }
+
 
     /********************************* 管理员功能 ***********************************
      *
@@ -88,13 +94,34 @@ public class StudentController {
         return JSONObject.fromObject(result);
     }
 
-    @RequestMapping("/deleteStudent")
+    @RequestMapping(value = "/deleteStudent", method = RequestMethod.GET)
     @ResponseBody
     public JSONObject deleteStudent(Integer sid) {
         studentService.deleteStudnetAndUser(sid);
         String result = "{'result' : '添加删除标记成功'}";
         return JSONObject.fromObject(result);
     }
+
+    @RequestMapping(value = "/updateStudent", method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject updateStudent(String json) {
+        studentService.updateStudnetAndUser(json);
+        String result = "{'result' : '更新学生信息成功'}";
+        return JSONObject.fromObject(result);
+    }
+
+    @RequestMapping(value = "/addCourseSelecting", method = RequestMethod.GET)
+    public String addCourseSelecting() {
+        return "student/addCourseSelecting";
+    }
+
+    @RequestMapping(value = "/addCourseSelecting", method = RequestMethod.POST)
+    @ResponseBody
+     public JSONObject addCourseSelecting(String json) {
+         studentService.addCourseSelecting(json);
+         String result = "{'result' : 'chenggong'}";
+         return JSONObject.fromObject(result);
+     }
 
     public IHomeworkService getHomeworkService() {
         return homeworkService;

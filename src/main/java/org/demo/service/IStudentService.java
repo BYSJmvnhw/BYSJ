@@ -14,17 +14,17 @@ public interface IStudentService {
 
     public HwStudent findStudent(String studentNo);
 
-    public void add(HwStudent student);
+    //public HwStudent load(Integer id);
 
-    public HwStudent load(Integer id);
-
-    public void delete(Integer id);
-
-    public void update(HwStudent student);
+    public void updateStudnetAndUser(String json);
 
     public void deleteStudnetAndUser(Integer id);
 
     public void addStrdentAndUser(JSONObject jsonObject, HwUser createUser);
 
     public JSONObject studentPage(Integer courseTeachingId);
+
+    public JSONObject studentDetail(Integer id);
+
+    public JSONObject addCourseSelecting(String json);
 }
