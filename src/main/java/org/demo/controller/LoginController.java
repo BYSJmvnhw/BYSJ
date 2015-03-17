@@ -23,7 +23,7 @@ import java.util.Set;
 public class LoginController {
 
     private IUserService userService;
-    private IRoleService roleService;
+   // private IRoleService roleService;
     private IStudentService studentService;
     private ITeacherService teacherService;
     /*  枚举用户类型 */
@@ -54,7 +54,7 @@ public class LoginController {
                 /*  获取角色集合 */
                 Set<HwRole> roleSet = user.getHwRoles();
                 //System.out.println(roleSet);
-                //List<HwRole> roleList = new ArrayList<HwRole>(roleSet);
+                //List<HwRole> roleList = new ArrayList<HwRole>(roleSet);courseSelectingService.
                 /*  判断登录用户类型， */
                 UserType userType = UserType.STUDENT;
                 for( HwRole r : roleSet) {
@@ -116,11 +116,11 @@ public class LoginController {
         this.teacherService = teacherService;
     }
 
-    public IRoleService getRoleService() {
+/*    public IRoleService getRoleService() {
         return roleService;
     }
     @Resource
     public void setRoleService(IRoleService roleService) {
         this.roleService = roleService;
-    }
+    }*/
 }

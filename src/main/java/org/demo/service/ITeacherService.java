@@ -11,7 +11,4 @@ import java.util.List;
 public interface ITeacherService {
     public HwTeacher findTeacher(String teahcerNo);
 
-    public List<HwTeacher> findTeacherByNameNo(String queryParameter);
-
-    public ViewTeacher findViewTeacher(String teahcerNo);
 }

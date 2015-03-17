@@ -1,7 +1,9 @@
 package org.demo.dao.impl;
 
 import org.demo.dao.IHomeworkInfoDao;
+import org.demo.model.HwCourseTeaching;
 import org.demo.model.HwHomeworkInfo;
+import org.demo.model.Page;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -9,4 +11,10 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class HomeworkInfoDao extends BaseDao<HwHomeworkInfo> implements IHomeworkInfoDao {
+    @Override
+    public Page<HwHomeworkInfo> homeworListInfoPage(Integer courseTeachingId) {
+        String hql = " from HwHomeworkInfo hi " +
+                "where hi.hwCourseTeaching.id = ? ";
+        return findPage(hql, courseTeachingId);
+    }
 }
