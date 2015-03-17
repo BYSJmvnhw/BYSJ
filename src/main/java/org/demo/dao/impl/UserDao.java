@@ -9,4 +9,11 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class UserDao extends BaseDao<HwUser> implements IUserDao {
+
+    @Override
+    public HwUser findUserByTypeId(Integer typeId) {
+        String hql = "from HwUser u where " +
+                "u.typeId = ?";
+        return findObject(hql, typeId);
+    }
 }

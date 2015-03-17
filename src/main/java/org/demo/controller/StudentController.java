@@ -36,14 +36,9 @@ public class StudentController {
         }
     }
 
-    private ICourseSelectingService courseSelectingService;
-    private ICourseTeachingService courseTeachingService;
-    private IHomeworkInfoService homeworkInfoService;
     private IHomeworkService homeworkService;
-    private ICollegeService collegeService;
-    private IMajorService majorService;
     private IStudentService studentService;
-    private IUserService userService;
+    //private IUserService userService;
     /**
      *
      * @param //cid 教师授课关系 courseTeaching id
@@ -52,19 +47,7 @@ public class StudentController {
     @RequestMapping(value = "/studentList", method = RequestMethod.GET)
     @ResponseBody
     public JSONObject studentList(Integer cid) {
-        Page<HwCourseSelecting> cs = courseSelectingService.selectingCoursePage(cid);
-        JsonConfig jsonConfig = new JsonConfig();
-        /**过滤简单属性*/
-        jsonConfig.setExcludes(new String[]{"hibernateLazyInitializer", "handler"/*"hwCourseTeaching",*//*",hwStudent"*/});
-        /**过滤复杂属性 hwStudent*/
-        jsonConfig.registerJsonValueProcessor(HwStudent.class,
-                new ObjectJsonValueProcessor(new  String[] {"id","studentNo","name"},
-                        HwStudent.class));
-        /**过滤复杂属性 hwCourseTeaching*/
-        jsonConfig.registerJsonValueProcessor(HwCourseTeaching.class,
-                new ObjectJsonValueProcessor(new  String[] {"id"},
-                        HwCourseTeaching.class));
-        return JSONObject.fromObject(cs, jsonConfig);
+        return studentService.studentPage(cid);
 }
 
     /**
@@ -76,23 +59,14 @@ public class StudentController {
     @RequestMapping(value = "/homeworkInfoList", method = RequestMethod.GET)
     @ResponseBody
     public JSONObject homeworkInfoList(Integer cid, Integer sid) {
-        JsonConfig jsonConfig = new JsonConfig();
-        /**过滤简单属性*/
-        jsonConfig.setExcludes(new String[] {"hibernateLazyInitializer", "handler","hwCourse","hwStudent",
-                "hwTeacher","hwHomeworkInfo"});
-        /**过滤复杂属性 hwHomeworkInfo*/
-        jsonConfig.registerJsonValueProcessor(HwHomeworkInfo.class,
-                new ObjectJsonValueProcessor(new String[]{"id","title","deadline","createDate","overtime"}, HwHomework.class));
-        /**自解析Timestamp属性，避免JsonObject自动解析 */
-        jsonConfig.registerJsonValueProcessor(Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));
-        //System.out.println(JSONObject.fromObject(homeworkService.homeworkPage(cid, sid),jsonConfig));
-        return JSONObject.fromObject(homeworkService.homeworkPage(cid, sid),jsonConfig);
+        return homeworkService.homeworkPage(cid, sid);
     }
 
 
     /********************************* 管理员功能 ***********************************
      *
      * @return
+     */
     @RequestMapping(value = "/addStudent", method = RequestMethod.GET)
     public String addStudent() {
         return "student/addStudent";
@@ -103,81 +77,23 @@ public class StudentController {
     public JSONObject addStudent( String jsonObject, HttpServletRequest request) {
         /**判登录*/
         HwUser createUser =  ((HwUser)request.getSession().getAttribute("loginUser"));
-        if( createUser == null) {
-            String result = "{'result':'请先登录'}";
-            return JSONObject.fromObject(result);
-        }
-
         JSONObject jo = JSONObject.fromObject(jsonObject);
         HwStudent st = studentService.findStudent(jo.getString("studentNo"));
         if( st != null) {
             String result = "{'result':'该学生已存在'}";
             return JSONObject.fromObject(result);
         }
-
-        HwStudent student = new HwStudent();
-        student.setStudentNo(jo.getString("studentNo"));
-        student.setName(jo.getString("name"));
-        student.setSex(jo.getString("sex"));
-        student.setClass_(jo.getString("cla"));
-        //student.setEmail(jo.getString("email"));
-        student.setGrade(jo.getString("grade"));
-        student.setHwCollege(collegeService.load(jo.getInt("collegeId")));
-        student.setHwMajor(majorService.load(jo.getInt("majorId")));
-        student.setDeleteFlag(false);
-        studentService.add(student);
-
-        HwUser user = new HwUser();
-        user.setUsername(jo.getString("studentNo"));
-        user.setPassword(jo.getString("studentNo"));
-        user.setTrueName(jo.getString("name"));
-        //user.setSex(jo.getString("sex"));
-        user.setCreateDate(new java.sql.Timestamp(System.currentTimeMillis()));
-        user.setUserType(UserType.STUDENT);
-        user.setTypeId(student.getId());
-        user.setCreateId(createUser.getId());
-        user.setCreateUsername(createUser.getUsername());
-        user.setDeleteFlag(false);
-        userService.add(user);
-        String result = "{'result':'success'}";
+        studentService.addStrdentAndUser(jo, createUser);
+        String result = "{'result':'添加学生成功'}";
         return JSONObject.fromObject(result);
     }
 
     @RequestMapping("/deleteStudent")
     @ResponseBody
-    public JSONObject deleteStudent(Integer id) {
-        studentService.deleteStudnet(id);
+    public JSONObject deleteStudent(Integer sid) {
+        studentService.deleteStudnetAndUser(sid);
         String result = "{'result' : '添加删除标记成功'}";
         return JSONObject.fromObject(result);
-    }
-
-
-
-    public ICourseSelectingService getCourseSelectingService() {
-        return courseSelectingService;
-    }
-
-    @Resource
-    public void setCourseSelectingService(ICourseSelectingService courseSelectingService) {
-        this.courseSelectingService = courseSelectingService;
-    }
-
-    public ICourseTeachingService getCourseTeachingService() {
-        return courseTeachingService;
-    }
-
-    @Resource
-    public void setCourseTeachingService(ICourseTeachingService courseTeachingService) {
-        this.courseTeachingService = courseTeachingService;
-    }
-
-    public IHomeworkInfoService getHomeworkInfoService() {
-        return homeworkInfoService;
-    }
-
-    @Resource
-    public void setHomeworkInfoService(IHomeworkInfoService homeworkInfoService) {
-        this.homeworkInfoService = homeworkInfoService;
     }
 
     public IHomeworkService getHomeworkService() {
@@ -189,24 +105,6 @@ public class StudentController {
         this.homeworkService = homeworkService;
     }
 
-    public ICollegeService getCollegeService() {
-        return collegeService;
-    }
-
-    @Resource
-    public void setCollegeService(ICollegeService collegeService) {
-        this.collegeService = collegeService;
-    }
-
-    public IMajorService getMajorService() {
-        return majorService;
-    }
-
-    @Resource
-    public void setMajorService(IMajorService majorService) {
-        this.majorService = majorService;
-    }
-
     public IStudentService getStudentService() {
         return studentService;
     }
@@ -216,12 +114,12 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    public IUserService getUserService() {
+/*    public IUserService getUserService() {
         return userService;
     }
 
     @Resource
     public void setUserService(IUserService userService) {
         this.userService = userService;
-    }
+    }*/
 }

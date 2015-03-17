@@ -1,6 +1,6 @@
 package service;
 
-import org.demo.dao.ICourseSeletingDao;
+import org.demo.dao.ICourseSelectingDao;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -14,16 +14,16 @@ import javax.annotation.Resource;
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class TestCourseSelectingService {
 
-    private ICourseSeletingDao seletingDao;
+    private ICourseSelectingDao seletingDao;
     public void test() {
 
     }
 
-    public ICourseSeletingDao getSeletingDao() {
+    public ICourseSelectingDao getSeletingDao() {
         return seletingDao;
     }
     @Resource
-    public void setSeletingDao(ICourseSeletingDao seletingDao) {
+    public void setSeletingDao(ICourseSelectingDao seletingDao) {
         this.seletingDao = seletingDao;
     }
 }

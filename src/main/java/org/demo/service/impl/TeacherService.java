@@ -81,7 +81,7 @@ public class TeacherService implements ITeacherService {
         teacher.setTeacherNo(teacherNo);
         teacher.setName(trueName);
         teacher.setSex(sex);
-        teacher.setEmail(email);
+        //teacher.setEmail(email);
         teacher.setHwCollege(collegeDao.get(collegeId));
         teacher.setHwMajor(majorDao.get(majorId));
         teacherDao.add(teacher);
@@ -114,7 +114,7 @@ public class TeacherService implements ITeacherService {
         HwTeacher oldTeacher = teacherDao.get(teacherId);
         oldTeacher.setName(trueName);
         oldTeacher.setSex(sex);
-        oldTeacher.setEmail(email);
+        //oldTeacher.setEmail(email);
         oldTeacher.setHwCollege(collegeDao.get(collegeId));
         oldTeacher.setHwMajor(majorDao.get(majorId));
         HwUser oldUser = userDao.get(userId);

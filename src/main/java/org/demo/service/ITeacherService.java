@@ -31,4 +31,5 @@ public interface ITeacherService {
     //peifeng
     //2015-3-16晚上
     public ViewTeacher findTeacherByNo(String teacherNo);
+
 }
