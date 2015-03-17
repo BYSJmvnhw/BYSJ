@@ -4,8 +4,8 @@
 
 seajs.config({
     paths: {
-        'script': './script',
-        'css': './css'
+        'script': '../resources/script',
+        'css': '../resources/skin/css'
     },
     alias: {
         'login': 'script/login.js',

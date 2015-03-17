@@ -10,16 +10,49 @@ define(function(require, exports, module) {
     Backbone.$ = $; // 使用cmd时需要手动引入$
     //seajs.use('webapp.css');
     //seajs.use('login.css');
+
+    var AppRouter = Backbone.Router.extend({
+        routes: {
+            'loginInput': 'login',
+            ':part': 'jmpPart',
+            ':part/:bar': 'jmpPartBar',
+            ':test': 'test'
+        },
+        initialize: function () {
+            console.log('start-routes');
+        },
+        login: function () {
+            console.log('login');
+        },
+        jmpPart: function (part) { // 页面切换
+            alert('part');
+            console.log('part');
+        },
+        jmpPartBar: function (part, bar) { // 页面内bar切换
+            console.log(part, bar);
+        },
+        test: function (test) {
+            console.log(test);
+        }
+    });
+
     var lgView = Backbone.View.extend({
         el: $('#login'),
         $lghtml: $('#login-html'), // 保存登陆页面的html代码
         $mainhtml: $('#main-html'),
+        approuter: new AppRouter,
         events: {
             'click #login-btn': 'loginApp',
             'keydown input': 'loginApp'
         },
         initialize: function () {
             _.bindAll(this, 'render');
+
+            var q = Backbone.history.start({
+                pushState: true,
+                root: '/mvnhk/login/'
+            });
+            console.log(q);
 
             var wh = window.innerHeight; // 视窗高度
             this.$el.find('#login-p').css('height', wh + 'px');
@@ -64,6 +97,7 @@ define(function(require, exports, module) {
         },
         loginSuccess: function () {
             var that = this;
+            that.approuter.navigate('personal/info', {trigger:true});
             require.async('./webapp.js?v=201503', function (webapp) {
                 // 执行主页面渲染
                 that.$el.next().html(that.$mainhtml.html());
@@ -90,22 +124,17 @@ define(function(require, exports, module) {
             this.$el.children().replaceClass('t-login-close', 't-login-open');
         }
     });
-    //console.error('未定义');
-    //console.log(new lgView());
 
     exports.loginHw = function () { // 暴露登陆接口
-        $(function ($) {
-            //var wh = window.innerHeight, // 视窗高度
-            //    $login = $('#login');
-            //$login.css('height', wh + 'px');
-            //$('#login-btn').click(function () {
-            //    $login.children().replaceClass('t-login-close', 't-login-open');
-            //    seajs.use('webapp.css');
-            //    //$login.children('section').slideUp(500, function () {
-            //    //    console.log($login.children('section').remove());
-            //    //});
-            //});
+        $(function () {
             new lgView;
+//            new AppRouter;
+//            var q = Backbone.history.start({
+//                pushState: true,
+//                root: '/mvnhk/login/'
+//            });
+//            console.log(q);
+//            approuter.navigate('login/loginInput', {trigger:true});
         });
     };
 

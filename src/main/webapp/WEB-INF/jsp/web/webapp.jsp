@@ -1,12 +1,13 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html>
 <head lang="zn">
     <meta charset="UTF-8">
     <title>个人信息</title>
-    <link rel="stylesheet" type="text/css" href="css/login.css">
-    <link rel="stylesheet" type="text/css" href="css/webapp.css">
-    <link rel="stylesheet" type="text/css" href="css/transition.css">
-    <script type="text/javascript" src="lib/sea-2.3.0.js"  id="seajsnode"></script>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/skin/css/login.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/skin/css/webapp.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/skin/css/transition.css">
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/lib/sea-2.3.0.js"  id="seajsnode"></script>
 </head>
 <body>
     <section id="login">
@@ -14,7 +15,7 @@
             <section class="lg-header">
                 <div class="lg-bg"></div>
                 <div class="lg-logo">
-                    <img src="images/logo.png">
+                    <img src="${pageContext.request.contextPath}/resources/skin/images/logo.png">
                 </div>
             </section>
             <section class="lg-info-wrap">
@@ -104,7 +105,7 @@
                     </div>
                 </div>
                 <div class="personal-img">
-                    <img src="images/man.jpg">
+                    <img src="${pageContext.request.contextPath}/resources/skin/images/man.jpg">
                 </div>
             </div>
         </section>
@@ -123,6 +124,6 @@
     </script>
     <!--<script type="text/javascript" src="script/webapp.js"></script>-->
     <!--<script type="text/javascript" src="script/login.js"></script>-->
-    <script type="text/javascript" src="script/seajs-ready.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/script/seajs-ready.js"></script>
 </body>
 </html>
