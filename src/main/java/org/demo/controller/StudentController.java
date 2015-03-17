@@ -91,7 +91,7 @@ public class StudentController {
     /********************************* 管理员功能 ***********************************
      *
      * @return
-     */
+     *
     @RequestMapping(value = "/addStudent", method = RequestMethod.GET)
     public String addStudent() {
         return "student/addStudent";
@@ -123,7 +123,7 @@ public class StudentController {
         private String createUsername;
         private Timestamp createDate;
         private UserType userType;
-        private Integer typeId;
+        private Integer typeId;*/
 
 
 

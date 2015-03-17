@@ -41,7 +41,7 @@ public class EmailController {
 //        li.add("377970076@qq.com");
 //        li.add("592283667@qq.com");
 //        return emailService.sendSimpleEmails("scnucpf@163.com","peifeng",li,"test","test");
-        return emailService.updatesome().getUrl();
+        return "";
 
     }
 }
