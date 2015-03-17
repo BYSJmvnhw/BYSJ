@@ -93,7 +93,6 @@ public class StudentController {
     /********************************* 管理员功能 ***********************************
      *
      * @return
-     */
     @RequestMapping(value = "/addStudent", method = RequestMethod.GET)
     public String addStudent() {
         return "student/addStudent";
