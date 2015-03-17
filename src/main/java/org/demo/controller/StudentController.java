@@ -42,6 +42,8 @@ public class StudentController {
     private IHomeworkService homeworkService;
     private ICollegeService collegeService;
     private IMajorService majorService;
+    private IStudentService studentService;
+    private IUserService userService;
     /**
      *
      * @param //cid 教师授课关系 courseTeaching id
@@ -97,33 +99,58 @@ public class StudentController {
         return "student/addStudent";
     }
 
-    public String addStudent( JSONObject jo, HttpServletRequest request) {
+    @RequestMapping(value = "/addStudent", method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject addStudent( String jsonObject, HttpServletRequest request) {
+        /**判登录*/
+        HwUser createUser =  ((HwUser)request.getSession().getAttribute("loginUser"));
+        if( createUser == null) {
+            String result = "{'result':'请先登录'}";
+            return JSONObject.fromObject(result);
+        }
+
+        JSONObject jo = JSONObject.fromObject(jsonObject);
+        HwStudent st = studentService.findStudent(jo.getString("studentNo"));
+        if( st != null) {
+            String result = "{'result':'该学生已存在'}";
+            return JSONObject.fromObject(result);
+        }
+
         HwStudent student = new HwStudent();
         student.setStudentNo(jo.getString("studentNo"));
         student.setName(jo.getString("name"));
         student.setSex(jo.getString("sex"));
         student.setClass_(jo.getString("cla"));
-        student.setEmail(jo.getString("email"));
+        //student.setEmail(jo.getString("email"));
         student.setGrade(jo.getString("grade"));
         student.setHwCollege(collegeService.load(jo.getInt("collegeId")));
         student.setHwMajor(majorService.load(jo.getInt("majorId")));
+        student.setDeleteFlag(false);
+        studentService.add(student);
 
         HwUser user = new HwUser();
         user.setUsername(jo.getString("studentNo"));
         user.setPassword(jo.getString("studentNo"));
         user.setTrueName(jo.getString("name"));
-        user.setSex(jo.getString("sex"));
-        private String username;
-        private String password;
-        private String trueName;
-        private String sex;
-        private String mobile;
-        private String email;
-        private Integer createId;
-        private String createUsername;
-        private Timestamp createDate;
-        private UserType userType;
-        private Integer typeId;
+        //user.setSex(jo.getString("sex"));
+        user.setCreateDate(new java.sql.Timestamp(System.currentTimeMillis()));
+        user.setUserType(UserType.STUDENT);
+        user.setTypeId(student.getId());
+        user.setCreateId(createUser.getId());
+        user.setCreateUsername(createUser.getUsername());
+        user.setDeleteFlag(false);
+        userService.add(user);
+        String result = "{'result':'success'}";
+        return JSONObject.fromObject(result);
+    }
+
+    @RequestMapping("/deleteStudent")
+    @ResponseBody
+    public JSONObject deleteStudent(Integer id) {
+        studentService.deleteStudnet(id);
+        String result = "{'result' : '添加删除标记成功'}";
+        return JSONObject.fromObject(result);
+    }
 
 
 
@@ -179,5 +206,23 @@ public class StudentController {
     @Resource
     public void setMajorService(IMajorService majorService) {
         this.majorService = majorService;
+    }
+
+    public IStudentService getStudentService() {
+        return studentService;
+    }
+
+    @Resource
+    public void setStudentService(IStudentService studentService) {
+        this.studentService = studentService;
+    }
+
+    public IUserService getUserService() {
+        return userService;
+    }
+
+    @Resource
+    public void setUserService(IUserService userService) {
+        this.userService = userService;
     }
 }

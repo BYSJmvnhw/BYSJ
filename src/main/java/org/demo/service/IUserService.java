@@ -8,6 +8,12 @@ import java.io.Serializable;
  * Created by jzchen on 2015/1/14.
  */
 public interface IUserService {
+
     public HwUser load(Serializable id);
+
     public HwUser findUser(String username);
+
+    public void add(HwUser user);
+
+    public void deleteUser(Integer id);
 }

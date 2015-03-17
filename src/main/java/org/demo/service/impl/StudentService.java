@@ -26,6 +26,33 @@ public class StudentService implements IStudentService {
         return studentDao.findObject(hql,studentNo);
     }
 
+    @Override
+    public void add(HwStudent student) {
+        studentDao.add(student);
+    }
+
+    @Override
+    public HwStudent load(Integer id) {
+        return studentDao.load(id);
+    }
+
+    @Override
+    public void delete(Integer id) {
+        studentDao.delete(studentDao.load(id));
+    }
+
+    @Override
+    public void update(HwStudent student) {
+        update(student);
+    }
+
+    @Override
+    public void deleteStudnet(Integer id) {
+        HwStudent st = studentDao.load(id);
+        st.setDeleteFlag(true);
+        studentDao.update(st);
+    }
+
     public IStudentDao getStudentDao() {
         return studentDao;
     }
