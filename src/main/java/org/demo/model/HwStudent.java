@@ -29,6 +29,7 @@ public class HwStudent implements java.io.Serializable {
 	// Fields
 
 	private Integer id;
+	private HwCampus hwCampus;
 	private HwMajor hwMajor;
 	private HwCollege hwCollege;
 	private String studentNo;
@@ -87,6 +88,7 @@ public class HwStudent implements java.io.Serializable {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "major_id")

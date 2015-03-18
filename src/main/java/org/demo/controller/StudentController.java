@@ -47,7 +47,7 @@ public class StudentController {
     @RequestMapping(value = "/studentList", method = RequestMethod.GET)
     @ResponseBody
     public JSONObject studentList(Integer cid) {
-        return studentService.studentPage(cid);
+        return studentService.studentPageByCTId(cid);
 }
 
     /**
@@ -122,6 +122,12 @@ public class StudentController {
          String result = "{'result' : 'chenggong'}";
          return JSONObject.fromObject(result);
      }
+
+    @RequestMapping(value = "/searchStudent", method = RequestMethod.GET)
+    @ResponseBody
+    public JSONObject searchStudent() {
+        return null;
+    }
 
     public IHomeworkService getHomeworkService() {
         return homeworkService;

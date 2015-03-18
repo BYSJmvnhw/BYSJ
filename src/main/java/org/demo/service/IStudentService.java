@@ -22,9 +22,20 @@ public interface IStudentService {
 
     public void addStrdentAndUser(JSONObject jsonObject, HwUser createUser);
 
-    public JSONObject studentPage(Integer courseTeachingId);
+    public JSONObject studentPageByCTId(Integer courseTeachingId);
 
     public JSONObject studentDetail(Integer id);
 
     public JSONObject addCourseSelecting(String json);
+
+    public JSONObject studentPage(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name);
+
+/*    public JSONObject studentPage(Integer campusId, Integer collegeId, Integer majorId, String studentNo);
+
+    public JSONObject studentPage(Integer campusId, Integer collegeId, Integer majorId);
+
+    public JSONObject studentPage(Integer campusId, Integer collegeId);
+
+    public JSONObject studentPage(Integer campusId);*/
+
 }

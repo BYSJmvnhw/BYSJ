@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class MainController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String abc() {
+    public String index() {
         return "web/webapp";
     }
 }
