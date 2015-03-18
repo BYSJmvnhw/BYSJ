@@ -25,11 +25,15 @@ public class LoginFilter implements Filter {
 
         //获取访问的 url 链接.
         String requestURI = request.getRequestURI().substring(request.getRequestURI().indexOf("/",1), request.getRequestURI().length());
+        String resourceURI = request.getRequestURI().substring(request.getRequestURI().indexOf("/", 1), request.getRequestURI().indexOf("/", 2));
         System.out.println(requestURI);
+        System.out.println(resourceURI);
 
         //请求不为 登录页面以及验证url 则进行检查用session内容,
         // 如果为登录页面就不去检查.
-        if( !"/login/loginInput".equals(requestURI) && ! "/login/login".equals(requestURI) )
+        if( !"/login/loginInput".equals(requestURI) && ! "/login/login".equals(requestURI)
+                //不拦截资源请求
+                && !"/web/login".equals(requestURI) && "/resources".equals(resourceURI))
         {
             //取得session. 如果没有session则自动会创建一个, 我们用false表示没有取得到session则设置为session为空.
             HttpSession session = request.getSession(false);

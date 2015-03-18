@@ -13,7 +13,6 @@ public class MainController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String abc() {
-        System.out.println("jin ru webapp");
         return "web/webapp";
     }
 }
