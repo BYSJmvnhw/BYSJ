@@ -53,7 +53,7 @@ public class HomeworkController {
      * @param request http请求
      * @return 学生返回选课列表，教师返回授课列表Json分页
      */
-    @RequestMapping(value = "/courseList", method = RequestMethod.GET, produces="application/json")
+    @RequestMapping(value = "/courseList", method = RequestMethod.GET)
     @ResponseBody
     public JSONObject courseList(Integer startYear, Integer schoolTerm, HttpServletRequest request) {
         /** 获取用户类型，学生返回选课列表，教师返回授课列表*/

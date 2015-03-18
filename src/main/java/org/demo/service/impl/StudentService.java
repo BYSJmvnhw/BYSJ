@@ -113,7 +113,7 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public JSONObject studentPage(Integer courseTeachingId) {
+    public JSONObject studentPageByCTId(Integer courseTeachingId) {
         Page cs = courseSelectingDao.courseSelectingPage(courseTeachingId);
         JsonConfig jsonConfig = new JsonConfig();
         jsonConfig.setExcludes(new String[]{"hibernateLazyInitializer", "handler"/*"hwCourseTeaching",*//*",hwStudent"*/});
@@ -153,6 +153,23 @@ public class StudentService implements IStudentService {
         }
 
         return null;
+    }
+
+    @Override
+    public JSONObject studentPage(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name) {
+        Page page =  studentDao.searchStudent(campusId, collegeId, majorId, studentNo, name);
+        JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.setExcludes(new String[]{"hibernateLazyInitializer", "handler","hwCourseSelectings","hwHomeworks","deleteFlag"});
+        jsonConfig.registerJsonValueProcessor(HwCampus.class,
+                new ObjectJsonValueProcessor(new  String[] {"id","name"},
+                        HwCampus.class));
+        jsonConfig.registerJsonValueProcessor(HwCollege.class,
+                new ObjectJsonValueProcessor(new  String[] {"id","collegeName"},
+                        HwCollege.class));
+        jsonConfig.registerJsonValueProcessor(HwMajor.class,
+                new ObjectJsonValueProcessor(new  String[] {"id","name"},
+                        HwMajor.class));
+        return JSONObject.fromObject(page, jsonConfig);
     }
 
     public IStudentDao getStudentDao() {

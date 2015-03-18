@@ -146,21 +146,29 @@ public class BaseDao<T> implements IBaseDao<T> {
     }
 
     @Override
-    public Page<T> findPage(String hql, Object[] args) {
+    public Page<T> findPage(String hql, Object[] params, String[] strings) {
         Page<T> page = new Page<T>();
         int pageOffset = SystemContext.getPageOffset();
         int pageSize = SystemContext.getPageSize();
         Query q = getSession().createQuery(hql);
         /*  获取计数hql */
         Query cq = getSession().createQuery(getCountHql(hql));
-        if( args!=null ) {
-            for (int i = 0; i < args.length; i++) {
-                q.setParameter(i, args[i]);
-                cq.setParameter(i, args[i]);
+        /** 记录 strings 下标的初始值*/
+        int j=0;
+        if( params!=null ) {
+            for (int i = 0; i < params.length; i++,j++) {
+                q.setParameter(i, params[i]);
+                cq.setParameter(i, params[i]);
+            }
+        }
+        if( strings != null ) {
+            for (int i = 0; i < strings.length ; i++) {
+                q.setString(i+j, strings[i]);
+                cq.setString(i+j, strings[i]);
             }
         }
         /* 获取记录条数 */
-       // System.out.println(q.toString());
+        // System.out.println(q.toString());
         long totalRecord =(Long) cq.uniqueResult();
         q.setFirstResult(pageOffset);
         q.setMaxResults(pageSize);
@@ -174,13 +182,43 @@ public class BaseDao<T> implements IBaseDao<T> {
     }
 
     @Override
-    public Page<T> findPage(String hql, Object arg) {
-        return this.findPage(hql, new Object[] {arg});
+    public Page<T> findPage(String hql, Object[] params, String string) {
+        return this.findPage(hql, params, new String[]{string});
+    }
+
+    @Override
+    public Page<T> findPage(String hql, Object[] params) {
+        return this.findPage(hql, params, (String[]) null);
+    }
+
+    @Override
+    public Page<T> findPage(String hql, Object param, String[] strings) {
+        return this.findPage(hql, new Object[]{param}, strings);
+    }
+
+    @Override
+    public Page<T> findPage(String hql, Object param, String string) {
+        return this.findPage(hql, new Object[]{param}, new String[]{string});
+    }
+
+    @Override
+    public Page<T> findPage(String hql, String[] strings) {
+        return this.findPage(hql, null, strings);
+    }
+
+    @Override
+    public Page<T> findPage(String hql, String string) {
+        return this.findPage(hql, null, new String[]{string});
+    }
+
+    @Override
+    public Page<T> findPage(String hql, Object param) {
+        return this.findPage(hql, new Object[] {param}, (String[])null);
     }
 
     @Override
     public Page<T> findPage(String hql) {
-        return this.findPage(hql, null);
+        return this.findPage(hql, null, (String[]) null);
     }
 
     @Override

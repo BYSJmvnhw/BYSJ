@@ -1,5 +1,7 @@
 package org.demo.service.impl;
 
+import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 import org.demo.dao.IUserDao;
 import org.demo.model.HwUser;
 import org.demo.service.IUserService;
@@ -19,10 +21,12 @@ public class UserService implements IUserService {
     private IUserDao userDao;
 
     @Override
-    public HwUser load(Serializable id) {
-        if( id!= null )
-            return  userDao.load(id);
-        return null;
+    public JSONObject load(Serializable id) {
+        HwUser user = userDao.load(id);
+        JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.setExcludes(new String[]{"hibernateLazyInitializer",
+                "handler","createId","createUsername","createDate","typeId","hwRoles","deleteFlag"});
+        return JSONObject.fromObject(user, jsonConfig);
     }
 
     @Override
@@ -32,8 +36,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void add(HwUser user) {
-        userDao.add(user);
+    public void addUser(String json) {
+        //????
     }
 
     @Override
@@ -41,6 +45,16 @@ public class UserService implements IUserService {
 
         HwUser user = userDao.load(id);
         user.setDeleteFlag(true);
+        userDao.update(user);
+    }
+
+    @Override
+    public void updateUser(String json) {
+        JSONObject jsonObject  = JSONObject.fromObject(json);
+        HwUser user = userDao.load(jsonObject.getInt("id"));
+        user.setPassword(jsonObject.getString("password"));
+        user.setMobile(jsonObject.getString("mobile"));
+        user.setEmail(jsonObject.getString("email"));
         userDao.update(user);
     }
 

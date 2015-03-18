@@ -1,5 +1,6 @@
 package org.demo.service;
 
+import net.sf.json.JSONObject;
 import org.demo.model.HwUser;
 
 import java.io.Serializable;
@@ -9,13 +10,14 @@ import java.io.Serializable;
  */
 public interface IUserService {
 
-    public HwUser load(Serializable id);
+    public JSONObject load(Serializable id);
 
     public HwUser findUser(String username);
 
-    public void add(HwUser user);
+    public void addUser(String json);
 
     public void deleteUser(Integer id);
 
+    public void updateUser(String json);
 
 }

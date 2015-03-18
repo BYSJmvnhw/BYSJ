@@ -39,11 +39,25 @@ public interface IBaseDao<T> {
 
     public T findObjectWithSql(String sql);
 
-    public Page<T> findPage(String hql, Object[] args);
+    public Page<T> findPage(String hql, Object[] params, String[] strings);
 
-    public Page<T> findPage(String hql, Object arg);
+    public Page<T> findPage(String hql, Object[] params, String string);
+
+    public Page<T> findPage(String hql, Object[] params);
+
+    public Page<T> findPage(String hql, Object param, String[] strings);
+
+    public Page<T> findPage(String hql, Object param, String string);
+
+    public Page<T> findPage(String hql, Object param);
+
+    public Page<T> findPage(String hql, String[] strings);
+
+    public Page<T> findPage(String hql, String string);
 
     public Page<T> findPage(String hql);
+
+
 
     /*  通过 hql 获取计数 hql */
     public String  getCountHql(String hql);
