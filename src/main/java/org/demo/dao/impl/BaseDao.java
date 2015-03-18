@@ -153,6 +153,7 @@ public class BaseDao<T> implements IBaseDao<T> {
         Query q = getSession().createQuery(hql);
         /*  获取计数hql */
         Query cq = getSession().createQuery(getCountHql(hql));
+        /** 记录 strings 下标的初始值*/
         int j=0;
         if( params!=null ) {
             for (int i = 0; i < params.length; i++,j++) {
@@ -161,9 +162,9 @@ public class BaseDao<T> implements IBaseDao<T> {
             }
         }
         if( strings != null ) {
-            for (int i = j; i < strings.length + j; i++) {
-                q.setString(i, strings[i]);
-                cq.setString(i, strings[i]);
+            for (int i = 0; i < strings.length ; i++) {
+                q.setString(i+j, strings[i]);
+                cq.setString(i+j, strings[i]);
             }
         }
         /* 获取记录条数 */

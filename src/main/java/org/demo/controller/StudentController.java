@@ -125,8 +125,8 @@ public class StudentController {
 
     @RequestMapping(value = "/searchStudent", method = RequestMethod.GET)
     @ResponseBody
-    public JSONObject searchStudent() {
-        return null;
+    public JSONObject searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name) {
+        return studentService.studentPage(campusId, collegeId, majorId, studentNo, name);
     }
 
     public IHomeworkService getHomeworkService() {

@@ -39,7 +39,7 @@ public class LoginController {
 
     @RequestMapping( value = "/loginInput", method = RequestMethod.GET)
     public String login() {
-        System.out.println("enter login_page!");
+        //System.out.println("enter login_page!");
         return "login/loginInput";
     }
 

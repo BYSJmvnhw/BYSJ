@@ -89,6 +89,15 @@ public class HwStudent implements java.io.Serializable {
 		this.id = id;
 	}
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "campus_id")
+	public HwCampus getHwCampus() {
+		return hwCampus;
+	}
+
+	public void setHwCampus(HwCampus hwCampus) {
+		this.hwCampus = hwCampus;
+	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "major_id")

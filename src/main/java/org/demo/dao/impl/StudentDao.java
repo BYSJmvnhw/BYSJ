@@ -31,7 +31,7 @@ public class StudentDao extends BaseDao<HwStudent> implements IStudentDao {
     public Page<HwStudent> searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name) {
         StringBuilder hql = new StringBuilder("from HwStudent st where 1=1 ");
         List<Object> param = new ArrayList<Object>();
-        List<String> string = new ArrayList<String>();
+        List<String> stringList = new ArrayList<String>();
         if( campusId != null ) {
             hql.append( "and st.hwCampus.id = ? ");
             param.add(campusId);
@@ -46,12 +46,16 @@ public class StudentDao extends BaseDao<HwStudent> implements IStudentDao {
         }
         if ( studentNo != null && !studentNo.equals("") ) {
             hql.append( "and st.studentNo like ? " );
-            string.add( "%" + studentNo + "%" );
+            stringList.add( "%" + studentNo + "%" );
         }
         if( name!= null && !name.equals("") ) {
             hql.append( "and st.name like ?" );
-            string.add( "%" + name + "%" );
+            stringList.add( "%" + name + "%" );
         }
-        return findPage(hql.toString(), param.toArray(), (String[])string.toArray() );
+        String[] str = new String[stringList.size()];
+        for(int i=0; i<str.length; i++) {
+            str[i] = stringList.get(i);
+        }
+        return findPage(hql.toString(), param.toArray(), str);
     }
 }
