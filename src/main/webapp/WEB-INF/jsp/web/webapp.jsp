@@ -23,7 +23,10 @@
                     <div class="lg-text"><strong>登录作业网</strong></div>
                     <div class="lg-name"><input type="text" placeholder="用户名"/></div>
                     <div class="lg-pw"><input type="password" placeholder="密码"/></div>
-                    <div class="lg-login-btn"><button id="login-btn" role="button"><strong>登陆</strong></button></div>
+                    <div class="lg-login-btn">
+                        <button id="login-btn" role="button"><strong>登陆</strong></button>
+                        <div id="lg-fail-tip">用户名或密码错误噢，请重试！<span>X</span></div>
+                    </div>
                 </div>
                 <div class="lg-footer">
                     <p class="lg-site">
@@ -72,36 +75,45 @@
         </header>
         <section class="main-content">
             <div id="left-nav" class="left-nav" role="navigation">
-                <div class="l-menu"><strong><span class="man"></span>个人中心<span class="bn-slide t-rotate t-rotate-open"></span></strong></div>
-                <ul class="t-slide t-open">
-                    <li class="l-active">个人信息</li>
-                    <li>密码修改</li>
-                    <li>设置邮箱</li>
-                </ul>
-                <div class="l-menu"><strong><span class="work"></span>作业管理<span class="bn-slide t-rotate t-rotate-close"></span></strong></div>
+                <div class="l-menu" data-type="man"><strong><span class="man"></span>个人中心<span class="bn-slide t-rotate t-rotate-open"></span></strong></div>
                 <ul class="t-slide t-close">
-                    <li>作业列表</li>
+                    <li data-bar="info">个人信息</li>
+                    <li data-bar="changepw">密码修改</li>
+                    <li data-bar="setmail">设置邮箱</li>
+                </ul>
+                <div class="l-menu" data-type="hkmanage"><strong><span class="work"></span>作业管理<span class="bn-slide t-rotate t-rotate-close"></span></strong></div>
+                <ul class="t-slide t-close">
+                    <li data-bar="hklist">作业列表</li>
                     <li>密码修改</li>
                     <li>设置邮箱</li>
                 </ul>
             </div>
-            <div class="content">
+            <div id="content" class="content">
+                <!--主要信息-->
                 <div class="personal-info">
                     <div class="p-name">
                         <label><strong>姓名</strong></label>
-                        <input type="text" value="陈培峰" readonly/>
+                        <label>{{name}}</label>
+                    </div>
+                    <div class="p-name">
+                        <label><strong>性别</strong></label>
+                        <label>{{sex}}</label>
                     </div>
                     <div class="p-name">
                         <label><strong>学号</strong></label>
-                        <input type="text" value="20112100167" readonly/>
+                        <label>{{studentNo}}</label>
                     </div>
                     <div class="p-name">
-                        <label><strong>学院</strong></label>
-                        <input type="text" value="计算机学院" readonly/>
+                        <label><strong>校区学院</strong></label>
+                        <label>{{hwCampus}}-{{hwCollege}}</label>
+                    </div>
+                    <div class="p-name">
+                        <label><strong>年级班级</strong></label>
+                        <label>{{grade}}级{{class_}}班</label>
                     </div>
                     <div class="p-name">
                         <label><strong>专业</strong></label>
-                        <input type="text" value="网络工程" readonly/>
+                        <label>{{hwMajor}}</label>
                     </div>
                 </div>
                 <div class="personal-img">
@@ -122,8 +134,54 @@
             </div>
         </footer>
     </script>
+    <script type="text/template" id="man-info">
+        <div class="personal-info">
+            <div class="p-name">
+                <label><strong>姓名</strong></label>
+                <input type="text" value="{{name}}" readonly/>
+            </div>
+            <div class="p-name">
+                <label><strong>学号</strong></label>
+                <input type="text" value="{{sn}}" readonly/>
+            </div>
+            <div class="p-name">
+                <label><strong>学院</strong></label>
+                <input type="text" value="{{college}}" readonly/>
+            </div>
+            <div class="p-name">
+                <label><strong>专业</strong></label>
+                <input type="text" value="{{major}}" readonly/>
+            </div>
+        </div>
+        <div class="personal-img">
+            <img src="${pageContext.request.contextPath}/resources/skin/images/man.jpg">
+        </div>
+    </script>
     <!--<script type="text/javascript" src="script/webapp.js"></script>-->
     <!--<script type="text/javascript" src="script/login.js"></script>-->
-    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/script/seajs-ready.js"></script>
+    <%--<script type="text/javascript" src="${pageContext.request.contextPath}/resources/script/seajs-ready.js"></script>--%>
+    <script type="text/javascript">
+        /**Created by zqc on 2015/3/15**/
+        window.basepath = '${pageContext.request.contextPath}';
+        seajs.config({
+            paths: {
+                'script': window.basepath + '/resources/script',
+                'css': window.basepath + '/resources/skin/css'
+            },
+            alias: {
+                'login': 'script/login.js',
+                'jquery': 'jquery-1.11.2.min.js',
+                'jquery-plugin': 'jquery-plugin.js',
+                'backbone': 'backbone-min.js',
+                'underscore': 'underscore-min.js',
+                'webapp': 'script/webapp.js?v=201503181523',
+                'webapp.css': 'css/webapp.css',
+                'login.css': 'css/login.css'
+            }
+        });
+        seajs.use('login', function (login) {
+            login.loginHw();
+        });
+    </script>
 </body>
 </html>
