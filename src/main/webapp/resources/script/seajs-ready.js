@@ -13,7 +13,7 @@ seajs.config({
         'jquery-plugin': 'jquery-plugin.js',
         'backbone': 'backbone-min.js',
         'underscore': 'underscore-min.js',
-        'webapp': 'script/webapp.js?v=1015',
+        'webapp': 'script/webapp.js?v=201503181523',
         'webapp.css': 'css/webapp.css',
         'login.css': 'css/login.css'
     }

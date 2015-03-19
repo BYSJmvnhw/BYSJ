@@ -318,7 +318,7 @@ header {
 
 .content {
     width: 760px;
-    height: 500px;
+    min-height: 289px; /* 防止底部栏上移 */
     background-color: white;
     padding: 20px 20px 20px 30px;
 }
@@ -375,7 +375,13 @@ footer {
 }
 
 .p-name label {
+    display: inline-block;
     margin-right: 20px;
+}
+
+.p-name label:first-child {
+    text-align: right;
+    width: 70px;
 }
 
 .p-name > input {
@@ -397,4 +403,8 @@ footer {
 .personal-img {
     float: right;
     margin-right: 20px;
+}
+
+.personal-img:after {
+    clear: both;
 }
