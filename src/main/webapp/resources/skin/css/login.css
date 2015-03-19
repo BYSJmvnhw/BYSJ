@@ -118,6 +118,35 @@ body, p {
     border-color: #009ee5;
 }
 
+.lg-login-btn {
+    position: relative;
+}
+
+.lg-login-btn div {
+    display: none;
+    position: absolute;
+    top: -40px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    line-height: 30px;
+    width: 250px;
+    text-align: center;
+    background-color: rgb(253, 253, 253);
+    box-shadow: 0 0 5px 1px red;
+    border-radius: 4px;
+}
+
+.lg-login-btn div>span {
+    display: inline-block;
+    background-color: gray;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    border-radius: 20px;
+    color: #fff;
+}
+
 .lg-login-btn button {
     width: 236px;
     color: white;

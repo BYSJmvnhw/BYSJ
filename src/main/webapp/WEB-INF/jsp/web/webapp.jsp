@@ -23,7 +23,10 @@
                     <div class="lg-text"><strong>登录作业网</strong></div>
                     <div class="lg-name"><input type="text" placeholder="用户名"/></div>
                     <div class="lg-pw"><input type="password" placeholder="密码"/></div>
-                    <div class="lg-login-btn"><button id="login-btn" role="button"><strong>登陆</strong></button></div>
+                    <div class="lg-login-btn">
+                        <button id="login-btn" role="button"><strong>登陆</strong></button>
+                        <div id="lg-fail-tip">用户名或密码错误噢，请重试！<span>X</span></div>
+                    </div>
                 </div>
                 <div class="lg-footer">
                     <p class="lg-site">
@@ -159,10 +162,11 @@
     <%--<script type="text/javascript" src="${pageContext.request.contextPath}/resources/script/seajs-ready.js"></script>--%>
     <script type="text/javascript">
         /**Created by zqc on 2015/3/15**/
+        window.basepath = '${pageContext.request.contextPath}';
         seajs.config({
             paths: {
-                'script': '${pageContext.request.contextPath}/resources/script',
-                'css': '${pageContext.request.contextPath}/resources/skin/css'
+                'script': window.basepath + '/resources/script',
+                'css': window.basepath + '/resources/skin/css'
             },
             alias: {
                 'login': 'script/login.js',

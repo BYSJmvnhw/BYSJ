@@ -144,9 +144,9 @@ define(['jquery-plugin', 'underscore', 'backbone'], function(require, exports, m
 
                 var infoview = new InfoView({model: infomodel});
                 infomodel.sync('read', infoview, {
-                    url: 'http://loaclhost:8080/mvnhk/student/studentList?cid=1',
-                    data: 'json',
-                    jsonp: 'callback',
+                    url: 'http://localhost:8080/mvnhk/student/studentDetail',
+                    data: {sid: 1},
+                    dataType: 'json',
                     success: function (data) {
                         console.log('数据加载成功！', data);
                     },
