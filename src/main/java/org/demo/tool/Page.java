@@ -1,4 +1,4 @@
-package org.demo.model;
+package org.demo.tool;
 
 import javax.persistence.Entity;
 import java.util.List;

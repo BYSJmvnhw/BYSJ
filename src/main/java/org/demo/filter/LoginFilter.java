@@ -33,7 +33,7 @@ public class LoginFilter implements Filter {
         /**
          * 请求不为 登录页面以及验证登录需要跳转的url 则检查session内容
          **/
-        if( !"/login/loginInput".equals(requestURI) && ! "/login/login".equals(requestURI)
+        if( !"/login/loginInput".equals(requestURI) && ! "/login/login".equals(requestURI) && !requestURI.equals("/login/logincheck")
                 //不拦截资源请求
                 &&/* !"/web/login".equals(requestURI) */ !resourceURI .equals("/web") && !"/resources".equals(resourceURI))
         {

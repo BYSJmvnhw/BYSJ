@@ -1,9 +1,8 @@
 package org.demo.dao.impl;
 
 import org.demo.dao.IHomeworkInfoDao;
-import org.demo.model.HwCourseTeaching;
 import org.demo.model.HwHomeworkInfo;
-import org.demo.model.Page;
+import org.demo.tool.Page;
 import org.springframework.stereotype.Repository;
 
 /**

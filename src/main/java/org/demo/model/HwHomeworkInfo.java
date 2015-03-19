@@ -2,6 +2,7 @@ package org.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import org.demo.tool.MarkType;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -39,6 +40,7 @@ public class HwHomeworkInfo implements java.io.Serializable {
 	private String courseName;
 	private Timestamp createDate;
 	private Boolean overtime;
+	private MarkType markType;
 	private Set<HwHomework> hwHomeworks = new HashSet<HwHomework>(0);
 	private HwCourseTeaching hwCourseTeaching;
 
@@ -92,28 +94,6 @@ public class HwHomeworkInfo implements java.io.Serializable {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
-/*
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "course_id")
-	public HwCourse getHwCourse() {
-		return this.hwCourse;
-	}
-
-	public void setHwCourse(HwCourse hwCourse) {
-		this.hwCourse = hwCourse;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "teacher_id")
-	public HwTeacher getHwTeacher() {
-		return this.hwTeacher;
-	}
-
-	public void setHwTeacher(HwTeacher hwTeacher) {
-		this.hwTeacher = hwTeacher;
-	}
-*/
 
 	@Column(name = "title", nullable = false, length = 50)
 	public String getTitle() {
@@ -185,6 +165,15 @@ public class HwHomeworkInfo implements java.io.Serializable {
 
 	public void setOvertime(Boolean overtime) {
 		this.overtime = overtime;
+	}
+
+	@Column(name = "mark_type")
+	public MarkType getMarkType() {
+		return markType;
+	}
+
+	public void setMarkType(MarkType markType) {
+		this.markType = markType;
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwHomeworkInfo")

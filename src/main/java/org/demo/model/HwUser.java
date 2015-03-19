@@ -1,5 +1,7 @@
 package org.demo.model;
 
+import org.demo.tool.UserType;
+
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;

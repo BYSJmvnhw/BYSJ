@@ -4,6 +4,7 @@ package org.demo.controller;
 import net.sf.json.JSONObject;
 import org.demo.model.*;
 import org.demo.service.*;
+import org.demo.tool.UserType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -168,7 +169,12 @@ public class HomeworkController {
         return "redirect:showHomeworkInfo";
     }
 
-
+    @RequestMapping(value = "/markHomework", method = RequestMethod.POST)
+    public JSONObject markHomework(Integer hwid, String mark, String comment) {
+        homeworkService.markHomework(hwid, mark, comment);
+        String result = "{'result' : '批改作业成功'}";
+        return JSONObject.fromObject(result);
+    }
 
     /**
     *  学生作业上传 Controller

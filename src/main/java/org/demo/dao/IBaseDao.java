@@ -1,10 +1,9 @@
 package org.demo.dao;
 
-import org.demo.model.Page;
+import org.demo.tool.Page;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by jzchen on 2015/1/13.

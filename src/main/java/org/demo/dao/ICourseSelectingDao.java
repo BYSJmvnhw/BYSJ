@@ -2,7 +2,7 @@ package org.demo.dao;
 
 import org.demo.model.HwCourseSelecting;
 import org.demo.model.HwStudent;
-import org.demo.model.Page;
+import org.demo.tool.Page;
 
 import java.util.List;
 

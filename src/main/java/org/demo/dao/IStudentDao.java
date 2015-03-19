@@ -1,7 +1,7 @@
 package org.demo.dao;
 
 import org.demo.model.HwStudent;
-import org.demo.model.Page;
+import org.demo.tool.Page;
 
 /**
  * Created by jzchen on 2015/1/13.

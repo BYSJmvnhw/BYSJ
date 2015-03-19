@@ -1,4 +1,4 @@
-package org.demo.model;
+package org.demo.tool;
 
 /**
  * Created by jzchen on 2015/1/26.
