@@ -1,14 +1,17 @@
 package org.demo.controller;
 
+import net.sf.json.JSONObject;
 import org.demo.model.*;
 //import org.demo.service.IRoleService;
 import org.demo.service.IStudentService;
 import org.demo.service.ITeacherService;
 import org.demo.service.IUserService;
+import org.demo.tool.UserType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -88,6 +91,54 @@ public class LoginController {
         }else {
             model.addAttribute("msg", "用户名不存在");
             return "login/loginInput";
+        }
+    }
+
+    @RequestMapping( value = "/logincheck", method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject login(String username, String password,HttpServletRequest request) {
+        HwUser user = userService.findUser(username);
+
+        if( user != null ) {
+            if( user.getPassword().equals( password) ) {
+                /* 在session中存入登录用户 */
+                request.getSession().setAttribute("loginUser", user);
+                /*  获取角色集合 */
+                Set<HwRole> roleSet = user.getHwRoles();
+                //System.out.println(roleSet);
+                //List<HwRole> roleList = new ArrayList<HwRole>(roleSet);courseSelectingService.
+                /*  判断登录用户类型， */
+                UserType userType = UserType.STUDENT;
+                for( HwRole r : roleSet) {
+                    System.out.println( "进入 for " + r.getRoleName());
+                    if ( r.getId().equals(1) )
+                        userType = UserType.STUDENT;
+                    else
+                        userType = UserType.TEACHER;
+                }
+                if( userType == UserType.TEACHER ) {
+                    System.out.println("角色：教师");
+                    request.getSession().setAttribute("userType", UserType.TEACHER);
+                    HwTeacher teacher = teacherService.findTeacher(user.getUsername());
+                    System.out.println(teacher);
+                    request.getSession().setAttribute("loginTeacher", teacher);
+                }
+                else if( userType == UserType.STUDENT ) {
+                    System.out.println("角色：学生");
+                    request.getSession().setAttribute("userType", UserType.STUDENT);
+                    HwStudent student = studentService.findStudent(user.getUsername());
+                    System.out.println(student);
+                    request.getSession().setAttribute("loginStudent", student);
+                }
+                String msg = "{'msg':'success'}";
+                return JSONObject.fromObject(msg);
+            }else {
+                String msg = "{'msg':'fail'}";
+                return JSONObject.fromObject(msg);
+        }
+        }else {
+            String msg = "{'msg':'fail'}";
+            return JSONObject.fromObject(msg);
         }
     }
 

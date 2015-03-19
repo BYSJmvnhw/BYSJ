@@ -2,7 +2,7 @@ package org.demo.controller;
 
 import net.sf.json.JSONObject;
 import org.demo.model.HwUser;
-import org.demo.model.Page;
+import org.demo.tool.Page;
 import org.demo.service.*;
 import org.demo.vo.ViewTeacher;
 import org.springframework.stereotype.Controller;

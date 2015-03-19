@@ -3,7 +3,7 @@ package org.demo.dao.impl;
 import org.demo.dao.ICourseSelectingDao;
 import org.demo.model.HwCourseSelecting;
 import org.demo.model.HwStudent;
-import org.demo.model.Page;
+import org.demo.tool.Page;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

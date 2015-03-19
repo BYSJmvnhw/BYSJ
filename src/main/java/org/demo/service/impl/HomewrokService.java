@@ -11,6 +11,7 @@ import org.demo.model.*;
 import org.demo.service.IHomeworkService;
 import org.demo.tool.DateJsonValueProcessor;
 import org.demo.tool.ObjectJsonValueProcessor;
+import org.demo.tool.Page;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -225,6 +226,17 @@ public class HomewrokService implements IHomeworkService {
     @Override
     public void deleteHomeworkInfo(Integer hwInfoId) {
         homeworkInfoDao.delete(homeworkInfoDao.load(hwInfoId));
+    }
+
+    @Override
+    public void markHomework(Integer hwid, String mark, String comment) {
+        HwHomework homework = homeworkDao.load(hwid);
+        homework.setMark(mark);
+        homework.setComment(comment);
+        Timestamp timestamp = new java.sql.Timestamp(System.currentTimeMillis());
+        homework.setMarkDate(timestamp);
+        homework.setLastModifyDate(timestamp);
+        homeworkDao.update(homework);
     }
 
 

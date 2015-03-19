@@ -57,24 +57,24 @@ define(function(require, exports, module) {
             //this.showLoad()
             this.loginSuccess('man', 'info');
             this.slidePage();
-            //$.ajax({
-            //    url: 'url',
-            //    type: 'post',
-            //    data: {username: un, password: pw},
-            //    dataType: 'json',
-            //    timeOut: 10000,
-            //    success: function (data) {
-            //        if(data.state == 'success'){
-            //            console.log('登陆成功');
-            //        }
-            //        else{
-            //
-            //        }
-            //    },
-            //    error: function (xhr, error, obj) {
-            //        console.error(error);
-            //    }
-            //});
+            $.ajax({
+                url: 'http://localhost:8080/mvnhk/login/logincheck',
+                type: 'post',
+                data: {username: un, password: pw},
+                dataType: 'json',
+                timeOut: 10000,
+                success: function (data) {
+                    if(data.msg == 'success'){
+                        console.log('登陆成功');
+                    }
+                    else{
+                        console.log(data.msg);
+                    }
+                },
+                error: function (xhr, error, obj) {
+                    console.error(error);
+                }
+            });
         },
         loginSuccess: function (type, bar) {
             var that = this;

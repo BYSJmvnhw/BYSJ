@@ -1,6 +1,7 @@
 package org.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.demo.tool.MarkType;
 
 import java.sql.Timestamp;
 import javax.persistence.Column;
@@ -36,6 +37,7 @@ public class HwHomework implements java.io.Serializable {
 	private String studentNo;
 	private Timestamp submitDate;
 	private Boolean checkedFlag;
+	private MarkType markType;
 	private String mark;
 	private Timestamp markDate;
 	private String comment;
@@ -195,6 +197,15 @@ public class HwHomework implements java.io.Serializable {
 
 	public void setCheckedFlag(Boolean checkedFlag) {
 		this.checkedFlag = checkedFlag;
+	}
+
+	@Column(name = "mark_type")
+	public MarkType getMarkType() {
+		return markType;
+	}
+
+	public void setMarkType(MarkType markType) {
+		this.markType = markType;
 	}
 
 	@Column(name = "mark", length = 50)

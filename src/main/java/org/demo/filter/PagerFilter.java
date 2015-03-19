@@ -1,6 +1,6 @@
 package org.demo.filter;
 
-import org.demo.model.SystemContext;
+import org.demo.tool.SystemContext;
 
 import javax.servlet.*;
 import java.io.IOException;

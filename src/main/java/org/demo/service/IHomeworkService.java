@@ -34,4 +34,6 @@ public interface IHomeworkService {
     public void upload(MultipartFile hw, Integer hwinfoId,HwStudent student, String backupPath) throws IOException;
 
     public void deleteHomeworkInfo(Integer hwInfoId);
+
+    public void markHomework(Integer hwid, String mark, String comment);
 }

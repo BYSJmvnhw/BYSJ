@@ -1,8 +1,8 @@
 package org.demo.dao.impl;
 
 import org.demo.dao.IBaseDao;
-import org.demo.model.Page;
-import org.demo.model.SystemContext;
+import org.demo.tool.Page;
+import org.demo.tool.SystemContext;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
