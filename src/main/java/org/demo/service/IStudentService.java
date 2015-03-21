@@ -14,7 +14,7 @@ public interface IStudentService {
 
     public HwStudent findStudent(String studentNo);
 
-    //public HwStudent load(Integer id);
+    public HwStudent load(Integer id);
 
     public void updateStudnetAndUser(String json);
 

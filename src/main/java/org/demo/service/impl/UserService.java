@@ -2,9 +2,12 @@ package org.demo.service.impl;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
+import org.demo.dao.IStudentDao;
+import org.demo.dao.ITeacherDao;
 import org.demo.dao.IUserDao;
 import org.demo.model.HwUser;
 import org.demo.service.IUserService;
+import org.demo.tool.UserType;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -19,6 +22,8 @@ public class UserService implements IUserService {
 
 
     private IUserDao userDao;
+    private IStudentDao studentDao;
+    private ITeacherDao teacherDao;
 
     @Override
     public JSONObject load(Serializable id) {
@@ -58,6 +63,15 @@ public class UserService implements IUserService {
         userDao.update(user);
     }
 
+    @Override
+    public Object userInfo(Integer typeId, UserType userType) {
+        if( userType == UserType.STUDENT ) {
+            return studentDao.load(typeId);
+        } else {
+            return teacherDao.load(typeId);
+        }
+    }
+
 
     public IUserDao getUserDao() {
         return userDao;
@@ -66,5 +80,23 @@ public class UserService implements IUserService {
     @Resource
     public void setUserDao(IUserDao userDao) {
         this.userDao = userDao;
+    }
+
+    public IStudentDao getStudentDao() {
+        return studentDao;
+    }
+
+    @Resource
+    public void setStudentDao(IStudentDao studentDao) {
+        this.studentDao = studentDao;
+    }
+
+    public ITeacherDao getTeacherDao() {
+        return teacherDao;
+    }
+
+    @Resource
+    public void setTeacherDao(ITeacherDao teacherDao) {
+        this.teacherDao = teacherDao;
     }
 }

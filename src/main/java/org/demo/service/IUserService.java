@@ -2,6 +2,7 @@ package org.demo.service;
 
 import net.sf.json.JSONObject;
 import org.demo.model.HwUser;
+import org.demo.tool.UserType;
 
 import java.io.Serializable;
 
@@ -19,5 +20,7 @@ public interface IUserService {
     public void deleteUser(Integer id);
 
     public void updateUser(String json);
+
+    public Object userInfo(Integer typeId, UserType userType);
 
 }

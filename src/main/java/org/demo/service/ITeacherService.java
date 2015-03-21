@@ -31,5 +31,7 @@ public interface ITeacherService {
     //peifeng
     //2015-3-16晚上
     public ViewTeacher findTeacherByNo(String teacherNo);
-
+    //jianzhao
+    //2015-3-21上午
+    public HwTeacher load(Integer id);
 }

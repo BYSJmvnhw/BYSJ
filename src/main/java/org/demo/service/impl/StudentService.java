@@ -31,10 +31,10 @@ public class StudentService implements IStudentService {
         return studentDao.findStudnetByStudentNo(studentNo);
     }
 
-/*    @Override
+    @Override
     public HwStudent load(Integer id) {
         return studentDao.load(id);
-    }*/
+    }
 
     @Override
     public void updateStudnetAndUser(String json) {
@@ -135,6 +135,8 @@ public class StudentService implements IStudentService {
                 new ObjectJsonValueProcessor(new String[]{"id","name"}, HwMajor.class));
         jsonConfig.registerJsonValueProcessor(HwCollege.class,
                 new ObjectJsonValueProcessor(new String[]{"id","collegeName"},HwCollege.class));
+        jsonConfig.registerJsonValueProcessor(HwMajor.class,
+                new ObjectJsonValueProcessor(new String[]{"id","name"},HwMajor.class));
         return JSONObject.fromObject(student, jsonConfig);
     }
 

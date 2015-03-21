@@ -156,4 +156,9 @@ public class TeacherService implements ITeacherService {
         return (ViewTeacher)baseDao.findObject(hql,teacherNo);
     }
 
+    @Override
+    public HwTeacher load(Integer id) {
+        return teacherDao.load(id);
+    }
+
 }
