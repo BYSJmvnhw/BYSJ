@@ -38,6 +38,7 @@ public class HwHomeworkInfo implements java.io.Serializable {
 	private String email;
 	private String courseName;
 	private Timestamp createDate;
+    private Timestamp lastReceiveDate;
 	private Boolean overtime;
 	private Set<HwHomework> hwHomeworks = new HashSet<HwHomework>(0);
 	private HwCourseTeaching hwCourseTeaching;
@@ -177,6 +178,15 @@ public class HwHomeworkInfo implements java.io.Serializable {
 	public void setCreateDate(Timestamp createDate) {
 		this.createDate = createDate;
 	}
+
+    @Column(name = "last_receive_date")
+    public Timestamp getLastReceiveDate() {
+        return this.lastReceiveDate;
+    }
+
+    public void setLastReceiveDate(Timestamp lastReceiveDate) {
+        this.lastReceiveDate = lastReceiveDate;
+    }
 
 	@Column(name = "overtime")
 	public Boolean getOvertime() {
