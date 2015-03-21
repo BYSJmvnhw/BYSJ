@@ -3,6 +3,7 @@ package org.demo.controller;
 import net.sf.json.JSONObject;
 import org.demo.model.*;
 //import org.demo.service.IRoleService;
+import org.demo.service.ILoginService;
 import org.demo.service.IStudentService;
 import org.demo.service.ITeacherService;
 import org.demo.service.IUserService;
@@ -26,17 +27,17 @@ import java.util.Set;
 public class LoginController {
 
     private IUserService userService;
-   // private IRoleService roleService;
     private IStudentService studentService;
     private ITeacherService teacherService;
+    private ILoginService loginService;
     /*  枚举用户类型 */
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String logout(HttpServletRequest request) {
         request.getSession().removeAttribute("loginUser");
         request.getSession().removeAttribute("userType");
-        request.getSession().removeAttribute("loginTeacher");
-        request.getSession().removeAttribute("loginStudent");
+        request.getSession().removeAttribute("urlList");
+        request.getSession().removeAttribute("roleList");
         return "redirect:/login/loginInput";
     }
 
@@ -48,97 +49,23 @@ public class LoginController {
 
     @RequestMapping( value = "/login", method = RequestMethod.POST)
     public String login(String username, String password, Model model, HttpServletRequest request) {
-        HwUser user = userService.findUser(username);
-
-        if( user != null ) {
-            if( user.getPassword().equals( password) ) {
-                /* 在session中存入登录用户 */
-                request.getSession().setAttribute("loginUser", user);
-                /*  获取角色集合 */
-                Set<HwRole> roleSet = user.getHwRoles();
-                //System.out.println(roleSet);
-                //List<HwRole> roleList = new ArrayList<HwRole>(roleSet);courseSelectingService.
-                /*  判断登录用户类型， */
-                UserType userType = UserType.STUDENT;
-                for( HwRole r : roleSet) {
-                    System.out.println( "进入 for " + r.getRoleName());
-                    if ( r.getId().equals(1) )
-                        userType = UserType.STUDENT;
-                    else
-                        userType = UserType.TEACHER;
-                }
-               if( userType == UserType.TEACHER ) {
-                    System.out.println("角色：教师");
-                    request.getSession().setAttribute("userType", UserType.TEACHER);
-                    HwTeacher teacher = teacherService.findTeacher(user.getUsername());
-                    System.out.println(teacher);
-                    request.getSession().setAttribute("loginTeacher", teacher);
-                }
-               else if( userType == UserType.STUDENT ) {
-                   System.out.println("角色：学生");
-                   request.getSession().setAttribute("userType", UserType.STUDENT);
-                   HwStudent student = studentService.findStudent(user.getUsername());
-                   System.out.println(student);
-                   request.getSession().setAttribute("loginStudent", student);
-               }
-
-                model.addAttribute("msg", "登录成功！！！！！！！！！！");
-                return "login/welcome";
-            }else {
-                model.addAttribute("msg", "密码错误");
-                return "login/loginInput";
-            }
-        }else {
-            model.addAttribute("msg", "用户名不存在");
-            return "login/loginInput";
+        if( loginService.login(username,password,request) ) {
+            model.addAttribute("msg","成功");
+        } else {
+            model.addAttribute("msg","失败");
         }
+        return "login/welcome";
     }
 
     @RequestMapping( value = "/logincheck", method = RequestMethod.POST)
     @ResponseBody
     public JSONObject login(String username, String password,HttpServletRequest request) {
-        HwUser user = userService.findUser(username);
-
-        if( user != null ) {
-            if( user.getPassword().equals( password) ) {
-                /* 在session中存入登录用户 */
-                request.getSession().setAttribute("loginUser", user);
-                /*  获取角色集合 */
-                Set<HwRole> roleSet = user.getHwRoles();
-                //System.out.println(roleSet);
-                //List<HwRole> roleList = new ArrayList<HwRole>(roleSet);courseSelectingService.
-                /*  判断登录用户类型， */
-                UserType userType = UserType.STUDENT;
-                for( HwRole r : roleSet) {
-                    System.out.println( "进入 for " + r.getRoleName());
-                    if ( r.getId().equals(1) )
-                        userType = UserType.STUDENT;
-                    else
-                        userType = UserType.TEACHER;
-                }
-                if( userType == UserType.TEACHER ) {
-                    System.out.println("角色：教师");
-                    request.getSession().setAttribute("userType", UserType.TEACHER);
-                    HwTeacher teacher = teacherService.findTeacher(user.getUsername());
-                    System.out.println(teacher);
-                    request.getSession().setAttribute("loginTeacher", teacher);
-                }
-                else if( userType == UserType.STUDENT ) {
-                    System.out.println("角色：学生");
-                    request.getSession().setAttribute("userType", UserType.STUDENT);
-                    HwStudent student = studentService.findStudent(user.getUsername());
-                    System.out.println(student);
-                    request.getSession().setAttribute("loginStudent", student);
-                }
+        if( loginService.login(username,password,request) ) {
                 String msg = "{'msg':'success'}";
                 return JSONObject.fromObject(msg);
-            }else {
+        }else {
                 String msg = "{'msg':'fail'}";
                 return JSONObject.fromObject(msg);
-        }
-        }else {
-            String msg = "{'msg':'fail'}";
-            return JSONObject.fromObject(msg);
         }
     }
 
@@ -167,11 +94,12 @@ public class LoginController {
         this.teacherService = teacherService;
     }
 
-/*    public IRoleService getRoleService() {
-        return roleService;
+    public ILoginService getLoginService() {
+        return loginService;
     }
+
     @Resource
-    public void setRoleService(IRoleService roleService) {
-        this.roleService = roleService;
-    }*/
+    public void setLoginService(ILoginService loginService) {
+        this.loginService = loginService;
+    }
 }

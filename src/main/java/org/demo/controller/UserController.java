@@ -64,8 +64,8 @@ public class UserController {
                     new ObjectJsonValueProcessor(new String[]{"name"}, HwMajor.class));
             jsonConfig.registerJsonValueProcessor(HwCollege.class,
                     new ObjectJsonValueProcessor(new String[]{"collegeName"}, HwCollege.class));
-          //  jsonConfig.registerJsonValueProcessor(HwCampus.class,
-           //         new ObjectJsonValueProcessor(new String[]{"name"},HwCampus.class));
+            jsonConfig.registerJsonValueProcessor(HwCampus.class,
+                    new ObjectJsonValueProcessor(new String[]{"name"},HwCampus.class));
             HwTeacher teacher = teacherService.load(user.getTypeId());
             jsonArray.add(teacher, jsonConfig);
         }

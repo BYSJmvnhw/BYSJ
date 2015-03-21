@@ -24,6 +24,7 @@ public class HwCampus implements java.io.Serializable {
 	private String name;
 	private Set<HwCollege> hwColleges = new HashSet<HwCollege>(0);
 	private Set<HwStudent> hwStudents = new HashSet<HwStudent>(0);
+	private Set<HwTeacher> hwTeachers = new HashSet<HwTeacher>(0);
 
 	// Constructors
 
@@ -79,5 +80,14 @@ public class HwCampus implements java.io.Serializable {
 
 	public void setHwStudents(Set<HwStudent> hwStudents) {
 		this.hwStudents = hwStudents;
+	}
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwCampus")
+	public Set<HwTeacher> getHwTeachers() {
+		return hwTeachers;
+	}
+
+	public void setHwTeachers(Set<HwTeacher> hwTeachers) {
+		this.hwTeachers = hwTeachers;
 	}
 }

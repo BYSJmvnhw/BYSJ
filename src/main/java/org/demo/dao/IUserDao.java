@@ -8,4 +8,6 @@ import org.demo.model.HwUser;
 public interface IUserDao extends IBaseDao<HwUser> {
 
     public HwUser findUserByTypeId(Integer typeId);
+
+    public HwUser findUserByUsername(String username);
 }
