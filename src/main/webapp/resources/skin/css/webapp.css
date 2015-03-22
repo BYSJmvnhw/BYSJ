@@ -25,13 +25,12 @@ nav {
 
 .nav-wrap {
     width: 960px;
+    height: 59px;
     position: relative;
     left: 0;
     right: 0;
     margin: 0 auto;
     background: white;
-    overflow: hidden;
-    zoom: 1;
 }
 
 .nav-main {
@@ -42,25 +41,21 @@ nav {
     float: left;
 }
 
-.nav-main li {
+.nav-main>li {
     display: inline-block;
     float: left;
-    color: #4fc5c7;
-}
-
-.nav-main li a {
-    display: block;
     padding: 17px 20px;
     font-size: 19px;
     color: #4fc5c7;
-    text-decoration: none;
+    cursor: pointer;
+    position: relative;
 }
 
-.nav-main li.logo a {
+.nav-main>li.logo{
     padding: 10px 20px 9px 20px;
 }
 
-.nav-main li.logo a>span {
+.nav-main>li.logo>span {
     display: block;
     width: 90px;
     height: 40px;
@@ -69,18 +64,52 @@ nav {
     background-repeat: no-repeat;
 }
 
-.nav-main li.active a {
+.nav-main>li.active{
     color: white;
     background: #4fc5c7;
 }
 
-.nav-main li a:hover {
+.nav-main>li:hover {
     color:white;
     background: #4fc5c7;
 }
 
-.nav-main li[class = 'logo'] a:hover {
+.nav-main>li:hover > ul.type1 {
+    height: 123px;
+}
+
+.nav-main>li:hover > ul.type2 {
+    height: 82px;
+}
+
+.nav-main>li[class = 'logo'] {
+    cursor: inherit;
+}
+
+.nav-main>li[class = 'logo']:hover {
     background: #ffffff;
+}
+
+.nav-main-child {
+    /*display: none;*/
+    position: absolute;
+    top: 59px;
+    left: 0;
+    width: 100%;
+    padding-top: 5px;
+    overflow: hidden;
+}
+
+.nav-main-child li {
+    text-align: center;
+    padding: 8px 0;
+    color: #3fd0ff;
+    background-color: #d1f4ff;
+}
+
+.nav-main-child li:hover {
+    background-color: #3fd0ff;
+    color: #fff;
 }
 
 .logo img {
