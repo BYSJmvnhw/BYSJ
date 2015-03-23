@@ -34,11 +34,20 @@ span.t-load-start {
     transition: top 200ms;
 }
 
-.t-success {
-    top: -100px !important;
+/*.t-success {*/
+    /*top: -100px !important;*/
+/*}*/
+
+/*主界面顶栏动画*/
+.t-top {
+    height: 0;
+    transition: height 500ms cubic-bezier(0.1,0.5,0.1,1);
+    -webkit-transition: height 500ms cubic-bezier(0.1,0.5,0.1,1);
+    -moz-transition: height 500ms cubic-bezier(0.1,0.5,0.1,1);
+    -o-transition: height 500ms cubic-bezier(0.1,0.5,0.1,1);
 }
 
-/*主界面动画*/
+/*主界面左侧菜单栏动画*/
 
 .t-slide {
     transition: height, 1000ms, cubic-bezier(0.1,0.5,0.1,1);
@@ -70,4 +79,34 @@ span.t-load-start {
 
 .t-rotate-close {
     transform: rotate(-90deg);
+}
+
+/*作业信息滑动列表*/
+
+.hw-content-wrap-k {
+    transition: transform 500ms linear;
+}
+
+.hw-content-wrap-1 {
+    transform: translateX(-30px);
+    -webkit-transform: translateX(-30px);
+    -ms-transform: translateX(-30px);
+    -o-transform: translateX(-30px);
+    -moz-transform: translateX(-30px);
+}
+
+.hw-content-wrap-2 {
+    transform: translateX(-840px);
+    -webkit-transform: translateX(-840px);
+    -ms-transform: translateX(-840px);
+    -o-transform: translateX(-840px);
+    -moz-transform: translateX(-840px);
+}
+
+.hw-content-wrap-3 {
+    transform: translateX(-1650px);
+    -webkit-transform: translateX(-1650px);
+    -ms-transform: translateX(-1650px);
+    -o-transform: translateX(-1650px);
+    -moz-transform: translateX(-1650px);
 }

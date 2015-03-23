@@ -8,24 +8,11 @@ define(function(require, exports, module) {
     var _ = require('underscore');
     var Backbone = require('backbone');
     Backbone.$ = $; // 使用cmd时需要手动引入$
-    _.templateSettings = {
-        interpolate: /\{\{(.+?)\}\}/g
-    };
-    //seajs.use('webapp.css');
-    //seajs.use('login.css');
 
-    window.approuter = null;
+    window.approuter = null; // 全局路由常量
 
-    var LoginModel = Backbone.Model.extend({
-        default: {
-            a: 'test'
-        }
-    });
-
+    // 登陆view模块
     var lgView = Backbone.View.extend({
-        el: $('#login'),
-        $lghtml: $('#login-html'), // 保存登陆页面的html代码
-        $mainhtml: $('#main-html'),
         events: {
             'click': 'hideFailTip',
             'click #lg-fail-tip>span': 'hideFailTip',
@@ -33,10 +20,8 @@ define(function(require, exports, module) {
             'keydown input': 'loginApp'
         },
         initialize: function () {
-            _.bindAll(this, 'render');
-            this.initHeight();
+            this.initHeight(); // 初始化登陆视窗高度
         },
-        render: function () {},
         initHeight: function () {
             var wh = window.innerHeight; // 视窗高度
             this.$el.find('#login-p').css('height', wh + 'px');
@@ -61,7 +46,7 @@ define(function(require, exports, module) {
             var that = this,
                 un = this.$el.find('#lg-info input[type="text"]').val(),
                 pw = this.$el.find('#lg-info input[type="password"]').val();
-            //this.showLoad()
+            this.showLoad(); // 显示登陆进度提示
             $.ajax({
                 url: 'http://localhost:8080/mvnhk/login/logincheck',
                 type: 'post',
@@ -72,10 +57,10 @@ define(function(require, exports, module) {
                     if(data.msg == 'success'){
                         console.log('登陆成功');
                         that.loginSuccess('man', 'info');
-                        that.slidePage();
                     }
                     else{
                         console.log(data.msg);
+                        that.hideLoad();
                         $('#lg-fail-tip').show(500);
                     }
                 },
@@ -85,67 +70,96 @@ define(function(require, exports, module) {
             });
         },
         loginSuccess: function (type, bar) {
-            var that = this;
-            window.approuter.navigate('main/' + type + '/' + bar, {trigger: false});
-            require.async('webapp', function (webapp) {
-                // 执行主页面渲染
-                that.$el.next().html(that.$mainhtml.html());
-
-                // 执行主页面各种事件绑定，数据加载
-                webapp.appView(type, bar);
-
-                // 设置定时器，从DOM中删除登陆页面的html代码，并将其保存在script中
-                setTimeout(function () {
-                    that.$lghtml.html(that.$el.find('#login-p').remove());
-                }, 1500);
-
+            // 登陆成功后，改变url，触发相应路由地址的操作
+            window.approuter.navigate('main/' + type + '/' + bar, {
+                trigger: true
             });
-            this.$el.find('#lg-shade .lg-shade-tip').addClass('t-success');
         },
         showLoad: function () {
-            this.$el.find('#lg-shade').show();
+            var $shade = this.$el.find('#lg-shade');
+            $shade.show();
+            setTimeout(function () {
+                $shade.find('.t-load').addClass('t-load-start');
+            }, 100);
+        },
+        hideLoad: function () {
+            var $shade = this.$el.find('#lg-shade');
+            $shade.find('.t-load').removeClass('t-load-start');
+            $shade.hide();
         },
         slidePage: function () {
             this.$el.children().replaceClass('t-login-close', 't-login-open');
+            approuter.$lghtml.html(this.$el.html());
         }
     });
 
+    // 主控制器
     var AppRouter = Backbone.Router.extend({
         routes: {
             ':part(/:type/:bar)': 'jmpPart'
         },
-        model: null,
         view: null,
+        $lghtml: $('#login-html'), // 保存登陆页面的html代码
+        $mainhtml: $('#main-html'),
+        $view_el: $('#login'),
+        $main_el: $('#main'),
         initialize: function () {
-            this.navigate('login', {trigger:true});
-            this.model = new LoginModel;
-            this.view = new lgView({model: this.model});
-        },
-        login: function () {
-            console.log('login');
+            this.navigate('login', {trigger:true}); // 设置登录路由地址
         },
         jmpPart: function (part, type, bar) { // 页面切换
+            var that =this;
             if(part == 'login'){ // 登录页面
-                this.view.$el.children().css('display', 'block'); // 显示登录界面
-                this.view.$el.children().replaceClass('t-login-open', 't-login-close');
+                this.$view_el.html(this.$lghtml.html()); // 显示登陆界面代码
+                if(this.view == null){
+                    this.view = new lgView({el: this.$view_el});
+                    this.$lghtml.html(this.$view_el.html());
+                }
+                else
+                    this.view.initialize();
+                setTimeout(function () {
+                    that.view.$el.children().replaceClass('t-login-open', 't-login-close');
+                    setTimeout(function () {
+                        that.$main_el.children().remove(); // 删除主界面代码
+                    }, 900);
+                },50);
             }
             else if(part == 'main'){ // 应用程序主界面
-                this.view.$el.children().replaceClass('t-login-close', 't-login-open');
-                this.view.loginSuccess(type, bar);
-                console.log(type, bar);
+                if(that.view == null){ // 登陆后，用户主动刷新页面
+                    require.async(['webapp', 'webapp.css'], function (webapp) {
+                        // 执行主页面渲染
+                        that.$main_el.html(approuter.$mainhtml.html());
+                        // 执行主页面各种事件绑定，数据加载
+                        webapp.appView(type, bar);
+                    });
+                }
+                else { // 从登陆界面进入主界面
+                    require.async(['webapp', 'webapp.css'], function (webapp) {
+                        // 执行主页面渲染
+                        that.$main_el.html(approuter.$mainhtml.html());
+                        // 执行主页面各种事件绑定，数据加载
+                        webapp.appView(type, bar);
+                        that.view.hideLoad();
+                        that.view.slidePage();
+                        // 设置定时器，从DOM中删除登陆页面的html代码，并将其保存在script中
+                        setTimeout(function () {
+                            that.view.$el.find('#login-p').remove();
+                        }, 1500);
+                    });
+                    this.view.$el.find('#lg-shade .lg-shade-tip').addClass('t-success');
+                }
             }
         }
     });
 
-
     exports.loginHw = function () { // 暴露登陆接口
         $(function () {
+            // 创建全局路由，控制器
             window.approuter =  new AppRouter;
+            // 开启路由历史记录
             Backbone.history.start({
                 pushState: true,
                 root: '/mvnhk/web/'
             });
-//            console.log(q);
         });
     };
 
