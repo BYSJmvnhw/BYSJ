@@ -1,5 +1,9 @@
 package org.demo.service;
 
+import net.sf.json.JSONObject;
+import org.demo.model.HwHomeworkInfo;
+import org.demo.model.HwStudent;
+
 import java.util.List;
 
 /**
@@ -7,9 +11,13 @@ import java.util.List;
  */
 public interface IEmailService {
 
-    public String updateEmail(String preFilePath);
-    public String sendSimpleEmail(String senderAddress, String senderPassword,
-                                  String recipientAddress, String emailSubject ,String text);
-    public String sendSimpleEmails(String senderAddress, String senderPassword,
-                                   List<String> recipientAddress, String emailSubject ,String text);
+    public JSONObject saveEmail(String preFilePath);
+    public void sendSimpleEmailToOne(String smptPost,String senderAddress, String senderPassword,
+                                  String recipientAddress, String emailSubject ,String text) throws Exception;
+    public void sendSimpleEmailToMany(String smptPost,String senderAddress, String senderPassword,
+                                   List<String> recipientAddress, String emailSubject ,String text) throws Exception;
+    public void sendSimpleEmailsToMany(String smptPost,String senderAddress, String senderPassword,
+                                         List<String> recipientAddress, String emailSubject ,List<String> text)throws Exception;
+    public JSONObject callToDo();
+    public JSONObject saveHomeworkNow(int infoId, String preFilePath);
 }
