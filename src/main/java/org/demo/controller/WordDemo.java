@@ -1,8 +1,11 @@
 package org.demo.controller;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.zhuozhengsoft.pageoffice.*;
+import org.demo.model.HwHomework;
+import org.demo.service.IHomeworkService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +16,7 @@ public class WordDemo {
 
     private static final long serialVersionUID = -758686623642845302L;
 
+	private IHomeworkService homeworkService;
 	private String homeworkBaseDir;
     private String message = "111";
 
@@ -22,6 +26,9 @@ public class WordDemo {
 
 	@RequestMapping("/openword")
 	public String openword(HttpServletRequest request) throws Exception {
+
+		//HwHomework homework = homeworkService.load(hwid);
+		//System.out.println(homework.getUrl());
 		PageOfficeCtrl poCtrl1 = new PageOfficeCtrl(request);
 		/**
 		 * 设置 PageOfficeCtrl 控件的运行服务页面
@@ -74,5 +81,14 @@ public class WordDemo {
 	@Value("${homeworkDir}")
 	public void setHomeworkBaseDir(String homeworkBaseDir) {
 		this.homeworkBaseDir = homeworkBaseDir;
+	}
+
+	public IHomeworkService getHomeworkService() {
+		return homeworkService;
+	}
+
+	@Resource
+	public void setHomeworkService(IHomeworkService homeworkService) {
+		this.homeworkService = homeworkService;
 	}
 }

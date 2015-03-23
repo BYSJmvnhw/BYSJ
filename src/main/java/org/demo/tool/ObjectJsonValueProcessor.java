@@ -52,8 +52,16 @@ public class ObjectJsonValueProcessor implements JsonValueProcessor {
             for(int i=0;i<properties.length;i++){
                 pd = new PropertyDescriptor(properties[i], clazz);
                 method = pd.getReadMethod();
-                String v = String.valueOf(method.invoke(value));
-                json.append("'"+properties[i]+"':'"+v+"'");
+                //System.out.println(method.invoke(value));
+                //System.out.println(method.invoke(value).getClass().getName());
+                //System.arraycopy();
+                if( method.invoke(value) instanceof Integer ){
+                    Integer v = (Integer)method.invoke(value);
+                    json.append("'"+properties[i]+"':"+v);
+                }else {
+                    String v = String.valueOf(method.invoke(value));
+                    json.append("'"+properties[i]+"':'"+v+"'");
+                }
                 /** 未到尾部则添加“,”*/
                 json.append(i != properties.length-1?",":"");
             }

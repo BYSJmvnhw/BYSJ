@@ -3,10 +3,7 @@ package org.demo.service.impl;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import org.apache.commons.io.FileUtils;
-import org.demo.dao.ICourseSelectingDao;
-import org.demo.dao.ICourseTeachingDao;
-import org.demo.dao.IHomeworkDao;
-import org.demo.dao.IHomeworkInfoDao;
+import org.demo.dao.*;
 import org.demo.model.*;
 import org.demo.service.IHomeworkService;
 import org.demo.tool.DateJsonValueProcessor;
@@ -36,6 +33,8 @@ public class HomewrokService implements IHomeworkService {
     private ICourseSelectingDao courseSelectingDao;
     private ICourseTeachingDao courseTeachingDao;
     private IHomeworkInfoDao homeworkInfoDao;
+    private IStudentDao studentDao;
+    private ITeacherDao teacherDao;
 
     @Override
     public void add(HwHomework homework) {
@@ -53,8 +52,8 @@ public class HomewrokService implements IHomeworkService {
     }
 
     @Override
-    public void load(Integer id) {
-        homeworkDao.load(id);
+    public HwHomework load(Integer id) {
+        return homeworkDao.load(id);
     }
 
     @Override
@@ -78,7 +77,8 @@ public class HomewrokService implements IHomeworkService {
     }
 
     @Override
-    public JSONObject courseSelectingPage(HwStudent student, Integer startYear, Integer schoolTerm) {
+    public JSONObject courseSelectingPage(HwUser user, Integer startYear, Integer schoolTerm) {
+        HwStudent student = studentDao.load(user.getTypeId());
         Page page =  courseSelectingDao.courseSelectingPage(student, startYear, schoolTerm);
         Page newPage = new Page();
         List<HwCourseTeaching> list = new ArrayList<HwCourseTeaching>();
@@ -285,4 +285,21 @@ public class HomewrokService implements IHomeworkService {
         this.homeworkBaseDir = homeworkBaseDir;
     }
 
+    public IStudentDao getStudentDao() {
+        return studentDao;
+    }
+
+    @Resource
+    public void setStudentDao(IStudentDao studentDao) {
+        this.studentDao = studentDao;
+    }
+
+    public ITeacherDao getTeacherDao() {
+        return teacherDao;
+    }
+
+    @Resource
+    public void setTeacherDao(ITeacherDao teacherDao) {
+        this.teacherDao = teacherDao;
+    }
 }
