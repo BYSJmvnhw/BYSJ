@@ -11,50 +11,240 @@ define(['jquery-plugin', 'underscore', 'backbone', 'template'], function(require
     var tmpl = require('template');
     Backbone.$ = $; // 使用cmd时需要手动引入$
     var servicepath = 'http://localhost:8080/mvnhk/';
-//    var data = {
-//        title: '标签',
-//        list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
-//    };
-//    var html = tmpl('test', data);
-//    console.log(html);
-    var HomeWork = Backbone.Model.extend({
-        initialize: function () {
-            console.log('model');
-        },
-        default: {
-            done: false
-        },
-        toggle: function () {
-            this.save({done: !this.get('done')});
-        }
-    });
 
-    var InfoList = Backbone.Collection.extend({
-        model: InfoModel
-    });
+    function ajaxRead (model, view, url, data, fun) {
+        model.sync('read', view, {
+            url: servicepath + url,
+            data: data,
+            dataType: 'json',
+            success: fun,
+            error: function (o, e) {
+                console.log(e);
+            }
+        });
+    }
 
-    var infolist = new InfoList;
-
-    var InfoModel = Backbone.Model.extend({
+    var TypeModel = Backbone.Model.extend({
         default: {
             'tip': '正在加载...'
         }
     });
 
-    var InfoView = Backbone.View.extend({
-        tagName: 'div',
+    var TypeView = Backbone.View.extend({
+        model: null,
+        tmpl_id: null,
+        $content: null,
+        constructor: function (obj) {
+            console.log(obj);
+            this.model = obj.model;
+            this.tmpl_id = obj.tmpl_id;
+            this.$content = obj.$content;
+            this.listenTo(this.model, "change", this.render);
+        },
+        initialize: function () {
+            _.bindAll(this, 'render');
+        },
+        render: function () {
+            console.log('render');
+            var ele = tmpl(this.tmpl_id, this.model.toJSON());
+            this.$content.html(ele);
+        }
+    });
+
+    // 学生作业视图类
+    var StudentListView = Backbone.View.extend({
+        targetName: 'div',
+        className: 'student-list-t',
+        tmpl_id: 'student-list',
+        events: {
+
+        },
+        initialize: function () {
+            this.listenTo(this.model, "change", this.render);
+        },
+        render: function () {
+            console.log('render-stuentwork');
+            var ele = tmpl(this.tmpl_id, this.model.toJSON());
+            $(this.el).html(ele);
+            console.log(this.el)
+            this.model.attributes.$studentlist.children('.student-list-wrap').html(this.el);
+        }
+    });
+
+    //作业视图类
+    var WorkListView = Backbone.View.extend({
+        targetName: 'div',
+        className: 'work-list-t',
+        tmpl_id: 'work-list',
+        events: {
+            'click .student-list-btn': 'showStudentList' // 查看每个学生的作业
+        },
+        initialize: function () {
+            this.listenTo(this.model, "change", this.render);
+        },
+        render: function () {
+            console.log('render-work');
+            var ele = tmpl(this.tmpl_id, this.model.toJSON());
+            $(this.el).html(ele);
+            this.model.attributes.$worklist.children('.work-list-wrap').html(this.el);
+        },
+        showStudentList: function (e) {
+            console.log('查看学生的作业列表');
+            var that = this;
+            this.model.attributes.$worklist.parent().replaceClass('hw-content-wrap-3', 'hw-content-wrap-2')
+            var studentmodel = new TypeModel;
+            var studentview = new StudentListView({
+                model: studentmodel
+            });
+            studentmodel.sync('read', studentview, {
+                url: servicepath + 'homework/homeworkList',
+                data: {hwInfoId: 1, submited: true},
+                dataType: 'json',
+                success: function (data) {
+                    console.log('学生作业', data);
+                    studentmodel.set({
+                        studentlist: data.data,
+                        $studentlist: that.model.attributes.$worklist.next()
+                    });
+                }
+            });
+        }
+    });
+
+    // 课程视图类，生成作业信息所有模板
+    var CourseView = Backbone.View.extend({
+        targetName: 'div',
+        className: 'hw-content-wrap hw-content-wrap-k hw-content-wrap-1',
+        tmpl_id: 'hw-info',
+        events: {
+            'click .return-course-btn': 'slideHwContentWrap',
+            'click .return-work-btn': 'slideHwContentWrap',
+            'click .work-list-btn': 'showWorkList', // 查看该课程的作业列表
+            'click .choice-sure-btn': 'searchCourse'
+        },
         initialize: function () {
             _.bindAll(this, 'render');
             this.listenTo(this.model, "change", this.render);
         },
         render: function () {
-            console.log('render');
-            var ele = tmpl('man-info', this.model.toJSON());
-            this.$el.html(ele);
-            return this;
+            console.log('render-hwinfo');
+            var ele = tmpl(this.tmpl_id, this.model.toJSON());
+            $(this.el).html(ele);
+            this.model.attributes.$content.html(this.el);
+        },
+        slideHwContentWrap: function (e) {
+            console.log('返回成功');
+            var page = parseInt($(e.currentTarget).attr('data-back'));
+            this.$el.replaceClass('hw-content-wrap-' + page.toString(), 'hw-content-wrap-' + (page + 1).toString());
+        },
+        showWorkList: function (e) {
+            var that = this;
+            this.$el.replaceClass('hw-content-wrap-2', 'hw-content-wrap-1');
+            var id = $(e.currentTarget).attr('data-id');
+            var workmodel = new TypeModel;
+            var workview = new WorkListView({model: workmodel});
+            workmodel.sync('read', workview, {
+                url: servicepath + 'homework/homeworkInfoList',
+                data: {cid: id},
+                dataType: 'json',
+                success: function (data) {
+                    console.log('作业信息', data);
+                    workmodel.set({
+                        worklist: data.data,
+                        $worklist: that.model.attributes.$content.find('.work-list')
+                    });
+                }
+            });
+        },
+        searchCourse: function () {
+            var that = this,
+                startYear = this.$el.find('.startYear').val(),
+                schoolTerm = this.$el.find('.schoolTerm').val();
+            this.model.sync('read', this, {
+                url: servicepath + 'homework/courseList',
+                data: {startYear: startYear, schoolTerm: schoolTerm},
+                dataType: 'json',
+                success: function (data) {
+                    console.log('课程数据加载成功！', data);
+                    that.model.set({
+                        courselist: data.data,
+                        $content: that.$content
+                    });
+                },
+                error: function (o, e) {
+                    console.log(e);
+                }
+            });
         }
     });
 
+    var HwInfoView = Backbone.View.extend({
+        targetName: 'div',
+        className: 'hw-content-wrap hw-content-wrap-k hw-content-wrap-1',
+        tmpl_id: 'hw-info',
+        events: {
+            'click .return-course-btn': 'slideHwContentWrap',
+            'click .return-work-btn': 'slideHwContentWrap',
+            'click .work-list-btn': 'showWorkList', // 查看该课程的作业列表
+            'click .choice-sure-btn': 'searchCourse'
+        },
+        initialize: function () {
+            _.bindAll(this, 'render');
+            this.listenTo(this.model, "change", this.render);
+        },
+        render: function () {
+            console.log('render-hwinfo');
+            var ele = tmpl(this.tmpl_id, this.model.toJSON());
+            $(this.el).html(ele);
+            this.model.attributes.$content.html(this.el);
+        },
+        slideHwContentWrap: function (e) {
+            console.log('返回成功');
+            var page = parseInt($(e.currentTarget).attr('data-back'));
+            this.$el.replaceClass('hw-content-wrap-' + page.toString(), 'hw-content-wrap-' + (page + 1).toString());
+        },
+        showWorkList: function (e) {
+            var that = this;
+            this.$el.replaceClass('hw-content-wrap-2', 'hw-content-wrap-1');
+            var id = $(e.currentTarget).attr('data-id');
+            var workmodel = new TypeModel;
+            var workview = new WorkListView({model: workmodel});
+            workmodel.sync('read', workview, {
+                url: servicepath + 'homework/homeworkInfoList',
+                data: {cid: id},
+                dataType: 'json',
+                success: function (data) {
+                    console.log('作业信息', data);
+                    workmodel.set({
+                        worklist: data.data,
+                        $worklist: that.model.attributes.$content.find('.work-list')
+                    });
+                }
+            });
+        },
+        searchCourse: function () {
+            var that = this,
+                startYear = this.$el.find('.startYear').val(),
+                schoolTerm = this.$el.find('.schoolTerm').val();
+            this.model.sync('read', this, {
+                url: servicepath + 'homework/courseList',
+                data: {startYear: startYear, schoolTerm: schoolTerm},
+                dataType: 'json',
+                success: function (data) {
+                    console.log('课程数据加载成功！', data);
+                    that.model.set({
+                        courselist: data.data,
+                        $content: that.$content
+                    });
+                },
+                error: function (o, e) {
+                    console.log(e);
+                }
+            });
+        }
+    });
+
+    // 应用总视图
     var AppView = Backbone.View.extend({ // 滑动视图，应用程序主视图类
         el: $('#main'),
         events: {
@@ -72,6 +262,8 @@ define(['jquery-plugin', 'underscore', 'backbone', 'template'], function(require
         $content: null,
         type: null, // 视图类型
         bar: null, // 视图子类型
+        models: {},
+        views: {},
         constructor: function (type, bar) {
             Backbone.View.apply(this, arguments);
             this.type = type;
@@ -157,48 +349,94 @@ define(['jquery-plugin', 'underscore', 'backbone', 'template'], function(require
         },
         showInfoTip: function (e) {
             e.stopPropagation();
-            this.type = 'hkmanage';
-            this.bar = 'hkdynamic';
-            window.approuter.navigate('main/hkmanage/hkdynamic', {trigger: false});
-            console.log($(e.currentTarget).attr('data-type'));
+            this.type = 'hwmanage';
+            this.bar = 'hwdynamic';
+            approuter.navigate('main/hwmanage/hwdynamic', {trigger: false});
             this.closeType(this.$old_el);
             this.activeBar(this.$old_bar, false);
             this.showState(this.type, this.bar);
         },
         showBarInfo: function (e) {
-            console.log(e.currentTarget);
             var that = this,
                 $curli = $(e.currentTarget);
             this.bar = $curli.attr('data-bar');
+            var datatype = this.type + '/' + this.bar;
             window.approuter.navigate('main/' + this.type + '/' + this.bar, {trigger: false});
             this.activeBar(this.$old_bar, false);
             this.activeBar($curli, true);
             this.$old_bar = $curli;
-            if(this.type == 'man' && this.bar == 'info'){
-//                var infoview = new InfoView({model: InfoModel});
-                var infomodel = new InfoModel();
-
-                var infoview = new InfoView({model: infomodel});
-                infomodel.sync('read', infoview, {
-                    url: servicepath + 'user/info',
-                    data: null,
-                    dataType: 'json',
-                    success: function (data) {
-                        console.log('数据加载成功！', data);
-                        infomodel.set({
-                            name: data[1].name,
-                            'sex': data[1].sex,
-                            sn: data[1].teacherNo || data[1].studentNo,
-                            college: data[1].hwCollege.collegeName,
-                            major: data[1].hwMajor.name
-                        });
-                        that.$content.html(infoview.el);
-                    },
-                    error: function (o, e) {
-                        console.log(e);
-                    }
-                });
+            // 获取数据病渲染UI
+            switch (datatype){
+                case  'man/info':
+                    that.getInfoData();
+                    break;
+                case  'man/changepw':
+                    break;
+                case  'man/setmail':
+                    break;
+                case  'hwmanage/hwinfo':
+                    that.getHwInfo();
+                    break;
+                case 'hwmanage/hwdynamic':
+                    break;
+                default:
+                    console.log('没有找到相关类型');
             }
+        },
+        getInfoData: function () {
+            var that = this;
+            that.models.infomodel = that.models.infomodel || new TypeModel();
+            that.views.infoview = that.views.infoview || new TypeView({
+                model: that.models.infomodel,
+                tmpl_id: 'man-info',
+                $content: that.$content
+            });
+            that.models.infomodel.sync('read', that.views.infoview, {
+                url: servicepath + 'user/info',
+                data: null,
+                dataType: 'json',
+                success: function (data) {
+                    console.log('个人数据加载成功！', data);
+                    that.models.infomodel.set({
+                        userType: data[1].userType,
+                        name: data[1].name,
+                        sex: data[1].sex,
+                        teacherNo: data[1].teacherNo,
+                        studentNo: data[1].studentNo,
+                        hwCollege: data[1].hwCollege.collegeName,
+                        hwMajor: data[1].hwMajor.name,
+                        hwCampus: data[1].hwCampus
+                    });
+                },
+                error: function (o, e) {
+                    console.log(e);
+                }
+            });
+        },
+        getPwData: function () {
+
+        },
+        getHwInfo: function () { // 获取课程信息
+            var that = this;
+            that.models.hwinfomodel = that.models.hwinfomodel || new TypeModel();
+            that.views.hwinfoview = that.views.hwinfoview || new HwInfoView({
+                model: that.models.hwinfomodel
+            });
+            that.models.hwinfomodel.sync('read', that.views.hwinfoview, {
+                url: servicepath + 'homework/courseList',
+                data: {startYear: 2011, schoolTerm: 1},
+                dataType: 'json',
+                success: function (data) {
+                    console.log('课程数据加载成功！', data);
+                    that.models.hwinfomodel.set({
+                        courselist: data.data,
+                        $content: that.$content
+                    });
+                },
+                error: function (o, e) {
+                    console.log(e);
+                }
+            });
         },
         exitApp: function () {
             approuter.navigate('login', {trigger: true});

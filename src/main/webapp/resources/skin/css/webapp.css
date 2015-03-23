@@ -350,6 +350,8 @@ header {
     min-height: 289px; /* 防止底部栏上移 */
     background-color: white;
     padding: 20px 20px 20px 30px;
+    position: relative;
+    overflow: hidden;
 }
 
 .content:after {
@@ -390,6 +392,7 @@ footer {
     margin-right: 3px;
 }
 
+/*--------------content------------------------*/
 
 /*personal*/
 
@@ -436,4 +439,192 @@ footer {
 
 .personal-img:after {
     clear: both;
+}
+
+/*hwinfo*/
+
+.hw-content-wrap {
+    /*position: absolute;*/
+    width: 24300px;
+    overflow: hidden;
+}
+
+.hw-content-wrap>section {
+    float: left;
+    width: 760px;
+    margin-right: 20px;
+    margin-left: 30px;
+}
+
+.hw-list-nav {
+    width: 100%;
+    background-color: #d1f4ff;
+    line-height: 32px;
+}
+
+.hw-choice {
+    overflow: hidden;
+}
+
+.hw-choice>div {
+    float: left;
+    line-height: 40px;
+}
+
+.choice-year {
+    margin-left: 20px;
+}
+.choice-year, .choice-term {
+    width: 230px;
+}
+
+.choice-sure {
+    width: 100px;
+}
+
+.choice-year p, .choice-term p {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.choice-year select, .choice-term select{
+    border: 1px solid #BABABA;
+    width: 150px;
+    padding: 4px;
+    background-color: #FFF;
+    outline: 0 none;
+    margin-right: 32px;
+    min-height: 28px;
+    position: relative;
+}
+
+.choice-year select:focus, .choice-term select:focus {
+    border-color: #009ee5;
+}
+
+.work-list-btn, .student-list-btn {
+    cursor: pointer;
+}
+
+.work-list-btn:hover, .student-list-btn:hover {
+    color: #00A300;
+}
+
+.choice-sure:after {
+    clear: both;
+}
+
+.choice-sure button {
+    background-color: #00A300;
+    min-width: 90px;
+    height: 30px;
+    border: 1px solid transparent;
+    color: #353535;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+}
+
+.hw-list table, .work-list-t table, .student-list-t table{
+    width: 100%;
+    margin: 0 0 20px;
+    line-height: 30px;
+    border-collapse: separate;
+    border: 1px solid #CCC;
+    text-align: center;
+    border-spacing: 0;
+}
+
+.hw-list thead th, .hw-list thead td,
+.work-list-t thead th, .work-list-t thead td,
+.student-list-t thead th, .student-list-t thead td {
+    display: table-cell;
+    vertical-align: bottom;
+    border-width: 1px;
+    border-style: solid;
+    border-color: transparent #DDD #DDD transparent;
+}
+
+.hw-list tbody tr td, .work-list-t tbody tr td, .student-list-t tbody tr td {
+    letter-spacing: 0.02em;
+    border-right: 1px solid #DDD;
+    border-bottom: 1px solid #DDD;
+    box-sizing: border-box;
+}
+
+.hw-list tbody tr:last-child td,
+.work-list-t tbody tr:last-child td,
+.student-list-t tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.hw-list tr td:last-child, .hw-list tr th:last-child,
+.work-list-t tr td:last-child, .work-list-t tr th:last-child,
+.student-list-t tr td:last-child, .student-list-t tr th:last-child {
+    border-right: none;
+}
+
+.return-course-list, .return-work-list {
+    height: 34px;
+    position: relative;
+    margin: 5px 0;
+}
+
+.return-course-btn, .return-work-btn {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid #5CB85C;
+    position: relative;
+    cursor: pointer;
+}
+
+.return-course-btn:before, .return-work-btn:before {
+    content: '';
+    height: 12px;
+    width: 12px;
+    display: block;
+    border: 4px solid #5CB85C;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    position: absolute;
+    top: 7px;
+    left: 5px;
+}
+
+.return-course-btn:after, .return-work-btn:after {
+    content: '';
+    height: 4px;
+    width: 20px;
+    display: block;
+    background-color: #5CB85C;
+    position: absolute;
+    top: 13px;
+    left: 5px;
+}
+
+.return-course-btn:hover, .return-work-btn:hover {
+    border-color: #449d44;
+}
+
+.return-course-btn:hover:after, .return-work-btn:hover:after {
+    background-color: #449d44;
+}
+
+.return-course-btn:hover:before, .return-work-btn:hover:before {
+    border-color: #449d44;
+}
+
+.return-course-list>span:last-child, .return-work-list>span:last-child {
+    margin-left: 10px;
+    display: inline-block;
+    line-height: 34px;
+    position: absolute;
+    font-size: 18px;
 }
