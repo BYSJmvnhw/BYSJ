@@ -7,6 +7,7 @@ define(function(require, exports, module) {
     var $ = require('jquery-plugin').$;
     var _ = require('underscore');
     var Backbone = require('backbone');
+    var tmpl = require('template');
     Backbone.$ = $; // 使用cmd时需要手动引入$
 
     window.approuter = null; // 全局路由常量
@@ -127,7 +128,9 @@ define(function(require, exports, module) {
                 if(that.view == null){ // 登陆后，用户主动刷新页面
                     require.async(['webapp', 'webapp.css'], function (webapp) {
                         // 执行主页面渲染
-                        that.$main_el.html(approuter.$mainhtml.html());
+                        that.$main_el.html(tmpl(that.$mainhtml.attr('id'), {
+                            userType: 'STUDENT'
+                        }));
                         // 执行主页面各种事件绑定，数据加载
                         webapp.appView(type, bar);
                     });
@@ -135,7 +138,9 @@ define(function(require, exports, module) {
                 else { // 从登陆界面进入主界面
                     require.async(['webapp', 'webapp.css'], function (webapp) {
                         // 执行主页面渲染
-                        that.$main_el.html(approuter.$mainhtml.html());
+                        that.$main_el.html(tmpl(that.$mainhtml.attr('id'), {
+                            userType: 'STUDENT'
+                        }));
                         // 执行主页面各种事件绑定，数据加载
                         webapp.appView(type, bar);
                         that.view.hideLoad();

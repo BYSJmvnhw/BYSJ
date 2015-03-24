@@ -189,8 +189,6 @@ body, p {
     position: absolute;
     top: 0;
     z-index: 100;
-    background: gray;
-    /*opacity: 0.5;*/
     background-color: rgba(100,100,100,0.5);
 }
 
