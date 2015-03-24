@@ -463,8 +463,13 @@ footer {
     line-height: 32px;
 }
 
+/*作业信息样式*/
+
 .course-choice {
     overflow: hidden;
+    border-bottom: 1px #EEEEEE solid;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
 }
 
 .course-choice>div {
@@ -503,67 +508,179 @@ footer {
     border-color: #009ee5;
 }
 
-.work-list-btn, .student-list-btn, .hand-in-work {
-    cursor: pointer;
-}
-
-.work-list-btn:hover, .student-list-btn:hover, .hand-in-work:hover {
-    color: #00A300;
-}
-
-.choice-sure:after {
-    clear: both;
-}
-
 .choice-sure button {
-    background-color: #00A300;
+    background-color: #5cb85c;
+    border: 1px #4cae4c solid;
     min-width: 90px;
     height: 30px;
-    border: 1px solid transparent;
-    color: #353535;
+    color: #fff;
+    font-weight: bold;
+    font-size: 16px;
     display: inline-block;
     text-align: center;
     cursor: pointer;
 }
 
-.course-list table, .work-list-t table, .student-list-t table{
-    width: 100%;
-    margin: 0 0 20px;
-    line-height: 30px;
-    border-collapse: separate;
-    border: 1px solid #CCC;
-    text-align: center;
-    border-spacing: 0;
+.choice-sure button:hover {
+    background-color: #449d44;
+    border-color: #398439;
 }
 
-.course-list thead th, .course-list thead td,
-.work-list-t thead th, .work-list-t thead td,
-.student-list-t thead th, .student-list-t thead td {
-    display: table-cell;
-    vertical-align: bottom;
-    border-width: 1px;
+.course-list ul, .work-list ul, .student-list ul {
+    padding-top: 3px;
+    overflow: hidden;
+    zoom: 1;
+}
+
+.course-list ul li, .work-list ul li, .student-list ul li {
+    float: left;
+    width: 232px;
+    margin-bottom: 10px;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+/*.course-list ul li:hover, .work-list ul li:hover {*/
+    /*outline: 3px #ccc solid;*/
+/*}*/
+
+.course-list ul li:hover>.work-list-btn,
+.work-list ul li:hover>.student-list-btn,
+.student-list ul li:hover>.alter-btn,
+.work-list ul li:hover>.hand-in-work {
+    top: 0;
+}
+
+.course-list ul li:nth-child(3n-1),
+.work-list ul li:nth-child(3n-1),
+.student-list ul li:nth-child(3n-1) {
+    margin-right: 15px;
+    margin-left: 15px;
+}
+
+.course-list ul li:nth-child(3n-2),
+.student-list ul li:nth-child(3n-2),
+.work-list ul li:nth-child(3n-2) {
+    margin-left: 5px;
+}
+
+.course-list ul li:nth-child(3n),
+.student-list ul li:nth-child(3n),
+.work-list ul li:nth-child(3n) {
+    margin-right: 5px;
+}
+
+.course-list ul li:last-child,
+.student-list ul li:last-child,
+.work-list ul li:last-child {
+    clear: right;
+}
+
+.course-work-list,
+.work-student-list,
+.student-alter-list {
     border-style: solid;
-    border-color: transparent #DDD #DDD transparent;
+    border-width: 4px;
 }
 
-.course-list tbody tr td, .work-list-t tbody tr td, .student-list-t tbody tr td {
-    letter-spacing: 0.02em;
-    border-right: 1px solid #DDD;
-    border-bottom: 1px solid #DDD;
-    box-sizing: border-box;
+.course-work-list:before,
+.student-alter-list:before,
+.work-student-list:before {
+    content: '';
+    display: block;
+    border-left: 35px transparent solid;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 
-.course-list tbody tr:last-child td,
-.work-list-t tbody tr:last-child td,
-.student-list-t tbody tr:last-child td {
-    border-bottom: none;
+.course-no-work:after,
+.student-no-alter:after,
+.work-no-student:after {
+    content: '';
+    display: block;
+    width: 5px;
+    height: 10px;
+    border-bottom: 4px #fff solid;
+    border-right: 4px #fff solid;
+    position: absolute;
+    top: 1px;
+    right: 6px;
+    transform: rotate(45deg);
 }
 
-.course-list tr td:last-child, .course-list tr th:last-child,
-.work-list-t tr td:last-child, .work-list-t tr th:last-child,
-.student-list-t tr td:last-child, .student-list-t tr th:last-child {
-    border-right: none;
+.course-has-work:after,
+.student-has-alter:after,
+.work-has-student:after {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 4px #fff solid;
+    position: absolute;
+    top: 2px;
+    right: 2px;
 }
+
+.course-no-work,
+.student-no-alter,
+.work-no-student {
+    border-color: #5CB85C;
+}
+
+.course-no-work:before,
+.student-no-alter:before,
+.work-no-student:before {
+    border-top: 35px #5CB85C solid;
+}
+
+.course-has-work,
+.student-has-alter,
+.work-has-student {
+    border-color: #f0ad4e;
+}
+
+.course-has-work:before,
+.student-has-alter:before,
+.work-has-student:before {
+    border-top: 35px #f0ad4e solid;
+}
+
+.course-work-list>div:first-child,
+.student-alter-list>div:first-child,
+.work-student-list>div:first-child {
+    padding: 10px;
+    line-height: 24px;
+}
+
+.course-work-list>div:last-child,
+.student-alter-list>div:last-child,
+.work-student-list>div:last-child {
+    position: absolute;
+    top: -100%;
+    height: 100%;
+    width: 100%;
+    line-height: 70px;
+    text-align: center;
+    color: #fff;
+    z-index: 1;
+}
+
+.course-no-work>div:last-child,
+.student-no-alter>div:last-child,
+.work-no-student>div:last-child {
+    background-color: #5CB85C;
+}
+
+.course-has-work>div:last-child,
+.student-has-alter>div:last-child,
+.work-has-student>div:last-child {
+    background-color: #f0ad4e;
+}
+
+/*end 作业信息样式*/
 
 /*弹出上传框*/
 
@@ -717,13 +834,15 @@ span.work-submit-clear:after {
 .return-course-list, .return-work-list {
     height: 34px;
     position: relative;
-    margin: 5px 0;
+    padding: 5px 0;
+    border-bottom: 1px #eee solid;
+    margin-bottom: 10px;
 }
 
 .return-course-btn, .return-work-btn {
     display: inline-block;
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
     border-radius: 50%;
     border: 2px solid #5CB85C;
     position: relative;
@@ -732,10 +851,10 @@ span.work-submit-clear:after {
 
 .return-course-btn:before, .return-work-btn:before {
     content: '';
-    height: 12px;
-    width: 12px;
+    height: 10px;
+    width: 10px;
     display: block;
-    border: 4px solid #5CB85C;
+    border: 3px solid #5CB85C;
     border-right-width: 0;
     border-bottom-width: 0;
     transform: rotate(-45deg);
@@ -744,18 +863,18 @@ span.work-submit-clear:after {
     -o-transform: rotate(-45deg);
     -ms-transform: rotate(-45deg);
     position: absolute;
-    top: 7px;
+    top: 6px;
     left: 5px;
 }
 
 .return-course-btn:after, .return-work-btn:after {
     content: '';
     height: 4px;
-    width: 20px;
+    width: 16px;
     display: block;
     background-color: #5CB85C;
     position: absolute;
-    top: 13px;
+    top: 11px;
     left: 5px;
 }
 

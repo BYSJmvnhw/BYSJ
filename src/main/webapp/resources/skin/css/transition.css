@@ -110,3 +110,9 @@ span.t-load-start {
     -o-transform: translateX(-1650px);
     -moz-transform: translateX(-1650px);
 }
+
+/* 课程列表 */
+
+.t-work-list-btn, .t-student-list-btn, .t-hand-in, .t-alter-btn {
+    transition: top 500ms cubic-bezier(0.1,0.5,0.1,1);
+}

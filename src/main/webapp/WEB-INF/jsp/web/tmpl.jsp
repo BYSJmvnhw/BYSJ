@@ -195,59 +195,55 @@
     </section>
     <section class="work-list">
         <div class="return-course-list">
-            <span class="return-course-btn" data-back="1"></span>
+            <span class="return-course-btn" data-cur="2" data-back="1"></span>
             <span>返回课程列表</span>
         </div>
         <div class="work-list-wrap"></div>
     </section>
     <section class="student-list">
+        <div class="return-course-list">
+            <span class="return-course-btn" data-cur="3" data-back="1"></span>
+            <span>返回课程列表</span>
+        </div>
         <div class="return-work-list">
-            <span class="return-work-btn" data-back="2"></span>
+            <span class="return-work-btn" data-cur="3" data-back="2"></span>
             <span>返回作业列表</span>
         </div>
         <div class="student-list-wrap"></div>
     </section>
 </script>
 <script type="text/template" id="course-list">
-    <!--<div class="course-list">-->
-    <table>
-        <tbody>
-        <thead><th>课程名</th><th>课程号</th><th>课程人数/人</th><th>操作</th></thead>
+    <ul>
         {{each courselist as value}}
-        <tr>
-            <td>{{value.hwCourse.courseName}}</td>
-            <td>{{value.hwCourse.courseNo}}</td>
-            <td>50</td>
-            <td><span class="work-list-btn" data-id="{{value.id}}">作业列表</span></td>
-        </tr>
+        <li class="course-work-list course-has-work">
+            <div>
+                <p>{{value.hwCourse.courseName}}</p>
+                <p>课程人数：40人</p>
+            </div>
+            <div class="work-list-btn t-work-list-btn" data-id="{{value.id}}">点击查看课程作业</div>
+        </li>
         {{/each}}
-        </tbody>
-    </table>
+    </ul>
     <!--</div>-->
 </script>
 <script type="text/template" id="work-list">
     <!--<div class="work-list-t">-->
-    <table>
-        <thead><th>作业名</th><th>作业号</th><th>课程人数/人</th><th>未交人数/人</th><th>截止时间</th><th>操作</th></thead>
-        <tbody>
+    <ul>
         {{each worklist as value}}
-        <tr>
-            <td>{{value.title}}</td>
-            <td>{{value.id}}</td>
-            <td>50</td>
-            <td>40</td>
-            <td>{{value.deadline.split(' ')[0]}}</td>
-            <td>
+        <li class="work-student-list work-has-student">
+            <div>
+                <p>{{value.title}}</p>
+                <p>共50人，4人未交</p>
+                <p>{{value.deadline.split(' ')[0]}}</p>
+            </div>
             {{if userType == 'TEACHER'}}
-                <span class="student-list-btn" data-id="{{value.id}}">批改作业</span>
+            <div class="student-list-btn t-student-list-btn" data-id="{{value.id}}">单击批改作业</div>
             {{else if userType == 'STUDENT'}}
-                <span class="hand-in-work" data-id="{{value.id}}">交作业</span>
+            <div class="hand-in-work t-hand-in" data-id="{{value.id}}">单击交作业</div>
             {{/if}}
-            </td>
-        </tr>
+        </li>
         {{/each}}
-        </tbody>
-    </table>
+    </ul>
     <!--</div>-->
 </script>
 <script type="text/template" id="hand-in">
@@ -293,20 +289,33 @@
 </script>
 <script type="text/template" id="student-list">
     <!--<div class="student-list-t">-->
-    <table>
+    <!--<table>-->
 
-        <thead><th>作业名</th><th>学生名</th><th>学号</th><th>提交时间</th><th>操作</th></thead>
-        <tbody>
+        <!--<thead><th>作业名</th><th>学生名</th><th>学号</th><th>提交时间</th><th>操作</th></thead>-->
+        <!--<tbody>-->
+        <!--{{each studentlist as value}}-->
+        <!--<tr>-->
+            <!--<td>{{value.title}}</td>-->
+            <!--<td>{{value.studentName}}</td>-->
+            <!--<td>{{value.studentNo}}</td>-->
+            <!--<td>{{value.submitDate.split(' ')[0]}}</td>-->
+            <!--<td><span class="hk-list-btn" data-id="{{value.id}}">批改</span></td>-->
+        <!--</tr>-->
+        <!--{{/each}}-->
+        <!--</tbody>-->
+    <!--</table>-->
+    <ul>
         {{each studentlist as value}}
-        <tr>
-            <td>{{value.title}}</td>
-            <td>{{value.studentName}}</td>
-            <td>{{value.studentNo}}</td>
-            <td>{{value.submitDate.split(' ')[0]}}</td>
-            <td><span class="hk-list-btn" data-id="{{value.id}}">批改</span></td>
-        </tr>
+        <li class="student-alter-list student-has-alter">
+            <div>
+                <p>{{value.title}}</p>
+                <p>{{value.studentName}}</p>
+                <p>{{value.studentNo}}</p>
+                <p>{{value.submitDate.split(' ')[0]}}</p>
+            </div>
+            <div class="alter-btn t-alter-btn" data-id="{{value.id}}">单击批改</div>
+        </li>
         {{/each}}
-        </tbody>
-    </table>
+    </ul>
     <!--</div>-->
 </script>

@@ -99,7 +99,7 @@ define(['jquery-plugin', 'underscore', 'backbone', 'template'], function(require
     // 学生作业视图类，教师才有
     var StudentListView = Backbone.View.extend({
         targetName: 'div',
-        className: 'student-list-t',
+        className: 'student-list',
         tmpl_id: 'student-list',
         events: {
 
@@ -119,10 +119,10 @@ define(['jquery-plugin', 'underscore', 'backbone', 'template'], function(require
     //作业视图类
     var WorkListView = Backbone.View.extend({
         targetName: 'div',
-        className: 'work-list-t',
+        className: 'work-list',
         tmpl_id: 'work-list',
         events: {
-            'click .student-list-btn': 'showStudentList', // 教师查看每个学生的作业
+            'click .student-list-btn': 'showStudentList', // 教师查看该作业提交情况
             'click .hand-in-work': 'handInWork' // 学生交作业
         },
         initialize: function () {
@@ -244,8 +244,9 @@ define(['jquery-plugin', 'underscore', 'backbone', 'template'], function(require
         },
         slideHwContentWrap: function (e) {
             console.log('返回成功');
-            var page = parseInt($(e.currentTarget).attr('data-back'));
-            this.$el.replaceClass('hw-content-wrap-' + page.toString(), 'hw-content-wrap-' + (page + 1).toString());
+            var back = parseInt($(e.currentTarget).attr('data-back')),
+                cur = parseInt($(e.currentTarget).attr('data-cur'));
+            this.$el.replaceClass('hw-content-wrap-' + back.toString(), 'hw-content-wrap-' + cur.toString());
         },
         termCourse: function () {
             var startYear = this.$el.find('.startYear').val(),
