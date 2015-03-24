@@ -103,7 +103,7 @@
         <div id="content" class="content"></div>
     </section>
     {{if userType == 'STUDENT'}}
-        {{include 'hand-in'}}
+        <div id="hand-in-wrap"></div>
     {{/if}}
     <footer>
         <div class="line"></div>
@@ -239,9 +239,9 @@
             <td>{{value.deadline.split(' ')[0]}}</td>
             <td>
             {{if userType == 'TEACHER'}}
-                <span class="student-list-btn" data-id="">批改作业</span>
+                <span class="student-list-btn" data-id="{{value.id}}">批改作业</span>
             {{else if userType == 'STUDENT'}}
-                <span class="hand-in-work" data-id="">交作业</span>
+                <span class="hand-in-work" data-id="{{value.id}}">交作业</span>
             {{/if}}
             </td>
         </tr>
@@ -259,23 +259,23 @@
             <div class="hand-in-body">
                 <div class="hand-in-course">
                     <label>课程：</label>
-                    <label>计算机组成原理</label>
+                    <label>{{detaillist.courseName}}</label>
                 </div>
                 <div class="hand-in-name">
                     <label>作业：</label>
-                    <label>计算机组成原理第一次作业</label>
+                    <label>{{detaillist.title}}</label>
                 </div>
                 <div class="hand-in-desc">
                     <label>作业说明：</label>
-                    <label>请按时完成作业，逾期不候！</label>
+                    <label>{{detaillist.hwDesc}}</label>
                 </div>
                 <div class="hand-in-create">
                     <label>作业发布时间：</label>
-                    <label>2015-02-13 17:47:44</label>
+                    <label>{{detaillist.createDate}}</label>
                 </div>
                 <div class="hand-in-deadline">
                     <label>截止上交时间：</label>
-                    <label>2015-02-14 17:46:58</label>
+                    <label>{{detaillist.deadline}}</label>
                 </div>
                 <div class="work-upload">
                     <label for="work-file">上传作业</label>
@@ -283,10 +283,11 @@
                     <label></label>
                 </div>
                 <div class="work-submit">
-                    <button>取消</button>
-                    <button>提交作业</button>
+                    <button class="work-submit-clear">取消</button>
+                    <button class="work-submit-sure" data-id="{{detaillist.id}}">提交作业</button>
                 </div>
             </div>
+            <span class="clear work-submit-clear" title="关闭窗口"></span>
         </div>
     </div>
 </script>

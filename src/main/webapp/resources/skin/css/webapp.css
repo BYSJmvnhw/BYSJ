@@ -589,8 +589,7 @@ footer {
     overflow: hidden;
 }
 
-.hand-in-area:after {
-    content: '';
+span.work-submit-clear {
     display: block;
     width: 60px;
     height: 60px;
@@ -605,13 +604,17 @@ footer {
     cursor: pointer;
 }
 
-.hand-in-area:before {
+span.work-submit-clear:hover {
+    background-color: #D43F3A;
+}
+
+span.work-submit-clear:after {
     content: 'X';
     font-size: 20px;
     color: white;
     position: absolute;
-    right: 4px;
-    top: 2px;
+    left: 12px;
+    bottom: 7px;
     z-index: 1;
     cursor: pointer;
 }

@@ -51,7 +51,52 @@ define(['jquery-plugin', 'underscore', 'backbone', 'template'], function(require
         }
     });
 
-    // 学生作业视图类
+    // 学生上交作业视图
+    var HandInView = Backbone.View.extend({
+        targetName: 'div',
+        className: 'hand-in-wrap',
+        tmpl_id: 'hand-in',
+        events: {
+            'click .work-submit-sure': 'submitWork',
+            'click .work-submit-clear': 'closeHandIn',
+            'change #work-file': 'showFileName'
+        },
+        initialize: function () {
+            this.listenTo(this.model, "change", this.render);
+        },
+        render: function () {
+            console.log('render-handin');
+            var ele = tmpl(this.tmpl_id, this.model.toJSON());
+            $(this.el).html(ele);
+            this.model.attributes.$handinwrap.html(this.el);
+        },
+        closeHandIn: function () {
+            console.log('关闭上传');
+            this.$el.hide(300);
+        },
+        showFileName: function (e) { // 显示上传文件的名字
+            $(e.currentTarget).next().html($(e.currentTarget).val().split('\\').pop());
+        },
+        submitWork: function (e) {
+            console.log('上传');
+            var name = this.$el.find('#work-file').attr('name');
+            var id = $(e.currentTarget).attr('data-id');
+            $.ajax({
+                type: 'post',
+                url: servicepath + 'homework/markHomework',
+                data: {hw: name, hwinfoId: id},
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (o, e) {
+                    console.log(e);
+                }
+            });
+        }
+    });
+
+    // 学生作业视图类，教师才有
     var StudentListView = Backbone.View.extend({
         targetName: 'div',
         className: 'student-list-t',
@@ -110,7 +155,29 @@ define(['jquery-plugin', 'underscore', 'backbone', 'template'], function(require
                 }
             });
         },
-        handInWork: function () {}
+        handInWork: function (e) {
+            console.log('交作业');
+            var id = $(e.currentTarget).attr('data-id');
+            var handinmodel = new TypeModel;
+            var handinview = new HandInView({
+                model: handinmodel
+            });
+            handinmodel.sync('read', handinview, {
+                url: servicepath + 'homework/homeworkInfoDetail',
+                data: {hwInfoId: id},
+                dataType: 'json',
+                success: function (data) {
+                    console.log('作业详细信息', data);
+                    handinmodel.set({
+                        detaillist: data,
+                        $handinwrap: $('#hand-in-wrap')
+                    });
+                },
+                error: function (o, e) {
+                    console.log(e);
+                }
+            });
+        }
     });
 
     // 课程视图类，生成作业信息所有模板
@@ -143,12 +210,14 @@ define(['jquery-plugin', 'underscore', 'backbone', 'template'], function(require
                 dataType: 'json',
                 success: function (data) {
                     console.log('作业信息', data);
-                    console.log(window.userType);
                     workmodel.set({
                         worklist: data.data,
                         userType: sessionStorage.userType,
                         $worklist: that.model.attributes.$courselist.next()
                     });
+                },
+                error: function (o, e) {
+                    console.log(e);
                 }
             });
         }
@@ -361,7 +430,6 @@ define(['jquery-plugin', 'underscore', 'backbone', 'template'], function(require
                 dataType: 'json',
                 success: function (data) {
                     console.log('个人数据加载成功！', data);
-                    sessionStorage.userType = data[0].userType; // 记录全局用户类型
                     that.models.infomodel.set({
                         userType: data[0].userType,
                         name: data[1].name,
