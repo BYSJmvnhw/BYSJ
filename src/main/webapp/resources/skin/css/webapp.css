@@ -462,11 +462,11 @@ footer {
     line-height: 32px;
 }
 
-.hw-choice {
+.course-choice {
     overflow: hidden;
 }
 
-.hw-choice>div {
+.course-choice>div {
     float: left;
     line-height: 40px;
 }
@@ -502,11 +502,11 @@ footer {
     border-color: #009ee5;
 }
 
-.work-list-btn, .student-list-btn {
+.work-list-btn, .student-list-btn, .hand-in-work {
     cursor: pointer;
 }
 
-.work-list-btn:hover, .student-list-btn:hover {
+.work-list-btn:hover, .student-list-btn:hover, .hand-in-work:hover {
     color: #00A300;
 }
 
@@ -525,7 +525,7 @@ footer {
     cursor: pointer;
 }
 
-.hw-list table, .work-list-t table, .student-list-t table{
+.course-list table, .work-list-t table, .student-list-t table{
     width: 100%;
     margin: 0 0 20px;
     line-height: 30px;
@@ -535,7 +535,7 @@ footer {
     border-spacing: 0;
 }
 
-.hw-list thead th, .hw-list thead td,
+.course-list thead th, .course-list thead td,
 .work-list-t thead th, .work-list-t thead td,
 .student-list-t thead th, .student-list-t thead td {
     display: table-cell;
@@ -545,23 +545,32 @@ footer {
     border-color: transparent #DDD #DDD transparent;
 }
 
-.hw-list tbody tr td, .work-list-t tbody tr td, .student-list-t tbody tr td {
+.course-list tbody tr td, .work-list-t tbody tr td, .student-list-t tbody tr td {
     letter-spacing: 0.02em;
     border-right: 1px solid #DDD;
     border-bottom: 1px solid #DDD;
     box-sizing: border-box;
 }
 
-.hw-list tbody tr:last-child td,
+.course-list tbody tr:last-child td,
 .work-list-t tbody tr:last-child td,
 .student-list-t tbody tr:last-child td {
     border-bottom: none;
 }
 
-.hw-list tr td:last-child, .hw-list tr th:last-child,
+.course-list tr td:last-child, .course-list tr th:last-child,
 .work-list-t tr td:last-child, .work-list-t tr th:last-child,
 .student-list-t tr td:last-child, .student-list-t tr th:last-child {
     border-right: none;
+}
+
+.hand-in-wrap {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(100,100,100,0.5);
 }
 
 .return-course-list, .return-work-list {
