@@ -110,9 +110,7 @@ define(['jquery-plugin', 'underscore', 'backbone', 'template'], function(require
                 }
             });
         },
-        handInWork: function () {
-
-        }
+        handInWork: function () {}
     });
 
     // 课程视图类，生成作业信息所有模板
