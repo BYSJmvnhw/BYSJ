@@ -13,7 +13,7 @@ public interface IHomeworkService {
 
     public void add(HwHomework homework);
 
-    public void load(Integer id);
+    public HwHomework load(Integer id);
 
     public void update(HwHomework homework);
 
@@ -21,7 +21,7 @@ public interface IHomeworkService {
 
     public JSONObject submittedHomeworkPage(Integer hwInfoId, boolean submited);
 
-    public JSONObject courseSelectingPage(HwStudent student, Integer startYear, Integer schoolTerm);
+    public JSONObject courseSelectingPage(HwUser user, Integer startYear, Integer schoolTerm);
 
     public JSONObject courseTeachingPage(HwTeacher teacher, Integer startYear, Integer schoolTerm);
 

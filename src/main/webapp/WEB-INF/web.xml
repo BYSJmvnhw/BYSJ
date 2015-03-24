@@ -86,6 +86,10 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>poserver</servlet-name>
+        <url-pattern>/pageoffice.cab</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>poserver</servlet-name>
         <url-pattern>/posetup.exe</url-pattern>
     </servlet-mapping>
 
@@ -99,4 +103,7 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>-->
 
+    <welcome-file-list>
+        <welcome-file>/WEB-INF/web/webapp.jsp</welcome-file>
+    </welcome-file-list>
 </web-app>

@@ -16,4 +16,11 @@ public class UserDao extends BaseDao<HwUser> implements IUserDao {
                 "u.typeId = ?";
         return findObject(hql, typeId);
     }
+
+    @Override
+    public HwUser findUserByUsername(String username) {
+        String hql = "from HwUser u where " +
+                "u.username = ?";
+        return findObject(hql, username);
+    }
 }

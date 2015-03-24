@@ -63,8 +63,9 @@ public class HomeworkController {
         /** 学生返回选课列表 */
         if( userType == UserType.STUDENT ) {
             HwStudent student = (HwStudent) request.getSession().getAttribute("loginStudent");
+            HwUser user = (HwUser) request.getSession().getAttribute("loginUser");
             /**查找选课关系*/
-            return homeworkService.courseSelectingPage(student, startYear, schoolTerm);
+            return homeworkService.courseSelectingPage(user, startYear, schoolTerm);
         }
 
         /** 教师返回授课列表 */
@@ -169,6 +170,13 @@ public class HomeworkController {
         return "redirect:showHomeworkInfo";
     }
 
+    /**
+     *
+     * @param hwid 作业id
+     * @param mark 分数
+     * @param comment 评语
+     * @return json请求结果
+     */
     @RequestMapping(value = "/markHomework", method = RequestMethod.POST)
     public JSONObject markHomework(Integer hwid, String mark, String comment) {
         homeworkService.markHomework(hwid, mark, comment);
@@ -184,6 +192,14 @@ public class HomeworkController {
         return "homework/upload";
     }
 
+    /**
+     *
+     * @param hw work文件
+     * @param hwinfoId 作业信息id
+     * @param request httpRequest
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public String upload(@RequestParam MultipartFile hw, Integer hwinfoId, HttpServletRequest request) throws IOException {
         /**从session中获取当前登录的学生*/
