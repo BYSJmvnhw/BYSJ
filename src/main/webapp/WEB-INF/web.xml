@@ -76,7 +76,6 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 
-<!--
     <servlet>
         <servlet-name>poserver</servlet-name>
         <servlet-class>com.zhuozhengsoft.pageoffice.poserver.Server</servlet-class>
@@ -93,57 +92,6 @@
         <servlet-name>poserver</servlet-name>
         <url-pattern>/posetup.exe</url-pattern>
     </servlet-mapping>
--->
-
-    <!-- PageOffice Begin -->
-    <servlet>
-        <servlet-name>poserver</servlet-name>
-        <servlet-class>com.zhuozhengsoft.pageoffice.poserver.Server</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>poserver</servlet-name>
-        <url-pattern>/poserver.do</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>poserver</servlet-name>
-        <url-pattern>/pageoffice.cab</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>poserver</servlet-name>
-        <url-pattern>/popdf.cab</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>poserver</servlet-name>
-        <url-pattern>/sealsetup.exe</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>poserver</servlet-name>
-        <url-pattern>/posetup.exe</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>adminseal</servlet-name>
-        <servlet-class>com.zhuozhengsoft.pageoffice.poserver.AdminSeal</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>adminseal</servlet-name>
-        <url-pattern>/adminseal.do</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>adminseal</servlet-name>
-        <url-pattern>/loginseal.do</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>adminseal</servlet-name>
-        <url-pattern>/sealimage.do</url-pattern>
-    </servlet-mapping>
-    <mime-mapping>
-        <extension>mht</extension>
-        <mime-type>message/rfc822</mime-type>
-    </mime-mapping>
-    <context-param>
-        <param-name>adminseal-password</param-name>
-        <param-value>123456</param-value>
-    </context-param>
 
     <!-- for struts2 mvc-->
 <!--    <filter>

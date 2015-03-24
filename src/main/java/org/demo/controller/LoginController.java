@@ -60,12 +60,14 @@ public class LoginController {
     @RequestMapping( value = "/logincheck", method = RequestMethod.POST)
     @ResponseBody
     public JSONObject login(String username, String password,HttpServletRequest request) {
+        JSONObject jsonObject = new JSONObject();
         if( loginService.login(username,password,request) ) {
-                String msg = "{'msg':'success'}";
-                return JSONObject.fromObject(msg);
+            jsonObject.put("msg","success");
+            jsonObject.put("userType",request.getSession().getAttribute("userType"));
+            return jsonObject;
         }else {
-                String msg = "{'msg':'fail'}";
-                return JSONObject.fromObject(msg);
+            jsonObject.put("msg","fail");
+            return jsonObject;
         }
     }
 

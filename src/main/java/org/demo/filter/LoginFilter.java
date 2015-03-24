@@ -25,10 +25,13 @@ public class LoginFilter implements Filter {
 
         //获取访问的 url 链接.
         String requestURI = request.getRequestURI().substring(request.getRequestURI().indexOf("/",1), request.getRequestURI().length());
-        String resourceURI = request.getRequestURI().substring(request.getRequestURI().indexOf("/", 1),
-                request.getRequestURI().indexOf( "/", 1)+ 10 );
-        String onePageAppURI =  request.getRequestURI().substring(request.getRequestURI().indexOf("/", 1),
-                request.getRequestURI().indexOf("/", 1) + 4);
+        String resourceURI = "";
+        if(request.getRequestURI().length() > 10 ) {
+            resourceURI = request.getRequestURI().substring( request.getRequestURI().indexOf("/", 1),
+                    request.getRequestURI().indexOf( "/", 1)+ 10  );
+        }
+        //String onePageAppURI =  request.getRequestURI().substring(request.getRequestURI().indexOf("/", 1),
+         //       request.getRequestURI().indexOf("/", 1) + 4);
 
         System.out.println(requestURI);
         System.out.println(resourceURI);
@@ -45,7 +48,7 @@ public class LoginFilter implements Filter {
             //如果session中没有任何东西.
             if( session == null || session.getAttribute("loginUser")==null)
             {
-                response.sendRedirect(request.getContextPath() + "/login/loginInput");
+                response.sendRedirect(request.getContextPath() + "/login/logincheck");
                 return;
             }
 

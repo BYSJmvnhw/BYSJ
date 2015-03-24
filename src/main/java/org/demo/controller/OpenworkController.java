@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/homework")
-public class WordDemo {
+public class OpenworkController {
 
     private static final long serialVersionUID = -758686623642845302L;
 
@@ -25,9 +25,9 @@ public class WordDemo {
     }
 
 	@RequestMapping("/openword")
-	public String openword(HttpServletRequest request) throws Exception {
+	public String openword(Integer hwid, HttpServletRequest request) throws Exception {
 
-		//HwHomework homework = homeworkService.load(hwid);
+		HwHomework homework = homeworkService.load(hwid);
 		//System.out.println(homework.getUrl());
 		PageOfficeCtrl poCtrl1 = new PageOfficeCtrl(request);
 		/**
@@ -51,7 +51,8 @@ public class WordDemo {
 		//打开文件的相对路径
 		//poCtrl1.webOpen("doc/test.doc", OpenModeType.docNormalEdit, "张三");
 		//设置打开文件的绝对路径
-		poCtrl1.webOpen( homeworkBaseDir + "/doc/test.doc", OpenModeType.docNormalEdit, "张三");
+		//poCtrl1.webOpen( homeworkBaseDir + "/doc/test.doc", OpenModeType.docNormalEdit, "张三");
+		poCtrl1.webOpen( homeworkBaseDir + "/doc" + homework.getUrl(), OpenModeType.docNormalEdit, "张三");
 		poCtrl1.setTagId("PageOfficeCtrl1"); //此行必须
 		return "homework/editword";
 	}
