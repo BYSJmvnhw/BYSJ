@@ -3,6 +3,7 @@ body {
     padding: 0;
     position: relative;
     background-color: #e4eef2;
+    color: #333333;
 }
 
 p {
@@ -564,6 +565,8 @@ footer {
     border-right: none;
 }
 
+/*弹出上传框*/
+
 .hand-in-wrap {
     position: fixed;
     top: 0;
@@ -571,7 +574,142 @@ footer {
     width: 100%;
     height: 100%;
     background-color: rgba(100,100,100,0.5);
+    z-index: 200;
 }
+
+.hand-in-area {
+    position: absolute;
+    top: 20%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 500px;
+    background-color: #fff;
+    padding: 10px 30px 20px;
+    overflow: hidden;
+}
+
+.hand-in-area:after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 60px;
+    color: white;
+    font-size: 20px;
+    line-height: 20px;
+    position: absolute;
+    right: -30px;
+    top: -30px;
+    background-color: #D9534F;
+    border-bottom-left-radius: 50%;
+    cursor: pointer;
+}
+
+.hand-in-area:before {
+    content: 'X';
+    font-size: 20px;
+    color: white;
+    position: absolute;
+    right: 4px;
+    top: 2px;
+    z-index: 1;
+    cursor: pointer;
+}
+
+.hand-in-title {
+    line-height: 30px;
+    border-bottom: 1px solid #333;
+}
+
+.hand-in-body {
+    line-height: 25px;
+}
+
+.hand-in-body>div>label:first-child {
+    display: inline-block;
+    width: 120px;
+    text-align: right;
+    font-weight: bold;
+}
+
+.hand-in-desc {
+    overflow: hidden;
+    zoom: 1;
+}
+
+.hand-in-desc>label:last-child {
+    color: #337AB7;
+    font-weight: bold;
+}
+
+.hand-in-desc>label:nth-child(2) {
+    float: right;
+    width: 380px;
+}
+
+.hand-in-deadline>label:last-child {
+    color: #C7254E;
+}
+
+.hand-in-create>label:last-child {
+    color: #3C763D;
+}
+
+.work-upload {
+    padding: 15px;
+}
+
+.work-upload>label:first-child {
+    color: #fff;
+    background-color: #5CB85C;
+    border: 1px solid #4CAE4C;
+    text-align: center !important;
+    cursor: pointer;
+}
+
+.work-upload>label:first-child:hover {
+    background-color: #449d44;
+}
+
+.work-upload>input {
+    display: none;
+}
+
+.work-submit {
+    border-top: 1px solid #333;
+    padding-top: 15px;
+    text-align: right;
+}
+
+.work-submit>button {
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 6px 12px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.work-submit>button:first-child {
+    background-color: #D9534F;
+    border: 1px solid #D43F3A;
+    margin-right: 20px;
+}
+
+.work-submit>button:first-child:hover {
+    background-color: #D43F3A;
+}
+
+.work-submit>button:nth-child(2) {
+    background-color: #5CB85C;
+    border: 1px solid #4CAE4C;
+}
+
+.work-submit>button:nth-child(2):hover {
+    background-color: #449d44;
+}
+
+/*end 弹出上传框*/
 
 .return-course-list, .return-work-list {
     height: 34px;

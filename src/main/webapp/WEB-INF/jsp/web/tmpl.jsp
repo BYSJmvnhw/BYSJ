@@ -254,7 +254,7 @@
     <div class="hand-in-wrap">
         <div class="hand-in-area">
             <div class="hand-in-title">
-                <p role='title'>交作业</p>
+                <p role='title'><strong>交作业</strong></p>
             </div>
             <div class="hand-in-body">
                 <div class="hand-in-course">
@@ -277,12 +277,13 @@
                     <label>截止上交时间：</label>
                     <label>2015-02-14 17:46:58</label>
                 </div>
-                <div>
-                    <label for="work-file"></label>
+                <div class="work-upload">
+                    <label for="work-file">上传作业</label>
                     <input id="work-file" name="work-file" type="file"/>
                     <label></label>
                 </div>
                 <div class="work-submit">
+                    <button>取消</button>
                     <button>提交作业</button>
                 </div>
             </div>
