@@ -26,7 +26,7 @@ public class LoginFilter implements Filter {
         //获取访问的 url 链接.
         String requestURI = request.getRequestURI().substring(request.getRequestURI().indexOf("/",1), request.getRequestURI().length());
         String resourceURI = "";
-        if(request.getRequestURI().length() > 10 ) {
+        if( request.getRequestURI().length() - request.getRequestURI().indexOf("/",1) > 10 ) {
             resourceURI = request.getRequestURI().substring( request.getRequestURI().indexOf("/", 1),
                     request.getRequestURI().indexOf( "/", 1)+ 10  );
         }
@@ -41,14 +41,14 @@ public class LoginFilter implements Filter {
          **/
         if( !"/login/loginInput".equals(requestURI) && ! "/login/login".equals(requestURI) && !requestURI.equals("/login/logincheck")
                 //不拦截资源请求
-                && !requestURI.equals("/web/login") && /* !onePageAppURI .equals("/web") && */!requestURI.equals("/resources"))
+                && !requestURI.equals("/web/login") && /* !onePageAppURI .equals("/web") && */!resourceURI.equals("/resources"))
         {
             //取得session. 如果没有session则自动会创建一个, 我们用false表示没有取得到session则设置为session为空.
             HttpSession session = request.getSession(false);
             //如果session中没有任何东西.
             if( session == null || session.getAttribute("loginUser")==null)
             {
-                response.sendRedirect(request.getContextPath() + "/login/logincheck");
+                response.sendRedirect(request.getContextPath() + "/web/login");
                 return;
             }
 
