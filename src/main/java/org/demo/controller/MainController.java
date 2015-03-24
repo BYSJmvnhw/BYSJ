@@ -12,11 +12,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * 用于单页面应用的拦截
  */
 @Controller
-@RequestMapping("/web")
 public class MainController {
 
-    @RequestMapping(value = "/**", method = RequestMethod.GET)
+    @RequestMapping(value = "/web/**", method = RequestMethod.GET)
     public String index() {
         return "web/webapp";
+    }
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String index2() {
+        return "redirect:/web/login";
     }
 }
