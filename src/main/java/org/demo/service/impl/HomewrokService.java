@@ -4,6 +4,8 @@ import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import org.apache.commons.io.FileUtils;
 import org.demo.dao.*;
+import org.demo.dao.impl.StudentDao;
+import org.demo.dao.impl.UserDao;
 import org.demo.model.*;
 import org.demo.service.IHomeworkService;
 import org.demo.tool.DateJsonValueProcessor;
@@ -103,7 +105,8 @@ public class HomewrokService implements IHomeworkService {
     }
 
     @Override
-    public JSONObject courseTeachingPage(HwTeacher teacher, Integer startYear, Integer schoolTerm) {
+    public JSONObject courseTeachingPage(HwUser user, Integer startYear, Integer schoolTerm) {
+        HwTeacher teacher = teacherDao.load(user.getTypeId());
         Page page =  courseTeachingDao.courseTeachingPage(teacher, startYear, schoolTerm);
         JsonConfig jsonConfig = new JsonConfig();
         jsonConfig.setExcludes(new String[] {"hibernateLazyInitializer", "handler",
@@ -133,7 +136,8 @@ public class HomewrokService implements IHomeworkService {
     }
 
     @Override
-    public void addHomeworkInfo(String jsonObject, HwTeacher teacher) {
+    public void addHomeworkInfo(String jsonObject, HwUser user) {
+        HwTeacher teacher = teacherDao.load(user.getTypeId());
         /** 将前端传递过来的json字符串解析成JsonObject对象 */
         JSONObject jo = JSONObject.fromObject(jsonObject);
         /** 构造一个新的HwHomeworkInfo对象 */
@@ -185,9 +189,10 @@ public class HomewrokService implements IHomeworkService {
     }
 
     @Override
-    public void upload(MultipartFile hw, Integer hwinfoId,HwStudent student, String backupPath ) throws IOException {
+    public void upload(MultipartFile hw, Integer hwinfoId,HwUser user, String backupPath ) throws IOException {
         HwHomeworkInfo hwinfo = homeworkInfoDao.load(hwinfoId);
         /**获取后缀*/
+        HwStudent student = studentDao.load(user.getTypeId());
         String hwName = student.getStudentNo() + "_" +student.getName() + hw.getOriginalFilename().substring
                 (hw.getOriginalFilename().lastIndexOf("."));
         String baseUrl = hwinfo.getUrl();
@@ -224,13 +229,13 @@ public class HomewrokService implements IHomeworkService {
     }
 
     @Override
-    public void deleteHomeworkInfo(Integer hwInfoId) {
+    public void deleteHomeworkInfo(Integer hwInfoId){
         homeworkInfoDao.delete(homeworkInfoDao.load(hwInfoId));
     }
 
     @Override
-    public void markHomework(Integer hwid, String mark, String comment) {
-        HwHomework homework = homeworkDao.load(hwid);
+    public void markHomework(Integer hwId, String mark, String comment) {
+        HwHomework homework = homeworkDao.load(hwId);
         homework.setMark(mark);
         homework.setComment(comment);
         Timestamp timestamp = new java.sql.Timestamp(System.currentTimeMillis());
