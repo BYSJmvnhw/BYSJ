@@ -51,39 +51,39 @@
                 <li class="active">首页</li>
                 <li>
                     个人中心
-                    <ul data-type="man" class="type1 nav-main-child t-top">
+                    <ul data-type="man" class="type2 nav-main-child t-top">
                         <li data-bar="info">个人信息</li>
-                        <li data-bar="changepw">密码修改</li>
-                        <li data-bar="setmail">设置邮箱</li>
+                        <li data-bar="setting">设置中心</li>
                     </ul>
                 </li>
                 <li>
                     作业管理
                     <ul data-type="hwmanage" class="type2 nav-main-child t-top">
                         <li data-bar="hwinfo">作业信息</li>
-                        <li data-bar="hkdynamic">作业动态</li>
+                        <li data-bar="hwdynamic">作业动态</li>
                     </ul>
                 </li>
+                {{if userType == 'TEACHER'}}
+                <li>
+                    学生管理
+                    <ul data-type="stumanage" class="type2 nav-main-child t-top">
+                        <li data-bar="stuinfo">选课信息</li>
+                        <li data-bar="hwdynamic">作业动态</li>
+                    </ul>
+                </li>
+                {{/if}}
                 <li>帮助</li>
             </ul>
             <div class="welcome">
-                <span>您好，陈培峰</span>
+                <span>您好，{{userName}}</span>
                 <span id="exit" title="退出系统">退出</span>
             </div>
         </div>
     </nav>
     <header>
-        <div class="bg"></div>
-        <div class="info-b">
-            <span id="info-btn"></span>
-            <div id="info-tip" class="info-tip">
-                <div></div>
-                <ul>
-                    <li data-type="work">最新作业<span>10</span></li>
-                    <li data-type="unhand">未提交<span>5</span></li>
-                    <li data-type="feedback">作业反馈<span>3</span></li>
-                </ul>
-            </div>
+        <div class="bg">
+        <div id="info-b">
+           <!--提示信息-->
         </div>
     </header>
     <section class="main-content">
@@ -91,14 +91,20 @@
             <div class="l-menu" data-type="man"><strong><span class="man"></span>个人中心<span class="bn-slide t-rotate t-rotate-close"></span></strong></div>
             <ul class="t-slide t-close">
                 <li data-bar="info">个人信息</li>
-                <li data-bar="changepw">密码修改</li>
-                <li data-bar="setmail">设置邮箱</li>
+                <li data-bar="setting">设置中心</li>
             </ul>
             <div class="l-menu" data-type="hwmanage"><strong><span class="work"></span>作业管理<span class="bn-slide t-rotate t-rotate-close"></span></strong></div>
             <ul class="t-slide t-close">
                 <li data-bar="hwinfo">作业信息</li>
                 <li data-bar="hwdynamic">作业动态</li>
             </ul>
+            {{if userType == 'TEACHER'}}
+            <div class="l-menu" data-type="stumanage"><strong>学生管理<span class="bn-slide t-rotate t-rotate-close"></span></strong></div>
+            <ul class="t-slide t-close">
+                <li data-bar="stuinfo">选课信息</li>
+                <li data-bar="hwdynamic">作业动态</li>
+            </ul>
+            {{/if}}
         </div>
         <div id="content" class="content"></div>
     </section>
@@ -117,6 +123,25 @@
             <p></p>
         </div>
     </footer>
+</script>
+<script type="text/template" id="info-tip-html">
+    <!--<div class="info-b">-->
+        <span id="info-btn" class="info-btn"></span>
+        <div id="info-tip" class="info-tip">
+            <div></div>
+            <ul>
+                {{if userType == 'STUDENT'}}
+                <li data-type="new-work">最新作业<span>10</span></li>
+                <li data-type="s-unhand">未提交<span>5</span></li>
+                <li data-type="feedback">作业反馈<span>3</span></li>
+                {{else if userType == 'TEACHER'}}
+                <li data-type="new-hand">最新提交<span>10</span></li>
+                <li data-type="unalter">未批改<span>5</span></li>
+                <li data-type="t-unhand">未提交<span>3</span></li>
+                {{/if}}
+            </ul>
+        </div>
+    <!--</div>-->
 </script>
 <script type="text/template" id="man-info">
     <div class="personal-info">
@@ -154,8 +179,9 @@
         <img src="${pageContext.request.contextPath}/resources/skin/images/man.jpg">
     </div>
 </script>
-<script type="text/template" id="man-pw">
-    <div class="personal-info">
+<script type="text/template" id="setting-html">
+    <div class="set-changepw"><strong>设置密码</strong></div>
+    <div class="pw-info">
         <div class="p-name">
             <label><strong>登陆账号</strong></label>
             <label>20112100167</label>
@@ -163,6 +189,60 @@
         <div class="p-name">
             <label><strong>密码</strong></label>
             <label>*********</label>
+        </div>
+        <div class="set-changepw-btn">
+            <button id="set-changepw-btn" type="button">修改密码</button>
+            <div class="set-changepw-submit t-changepw-submit t-changepw-submit-close">
+                <div class="set-changepw-old">
+                    <label for="old-pw">旧密码</label>
+                    <input id="old-pw" name="old-pw" type="password" />
+                </div>
+                <div class="set-changepw-new">
+                    <label for="new-pw">新密码</label>
+                    <input id="new-pw" name="new-pw" type="password" />
+                </div>
+                <div class="set-changepw-sure">
+                    <label for="sure-pw">确认密码</label>
+                    <input id="sure-pw" name="sure-pw" type="password" />
+                </div>
+                <span class="fold-changepw" id="fold-changepw">收起</span>
+                <button id="changepw-sure" type="button">确认</button>
+            </div>
+        </div>
+    </div>
+    <div class="set-mail"><strong>设置邮箱</strong></div>
+    <div class="mail-info">
+        <div class="p-name">
+            <label><strong>当前邮箱</strong></label>
+            <label>1234567@126.com</label>
+        </div>
+        <div class="p-name">
+            <label><strong>邮箱状态</strong></label>
+            <label for="mail-state" class="mail-state">
+                <div class="mail-switch-wrap">
+                    <div class="mail-state-btn t-mail t-mail-open">
+                        <input id="mail-state" name="mail-state" type="checkbox" checked/>
+                        <span class="mail-switch-on">ON</span>
+                        <label for="mail-state"></label>
+                        <span class="mail-switch-off">OFF</span>
+                    </div>
+                </div>
+            </label>
+        </div>
+        <div class="set-mail-btn">
+            <button id="set-mail-btn" type="button">修改邮箱</button>
+            <div class="set-mail-submit t-mail-submit t-mail-submit-close">
+                <div class="set-mail-new">
+                    <label for="new-mail">新邮箱：</label>
+                    <input id="new-mail" name="new-mail" type="email" />
+                </div>
+                <div class="set-mail-sure">
+                    <label for="sure-mail">验证码：</label>
+                    <input id="sure-mail" name="sure-mail" type="email" />
+                </div>
+                <span class="fold-mail" id="fold-mail">收起</span>
+                <button id="mail-sure" type="button">确认</button>
+            </div>
         </div>
     </div>
 </script>
@@ -201,7 +281,7 @@
         <div class="work-list-wrap"></div>
     </section>
     <section class="student-list">
-        <div class="return-course-list">
+        <div class="return-course-list return-course-btn1">
             <span class="return-course-btn" data-cur="3" data-back="1"></span>
             <span>返回课程列表</span>
         </div>
