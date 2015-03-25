@@ -554,7 +554,8 @@ define(function(require, exports, module) {
                         studentNo: data[1].studentNo,
                         hwCollege: data[1].hwCollege.collegeName,
                         hwMajor: data[1].hwMajor.name,
-                        hwCampus: data[1].hwCampus
+                        hwCampus: data[1].hwCampus,
+                        random: Math.random()
                     });
                 },
                 error: function (o, e) {
@@ -575,7 +576,7 @@ define(function(require, exports, module) {
 //                data: null,
 //                dataType: 'json',
 //                success: function (data) {
-//                    console.log('个人数据加载成功！', data);
+//                    console.log('设置中心！', data);
 //                    that.models.settingmodel.set({
 //                        userType: sessionStorage.userType
 //                    });
@@ -584,10 +585,11 @@ define(function(require, exports, module) {
 //                    console.log(e);
 //                }
 //            });
-
+            console.log('setting');
             that.models.settingmodel.set({
                 userType: sessionStorage.userType,
-                $content: that.$content
+                $content: that.$content,
+                random: Math.random()
             });
 
         },
