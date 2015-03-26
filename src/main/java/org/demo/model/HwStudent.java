@@ -37,7 +37,7 @@ public class HwStudent implements java.io.Serializable {
 	private String sex;
 	private String class_;
 	private String grade;
-	//private String email;
+	private String email;
 	private Set<HwCourseSelecting> hwCourseSelectings = new HashSet<HwCourseSelecting>(0);
 	private Set<HwHomework> hwHomeworks = new HashSet<HwHomework>(0);
 	private Boolean deleteFlag;
@@ -164,14 +164,14 @@ public class HwStudent implements java.io.Serializable {
 		this.grade = grade;
 	}
 
-/*	@Column(name = "email", length = 50)
+	@Column(name = "email", length = 50)
 	public String getEmail() {
 		return this.email;
 	}
 
 	public void setEmail(String email) {
 		this.email = email;
-	}*/
+	}
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwStudent")
 	public Set<HwCourseSelecting> getHwCourseSelectings() {
