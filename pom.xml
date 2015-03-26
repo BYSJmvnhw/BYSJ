@@ -258,6 +258,13 @@
           <artifactId>mail</artifactId>
           <version>1.4.7</version>
       </dependency>
+      <!-- for excel-->
+      <dependency>
+          <groupId>org.apache.poi</groupId>
+          <artifactId>poi</artifactId>
+          <version>3.11</version>
+      </dependency>
+
   </dependencies>
 
 

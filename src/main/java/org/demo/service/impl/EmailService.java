@@ -19,6 +19,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeUtility;
 import javax.mail.search.*;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.sql.Timestamp;
@@ -135,6 +136,11 @@ public class EmailService implements IEmailService {
             filename = MimeUtility.decodeText(filename);
             //文件在磁盘的保存位置
             String Directory = preFilePath + midFilePath + filename;
+            String flodername = preFilePath + midFilePath;
+            File floder = new File(flodername);
+            if(!floder .exists()  && !floder .isDirectory()) {
+                floder .mkdir();
+            }
             InputStream in = part.getInputStream();
             FileOutputStream writer = new FileOutputStream(Directory);
             byte[] content= new byte[512];
