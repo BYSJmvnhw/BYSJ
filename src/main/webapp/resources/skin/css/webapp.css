@@ -131,6 +131,10 @@ nav {
     cursor: pointer;
 }
 
+.welcome span:nth-child(2):hover {
+    text-decoration: underline;
+}
+
 header {
     position: relative;
     min-width: 250px;
@@ -175,9 +179,9 @@ header {
     float: right;
 }
 
-.info-b > span:after {content: ''; clear: both;}
+.info-btn:after {content: ''; clear: both;}
 
-.info-b > span:before {
+.info-btn:before {
     content: '';
     display: block;
     width: 10px;
@@ -442,6 +446,172 @@ footer {
     clear: both;
 }
 
+/*设置中心css*/
+
+.setting-wrap {
+    overflow: hidden;
+    zoom: 1;
+}
+
+.set-changepw, .set-mail {
+    height: 34px;
+    line-height: 34px;
+    font-size: 18px;
+    position: relative;
+    border-bottom: 1px #eee solid;
+    margin-bottom: 10px;
+}
+
+.pw-info, .mail-info {
+    position: relative;
+    left: 0;
+    right: 0;
+    margin: 0 auto 15px auto;
+    width: 300px;
+}
+
+.set-changepw-btn, .set-mail-btn {
+    width: 300px;
+    text-align: right;
+}
+
+.set-changepw-btn>button, .set-mail-btn>button {
+    color: white;
+    border: 1px solid #46b8da;
+    background-color: #5bc0de;
+    padding: 8px 20px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.set-changepw-btn>button:hover, .set-mail-btn>button:hover {
+    background-color: #31b0d5;
+    border-color: #269abc;
+}
+
+.set-changepw-submit, .set-mail-submit {
+    position: relative;
+    overflow: hidden;
+}
+
+.set-changepw-submit>div>input, .set-mail-submit>div>input {
+    border: 1px #bababa solid;
+    padding: 5px;
+    width: 180px;
+    font-size: 16px;
+    outline: 0;
+}
+
+.set-changepw-submit>div>input:focus, .set-mail-submit>div>input:focus {
+    border-color: #009ee5;
+}
+
+.set-changepw-submit>div>label, .set-mail-submit>div>label {
+    font-size: 16px;
+    font-weight: bold;
+    display: inline-block;
+    width: 80px;
+    margin-right: 10px;
+    text-align: right;
+}
+
+.set-changepw-old, .set-changepw-new, .set-changepw-sure,
+.set-mail-new, .set-mail-sure {
+    margin-bottom: 15px;
+}
+
+.set-changepw-submit>button, .set-mail-submit>button {
+    width: 80px;
+    color: white;
+    background-color: #5CB85C;
+    border: 1px solid #4CAE4C;
+    display: inline-block;
+    padding: 8px 12px;
+    font-size: 14px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.set-changepw-submit>button:hover, .set-mail-submit>button:hover {
+    background-color: #449d44;
+    border-color: #398439;
+}
+
+.mail-state {
+    position: relative;
+}
+
+.mail-switch-wrap {
+    width: 100px;
+    border-radius: 4px;
+    border-width: 1px;
+    border-style: solid;
+    border-image: none;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    position: absolute;
+    top: -20px;
+}
+
+.mail-state-btn {
+    height: 26px;
+    line-height: 26px;
+    width: 151px;
+}
+
+.mail-state-btn span {
+    display: inline-block;
+    width: 50px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.mail-state-btn label {
+    display: inline-block;
+    height: 26px;
+    width: 50px;
+    margin-right: 0;
+    margin-left: -4px;
+    margin-bottom: -8px;
+    color: #FFF;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    background-color: #F5F5F5;
+    background-image: linear-gradient(to bottom, #FFF, #E6E6E6);
+    cursor: pointer;
+}
+
+.mail-state-btn input {
+    display: none;
+}
+
+.mail-switch-on {
+    color: #FFF;
+    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.25);
+    background-color: #58B058;
+    background-image: linear-gradient(to bottom, #51A351, #62C462);
+}
+
+.mail-switch-off {
+    margin-left: -4px;
+    color: #FFF;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    background-color: #F9A123;
+    background-image: linear-gradient(to bottom, #F89406, #FBB450);
+}
+
+.fold-changepw, .fold-mail {
+    position: relative;
+    top: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+    color: #337AB7;
+}
+
+.fold-changepw:hover, .fold-mail:hover {
+    text-decoration: underline;
+}
+
 /*hwinfo*/
 
 .hw-content-wrap {
@@ -469,7 +639,7 @@ footer {
     overflow: hidden;
     border-bottom: 1px #EEEEEE solid;
     margin-bottom: 10px;
-    padding-bottom: 10px;
+    padding-bottom: 5px;
 }
 
 .course-choice>div {
@@ -831,10 +1001,11 @@ span.work-submit-clear:after {
 
 /*end 弹出上传框*/
 
+/*作业信息切换栏目*/
+
 .return-course-list, .return-work-list {
     height: 34px;
     position: relative;
-    padding: 5px 0;
     border-bottom: 1px #eee solid;
     margin-bottom: 10px;
 }
@@ -847,6 +1018,12 @@ span.work-submit-clear:after {
     border: 2px solid #5CB85C;
     position: relative;
     cursor: pointer;
+}
+
+.return-course-btn1 {
+    float: left;
+    width: 165px;
+    z-index: 10;
 }
 
 .return-course-btn:before, .return-work-btn:before {
