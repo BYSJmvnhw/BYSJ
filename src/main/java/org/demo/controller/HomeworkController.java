@@ -59,19 +59,17 @@ public class HomeworkController {
     public JSONObject courseList(Integer startYear, Integer schoolTerm, HttpServletRequest request) {
         /** 获取用户类型，学生返回选课列表，教师返回授课列表*/
         UserType userType = (UserType) request.getSession().getAttribute("userType");
+        HwUser user = (HwUser) request.getSession().getAttribute("loginUser");
 
         /** 学生返回选课列表 */
         if( userType == UserType.STUDENT ) {
-            HwStudent student = (HwStudent) request.getSession().getAttribute("loginStudent");
-            HwUser user = (HwUser) request.getSession().getAttribute("loginUser");
             /**查找选课关系*/
             return homeworkService.courseSelectingPage(user, startYear, schoolTerm);
         }
 
         /** 教师返回授课列表 */
         else {
-            HwTeacher teacher = (HwTeacher)request.getSession().getAttribute("loginTeacher");
-            return  homeworkService.courseTeachingPage(teacher, startYear, schoolTerm);
+            return  homeworkService.courseTeachingPage(user, startYear, schoolTerm);
         }
     }
 
@@ -147,41 +145,68 @@ public class HomeworkController {
 
      @RequestMapping(value = "/addHomeworkInfo", method = RequestMethod.POST)
      @ResponseBody
-    public String addHomeworkInfo(String jsonObject, HttpServletRequest request) {
+    public JSONObject addHomeworkInfo(String jsonObject, HttpServletRequest request) {
 
             /** 从Session获取当前登陆用户类型 */
-         HwTeacher teacher  = (HwTeacher) request.getSession().getAttribute("loginTeacher");
+
+         /*HwTeacher teacher  = (HwTeacher) request.getSession().getAttribute("loginTeacher");
          if( teacher == null ){
              //登陆类型不是教师或者未登陆，返回登陆页面
              return "../login/loginInput";
+         }*/
+         JSONObject result = new JSONObject();
+         try {
+             HwUser user = (HwUser) request.getSession().getAttribute("loginUser");
+             homeworkService.addHomeworkInfo(jsonObject, user);
+             result.put("msg","success");
+             return result;
+         } catch (Exception e) {
+             result.put("msg","fail");
+             return result;
          }
-        homeworkService.addHomeworkInfo(jsonObject, teacher);
-         return "showHomeworkInfoDetail";
+         //return "showHomeworkInfoDetail";
     }
 
     /**
      * 删除了
-     * @param id 需要删除的作业信息id
+     * @param hwInfoId 需要删除的作业信息id
      * */
     @RequestMapping(value = "/deleteHomeworkInfo", method = RequestMethod.GET)
-    public String deleteHomeworkInfo(Integer id) {
-        homeworkService.deleteHomeworkInfo(id);
+    @ResponseBody
+    public JSONObject deleteHomeworkInfo(Integer hwInfoId) throws Exception{
+        JSONObject result = new JSONObject();
+        try {
+            homeworkService.deleteHomeworkInfo(hwInfoId);
+            result.put("msg","success");
+            return result;
+        }catch (Exception e) {
+            result = new JSONObject();
+            result.put("msg","fail");
+            return result;
+        }
         /**同时将级联删除该次作业信息对应的所有学生作业*/
-        return "redirect:showHomeworkInfo";
+        //return "redirect:showHomeworkInfo";
     }
 
     /**
      *
-     * @param hwid 作业id
+     * @param hwId 作业id
      * @param mark 分数
      * @param comment 评语
      * @return json请求结果
      */
     @RequestMapping(value = "/markHomework", method = RequestMethod.POST)
-    public JSONObject markHomework(Integer hwid, String mark, String comment) {
-        homeworkService.markHomework(hwid, mark, comment);
-        String result = "{'result' : '批改作业成功'}";
-        return JSONObject.fromObject(result);
+    public JSONObject markHomework(Integer hwId, String mark, String comment) {
+        JSONObject result = new JSONObject();
+        try{
+            homeworkService.markHomework(hwId, mark, comment);
+            result.put("msg", "success");
+            return result;
+        } catch (Exception e){
+            e.printStackTrace();
+            result.put("msg", "fail");
+            return result;
+        }
     }
 
     /**
@@ -201,16 +226,26 @@ public class HomeworkController {
      * @throws IOException
      */
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public String upload(@RequestParam MultipartFile hw, Integer hwinfoId, HttpServletRequest request) throws IOException {
+    public JSONObject upload(@RequestParam MultipartFile hw, Integer hwinfoId, HttpServletRequest request) throws IOException {
         /**从session中获取当前登录的学生*/
-        HwStudent student = (HwStudent) request.getSession().getAttribute("loginStudent");
+        /*HwStudent student = (HwStudent) request.getSession().getAttribute("loginStudent");
         if(student == null) {
            return "redirect:/login/loginInput";
-        }
+        }*/
+        HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
         /**备用目录*/
         String backupPath = request.getServletContext().getRealPath("/doc");
-        homeworkService.upload(hw, hwinfoId, student, backupPath);
-        return "redirect:showHomework";
+        JSONObject result = new JSONObject();
+        try{
+            homeworkService.upload(hw, hwinfoId, user, backupPath);
+            result.put("msg","success");
+            return result;
+        }catch (Exception e){
+            e.printStackTrace();
+            result.put("msg","fail");
+            return result;
+        }
+        //return "redirect:showHomework";
     }
 
     public IHomeworkService getHomeworkService() {

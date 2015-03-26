@@ -23,17 +23,17 @@ public interface IHomeworkService {
 
     public JSONObject courseSelectingPage(HwUser user, Integer startYear, Integer schoolTerm);
 
-    public JSONObject courseTeachingPage(HwTeacher teacher, Integer startYear, Integer schoolTerm);
+    public JSONObject courseTeachingPage(HwUser user, Integer startYear, Integer schoolTerm);
 
     public JSONObject homeworListInfoPage(Integer courseTeachingId);
 
     public JSONObject homeworkInfoDetail(Integer hwInfoId);
 
-    public void addHomeworkInfo(String jsonObject, HwTeacher teacher);
+    public void addHomeworkInfo(String jsonObject, HwUser user);
 
-    public void upload(MultipartFile hw, Integer hwinfoId,HwStudent student, String backupPath) throws IOException;
+    public void upload(MultipartFile hw, Integer hwinfoId,HwUser user, String backupPath) throws IOException;
 
     public void deleteHomeworkInfo(Integer hwInfoId);
 
-    public void markHomework(Integer hwid, String mark, String comment);
+    public void markHomework(Integer I, String mark, String comment);
 }

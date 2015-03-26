@@ -28,7 +28,7 @@ public class UserController {
     private ITeacherService teacherService;
     @RequestMapping("/info")
     @ResponseBody
-    public JSONArray userInfo(HttpServletRequest request) {
+    public JSONObject userInfo(HttpServletRequest request) {
 
         /**获取登录用户信息*/
         HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
@@ -38,8 +38,8 @@ public class UserController {
         userConfig.setExcludes(new String[]{"password","createId",
                 "createUsername","createDate", "typeId","hwRoles","deleteFlag"});
 
-        JSONArray jsonArray = new JSONArray();
-        jsonArray.add(user, userConfig);
+        /*JSONArray jsonArray = new JSONArray();
+        jsonArray.add(user, userConfig);*/
 
         /**根据用户类型获取登录学生或者老师的其他个人信息*/
         JSONObject jsonObject;
@@ -55,7 +55,8 @@ public class UserController {
             jsonConfig.registerJsonValueProcessor(HwCampus.class,
                     new ObjectJsonValueProcessor(new String[]{"name"},HwCampus.class));
             HwStudent student = studentService.load(user.getTypeId());
-            jsonArray.add(student, jsonConfig);
+            jsonObject = JSONObject.fromObject(student, jsonConfig);
+            //jsonArray.add(student, jsonConfig);
         } else{
             JsonConfig jsonConfig = new JsonConfig();
             jsonConfig.setExcludes(new String[]{"hibernateLazyInitializer", "handler",
@@ -67,10 +68,11 @@ public class UserController {
             jsonConfig.registerJsonValueProcessor(HwCampus.class,
                     new ObjectJsonValueProcessor(new String[]{"name"},HwCampus.class));
             HwTeacher teacher = teacherService.load(user.getTypeId());
-            jsonArray.add(teacher, jsonConfig);
+            jsonObject = JSONObject.fromObject(teacher,jsonConfig);
+            //jsonArray.add(teacher, jsonConfig);
         }
-
-        return  jsonArray;
+        return jsonObject;
+        //return  jsonArray;
     }
 
     public IStudentService getStudentService() {

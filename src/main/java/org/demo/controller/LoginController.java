@@ -33,12 +33,20 @@ public class LoginController {
     /*  枚举用户类型 */
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public String logout(HttpServletRequest request) {
-        request.getSession().removeAttribute("loginUser");
-        request.getSession().removeAttribute("userType");
-        request.getSession().removeAttribute("urlList");
-        request.getSession().removeAttribute("roleList");
-        return "redirect:/login/loginInput";
+    @ResponseBody
+    public JSONObject logout(HttpServletRequest request) {
+        JSONObject result = new JSONObject();
+        try{
+            request.getSession().removeAttribute("urlList");
+            request.getSession().removeAttribute("loginUser");
+            request.getSession().removeAttribute("userType");
+            request.getSession().removeAttribute("roleList");
+            result.put("msg","success");
+            return result;
+        }catch (Exception e) {
+            result.put("msg","fail");
+            return result;
+        }
     }
 
     @RequestMapping( value = "/loginInput", method = RequestMethod.GET)
@@ -47,7 +55,7 @@ public class LoginController {
         return "login/loginInput";
     }
 
-    @RequestMapping( value = "/login", method = RequestMethod.POST)
+/*    @RequestMapping( value = "/login", method = RequestMethod.POST)
     public String login(String username, String password, Model model, HttpServletRequest request) {
         if( loginService.login(username,password,request) ) {
             model.addAttribute("msg","成功");
@@ -55,7 +63,7 @@ public class LoginController {
             model.addAttribute("msg","失败");
         }
         return "login/welcome";
-    }
+    }*/
 
     @RequestMapping( value = "/logincheck", method = RequestMethod.POST)
     @ResponseBody
@@ -64,6 +72,8 @@ public class LoginController {
         if( loginService.login(username,password,request) ) {
             jsonObject.put("msg","success");
             jsonObject.put("userType",request.getSession().getAttribute("userType"));
+            jsonObject.put("trueName",((HwUser)request.getSession().getAttribute("loginUser")).getTrueName());
+            System.out.println(request.getSession().getAttribute("userType"));
             return jsonObject;
         }else {
             jsonObject.put("msg","fail");
