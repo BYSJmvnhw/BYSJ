@@ -43,7 +43,8 @@ public class ExportExcelService implements IExportExcelService{
         if(hct == null) {
             return null;
         }
-        List<HwCourseSelecting> hcs = (List<HwCourseSelecting>)hct.getHwCourseSelectings();
+        List<HwCourseSelecting> hcs = new ArrayList<HwCourseSelecting>();
+        hcs.addAll(hct.getHwCourseSelectings());
         if(hcs == null) {
             return null;
         }
