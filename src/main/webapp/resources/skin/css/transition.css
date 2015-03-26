@@ -58,7 +58,7 @@ span.t-load-start {
 }
 
 .t-open {
-    height: 114px;
+    height: 76px;
 }
 
 .t-close {
@@ -115,4 +115,43 @@ span.t-load-start {
 
 .t-work-list-btn, .t-student-list-btn, .t-hand-in, .t-alter-btn {
     transition: top 500ms cubic-bezier(0.1,0.5,0.1,1);
+}
+
+/*邮箱开启*/
+
+.t-mail {
+    transition: transform 500ms;
+}
+
+.t-mail-open {
+    transform: translateX(0);
+    -webkit-transform: translateX(0);
+    -ms-transform: translateX(0);
+    -o-transform: translateX(0);
+    -moz-transform: translateX(0);
+}
+
+.t-mail-close {
+    transform: translateX(-50px);
+    -webkit-transform: translateX(-50px);
+    -ms-transform: translateX(-50px);
+    -o-transform: translateX(-50px);
+    -moz-transform: translateX(-50px);
+}
+
+.t-changepw-submit, .t-mail-submit {
+    transition: height 500ms cubic-bezier(0.1,0.5,0.1,1);
+}
+
+.t-changepw-submit-open {
+    height: 170px;
+}
+
+.t-mail-submit-open {
+    height: 125px;
+}
+
+
+.t-changepw-submit-close, .t-mail-submit-close {
+    height: 0;
 }
