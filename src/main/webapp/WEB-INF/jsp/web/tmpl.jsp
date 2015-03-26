@@ -65,6 +65,13 @@
                 </li>
                 {{if userType == 'TEACHER'}}
                 <li>
+                    课程管理
+                    <ul data-type="csmanage" class="type2 nav-main-child t-top">
+                        <li data-bar="csinfo">课程信息</li>
+                        <li data-bar="csdynamic">作业动态</li>
+                    </ul>
+                </li>
+                <li>
                     学生管理
                     <ul data-type="stumanage" class="type2 nav-main-child t-top">
                         <li data-bar="stuinfo">选课信息</li>
@@ -91,18 +98,27 @@
             <div class="l-menu" data-type="man"><strong><span class="man"></span>个人中心<span class="bn-slide t-rotate t-rotate-close"></span></strong></div>
             <ul class="t-slide t-close">
                 <li data-bar="info">个人信息</li>
-                <li data-bar="setting">设置中心</li>
+                <li data-bar="setting">设置</li>
+            </ul>
+            {{if userType == 'STUDENT'}}
+            <div class="l-menu" data-type="hwmanage"><strong><span class="work"></span>作业管理<span class="bn-slide t-rotate t-rotate-close"></span></strong></div>
+            <ul class="t-slide t-close">
+                <li data-bar="hwinfo">作业提交</li>
+                <li data-bar="hwdynamic">作业动态</li>
+            </ul>
+            {{else if userType == 'TEACHER'}}
+            <div class="l-menu" data-type="csmanage"><strong>课程管理<span class="bn-slide t-rotate t-rotate-close"></span></strong></div>
+            <ul class="t-slide t-close">
+                <li data-bar="csmail">课程邮箱设置</li>
             </ul>
             <div class="l-menu" data-type="hwmanage"><strong><span class="work"></span>作业管理<span class="bn-slide t-rotate t-rotate-close"></span></strong></div>
             <ul class="t-slide t-close">
-                <li data-bar="hwinfo">作业信息</li>
-                <li data-bar="hwdynamic">作业动态</li>
+                <li data-bar="hwinfo">作业布置与批改</li>
+                <!--<li data-bar="hwdynamic">作业动态</li>-->
             </ul>
-            {{if userType == 'TEACHER'}}
             <div class="l-menu" data-type="stumanage"><strong>学生管理<span class="bn-slide t-rotate t-rotate-close"></span></strong></div>
             <ul class="t-slide t-close">
-                <li data-bar="stuinfo">选课信息</li>
-                <li data-bar="hwdynamic">作业动态</li>
+                <li data-bar="stuinfo">学生信息</li>
             </ul>
             {{/if}}
         </div>

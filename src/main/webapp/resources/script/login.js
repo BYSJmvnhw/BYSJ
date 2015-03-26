@@ -56,8 +56,9 @@ define(function(require, exports, module) {
                 timeOut: 10000,
                 success: function (data) {
                     if(data.msg == 'success'){
-                        console.log('登陆成功');
+                        console.log('登陆成功', data);
                         sessionStorage.userType = data.userType; // 记录全局用户类型
+//                        sessionStorage.userType = 'TEACHER'; // 记录全局用户类型
                         sessionStorage.userName = data.userName; // 记录全局用户类型
                         that.loginSuccess('man', 'info');
                     }
