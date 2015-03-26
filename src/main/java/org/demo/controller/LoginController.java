@@ -64,6 +64,7 @@ public class LoginController {
         if( loginService.login(username,password,request) ) {
             jsonObject.put("msg","success");
             jsonObject.put("userType",request.getSession().getAttribute("userType"));
+            System.out.println(request.getSession().getAttribute("userType"));
             return jsonObject;
         }else {
             jsonObject.put("msg","fail");
