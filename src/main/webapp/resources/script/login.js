@@ -58,8 +58,7 @@ define(function(require, exports, module) {
                     if(data.msg == 'success'){
                         console.log('登陆成功', data);
                         sessionStorage.userType = data.userType; // 记录全局用户类型
-//                        sessionStorage.userType = 'TEACHER'; // 记录全局用户类型
-                        sessionStorage.userName = data.userName; // 记录全局用户类型
+                        sessionStorage.trueName = data.trueName; // 记录全局用户类型
                         that.loginSuccess('man', 'info');
                     }
                     else{
@@ -133,7 +132,7 @@ define(function(require, exports, module) {
                         // 执行主页面渲染
                         that.$main_el.html(tmpl(that.$mainhtml.attr('id'), {
                             userType: sessionStorage.userType,
-                            username: sessionStorage.userName
+                            trueName: sessionStorage.trueName
                         }));
                         // 执行主页面各种事件绑定，数据加载
                         webapp.appView(type, bar);

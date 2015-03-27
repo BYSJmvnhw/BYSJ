@@ -111,31 +111,33 @@ define(function(require, exports, module) {
         }
     });
 
-    // 学生上交作业视图，弹框
-    var HandInView = Backbone.View.extend({
+    // 弹出框公共视图类
+    var DialogView = Backbone.View.extend({
         targetName: 'div',
-        className: 'hand-in-wrap',
-        tmpl_id: 'hand-in',
-        events: {
-            'click .work-submit-sure': 'submitWork',
-            'click .work-submit-clear': 'closeHandIn',
-            'change #work-file': 'showFileName'
-        },
+        className: 'shade-wrap',
+        tmpl_id: 'dailog-html',
         initialize: function () {
             this.listenTo(this.model, "change", this.render);
         },
         render: function () {
-            console.log('render-handin');
             var ele = tmpl(this.tmpl_id, this.model.toJSON());
             $(this.el).html(ele);
-            this.model.attributes.$handinwrap.html(this.el);
+            this.model.attributes.$wrap.html(this.el);
         },
         closeHandIn: function () {
-            console.log('关闭上传');
             this.$el.hide(300);
         },
         showFileName: function (e) { // 显示上传文件的名字
             $(e.currentTarget).next().html($(e.currentTarget).val().split('\\').pop());
+        }
+    });
+
+    // 学生上交作业视图，弹框
+    var HandInView = DialogView.extend({
+        events: {
+            'click .work-submit-sure': 'submitWork',
+            'click .dailog-clear': 'closeHandIn',
+            'change #work-file': 'showFileName'
         },
         submitWork: function (e) {
             console.log('上传');
@@ -153,6 +155,37 @@ define(function(require, exports, module) {
                     console.log(e);
                 }
             });
+        }
+    });
+
+    // 教师新增作业，弹框
+    var AddWorkView = DialogView.extend({
+        events: {
+            'click .add-work-sure': 'submitAddWork',
+            'click .dailog-clear': 'closeHandIn'
+        },
+        submitAddWork: function () {
+            var $t = this.$el,
+                that = this;
+            var data = $t.find('input, textarea');
+            console.log(data, that.model.attributes.cid);
+            this.model.sync('create', that, {
+                url: servicepath + '',
+                data: {
+                    title: data[0].value,
+                    hwDesc: data[1].value,
+                    deadline: data[2].value,
+                    cid: that.model.attributes.cid // 授课关系id
+                },
+                dataType: 'json',
+                timeOut: 10000,
+                success: function (data) {
+                    console.log('新增作业', data);
+                },
+                error: function (xhr, error, obj) {
+                    console.error(error);
+                }
+            })
         }
     });
 
@@ -182,6 +215,7 @@ define(function(require, exports, module) {
         className: 'work-list',
         tmpl_id: 'work-list',
         events: {
+            'click .add-work': 'addWork', // 教师添加作业
             'click .student-list-btn': 'showStudentList', // 教师查看该作业提交情况
             'click .hand-in-work': 'handInWork' // 学生交作业
         },
@@ -193,6 +227,18 @@ define(function(require, exports, module) {
             var ele = tmpl(this.tmpl_id, this.model.toJSON());
             $(this.el).html(ele);
             this.model.attributes.$worklist.children('.work-list-wrap').html(this.el);
+        },
+        addWork: function () {
+            var that = this,
+                addworkmodel = new TypeModel,
+                addworkview = new AddWorkView({
+                model: addworkmodel
+            });
+            addworkmodel.set({
+                op: 'add-work',
+                cid: that.model.attributes.cid,
+                $wrap: $('#add-work-wrap')
+            });
         },
         showStudentList: function (e) {
             console.log('查看学生的作业列表');
@@ -230,7 +276,8 @@ define(function(require, exports, module) {
                     console.log('作业详细信息', data);
                     handinmodel.set({
                         detaillist: data,
-                        $handinwrap: $('#hand-in-wrap')
+                        op: 'hand-in',
+                        $wrap: $('#hand-in-wrap')
                     });
                 },
                 error: function (o, e) {
@@ -272,6 +319,7 @@ define(function(require, exports, module) {
                     console.log('作业信息', data);
                     workmodel.set({
                         worklist: data.data,
+                        cid: id, // 授课关系id
                         userType: sessionStorage.userType,
                         $worklist: that.model.attributes.$courselist.next()
                     });
@@ -371,6 +419,45 @@ define(function(require, exports, module) {
         showInfoTip: function (e) {
             e.stopPropagation();
             this.model.attributes.unfoldLeftMenu();
+        }
+    });
+
+    // 课程邮箱设置视图
+    var CsMailView = Backbone.View.extend({
+        targetName: 'div',
+        className: 'cs-mail-wrap',
+        tmpl_id: 'cs-mail-html',
+        events: {
+            'click .cs-mail-change': 'changeMail',
+            'click .cs-mail-clear': 'clear',
+            'click .cs-mail-sure': 'submitMail'
+        },
+        initialize: function () {
+            this.listenTo(this.model, "change", this.render);
+        },
+        render: function () {
+            console.log('render-csmail');
+            var ele = tmpl(this.tmpl_id, this.model.toJSON());
+            $(this.el).html(ele);
+            this.model.attributes.$wrap.html(this.el);
+        },
+        changeMail: function (e) {
+            var $cur = $(e.currentTarget);
+            $cur.parent().addClass('t-cs-mail-open');
+            $cur.next().show();
+            $cur.hide();
+        },
+        clear: function (e) {
+            var $cur = $(e.currentTarget);
+            $(e.currentTarget).parent().removeClass('t-cs-mail-open');
+            $cur.prev().show();
+            $cur.hide();
+        },
+        submitMail: function (e) {
+            var $cur = $(e.currentTarget);
+            var mail = $cur.prev().prev().val(),
+                ac = $cur.prev().val();
+            console.log(mail, ac);
         }
     });
 
@@ -483,16 +570,19 @@ define(function(require, exports, module) {
                 case  'man/setting':
                     that.getSettingData();
                     break;
+                case 'csmanage/csmail':
+                    that.getCsMailData();
+                    break;
                 case  'hwmanage/hwinfo':
-                    that.getHwInfo();
+                    that.getHwInfoData();
                     break;
                 case 'hwmanage/hwdynamic':
                     break;
                 case  'stumanage/stuinfo':
-                    console.log(this.type+this.bar)
+                    this.GetStuInfoData();
                     break;
                 case 'stumanage/':
-                    console.log(this.type+this.bar)
+                    console.log(this.type+this.bar);
                     break;
                 default:
                     console.log('没有找到相关类型');
@@ -548,13 +638,7 @@ define(function(require, exports, module) {
                     console.log('个人数据加载成功！', data);
                     that.models.infomodel.set({
                         userType: sessionStorage.userType,
-                        name: data[1].name,
-                        sex: data[1].sex,
-                        teacherNo: data[1].teacherNo,
-                        studentNo: data[1].studentNo,
-                        hwCollege: data[1].hwCollege.collegeName,
-                        hwMajor: data[1].hwMajor.name,
-                        hwCampus: data[1].hwCampus,
+                        data: data,
                         random: Math.random()
                     });
                 },
@@ -593,15 +677,57 @@ define(function(require, exports, module) {
             });
 
         },
-        getHwInfo: function () { // 获取课程信息
-//            this.views.hwinfoview ? this.views.hwinfoview.initialize() : this.views.hwinfoview = new HwInfoView;
+        getHwInfoData: function () { // 获取课程信息
             this.views.hwinfoview = new HwInfoView;
         },
+        getCsMailData: function () {
+            var that = this;
+            this.models.csmailmodel = new TypeModel;
+            this.views.csmailview = new CsMailView({
+                model: this.models.csmailmodel
+            });
+//            this.models.csmailmodel.sync('read', this.views.csmailview, {
+//                url: servicepath + '',
+//                data: null,
+//                dataType: 'json',
+//                success: function (data) {
+//                    console.log('课程邮箱', data);
+//                    that.models.csmailmodel.set({
+//                        userType: sessionStorage.userType,
+//                        data: data,
+//                        random: Math.random()
+//                    });
+//                },
+//                error: function (o, e) {
+//                    console.log(e);
+//                }
+//            });
+            this.models.csmailmodel.set({
+                $wrap: that.$content
+            });
+        },
+        GetStuInfoData: function () {
+
+        },
         exitApp: function () {
-            approuter.navigate('login', {trigger: true});
+            $.ajax({
+                url: servicepath + 'logout',
+                type: 'post',
+                data: null,
+                dataType: 'json',
+                timeOut: 10000,
+                success: function (data) {
+                    console.log('退出', data);
+                    approuter.navigate('login', {trigger: true});
+                },
+                error: function (xhr, error, obj) {
+                    console.error(error);
+                }
+            });
         }
     });
 
+    // 对外提供接口
     module.exports = {
         appView: function (type, bar) {
             console.log('创建webapp对象');
