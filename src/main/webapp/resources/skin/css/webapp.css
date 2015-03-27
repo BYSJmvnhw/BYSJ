@@ -495,7 +495,9 @@ footer {
     overflow: hidden;
 }
 
-.set-changepw-submit>div>input, .set-mail-submit>div>input {
+.set-changepw-submit>div>input, .set-mail-submit>div>input,
+.add-work-name>input, .add-work-deadline>input, .add-work-desc>textarea,
+.cs-mail-input1, .cs-mail-input2{
     border: 1px #bababa solid;
     padding: 5px;
     width: 180px;
@@ -503,8 +505,11 @@ footer {
     outline: 0;
 }
 
-.set-changepw-submit>div>input:focus, .set-mail-submit>div>input:focus {
+.set-changepw-submit>div>input:focus, .set-mail-submit>div>input:focus,
+.add-work-name>input:focus, .add-work-deadline>input:focus, .add-work-desc>textarea:focus,
+.cs-mail-input1:focus, .cs-mail-input2:focus {
     border-color: #009ee5;
+    outline: none;
 }
 
 .set-changepw-submit>div>label, .set-mail-submit>div>label {
@@ -521,7 +526,8 @@ footer {
     margin-bottom: 15px;
 }
 
-.set-changepw-submit>button, .set-mail-submit>button {
+.set-changepw-submit>button, .set-mail-submit>button,
+.cs-mail-sure {
     width: 80px;
     color: white;
     background-color: #5CB85C;
@@ -533,7 +539,8 @@ footer {
     cursor: pointer;
 }
 
-.set-changepw-submit>button:hover, .set-mail-submit>button:hover {
+.set-changepw-submit>button:hover, .set-mail-submit>button:hover,
+.cs-mail-sure:hover {
     background-color: #449d44;
     border-color: #398439;
 }
@@ -678,7 +685,7 @@ footer {
     border-color: #009ee5;
 }
 
-.choice-sure button {
+.choice-sure button, .add-work {
     background-color: #5cb85c;
     border: 1px #4cae4c solid;
     min-width: 90px;
@@ -691,7 +698,7 @@ footer {
     cursor: pointer;
 }
 
-.choice-sure button:hover {
+.choice-sure button:hover, .add-work:hover {
     background-color: #449d44;
     border-color: #398439;
 }
@@ -852,9 +859,9 @@ footer {
 
 /*end 作业信息样式*/
 
-/*弹出上传框*/
+/*弹出框共有样式*/
 
-.hand-in-wrap {
+.shade-wrap {
     position: fixed;
     top: 0;
     left: 0;
@@ -864,7 +871,7 @@ footer {
     z-index: 200;
 }
 
-.hand-in-area {
+.dailog-area {
     position: absolute;
     top: 20%;
     left: 0;
@@ -876,7 +883,7 @@ footer {
     overflow: hidden;
 }
 
-span.work-submit-clear {
+span.dailog-clear {
     display: block;
     width: 60px;
     height: 60px;
@@ -884,18 +891,18 @@ span.work-submit-clear {
     font-size: 20px;
     line-height: 20px;
     position: absolute;
-    right: -30px;
+    right: -50px;
     top: -30px;
     background-color: #D9534F;
     border-bottom-left-radius: 50%;
     cursor: pointer;
 }
 
-span.work-submit-clear:hover {
+span.dailog-clear:hover {
     background-color: #D43F3A;
 }
 
-span.work-submit-clear:after {
+span.dailog-clear:after {
     content: 'X';
     font-size: 20px;
     color: white;
@@ -906,21 +913,26 @@ span.work-submit-clear:after {
     cursor: pointer;
 }
 
-.hand-in-title {
+.dailog-title {
     line-height: 30px;
     border-bottom: 1px solid #333;
 }
 
-.hand-in-body {
+.dailog-body {
     line-height: 25px;
 }
 
-.hand-in-body>div>label:first-child {
+.dailog-body>div>label:first-child {
     display: inline-block;
     width: 120px;
+    margin-right: 10px;
     text-align: right;
     font-weight: bold;
 }
+
+/*end弹出框共有样式*/
+
+/*弹出上传框*/
 
 .hand-in-desc {
     overflow: hidden;
@@ -934,7 +946,7 @@ span.work-submit-clear:after {
 
 .hand-in-desc>label:nth-child(2) {
     float: right;
-    width: 380px;
+    width: 370px;
 }
 
 .hand-in-deadline>label:last-child {
@@ -965,13 +977,13 @@ span.work-submit-clear:after {
     display: none;
 }
 
-.work-submit {
+.work-submit, .add-submit {
     border-top: 1px solid #333;
     padding-top: 15px;
     text-align: right;
 }
 
-.work-submit>button {
+.work-submit>button, .add-submit>button {
     color: white;
     font-weight: bold;
     font-size: 16px;
@@ -980,26 +992,72 @@ span.work-submit-clear:after {
     cursor: pointer;
 }
 
-.work-submit>button:first-child {
+.dailog-clear {
     background-color: #D9534F;
     border: 1px solid #D43F3A;
     margin-right: 20px;
 }
 
-.work-submit>button:first-child:hover {
+.dailog-clear:hover {
     background-color: #D43F3A;
 }
 
-.work-submit>button:nth-child(2) {
+.work-submit-sure, .add-work-sure {
     background-color: #5CB85C;
     border: 1px solid #4CAE4C;
 }
 
-.work-submit>button:nth-child(2):hover {
+.work-submit-sure:hover, .add-work-sure:hover {
     background-color: #449d44;
 }
 
 /*end 弹出上传框*/
+
+/*弹出新增作业*/
+
+.add-work-dailog-body {
+    line-height: 30px;
+}
+
+.add-work-dailog-body input, .add-work-dailog-body textarea {
+    width: 300px;
+}
+
+.add-work-course {
+
+}
+
+.add-work-desc {
+    margin: 10px 0;
+}
+
+.add-work-desc textarea {
+    margin-left: 5px;
+    height: 120px;
+}
+
+.add-work-desc>label:first-child {
+    float: left;
+}
+
+.add-work-deadline {
+    margin-bottom: 15px;
+}
+
+
+.add-work {
+    position: absolute;
+    top: -45px;
+    right: 0;
+    height: 30px;
+    z-index: 10;
+}
+
+.work-list-wrap {
+    position: relative;
+}
+
+/*end弹出新增作业*/
 
 /*作业信息切换栏目*/
 
@@ -1074,3 +1132,109 @@ span.work-submit-clear:after {
     position: absolute;
     font-size: 18px;
 }
+
+.return-course-text {
+    position: absolute;
+    margin-left: 10px;
+    font-size: 18px;
+    margin-top: 2px;
+}
+
+/*end作业信息切换栏目*/
+
+/*课程邮箱设置*/
+
+.cs-mail-list>ul>li {
+    border: 1px #eee solid;
+    height: 50px;
+    line-height: 50px;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.cs-mail-list>ul>li>div {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.cs-mail-green {
+    border-left: 5px #AA6708 solid !important;
+}
+
+
+.cs-mail-name {
+
+}
+
+.cs-mail-name p {
+
+}
+
+.cs-mail-adr {
+
+}
+
+.cs-mail-adr p {
+
+}
+
+.cs-mail-input {
+    display: inline-block;
+}
+
+.cs-mail-input1 {
+    width: 180px;
+}
+
+.cs-mail-input2 {
+    display: none;
+    width: 100px;
+}
+
+.cs-mail-btn {
+    position: absolute;
+    /*right: 0;*/
+    background-color: #eee;
+}
+
+.cs-mail-btn>button {
+
+}
+
+.cs-mail-change, .cs-mail-clear {
+    height: 51px;
+    outline: none;
+    border: none;
+    background-color: #F0AD4E;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.cs-mail-clear {
+    display: none;
+}
+
+.cs-mail-change {
+    background-color: #5bc0de;
+}
+
+.cs-mail-sure {
+    width: auto;
+    margin-right: 10px;
+}
+
+.cs-mail-change:hover {
+    background-color: #31b0d5;
+}
+
+.cs-mail-clear {
+    background-color: #f0ad4e;
+}
+
+.cs-mail-clear:hover {
+    background-color: #ec971f;
+}
+
+/*end课程邮箱设置*/

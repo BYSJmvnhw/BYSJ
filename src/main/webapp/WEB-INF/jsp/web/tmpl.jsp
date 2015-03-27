@@ -19,8 +19,8 @@
         <section class="lg-info-wrap">
             <div id="lg-info" class="lg-info">
                 <div class="lg-text"><strong>登录作业网</strong></div>
-                <div class="lg-name"><input type="text" placeholder="用户名"/></div>
-                <div class="lg-pw"><input type="password" placeholder="密码"/></div>
+                <div class="lg-name"><input type="text" placeholder="用户名" required/></div>
+                <div class="lg-pw"><input type="password" placeholder="密码" required/></div>
                 <div class="lg-login-btn">
                     <button id="login-btn" role="button"><strong>登陆</strong></button>
                     <div id="lg-fail-tip">用户名或密码错误噢，请重试！<span>X</span></div>
@@ -82,7 +82,7 @@
                 <li>帮助</li>
             </ul>
             <div class="welcome">
-                <span>您好，{{userName}}</span>
+                <span>您好，{{trueName}}</span>
                 <span id="exit" title="退出系统">退出</span>
             </div>
         </div>
@@ -125,7 +125,9 @@
         <div id="content" class="content"></div>
     </section>
     {{if userType == 'STUDENT'}}
-        <div id="hand-in-wrap"></div>
+    <div id="hand-in-wrap"></div>
+    {{else if userType == 'TEACHER'}}
+    <div id="add-work-wrap"></div>
     {{/if}}
     <footer>
         <div class="line"></div>
@@ -140,6 +142,7 @@
         </div>
     </footer>
 </script>
+
 <script type="text/template" id="info-tip-html">
     <!--<div class="info-b">-->
         <span id="info-btn" class="info-btn"></span>
@@ -159,36 +162,39 @@
         </div>
     <!--</div>-->
 </script>
+
 <script type="text/template" id="man-info">
     <div class="personal-info">
         <div class="p-name">
             <label><strong>姓名</strong></label>
-            <label>{{name}}</label>
+            <label>{{data.name}}</label>
         </div>
         <div class="p-name">
             <label><strong>性别</strong></label>
-            <label>{{sex}}</label>
+            <label>{{data.sex}}</label>
         </div>
         <div class="p-name">
             {{if userType == 'STUDENT'}}
             <label><strong>学号</strong></label>
-            <label>{{studentNo}}</label>
+            <label>{{data.studentNo}}</label>
             {{else if userType == 'TEACHER'}}
             <label><strong>教师号</strong></label>
-            <label>{{teacherNo}}</label>
+            <label>{{data.teacherNo}}</label>
             {{/if}}
         </div>
         <div class="p-name">
             <label><strong>校区学院</strong></label>
-            <label>{{hwCampus}}-{{hwCollege}}</label>
+            <label>{{data.hwCampus.name}}校区-{{data.hwCollege.collegeName}}</label>
         </div>
+        {{if userType == 'STUDENT'}}
         <div class="p-name">
             <label><strong>年级班级</strong></label>
-            <label>{{grade}}级{{class_}}班</label>
+            <label>{{data.grade}}级{{data.class_}}班</label>
         </div>
+        {{/if}}
         <div class="p-name">
             <label><strong>专业</strong></label>
-            <label>{{hwMajor}}</label>
+            <label>{{data.hwMajor.name}}</label>
         </div>
     </div>
     <div class="personal-img">
@@ -262,6 +268,7 @@
         </div>
     </div>
 </script>
+
 <script type="text/template" id="hw-info">
     <!--<div class="load-data"></div>-->
     <section class="course-list">
@@ -340,66 +347,93 @@
         </li>
         {{/each}}
     </ul>
+    {{if userType == 'TEACHER'}}
+    <button class="add-work">新增课程作业</button>
+    {{/if}}
     <!--</div>-->
 </script>
-<script type="text/template" id="hand-in">
-    <div class="hand-in-wrap">
-        <div class="hand-in-area">
-            <div class="hand-in-title">
-                <p role='title'><strong>交作业</strong></p>
-            </div>
-            <div class="hand-in-body">
-                <div class="hand-in-course">
-                    <label>课程：</label>
-                    <label>{{detaillist.courseName}}</label>
-                </div>
-                <div class="hand-in-name">
-                    <label>作业：</label>
-                    <label>{{detaillist.title}}</label>
-                </div>
-                <div class="hand-in-desc">
-                    <label>作业说明：</label>
-                    <label>{{detaillist.hwDesc}}</label>
-                </div>
-                <div class="hand-in-create">
-                    <label>作业发布时间：</label>
-                    <label>{{detaillist.createDate}}</label>
-                </div>
-                <div class="hand-in-deadline">
-                    <label>截止上交时间：</label>
-                    <label>{{detaillist.deadline}}</label>
-                </div>
-                <div class="work-upload">
-                    <label for="work-file">上传作业</label>
-                    <input id="work-file" name="work-file" type="file"/>
-                    <label></label>
-                </div>
-                <div class="work-submit">
-                    <button class="work-submit-clear">取消</button>
-                    <button class="work-submit-sure" data-id="{{detaillist.id}}">提交作业</button>
-                </div>
-            </div>
-            <span class="clear work-submit-clear" title="关闭窗口"></span>
+<script type="text/template" id="dailog-html">
+    <!--<div class="wrap">-->
+    <div class="dailog-area">
+        <div class="dailog-title">
+            <p role='title'>
+                {{if op == 'add-work'}}
+                <strong>新增课程作业</strong>
+                {{else if op == 'hand-in'}}
+                <strong>交作业</strong>
+                {{/if}}
+            </p>
         </div>
+        {{if op == 'add-work'}}
+        <div class="dailog-body add-work-dailog-body">
+            {{include 'add-work-html'}}
+        </div>
+        {{else if op == 'hand-in'}}
+        <div class="dailog-body">
+            {{include 'hand-in'}}
+        </div>
+        {{/if}}
+        <span class="clear dailog-clear" title="关闭窗口"></span>
+    </div>
+    <!--</div>-->
+</script>
+<script type="text/template" id="add-work-html">
+    <div class="add-work-course">
+        <label>课程名</label>
+        <label>计算机组成原理</label>
+    </div>
+    <div class="add-work-name">
+        <label>作业名</label>
+        <input name="name" type="text" placeholder="作业名" required/>
+    </div>
+    <div class="add-work-desc">
+        <label>作业描述</label>
+        <textarea name="desc" placeholder="可以填写作业注意事项，难度，要求等信息" required></textarea>
+    </div>
+    <div class="add-work-deadline">
+        <label>截止日期</label>
+        <input name="deadline" type="datetime" required/>
+    </div>
+    <div class="add-submit">
+        <button class="dailog-clear">取消</button>
+        <button class="add-work-sure" data-id="">发布作业</button>
     </div>
 </script>
+<script type="text/template" id="hand-in">
+    <div class="hand-in-course">
+        <label>课程名</label>
+        <label>{{detaillist.courseName}}</label>
+    </div>
+    <div class="hand-in-name">
+        <label>作业名</label>
+        <label>{{detaillist.title}}</label>
+    </div>
+    <div class="hand-in-desc">
+        <label>作业说明</label>
+        <label>{{detaillist.hwDesc}}</label>
+    </div>
+    <div class="hand-in-create">
+        <label>作业发布时间</label>
+        <label>{{detaillist.createDate}}</label>
+    </div>
+    <div class="hand-in-deadline">
+        <label>截止上交时间</label>
+        <label>{{detaillist.deadline}}</label>
+    </div>
+    <div class="work-upload">
+        <label for="work-file">上传作业</label>
+        <input id="work-file" name="work-file" type="file"/>
+        <label></label>
+    </div>
+    <div class="work-submit">
+        <button class="dailog-clear">取消</button>
+        <button class="work-submit-sure" data-id="{{detaillist.id}}">提交作业</button>
+    </div>
+    <!--</div>-->
+</script>
+
 <script type="text/template" id="student-list">
     <!--<div class="student-list-t">-->
-    <!--<table>-->
-
-        <!--<thead><th>作业名</th><th>学生名</th><th>学号</th><th>提交时间</th><th>操作</th></thead>-->
-        <!--<tbody>-->
-        <!--{{each studentlist as value}}-->
-        <!--<tr>-->
-            <!--<td>{{value.title}}</td>-->
-            <!--<td>{{value.studentName}}</td>-->
-            <!--<td>{{value.studentNo}}</td>-->
-            <!--<td>{{value.submitDate.split(' ')[0]}}</td>-->
-            <!--<td><span class="hk-list-btn" data-id="{{value.id}}">批改</span></td>-->
-        <!--</tr>-->
-        <!--{{/each}}-->
-        <!--</tbody>-->
-    <!--</table>-->
     <ul>
         {{each studentlist as value}}
         <li class="student-alter-list student-has-alter">
@@ -414,4 +448,46 @@
         {{/each}}
     </ul>
     <!--</div>-->
+</script>
+
+<script type="text/template" id="cs-mail-html">
+    <div class="set-changepw"><strong>设置课程邮箱</strong></div>
+    <div class="cs-mail-list">
+        <ul>
+            <li class="cs-mail-green">
+                <div class="cs-mail-name">
+                    <p>计算机组成原理</p>
+                </div>
+                <div class="cs-mail-adr">
+                    <p>1234566@124.com</p>
+                </div>
+                <div class="cs-mail-btn t-cs-mail">
+                    <button class="cs-mail-change" type="submit">修改</button>
+                    <button class="cs-mail-clear" type="button">取消</button>
+                    <div class="cs-mail-input">
+                        <input class="cs-mail-input1" type="email" placeholder="输入新的邮箱"/>
+                        <input class="cs-mail-input2" type="text" placeholder="邮箱验证码"/>
+                        <button class="cs-mail-sure" type="submit">确认</button>
+                    </div>
+                </div>
+            </li>
+            <li class="cs-mail-green">
+                <div class="cs-mail-name">
+                    <p>计算机组成原理</p>
+                </div>
+                <div class="cs-mail-adr">
+                    <p>1234566@124.com</p>
+                </div>
+                <div class="cs-mail-btn t-cs-mail">
+                    <button class="cs-mail-change" type="submit">修改</button>
+                    <button class="cs-mail-clear" type="button">取消</button>
+                    <div class="cs-mail-input">
+                        <input class="cs-mail-input1" type="email" placeholder="输入新的邮箱"/>
+                        <input class="cs-mail-input2" type="text" placeholder="邮箱验证码"/>
+                        <button class="cs-mail-sure" type="submit">确认</button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
 </script>
