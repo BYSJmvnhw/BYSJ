@@ -140,21 +140,18 @@ public class HomewrokService implements IHomeworkService {
         HwTeacher teacher = teacherDao.load(user.getTypeId());
         /** 将前端传递过来的json字符串解析成JsonObject对象 */
         JSONObject jo = JSONObject.fromObject(jsonObject);
+        Integer cid = jo.getInt("cid");
+        /**查询出对应的courseTeaching*/
+        HwCourseTeaching courseTeaching = courseTeachingDao.load(cid);
         /** 构造一个新的HwHomeworkInfo对象 */
         HwHomeworkInfo hwinfo = new HwHomeworkInfo();
         /** 从前端传递过来的json中解析出参数 */
         hwinfo.setTitle(jo.getString("title"));
         hwinfo.setHwDesc(jo.getString("hwDesc"));
-        hwinfo.setCourseName(jo.getString("courseName"));
         hwinfo.setDeadline(new java.sql.Timestamp(jo.getLong("deadline")));
-        Integer cid = jo.getInt("cid");
-
-        /**查询出对应的courseTeaching*/
-        //HwCourse course = courseService.load(jo.getInt("courseId"));
-        //HwCourseTeaching courseTeaching = courseTeachingService.findCourseTeaching(course,teacher);
-        HwCourseTeaching courseTeaching = courseTeachingDao.load(cid);
 
         /**往HwHomeworkInfo填入其他信息*/
+        hwinfo.setCourseName(courseTeaching.getHwCourse().getCourseName());
         hwinfo.setCreateDate(new java.sql.Timestamp(System.currentTimeMillis()));
         hwinfo.setEmail(courseTeaching.getEmail());
         hwinfo.setHwCourseTeaching(courseTeaching);
@@ -229,8 +226,18 @@ public class HomewrokService implements IHomeworkService {
     }
 
     @Override
-    public void deleteHomeworkInfo(Integer hwInfoId){
-        homeworkInfoDao.delete(homeworkInfoDao.load(hwInfoId));
+    public void deleteHomeworkInfo(Integer hwInfoId) throws Exception {
+        Page page = homeworkDao.submittedHomeworkPage(hwInfoId, true);
+        //没有学生已经提交作业则执行删除
+        if( page.getData().isEmpty()) {
+            List<HwHomework> hwList = homeworkDao.homeworkList(hwInfoId);
+            for(HwHomework hw : hwList) {
+                homeworkDao.delete(hw);
+            }
+            homeworkInfoDao.delete(homeworkInfoDao.load(hwInfoId));
+        }else {
+            throw new Exception("已有学生提交作业，不可删除作业信息！");
+        }
     }
 
     @Override

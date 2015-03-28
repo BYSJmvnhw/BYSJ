@@ -21,6 +21,8 @@ public interface IUserService {
 
     public void updateUser(String json);
 
-    public Object userInfo(Integer typeId, UserType userType);
+    public JSONObject userInfo(HwUser user,UserType userType);
+
+    public JSONObject userEmail(HwUser user);
 
 }

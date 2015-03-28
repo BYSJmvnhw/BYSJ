@@ -1,6 +1,7 @@
 package org.demo.tool;
 
 import javax.persistence.Entity;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
  */
 
 public class Page<T> {
-    private List<T> data;
+    private List<T> data = new ArrayList<T>(0);
     private int pageOffsset;
     private int pageSize;
     private long totalRecord;

@@ -6,6 +6,8 @@ import org.demo.model.HwStudent;
 import org.demo.tool.Page;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created by jzchen on 2015/1/13.
  */
@@ -38,5 +40,12 @@ public class HomeworkDao extends BaseDao<HwHomework> implements IHomeworkDao {
                 "hw.hwHomeworkInfo.id = ? " +
                 "and hw.hwStudent = ?";
         return findObject(hql, new Object[] {hwinfoId, student});
+    }
+
+    @Override
+    public List<HwHomework> homeworkList(Integer hwInfoId) {
+        String hql = "from HwHomework hw where " +
+                "hwHomeworkInfo.id = ?";
+        return list(hql,hwInfoId);
     }
 }

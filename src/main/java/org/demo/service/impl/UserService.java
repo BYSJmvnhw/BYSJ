@@ -5,8 +5,9 @@ import net.sf.json.JsonConfig;
 import org.demo.dao.IStudentDao;
 import org.demo.dao.ITeacherDao;
 import org.demo.dao.IUserDao;
-import org.demo.model.HwUser;
+import org.demo.model.*;
 import org.demo.service.IUserService;
+import org.demo.tool.ObjectJsonValueProcessor;
 import org.demo.tool.UserType;
 import org.springframework.stereotype.Service;
 
@@ -64,12 +65,40 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Object userInfo(Integer typeId, UserType userType) {
+    public JSONObject userInfo(HwUser user, UserType userType) {
+        /**根据用户类型获取登录学生或者老师的其他个人信息*/
+        JSONObject jsonObject;
         if( userType == UserType.STUDENT ) {
-            return studentDao.load(typeId);
-        } else {
-            return teacherDao.load(typeId);
+            JsonConfig jsonConfig = new JsonConfig();
+            jsonConfig.setExcludes(new String[]{"hibernateLazyInitializer", "handler",
+                    "hwCourseSelectings", "hwHomeworks", "deleteFlag"});
+            jsonConfig.registerJsonValueProcessor(HwMajor.class,
+                    new ObjectJsonValueProcessor(new String[]{"name"}, HwMajor.class));
+            jsonConfig.registerJsonValueProcessor(HwCollege.class,
+                    new ObjectJsonValueProcessor(new String[]{"collegeName"}, HwCollege.class));
+            jsonConfig.registerJsonValueProcessor(HwCampus.class,
+                    new ObjectJsonValueProcessor(new String[]{"name"},HwCampus.class));
+            HwStudent student = studentDao.load(user.getTypeId());
+            jsonObject = JSONObject.fromObject(student, jsonConfig);
+        } else{
+            JsonConfig jsonConfig = new JsonConfig();
+            jsonConfig.setExcludes(new String[]{"hibernateLazyInitializer", "handler",
+                    "hwHomeworks", "hwCourseTeachings", "deleteFlag"});
+            jsonConfig.registerJsonValueProcessor(HwMajor.class,
+                    new ObjectJsonValueProcessor(new String[]{"name"}, HwMajor.class));
+            jsonConfig.registerJsonValueProcessor(HwCollege.class,
+                    new ObjectJsonValueProcessor(new String[]{"collegeName"}, HwCollege.class));
+            jsonConfig.registerJsonValueProcessor(HwCampus.class,
+                    new ObjectJsonValueProcessor(new String[]{"name"},HwCampus.class));
+            HwTeacher teacher = teacherDao.load(user.getTypeId());
+            jsonObject = JSONObject.fromObject(teacher,jsonConfig);
         }
+        return jsonObject;
+    }
+
+    @Override
+    public JSONObject userEmail(HwUser user) {
+        return JSONObject.fromObject( userDao.load(user.getId()).getEmail());
     }
 
 
