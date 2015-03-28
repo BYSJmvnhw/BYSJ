@@ -49,7 +49,8 @@ public class StudentDao extends BaseDao<HwStudent> implements IStudentDao {
             stringList.add( "%" + studentNo + "%" );
         }
         if( name!= null && !name.equals("") ) {
-            hql.append( "and st.name like ?" );
+            System.out.println(name);
+            hql.append( "and st.name like ? " );
             stringList.add( "%" + name + "%" );
         }
         String[] str = new String[stringList.size()];
