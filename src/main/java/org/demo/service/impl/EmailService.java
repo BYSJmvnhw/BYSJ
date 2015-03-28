@@ -349,7 +349,7 @@ public class EmailService implements IEmailService {
             return jsonResult;
         }
         List<HwHomeworkInfo> homeworkInfos = getHwInfoIdByDeadline();
-        if(homeworkInfos == null) {
+        if(homeworkInfos == null || homeworkInfos.size() == 0) {
             jsonResult.put("message","没有3天内的作业");
             return jsonResult;
         }

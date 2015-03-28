@@ -51,7 +51,7 @@ public class CheckEmailService implements ICheckEmailService {
     //判断该邮箱是否存在，存在但未验证，发送验证码，不存在，插入并发送验证码
     public JSONObject findEmailExist(String email) {
         JSONObject jsonresult = new JSONObject();jsonresult.clear();
-        String smptPost = GetPost.getSmptPost(email);
+        String smptPost = GetPost.getSmptPost(systemEmail);
         if(smptPost == null || smptPost.equals("")) {
             jsonresult.put("isChecked",false);
             jsonresult.put("message","邮箱不合法");
