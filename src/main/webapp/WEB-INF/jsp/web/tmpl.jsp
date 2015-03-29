@@ -128,6 +128,7 @@
     <div id="hand-in-wrap"></div>
     {{else if userType == 'TEACHER'}}
     <div id="add-work-wrap"></div>
+    <div id="add-student-wrap"></div>
     {{/if}}
     <footer>
         <div class="line"></div>
@@ -310,7 +311,11 @@
         </div>
         <div class="return-work-list">
             <span class="return-work-btn" data-cur="3" data-back="2"></span>
+            {{if view_type == 'hwmanage'}}
             <span>返回作业列表</span>
+            {{else if view_type == 'stumanage'}}
+            <span>返回学生列表</span>
+            {{/if}}
         </div>
         <div class="student-list-wrap"></div>
     </section>
@@ -323,7 +328,11 @@
                 <p>{{value.hwCourse.courseName}}</p>
                 <p>课程人数：40人</p>
             </div>
-            <div class="work-list-btn t-work-list-btn" data-id="{{value.id}}">点击查看课程作业</div>
+            {{if view_type == 'hwmanage'}}
+            <div class="work-list-btn t-work-list-btn" data-id="{{value.id}}">单击查看该课程作业列表</div>
+            {{else if view_type == 'stumanage'}}
+            <div class="stumanage-list-btn t-stumanage-list-btn" data-id="{{value.id}}">单击查看该课程学生列表</div>
+            {{/if}}
         </li>
         {{/each}}
     </ul>
@@ -354,13 +363,15 @@
 </script>
 <script type="text/template" id="dailog-html">
     <!--<div class="wrap">-->
-    <div class="dailog-area">
+    <div class="dailog-area {{if op == 'add-student'}}add-student-area{{/if}}">
         <div class="dailog-title">
             <p role='title'>
                 {{if op == 'add-work'}}
                 <strong>新增课程作业</strong>
                 {{else if op == 'hand-in'}}
                 <strong>交作业</strong>
+                {{else if op == 'add-student'}}
+                <strong>增加学生</strong>
                 {{/if}}
             </p>
         </div>
@@ -371,6 +382,10 @@
         {{else if op == 'hand-in'}}
         <div class="dailog-body">
             {{include 'hand-in'}}
+        </div>
+        {{else is op == 'add-student'}}
+        <div class="dailog-body">
+            {{include 'add-stu-html'}}
         </div>
         {{/if}}
         <span class="clear dailog-clear" title="关闭窗口"></span>
@@ -398,6 +413,30 @@
         <button class="dailog-clear">取消</button>
         <button class="add-work-sure" data-id="">发布作业</button>
     </div>
+</script>
+<script type="text/template" id="add-stu-html">
+    <div class="add-stu-choice">
+        <label>学生姓名或学号</label>
+        <input name="add-stu-text" type="text" />
+        <button class="add-student-search">搜索</button>
+        <button class="add-student-pre">上一页</button>
+        <button class="add-student-next">下一页</button>
+    </div>
+    <div class="add-stu-list">
+    </div>
+    <div class="add-student-page">
+        <button class="add-student-next">上一页</button>
+        <button class="add-student-pre">下一页</button>
+    </div>
+</script>
+<script type="text/template" id="add-stu-list-html">
+    <%--<ul>--%>
+    <li class="stu-list-li">
+        <p><strong>{{name}}</strong></p>
+        <p>{{No}}</p>
+        <span></span>
+    </li>
+    <%--</ul>--%>
 </script>
 <script type="text/template" id="hand-in">
     <div class="hand-in-course">
@@ -431,7 +470,6 @@
     </div>
     <!--</div>-->
 </script>
-
 <script type="text/template" id="student-list">
     <!--<div class="student-list-t">-->
     <ul>
@@ -443,10 +481,17 @@
                 <p>{{value.studentNo}}</p>
                 <p>{{value.submitDate.split(' ')[0]}}</p>
             </div>
+            {{if view_type == 'hwmanage'}}
             <div class="alter-btn t-alter-btn" data-id="{{value.id}}">单击批改</div>
+            {{else if view_type == 'stumanage'}}
+            <div class="check-btn t-check-btn" data-id="{{value.id}}">单击查看{{value.studentName}}的作业列表</div>
+            {{/if}}
         </li>
         {{/each}}
     </ul>
+    {{if view_type == 'stumanage'}}
+    <button class="add-student">添加学生</button>
+    {{/if}}
     <!--</div>-->
 </script>
 

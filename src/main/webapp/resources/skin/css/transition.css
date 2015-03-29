@@ -133,7 +133,8 @@ span.t-load-start {
 
 /* 课程列表 */
 
-.t-work-list-btn, .t-student-list-btn, .t-hand-in, .t-alter-btn {
+.t-work-list-btn, .t-student-list-btn,
+.t-hand-in, .t-alter-btn, .t-stumanage-list-btn, .t-check-btn {
     transition: top 500ms cubic-bezier(0.1,0.5,0.1,1);
     -o-transition: top 500ms cubic-bezier(0.1,0.5,0.1,1);
     -webkit-transition: top 500ms cubic-bezier(0.1,0.5,0.1,1);

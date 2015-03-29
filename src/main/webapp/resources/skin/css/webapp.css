@@ -343,11 +343,13 @@ header {
 
 .l-menu + ul li.l-active:after {
     content: '';
-    border-left: 16px solid #3fd0ff;
+    border-right: 10px solid #FFFFFF;
     border-top: 8px solid transparent;
     border-bottom: 8px solid transparent;
     position: absolute;
-    right: -16px;
+    right: 0px;
+    top: 50%;
+    margin-top: -8px;
 }
 
 .content {
@@ -497,7 +499,7 @@ footer {
 
 .set-changepw-submit>div>input, .set-mail-submit>div>input,
 .add-work-name>input, .add-work-deadline>input, .add-work-desc>textarea,
-.cs-mail-input1, .cs-mail-input2{
+.cs-mail-input1, .cs-mail-input2, .add-stu-choice>input{
     border: 1px #bababa solid;
     padding: 5px;
     width: 180px;
@@ -507,7 +509,7 @@ footer {
 
 .set-changepw-submit>div>input:focus, .set-mail-submit>div>input:focus,
 .add-work-name>input:focus, .add-work-deadline>input:focus, .add-work-desc>textarea:focus,
-.cs-mail-input1:focus, .cs-mail-input2:focus {
+.cs-mail-input1:focus, .cs-mail-input2:focus, .add-stu-choice>input:focus {
     border-color: #009ee5;
     outline: none;
 }
@@ -527,7 +529,7 @@ footer {
 }
 
 .set-changepw-submit>button, .set-mail-submit>button,
-.cs-mail-sure {
+.cs-mail-sure, .add-student-search {
     width: 80px;
     color: white;
     background-color: #5CB85C;
@@ -540,7 +542,7 @@ footer {
 }
 
 .set-changepw-submit>button:hover, .set-mail-submit>button:hover,
-.cs-mail-sure:hover {
+.cs-mail-sure:hover, .add-student-search:hover {
     background-color: #449d44;
     border-color: #398439;
 }
@@ -685,7 +687,7 @@ footer {
     border-color: #009ee5;
 }
 
-.choice-sure button, .add-work {
+.choice-sure button, .add-work, .add-student {
     background-color: #5cb85c;
     border: 1px #4cae4c solid;
     min-width: 90px;
@@ -698,7 +700,7 @@ footer {
     cursor: pointer;
 }
 
-.choice-sure button:hover, .add-work:hover {
+.choice-sure button:hover, .add-work:hover, .add-student:hover {
     background-color: #449d44;
     border-color: #398439;
 }
@@ -723,8 +725,10 @@ footer {
 /*}*/
 
 .course-list ul li:hover>.work-list-btn,
+.course-list ul li:hover>.stumanage-list-btn,
 .work-list ul li:hover>.student-list-btn,
 .student-list ul li:hover>.alter-btn,
+.student-list ul li:hover>.check-btn,
 .work-list ul li:hover>.hand-in-work {
     top: 0;
 }
@@ -1045,7 +1049,7 @@ span.dailog-clear:after {
 }
 
 
-.add-work {
+.add-work, .add-student {
     position: absolute;
     top: -45px;
     right: 0;
@@ -1058,6 +1062,118 @@ span.dailog-clear:after {
 }
 
 /*end弹出新增作业*/
+
+/*弹出教师新增学生框*/
+
+.add-stu-choice {
+    height: 40px;
+    line-height: 40px;
+    margin: 5px 0;
+    position: relative;
+}
+
+.add-stu-choice>label {
+
+}
+
+.add-stu-choice>input {
+    margin-right: 40px;
+}
+
+.add-student-search {
+    width: auto;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 0 8px;
+    line-height: 30px;
+}
+
+.add-student-pre, .add-student-next {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    color: #5A7AC3;
+    line-height: 25px;
+    border-radius: 4px;
+    position: absolute;
+    bottom: 5px;
+    cursor: pointer;
+}
+
+.add-student-pre {
+    right: 70px;
+}
+
+.add-student-next {
+    right: 0;
+}
+
+.add-student-pre:hover, .add-student-next:hover {
+    background-color: #eee;
+}
+
+.add-stu-list, .add-stu-list>ul {
+    overflow: hidden;
+    zoom: 1;
+}
+
+.add-stu-list>ul>li {
+    float: left;
+    width: 110px;
+    margin-right: 5px;
+    margin-left: 5px;
+    margin-bottom: 10px;
+    border: 5px #D9EDF7 solid;
+    padding: 5px 10px;
+    cursor: pointer;
+    position: relative;
+}
+
+.add-stu-list>ul>li:hover {
+    border-color: #41B8F4;
+}
+
+.add-stu-list>ul>li:hover:before {
+    content: '';
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    border-top: 35px #41B8F4 solid;
+    border-left: 35px transparent solid;
+}
+
+.add-stu-list>ul>li:hover>span {
+    display: block;
+    width: 16px;
+    height: 4px;
+    position: absolute;
+    top: 7px;
+    right: 1px;
+    background-color: #fff;
+}
+
+.add-stu-list>ul>li:hover>span:before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 16px;
+    position: absolute;
+    top: -6px;
+    right: 6px;
+    background-color: #fff;
+}
+
+.add-student-area {
+    width: 750px;
+    top: 10%;
+}
+
+.add-student-page {
+    position: relative;
+    height: 40px;
+}
+
+/*end弹出教师新增学生框*/
 
 /*作业信息切换栏目*/
 
