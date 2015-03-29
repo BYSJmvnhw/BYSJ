@@ -484,7 +484,7 @@
             {{if view_type == 'hwmanage'}}
             <div class="alter-btn t-alter-btn" data-id="{{value.id}}">单击批改</div>
             {{else if view_type == 'stumanage'}}
-            <div class="alter-btn t-alter-btn" data-id="{{value.id}}">单击查看{{value.studentName}}的作业列表</div>
+            <div class="check-btn t-check-btn" data-id="{{value.id}}">单击查看{{value.studentName}}的作业列表</div>
             {{/if}}
         </li>
         {{/each}}

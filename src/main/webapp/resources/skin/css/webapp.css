@@ -726,6 +726,7 @@ footer {
 .course-list ul li:hover>.stumanage-list-btn,
 .work-list ul li:hover>.student-list-btn,
 .student-list ul li:hover>.alter-btn,
+.student-list ul li:hover>.check-btn,
 .work-list ul li:hover>.hand-in-work {
     top: 0;
 }

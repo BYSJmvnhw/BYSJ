@@ -272,7 +272,8 @@ define(function(require, exports, module) {
         className: 'student-list',
         tmpl_id: 'student-list',
         events: {
-            'click .add-student': 'addStudent'
+            'click .add-student': 'addStudent',
+            'click .check-btn': 'checkStuWork'
         },
         initialize: function () {
             this.listenTo(this.model, "change", this.render);
@@ -307,6 +308,36 @@ define(function(require, exports, module) {
                 studentlist: [{name: 'aaaa'}],
                 op: 'add-student',
                 $wrap: $('#add-student-wrap')
+            });
+        },
+        // 教师查看单个学生该课程的所有作业
+        checkStuWork: function () {
+            var that = this;
+            var worklistmodel = new TypeModel;
+            var worklistview = new WorkListView({
+                model: worklistmodel
+            });
+            this.model.attributes.$studentlistwrap.parent().parent().replaceClass('hw-content-wrap-3', 'hw-content-wrap-2')
+//            worklistmodel.sync('read', worklistview, {
+//                url: servicepath + '',
+//                data: null,
+//                dataType: 'json',
+//                success: function (data) {
+//                    console.log('该学生的课程作业', data);
+//                    worklistmodel.set({
+//                    });
+//                },
+//                error: function (o, e) {
+//                    console.log(e);
+//                }
+//            });
+            worklistmodel.set({
+                worklist: [{
+                    title: '计算机组成原理第一次作业',
+                    deadline: '2014nian1'
+                }],
+                userType: sessionStorage.userType,
+                $worklistwrap: that.model.attributes.$studentlistwrap.parent().next().children('.student-list-wrap')
             });
         }
     });
