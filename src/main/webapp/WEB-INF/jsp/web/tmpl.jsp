@@ -53,9 +53,10 @@
                     个人中心
                     <ul data-type="man" class="type2 nav-main-child t-top">
                         <li data-bar="info">个人信息</li>
-                        <li data-bar="setting">设置中心</li>
+                        <li data-bar="setting">设置</li>
                     </ul>
                 </li>
+                {{if userType == 'STUDENT'}}
                 <li>
                     作业管理
                     <ul data-type="hwmanage" class="type2 nav-main-child t-top">
@@ -63,19 +64,24 @@
                         <li data-bar="hwdynamic">作业动态</li>
                     </ul>
                 </li>
-                {{if userType == 'TEACHER'}}
+                {{else if userType == 'TEACHER'}}
                 <li>
                     课程管理
                     <ul data-type="csmanage" class="type2 nav-main-child t-top">
-                        <li data-bar="csinfo">课程信息</li>
-                        <li data-bar="csdynamic">作业动态</li>
+                        <li data-bar="csmail">课程邮箱设置</li>
+                    </ul>
+                </li>
+                <li>
+                    作业管理
+                    <ul data-type="hwmanage" class="type2 nav-main-child t-top">
+                        <li data-bar="hwinfo">作业布置与批改</li>
+                        <!--<li data-bar="hwdynamic">作业动态</li>-->
                     </ul>
                 </li>
                 <li>
                     学生管理
                     <ul data-type="stumanage" class="type2 nav-main-child t-top">
-                        <li data-bar="stuinfo">选课信息</li>
-                        <li data-bar="hwdynamic">作业动态</li>
+                        <li data-bar="stuinfo">学生信息</li>
                     </ul>
                 </li>
                 {{/if}}
@@ -95,29 +101,36 @@
     </header>
     <section class="main-content">
         <div id="left-nav" class="left-nav" role="navigation">
-            <div class="l-menu" data-type="man"><strong><span class="man"></span>个人中心<span class="bn-slide t-rotate t-rotate-close"></span></strong></div>
-            <ul class="t-slide t-close">
+            <div class="l-menu" data-type="man"><strong>
+                    <!--<span class="man"></span>-->
+                    个人中心<span class="bn-slide t-rotate"></span>
+            </strong></div>
+            <ul class="t-slide">
                 <li data-bar="info">个人信息</li>
                 <li data-bar="setting">设置</li>
             </ul>
             {{if userType == 'STUDENT'}}
-            <div class="l-menu" data-type="hwmanage"><strong><span class="work"></span>作业管理<span class="bn-slide t-rotate t-rotate-close"></span></strong></div>
-            <ul class="t-slide t-close">
+            <div class="l-menu" data-type="hwmanage"><strong>
+                <!--<span class="work"></span>-->
+                作业管理<span class="bn-slide t-rotate"></span></strong></div>
+            <ul class="t-slide">
                 <li data-bar="hwinfo">作业提交</li>
                 <li data-bar="hwdynamic">作业动态</li>
             </ul>
             {{else if userType == 'TEACHER'}}
-            <div class="l-menu" data-type="csmanage"><strong>课程管理<span class="bn-slide t-rotate t-rotate-close"></span></strong></div>
-            <ul class="t-slide t-close">
+            <div class="l-menu" data-type="csmanage"><strong>课程管理<span class="bn-slide t-rotate"></span></strong></div>
+            <ul class="t-slide">
                 <li data-bar="csmail">课程邮箱设置</li>
             </ul>
-            <div class="l-menu" data-type="hwmanage"><strong><span class="work"></span>作业管理<span class="bn-slide t-rotate t-rotate-close"></span></strong></div>
-            <ul class="t-slide t-close">
+            <div class="l-menu" data-type="hwmanage"><strong>
+                <!--<span class="work"></span>-->
+                作业管理<span class="bn-slide t-rotate"></span></strong></div>
+            <ul class="t-slide">
                 <li data-bar="hwinfo">作业布置与批改</li>
                 <!--<li data-bar="hwdynamic">作业动态</li>-->
             </ul>
-            <div class="l-menu" data-type="stumanage"><strong>学生管理<span class="bn-slide t-rotate t-rotate-close"></span></strong></div>
-            <ul class="t-slide t-close">
+            <div class="l-menu" data-type="stumanage"><strong>学生管理<span class="bn-slide t-rotate"></span></strong></div>
+            <ul class="t-slide">
                 <li data-bar="stuinfo">学生信息</li>
             </ul>
             {{/if}}
@@ -534,5 +547,28 @@
                 </div>
             </li>
         </ul>
+    </div>
+</script>
+
+<script type="text/template" id="hw-dynamic-html">
+    <div class="d-newestwork">
+        <div class="d-newestwork-title">
+            <strong>最新作业</strong>
+            <button class="d-newestwork-unfold">展开</button>
+            <button class="d-newestwork-fold">收起</button>
+        </div>
+        <div class="d-newestwork-list"></div>
+    </div>
+    <div class="d-unhand">
+        <div class="d-unhand-title">
+            <strong>未提交</strong>
+        </div>
+        <div class="d-unhand-list"></div>
+    </div>
+    <div class="d-feedback">
+        <div class="d-feeedback-title">
+            <strong>未提交</strong>
+        </div>
+        <div class="d-feedback-list"></div>
     </div>
 </script>

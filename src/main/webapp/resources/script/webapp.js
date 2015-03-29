@@ -567,7 +567,7 @@ define(function(require, exports, module) {
         view_type: 'stumanage'
     });
 
-    // 提示信息视图
+    // 动态提示信息视图
     var TipInfoView = Backbone.View.extend({
         tagName: 'div',
         className: 'info-b',
@@ -599,6 +599,23 @@ define(function(require, exports, module) {
         showInfoTip: function (e) {
             e.stopPropagation();
             this.model.attributes.unfoldLeftMenu();
+        }
+    });
+
+    var HwDynamicView = Backbone.View.extend({
+        tagName: 'div',
+        className: 'hw-dynamic',
+        events: {
+
+        },
+        tmpl_id: 'hw-dynamic-html',
+        initialize: function () {
+            this.render();
+        },
+        render: function () {
+            var ele = tmpl(this.tmpl_id);
+            $(this.el).html(ele);
+            $('#content').html(this.el);
         }
     });
 
@@ -681,14 +698,26 @@ define(function(require, exports, module) {
             // 执行渲染
             this.initView();
         },
+        // 获取页面title
+        setSiteTitle: function (type) {
+            switch (type) {
+                case 'man': return '作业网-个人中心';
+                case 'csmanage': return '作业网-课程管理';
+                case 'hwmanage': return '作业网-作业管理';
+                case 'stumanage': return '作业网-学生管理';
+                default : return '作业网';
+            }
+        },
         closeType: function ($type) {
-            $type.replaceClass('t-close', 't-open');
-            $type.prev().find('span.t-rotate').replaceClass('t-rotate-close', 't-rotate-open');
+            var nli = $type.children().length;
+            $type.removeClass('t-open' + nli);
+            $type.prev().find('span.t-rotate').removeClass('t-rotate-open');
             return $type;
         },
         openType: function ($type) {
-            $type.replaceClass('t-open', 't-close');
-            $type.prev().find('span.t-rotate').replaceClass('t-rotate-open', 't-rotate-close');
+            var nli = $type.children().length;
+            $type.addClass('t-open' + nli);
+            $type.prev().find('span.t-rotate').addClass('t-rotate-open');
             return $type;
         },
         activeBar: function ($bar, active) {
@@ -711,7 +740,7 @@ define(function(require, exports, module) {
             var $ele = $(e.currentTarget);
             this.type = $ele.parent().attr('data-type');
             this.bar = $ele.attr('data-bar');
-            approuter.navigate('main/' + this.type + '/' + this.bar, {trigger: false});
+            appNavigate('main/' + this.type + '/' + this.bar, this.setSiteTitle(this.type), {trigger: false});
             this.closeType(this.$old_el);
             this.activeBar(this.$old_bar, false);
             this.showState(this.type, this.bar);
@@ -720,8 +749,9 @@ define(function(require, exports, module) {
             var $temp_el = $(e.currentTarget),
                 $ul = $temp_el.next(); // 获取ul元素
             this.type = $temp_el.attr('data-type'); // 获取用户点击的菜单项type
+            console.log($ul.css('height'))
             if (this.$old_el[0] === $ul[0]) {
-                if ($ul.hasClass('t-close')) {
+                if ($ul.css('height') == '0px') {
                     this.openType($ul);
                 }
                 else {
@@ -738,7 +768,7 @@ define(function(require, exports, module) {
                 $curli = $(e.currentTarget);
             this.bar = $curli.attr('data-bar');
             var datatype = this.type + '/' + this.bar;
-            window.approuter.navigate('main/' + this.type + '/' + this.bar, {trigger: false});
+            appNavigate('main/' + this.type + '/' + this.bar, this.setSiteTitle(this.type), {trigger: false});
             this.activeBar(this.$old_bar, false);
             this.activeBar($curli, true);
             this.$old_bar = $curli;
@@ -757,6 +787,7 @@ define(function(require, exports, module) {
                     that.getHwInfoData();
                     break;
                 case 'hwmanage/hwdynamic':
+                    that.getHwDynamic();
                     break;
                 case  'stumanage/stuinfo':
                     this.GetStuInfoData();
@@ -794,7 +825,7 @@ define(function(require, exports, module) {
                 unfoldLeftMenu: function () {
                     that.type = 'hwmanage';
                     that.bar = 'hwdynamic';
-                    approuter.navigate('main/hwmanage/hwdynamic', {trigger: false});
+                    appNavigate('main/hwmanage/hwdynamic', that.setSiteTitle(that.type), {trigger: false})
                     that.closeType(that.$old_el);
                     that.activeBar(that.$old_bar, false);
                     that.showState(that.type, that.bar);
@@ -860,6 +891,9 @@ define(function(require, exports, module) {
         getHwInfoData: function () { // 获取课程信息
             this.views.workinfoview = new WorkInfoView;
         },
+        getHwDynamic: function () {
+            new HwDynamicView;
+        },
         getCsMailData: function () {
             var that = this;
             this.models.csmailmodel = new TypeModel;
@@ -891,14 +925,14 @@ define(function(require, exports, module) {
         },
         exitApp: function () {
             $.ajax({
-                url: servicepath + 'logout',
-                type: 'post',
+                url: servicepath + 'login/logout',
+                type: 'get',
                 data: null,
                 dataType: 'json',
                 timeOut: 10000,
                 success: function (data) {
                     console.log('退出', data);
-                    approuter.navigate('login', {trigger: true});
+                    appNavigate('login', '登陆作业网', {trigger: true});
                 },
                 error: function (xhr, error, obj) {
                     console.error(error);

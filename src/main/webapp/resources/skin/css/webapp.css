@@ -97,6 +97,7 @@ nav {
     top: 59px;
     left: 0;
     width: 100%;
+    font-size: 16px;
     padding-top: 5px;
     overflow: hidden;
 }
@@ -279,6 +280,8 @@ header {
     zoom: 1;
 }
 
+/*左侧菜单栏*/
+
 .content, .left-nav {
     float: left;
 }
@@ -292,19 +295,19 @@ header {
     text-align: center;
     padding: 10px 0;
     border-bottom: 1px solid #d1f4ff;
-    background-color: #3fd0ff;
+    background-color: #4fc5c7;
     cursor: pointer;
     position: relative;
 }
 
-.l-menu span {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    background-image: url("../images/icon.png");
-    background-repeat: no-repeat;
-    vertical-align: middle;
-}
+/*.l-menu span {*/
+    /*display: inline-block;*/
+    /*width: 30px;*/
+    /*height: 30px;*/
+    /*background-image: url("../images/icon.png");*/
+    /*background-repeat: no-repeat;*/
+    /*vertical-align: middle;*/
+/*}*/
 
 .man {
     background-position: 0 0;
@@ -314,11 +317,22 @@ header {
     background-position: 0 -30px;
 }
 
-.l-menu span.bn-slide {
-    width: 30px;
-    background-position: 0 -60px;
+/*.l-menu span.bn-slide {*/
+    /*width: 30px;*/
+    /*background-position: 0 -60px;*/
+    /*position: absolute;*/
+    /*right: 0;*/
+/*}*/
+
+.bn-slide {
+    display: block;
+    border-left: 10px #fff solid;
+    border-bottom: 8px transparent solid;
+    border-top: 8px transparent solid;
     position: absolute;
-    right: 0;
+    right: 10px;
+    top: 50%;
+    margin-top: -8px;
 }
 
 .l-menu + ul li {
@@ -347,10 +361,12 @@ header {
     border-top: 8px solid transparent;
     border-bottom: 8px solid transparent;
     position: absolute;
-    right: 0px;
+    right: 0;
     top: 50%;
     margin-top: -8px;
 }
+
+/*end 左侧菜单栏*/
 
 .content {
     width: 760px;
@@ -691,7 +707,7 @@ footer {
     background-color: #5cb85c;
     border: 1px #4cae4c solid;
     min-width: 90px;
-    height: 30px;
+    line-height: 30px;
     color: #fff;
     font-weight: bold;
     font-size: 16px;
@@ -1354,3 +1370,12 @@ span.dailog-clear:after {
 }
 
 /*end课程邮箱设置*/
+
+/*作业动态*/
+
+.hw-dynamic>div>div:first-child {
+    font-size: 18px;
+    position: relative;
+}
+
+/*end作业动态*/

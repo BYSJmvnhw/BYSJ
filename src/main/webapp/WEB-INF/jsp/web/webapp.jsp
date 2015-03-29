@@ -3,7 +3,6 @@
 <html>
 <head lang="zn">
     <meta charset="UTF-8">
-    <title>个人信息</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/skin/css/login.css">
     <%--<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/skin/css/webapp.css">--%>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/skin/css/transition.css">

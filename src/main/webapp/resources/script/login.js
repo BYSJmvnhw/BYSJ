@@ -74,9 +74,7 @@ define(function(require, exports, module) {
         },
         loginSuccess: function (type, bar) {
             // 登陆成功后，改变url，触发相应路由地址的操作
-            window.approuter.navigate('main/' + type + '/' + bar, {
-                trigger: true
-            });
+            appNavigate('main/' + type + '/' + bar, '个人中心', {trigger: true});
         },
         showLoad: function () {
             var $shade = this.$el.find('#lg-shade');
@@ -107,7 +105,12 @@ define(function(require, exports, module) {
         $view_el: $('#login'),
         $main_el: $('#main'),
         initialize: function () {
-            this.navigate('login', {trigger:true}); // 设置登录路由地址
+            var that = this;
+            window.appNavigate = function (url, title, setting){
+                that.navigate(url, setting); // 设置登录路由地址
+                document.title = title;
+            };
+            appNavigate('login', '登陆作业网', {trigger:true}); // 设置登录路由地址
         },
         jmpPart: function (part, type, bar) { // 页面切换
             var that =this;
