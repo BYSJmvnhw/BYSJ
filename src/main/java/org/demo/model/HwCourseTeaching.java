@@ -83,7 +83,7 @@ public class HwCourseTeaching implements Serializable{
         this.hwTeacher = hwTeacher;
     }
 
-    @Column(name = "start_year", insertable = false, updatable= false )
+    @Column(name = "start_year" )
     public Integer getStartYear() {
         return startYear;
     }
@@ -110,7 +110,7 @@ public class HwCourseTeaching implements Serializable{
         this.hwHomeworkInfos = hwHomeworkInfos;
     }
 
-    @Column(name = "email", insertable = false, updatable= false )
+    @Column(name = "email")
     public String getEmail() {
         return email;
     }
@@ -119,7 +119,7 @@ public class HwCourseTeaching implements Serializable{
         this.email = email;
     }
 
-    @Column(name = "password", insertable = false, updatable= false )
+    @Column(name = "password")
     public String getPassword() {
         return password;
     }

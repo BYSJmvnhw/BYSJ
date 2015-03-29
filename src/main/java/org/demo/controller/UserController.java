@@ -6,6 +6,7 @@ import net.sf.json.JsonConfig;
 import org.demo.model.*;
 import org.demo.service.IStudentService;
 import org.demo.service.ITeacherService;
+import org.demo.service.IUserService;
 import org.demo.tool.ObjectJsonValueProcessor;
 import org.demo.tool.UserType;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,7 @@ public class UserController {
 
     private IStudentService studentService;
     private ITeacherService teacherService;
+    private IUserService userService;
     @RequestMapping("/info")
     @ResponseBody
     public JSONObject userInfo(HttpServletRequest request) {
@@ -34,46 +36,35 @@ public class UserController {
         HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
         UserType userType = (UserType)request.getSession().getAttribute("userType");
 
-        JsonConfig userConfig = new JsonConfig();
-        userConfig.setExcludes(new String[]{"password","createId",
-                "createUsername","createDate", "typeId","hwRoles","deleteFlag"});
-
-        /*JSONArray jsonArray = new JSONArray();
-        jsonArray.add(user, userConfig);*/
-
-        /**根据用户类型获取登录学生或者老师的其他个人信息*/
-        JSONObject jsonObject;
-        if( userType == UserType.STUDENT ) {
-            //Object student = request.getSession().getAttribute("loginStudent");
-            JsonConfig jsonConfig = new JsonConfig();
-            jsonConfig.setExcludes(new String[]{"hibernateLazyInitializer", "handler",
-                    "hwCourseSelectings", "hwHomeworks", "deleteFlag"});
-            jsonConfig.registerJsonValueProcessor(HwMajor.class,
-                    new ObjectJsonValueProcessor(new String[]{"name"}, HwMajor.class));
-            jsonConfig.registerJsonValueProcessor(HwCollege.class,
-                    new ObjectJsonValueProcessor(new String[]{"collegeName"}, HwCollege.class));
-            jsonConfig.registerJsonValueProcessor(HwCampus.class,
-                    new ObjectJsonValueProcessor(new String[]{"name"},HwCampus.class));
-            HwStudent student = studentService.load(user.getTypeId());
-            jsonObject = JSONObject.fromObject(student, jsonConfig);
-            //jsonArray.add(student, jsonConfig);
-        } else{
-            JsonConfig jsonConfig = new JsonConfig();
-            jsonConfig.setExcludes(new String[]{"hibernateLazyInitializer", "handler",
-                    "hwHomeworks", "hwCourseTeachings", "deleteFlag"});
-            jsonConfig.registerJsonValueProcessor(HwMajor.class,
-                    new ObjectJsonValueProcessor(new String[]{"name"}, HwMajor.class));
-            jsonConfig.registerJsonValueProcessor(HwCollege.class,
-                    new ObjectJsonValueProcessor(new String[]{"collegeName"}, HwCollege.class));
-            jsonConfig.registerJsonValueProcessor(HwCampus.class,
-                    new ObjectJsonValueProcessor(new String[]{"name"},HwCampus.class));
-            HwTeacher teacher = teacherService.load(user.getTypeId());
-            jsonObject = JSONObject.fromObject(teacher,jsonConfig);
-            //jsonArray.add(teacher, jsonConfig);
+        try{
+            return userService.userInfo(user,userType);
+        }catch (Exception e) {
+            e.printStackTrace();
+            JSONObject result = new JSONObject();
+            result.put("msg","fail");
+            return result;
         }
-        return jsonObject;
-        //return  jsonArray;
     }
+
+    @RequestMapping("/email")
+    @ResponseBody
+    public JSONObject userEmail(HttpServletRequest request) {
+        HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
+       try {
+           return userService.userEmail(user);
+       }catch (Exception e) {
+           e.printStackTrace();
+           JSONObject result = new JSONObject();
+           result.put("msg","fail");
+           return result;
+       }
+    }
+
+/*    @RequestMapping("/updateUserInfo")
+    @ResponseBody
+    public JSONObject updateUserInfo(HttpServletRequest request){
+        return null;
+    }*/
 
     public IStudentService getStudentService() {
         return studentService;
@@ -91,5 +82,14 @@ public class UserController {
     @Resource
     public void setTeacherService(ITeacherService teacherService) {
         this.teacherService = teacherService;
+    }
+
+    public IUserService getUserService() {
+        return userService;
+    }
+
+    @Resource
+    public void setUserService(IUserService userService) {
+        this.userService = userService;
     }
 }

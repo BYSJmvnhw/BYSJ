@@ -173,7 +173,7 @@ public class HwUser implements java.io.Serializable {
         this.typeId = typeId;
     }
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "hw_user_role", catalog = "homework", joinColumns = { @JoinColumn(name = "user_id", updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "role_id", updatable = false) })
+	@JoinTable(name = "hw_user_role", catalog = "homework", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = { @JoinColumn(name = "role_id") })
 	public Set<HwRole> getHwRoles() {
 		return this.hwRoles;
 	}

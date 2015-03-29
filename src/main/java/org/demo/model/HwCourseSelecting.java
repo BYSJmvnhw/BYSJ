@@ -69,43 +69,5 @@ public class HwCourseSelecting implements java.io.Serializable{
     public void setHwCourseTeaching(HwCourseTeaching hwCourseTeaching) {
         this.hwCourseTeaching = hwCourseTeaching;
     }
-/*    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id")
-    public HwCourse getHwCourse() {
-        return hwCourse;
-    }
-
-    public void setHwCourse(HwCourse hwCourse) {
-        this.hwCourse = hwCourse;
-    }
-
-    //@JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "teacher_id")
-    public HwTeacher getHwTeacher() {
-        return hwTeacher;
-    }
-
-    public void setHwTeacher(HwTeacher hwTeacher) {
-        this.hwTeacher = hwTeacher;
-    }
-
-    @Column(name = "start_year", insertable = false, updatable= false )
-    public Integer getStartYear() {
-        return startYear;
-    }
-
-    public void setStartYear(Integer startYear) {
-        this.startYear = startYear;
-    }
-
-    @Column(name = "school_term")
-    public Integer getSchoolTerm() {
-        return schoolTerm;
-    }
-
-    public void setSchoolTerm(Integer schoolTerm) {
-        this.schoolTerm = schoolTerm;
-    }*/
 
 }

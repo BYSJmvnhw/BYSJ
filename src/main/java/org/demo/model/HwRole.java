@@ -115,7 +115,7 @@ public class HwRole implements java.io.Serializable {
 	}
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "hw_permission_role", catalog = "homework", joinColumns = { @JoinColumn(name = "role_id", updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "permission_id", updatable = false) })
+	@JoinTable(name = "hw_permission_role", catalog = "homework", joinColumns = { @JoinColumn(name = "role_id") }, inverseJoinColumns = { @JoinColumn(name = "permission_id") })
 	public Set<HwPermission> getHwPermissions() {
 		return this.hwPermissions;
 	}

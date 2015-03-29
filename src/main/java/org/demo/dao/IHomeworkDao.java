@@ -4,6 +4,8 @@ import org.demo.model.HwHomework;
 import org.demo.model.HwStudent;
 import org.demo.tool.Page;
 
+import java.util.List;
+
 /**
  * Created by jzchen on 2015/1/13.
  */
@@ -15,4 +17,5 @@ public interface IHomeworkDao extends IBaseDao<HwHomework> {
 
     public HwHomework findHomework(Integer hwinfoId, HwStudent student);
 
+    public List<HwHomework> homeworkList(Integer hwInfoId);
     }
