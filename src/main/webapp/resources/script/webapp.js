@@ -501,7 +501,7 @@ define(function(require, exports, module) {
         }
     });
 
-    // 作业信息模版，生成作业信息所有模板
+    // 信息模版
     var HwInfoView = Backbone.View.extend({
         tagName: 'div',
         className: 'hw-content-wrap hw-content-wrap-k hw-content-wrap-1',
@@ -512,7 +512,6 @@ define(function(require, exports, module) {
             'click .choice-sure-btn': 'termCourse' // 搜索按钮
         },
         initialize: function () {
-            _.bindAll(this, 'render');
             this.render(); // 初始化作业信息基本视图
             this.getCourseData(2011, 1);
         },

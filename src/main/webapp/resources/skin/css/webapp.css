@@ -343,11 +343,13 @@ header {
 
 .l-menu + ul li.l-active:after {
     content: '';
-    border-left: 16px solid #3fd0ff;
+    border-right: 10px solid #FFFFFF;
     border-top: 8px solid transparent;
     border-bottom: 8px solid transparent;
     position: absolute;
-    right: -16px;
+    right: 0px;
+    top: 50%;
+    margin-top: -8px;
 }
 
 .content {
