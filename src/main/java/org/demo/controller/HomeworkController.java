@@ -1,6 +1,7 @@
 package org.demo.controller;
 
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.demo.model.*;
 import org.demo.service.*;
@@ -94,7 +95,7 @@ public class HomeworkController {
      * */
     @RequestMapping(value = "/homeworkInfoList", method = RequestMethod.GET)
     @ResponseBody
-    public JSONObject homeworkInfoList(Integer cid, HttpServletRequest request)  {
+    public Object homeworkInfoList(Integer cid, HttpServletRequest request)  {
         try {
             return homeworkService.homeworListInfoPage(cid);
         } catch (Exception e) {

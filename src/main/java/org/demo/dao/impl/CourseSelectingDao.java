@@ -33,4 +33,11 @@ public class CourseSelectingDao extends BaseDao<HwCourseSelecting> implements IC
         String hql = "from HwCourseSelecting cs where cs.hwCourseTeaching.id = ?";
         return list(hql,courseTeachingId);
     }
+
+    @Override
+    public Long countByCtId(Integer ctId) {
+        String hql = "select count(*) from HwCourseSelecting cs where " +
+                "cs.hwCourseTeaching.id = ? ";
+        return count(hql, ctId);
+    }
 }
