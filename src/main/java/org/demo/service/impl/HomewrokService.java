@@ -1,5 +1,7 @@
 package org.demo.service.impl;
 
+import freemarker.template.utility.DateUtil;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import org.apache.commons.io.FileUtils;
@@ -16,12 +18,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.persistence.OneToMany;
+import javax.tools.Tool;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.NotDirectoryException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by jzchen on 2015/1/14.
@@ -117,13 +120,30 @@ public class HomewrokService implements IHomeworkService {
     }
 
     @Override
-    public JSONObject homeworListInfoPage(Integer courseTeachingId) {
-        Page page = homeworkInfoDao.homeworListInfoPage(courseTeachingId);
+    public JSONArray homeworListInfoPage(Integer courseTeachingId) {
+        //根据授课关系id统计该门课程每次作业已经上交的人数。
+        HwCourseTeaching ct = courseTeachingDao.load(courseTeachingId);
+        //根据授课关系id统计该门课程选课总人数，即应交作业总人数。
+        Long sum = courseSelectingDao.countByCtId(courseTeachingId);
+        //通过sql连表l查询出所需要的字段
+        List<Object[]> countSubmittedList = homeworkDao.countSubmitted(ct.getHwCourse().getId(), ct.getHwTeacher().getId());
+        //存放返回结果的列表
+        List<HashMap<String,Object>> resultList = new ArrayList<HashMap<String,Object>>();
+        //构造键值
+        for(Object[] o : countSubmittedList) {
+            HashMap<String, Object> resultMap = new HashMap<String, Object>();
+            resultMap.put("hwInfoId", o[0]);
+            resultMap.put("title",o[1]);
+            resultMap.put("deadline",o[2]);
+            resultMap.put("overtime",o[3]);
+            resultMap.put("submitted",o[4]);
+            resultMap.put("sum",sum);
+            resultList.add(resultMap);
+        }
         JsonConfig jsonConfig = new JsonConfig();
-        jsonConfig.setExcludes(new String[]{"hwHomeworks","hwCourseTeaching","hwDesc","email","courseName","createDate","url",
-                "hibernateLazyInitializer", "handler"});
         jsonConfig.registerJsonValueProcessor(Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd HH:mm:ss"));
-        return JSONObject.fromObject(page, jsonConfig);
+        JSONArray  jsonObject = JSONArray.fromObject(resultList,jsonConfig);
+        return jsonObject;
     }
 
     @Override

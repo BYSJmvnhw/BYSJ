@@ -13,14 +13,13 @@ import net.sf.json.JsonConfig;
 import net.sf.json.processors.JsonValueProcessor;
 
 public class DateJsonValueProcessor implements JsonValueProcessor {
-    public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd";
+    public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
     private DateFormat dateFormat;
 
-    /**
-     * 构造方法.
-     *
-     * @param datePattern 日期格式
-     */
+    public DateJsonValueProcessor() {
+        this.dateFormat = new SimpleDateFormat(DEFAULT_DATE_PATTERN);
+    }
+
     public DateJsonValueProcessor(String datePattern) {
         try {
             dateFormat = new SimpleDateFormat(datePattern);

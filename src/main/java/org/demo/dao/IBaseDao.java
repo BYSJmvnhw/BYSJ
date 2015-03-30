@@ -2,6 +2,7 @@ package org.demo.dao;
 
 import org.demo.tool.Page;
 
+import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.util.List;
 
@@ -38,6 +39,9 @@ public interface IBaseDao<T> {
 
     public T findObjectWithSql(String sql);
 
+    //可以修改默认分页大小，但要用原始方法
+    public Page<T> findPage(String hql, Object[] params, String[] strings, Integer pageSize);
+
     public Page<T> findPage(String hql, Object[] params, String[] strings);
 
     public Page<T> findPage(String hql, Object[] params, String string);
@@ -56,8 +60,28 @@ public interface IBaseDao<T> {
 
     public Page<T> findPage(String hql);
 
+    public Long count(String hql, Object[] params);
 
+    public Long count(String hql, Object param);
+
+    public Long count(String hql);
+
+    //返回列表分页但非分页类
+    public List pageList(String hql, Object[] params, Integer pageSize);
 
     /*  通过 hql 获取计数 hql */
     public String  getCountHql(String hql);
+
+    //sql查询分页列表
+    public List  listWithSql(String sql, Object[] params, Integer pageSize);
+
+    public List listWithSql(String sql, Object param, Integer pageSize);
+
+    public List listWithSql(String sql,  Integer pageSize);
+
+    public List listWithSql(String sql,  Object[] params);
+
+    public List listWithSql(String sql, Object param);
+
+    public List listWithSql(String sql);
 }

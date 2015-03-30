@@ -1,5 +1,6 @@
 package org.demo.service;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.demo.model.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +26,7 @@ public interface IHomeworkService {
 
     public JSONObject courseTeachingPage(HwUser user, Integer startYear, Integer schoolTerm);
 
-    public JSONObject homeworListInfoPage(Integer courseTeachingId);
+    public JSONArray homeworListInfoPage(Integer courseTeachingId);
 
     public JSONObject homeworkInfoDetail(Integer hwInfoId);
 
