@@ -5,15 +5,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.zhuozhengsoft.pageoffice.*;
 import net.sf.json.JSONObject;
-import org.demo.model.HwHomework;
-import org.demo.model.HwTeacher;
-import org.demo.model.HwUser;
+import org.apache.commons.io.FileUtils;
+import org.demo.dao.IStudentDao;
+import org.demo.model.*;
 import org.demo.service.IHomeworkService;
+import org.demo.service.IStudentService;
 import org.demo.service.ITeacherService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.io.File;
+import java.nio.file.NotDirectoryException;
 
 @Controller
 @RequestMapping("/homework")
@@ -22,14 +26,20 @@ public class OpenWordController {
     private static final long serialVersionUID = -758686623642845302L;
 
 	private IHomeworkService homeworkService;
+	private IStudentService studentService;
 	private String homeworkBaseDir;
-    private String message = "111";
+    private String message;
 
 	public String getMessage(){
     	return message;
     }
-
 	private ITeacherService teacherService;
+
+	/**
+	 * 根据作业信息id打开word文档的接口
+	 * @param hwId 作业信息id
+	 * @throws Exception
+	 */
 	@RequestMapping("/openword")
 	public String openword(Integer hwId, HttpServletRequest request) throws Exception {
 		PageOfficeCtrl poCtrl1 = new PageOfficeCtrl(request);
@@ -37,8 +47,8 @@ public class OpenWordController {
 		 * 设置 PageOfficeCtrl 控件的运行服务页面
 		 * */
 		// 访问的是当前的相对路径，web.xml中 servlet的 url-pattern 必须拦截webapp根目录之后的路径，此处为 homework/poserver.do
+		//新建PageOfficeCtrl对象
 		poCtrl1.setServerPage("poserver.do"); //此行必须
-
 		try{
 			//获取作业的url
 			HwHomework homework = homeworkService.load(hwId);
@@ -47,7 +57,31 @@ public class OpenWordController {
 			HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
 			HwTeacher teacher = teacherService.load(user.getTypeId());
 			String name  = teacher.getName();
-			//新建PageOfficeCtrl对象
+
+			HwStudent student = homework.getHwStudent();
+			request.setAttribute("student",student);
+			HwHomeworkInfo hwHomeworkInfo = homework.getHwHomeworkInfo();
+			request.setAttribute("hwInfo", hwHomeworkInfo);
+
+			//若找不到配置的磁盘目录，则使用项目下的备用路径
+			String backupPath = request.getServletContext().getRealPath("/doc");
+			String realPath = homeworkBaseDir;
+			System.out.println(homeworkBaseDir);
+			try {
+            /* 若指定目录不存在，则抛异常*/
+				File dirname = new File(homeworkBaseDir);
+				if ( !dirname.isDirectory() ) {
+					throw new NotDirectoryException("homeworkBaseDir ---> " + homeworkBaseDir + " is not found! "
+							+ " files were all putted into [" + backupPath + "]");
+				}
+				realPath = realPath + "/doc";
+			} catch (NotDirectoryException e ) {
+				/**使用web应用路径下的默认目录*/
+				e.printStackTrace();
+				realPath = backupPath;
+			}finally {
+				System.out.println("homeworkBaseDir ---> " + realPath);
+			}
 
 			// Create custom toolbar
 			poCtrl1.addCustomToolButton("保存", "SaveDocument()", 1);
@@ -63,12 +97,12 @@ public class OpenWordController {
 			poCtrl1.setSaveFilePage("saveword");
 			//设置打开文件的绝对路径
 			//poCtrl1.webOpen( homeworkBaseDir + "/doc/test.doc", OpenModeType.docNormalEdit, "张三");
-			poCtrl1.webOpen( homeworkBaseDir + "/doc" + url, OpenModeType.docNormalEdit, name);
+			poCtrl1.webOpen( realPath + url, OpenModeType.docNormalEdit, name);
 			poCtrl1.setTagId("PageOfficeCtrl1"); //此行必须
 			return "homework/editword";
 		} catch (Exception e) {
 			e.printStackTrace();
-			poCtrl1.setTagId("PageOfficeCtrl1"); //此行必须
+			poCtrl1.setTagId("PageOfficeCtrl1"); //此行必须，否则PageOffice自带的servlet会报错。
 			return "homework/editword";
 		}
 	}
@@ -126,5 +160,13 @@ public class OpenWordController {
 	@Resource
 	public void setTeacherService(ITeacherService teacherService) {
 		this.teacherService = teacherService;
+	}
+
+	public IStudentService getStudentService() {
+		return studentService;
+	}
+	@Resource
+	public void setStudentService(IStudentService studentService) {
+		this.studentService = studentService;
 	}
 }
