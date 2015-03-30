@@ -45,7 +45,7 @@
           jsonObject: JSON.stringify(
               {
                   title: "123",
-                  hwDesc: "desc",
+                  hwDesc: "表示表示",
                   deadline: Date.parse(new Date()),
                   email: "623487211@qq.com",
                   courseName: "courseName",

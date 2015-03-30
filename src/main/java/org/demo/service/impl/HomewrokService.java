@@ -208,16 +208,21 @@ public class HomewrokService implements IHomeworkService {
     @Override
     public void upload(MultipartFile hw, Integer hwinfoId,HwUser user, String backupPath ) throws IOException {
         HwHomeworkInfo hwinfo = homeworkInfoDao.load(hwinfoId);
-        /**获取后缀*/
         HwStudent student = studentDao.load(user.getTypeId());
-        String hwName = student.getStudentNo() + "_" +student.getName() + hw.getOriginalFilename().substring
-                (hw.getOriginalFilename().lastIndexOf("."));
+        /**拼装文件名以及获取文件后缀名*/
+        String hwName = student.getStudentNo() + "_" +student.getName() +
+                hw.getOriginalFilename().substring( hw.getOriginalFilename().lastIndexOf("."));
+        //获取作业信息的 baseUrl
         String baseUrl = hwinfo.getUrl();
+        //拼接最终的文件url
         String url = baseUrl + hwinfo.getId() + "/" + hwName;
-
+        System.out.println(url);
         HwCourseTeaching ct = hwinfo.getHwCourseTeaching();
+        //拼接作业编号
         String hwNo = ct.getStartYear().toString() + ct.getSchoolTerm().toString() +  ct.getHwCourse().getCourseNo()  + student.getStudentNo();
+        //获取作业对象并更新作业的信息
         HwHomework homework = homeworkDao.findHomework(hwinfoId, student);
+        System.out.println(homework.getId());
         homework.setTitle(hwinfo.getTitle());
         homework.setUrl(url);
         homework.setHwNo(hwNo);
@@ -225,22 +230,24 @@ public class HomewrokService implements IHomeworkService {
         homeworkDao.update(homework);
 
         /**判断预设的目录的是否存在，不存在则使用web应用路径下的默认目录*/
+        //声明最终的路径
+        String realPath = homeworkBaseDir;
         try {
-            System.out.println( "BaseDir" + homeworkBaseDir);
             /* 若指定目录不存在，则抛异常*/
             File dirname = new File(homeworkBaseDir);
-            if ( !dirname.isDirectory() )
-                throw new NotDirectoryException( "homeworkDir" + homeworkBaseDir + " is not found."
-                        +"[ files were all putted into "+ backupPath + "]");
+            if ( !dirname.isDirectory() ) {
+                throw new NotDirectoryException("homeworkBaseDir ---> " + homeworkBaseDir + " is not found! "
+                        + " files were all putted into [" + backupPath + "]");
+            }
+            realPath = realPath + "/doc";
         } catch (NotDirectoryException e ) {
             /**使用web应用路径下的默认目录*/
-            homeworkBaseDir = backupPath;
             e.printStackTrace();
+            realPath = backupPath;
         }finally {
-            //String finalDir = homeworkBaseDir + "/" + sdf.format(new Date()) ;
-            System.out.println(homeworkBaseDir);
-            //File f = new File( homeworkBaseDir + "/" + hw.getOriginalFilename() );
-            File f = new File( homeworkBaseDir + "/doc/" + url );
+            //realPath = backupPath;
+            System.out.println("homeworkBaseDir ---> " + realPath);
+            File f = new File( realPath + url );
             FileUtils.copyInputStreamToFile(hw.getInputStream(), f);
         }
     }
