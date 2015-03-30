@@ -132,7 +132,7 @@ public class HomewrokService implements IHomeworkService {
         //构造键值
         for(Object[] o : countSubmittedList) {
             HashMap<String, Object> resultMap = new HashMap<String, Object>();
-            resultMap.put("id", o[0]);
+            resultMap.put("hwInfoId", o[0]);
             resultMap.put("title",o[1]);
             resultMap.put("deadline",o[2]);
             resultMap.put("overtime",o[3]);

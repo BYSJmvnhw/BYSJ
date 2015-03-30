@@ -5,6 +5,7 @@ import org.demo.model.HwUser;
 import org.demo.service.IMessageService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
@@ -20,7 +21,12 @@ public class MessageController {
 
     private IMessageService messageService;
 
-    @RequestMapping("/unSubmited")
+    /**
+     * 学生登录提示信息，获取未提交作业信息接口
+     * @param request HttpRequest请求，用于获取当前登录用户
+     * @return
+     */
+    @RequestMapping(value = "/unSubmited", method = RequestMethod.GET)
     @ResponseBody
     public Object unSubmited(HttpServletRequest request) {
         try {
@@ -32,7 +38,12 @@ public class MessageController {
         }
     }
 
-    @RequestMapping("/recentHomework")
+    /**
+     * 学生登录提示信息，获取最近作业信息接口，用于提交作业或者重新提交
+     * @param request HttpRequest请求，用于获取当前登录用户
+     * @return
+     */
+    @RequestMapping(value = "/recentHomework" , method = RequestMethod.GET)
     @ResponseBody
     public Object recentHomework(HttpServletRequest request){
         try{
