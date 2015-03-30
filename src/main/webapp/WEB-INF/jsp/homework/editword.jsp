@@ -30,7 +30,7 @@
 <script language="javascript" type="text/javascript">
   function SaveDocument() {
     document.getElementById("PageOfficeCtrl1").WebSave();
-    //alert(document.getElementById("PageOfficeCtrl1").CustomSaveResult);
+   console.log(document.getElementById("PageOfficeCtrl1").CustomSaveResult);
   }
   function ShowPrintDlg() {
     document.getElementById("PageOfficeCtrl1").ShowDialog(4);
@@ -53,9 +53,16 @@
     {
     }
   }
+  function ShowPageOfficeName() {
+    alert(document.getElementById("PageOfficeCtrl1").Caption);//显示PageOffice标题
+  }
+  //document.getElementById("PageOfficeCtrl1").JsFunction_AfterDocumentSaved = "aaa()";
+  function aaa(){
+    alert("!!!");
+  }
 </script>
 <!--**************   卓正 PageOffice 客户端代码结束    ************************-->
-<div style="width:auto; height:600px;">
+<div style="width:80%; height:600px;">
   <po:PageOfficeCtrl id="PageOfficeCtrl1" />
 </div>
 </body>

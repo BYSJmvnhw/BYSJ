@@ -123,33 +123,15 @@ public class BaseDao<T> implements IBaseDao<T> {
     }
 
     @Override
-    public T findObjectWithSql(String sql, Object[] args)
-    {
-        SQLQuery sq = getSession().createSQLQuery(sql);
-        if( args != null ){
-            for( int i =0; i<args.length; i++ ) {
-                sq.setParameter( i, args[i] );
-            }
-        }
-        T t = (T) sq.uniqueResult();
-        return t;
-    }
-
-    @Override
-    public T findObjectWithSql(String sql, Object arg) {
-        return this.findObjectWithSql(sql, new Object[] {arg});
-    }
-
-    @Override
-    public T findObjectWithSql(String sql) {
-        return this.findObjectWithSql(sql, null);
-    }
-
-    @Override
-    public Page<T> findPage(String hql, Object[] params, String[] strings) {
+    public Page<T> findPage(String hql, Object[] params, String[] strings, Integer pageSize) {
         Page<T> page = new Page<T>();
-        int pageOffset = SystemContext.getPageOffset();
-        int pageSize = SystemContext.getPageSize();
+        int po = SystemContext.getPageOffset();
+        int ps;
+        if( pageSize != null){
+            ps = pageSize;
+        }else {
+            ps = SystemContext.getPageSize();
+        }
         Query q = getSession().createQuery(hql);
         /*  获取计数hql */
         Query cq = getSession().createQuery(getCountHql(hql));
@@ -170,61 +152,109 @@ public class BaseDao<T> implements IBaseDao<T> {
         /* 获取记录条数 */
         // System.out.println(q.toString());
         long totalRecord =(Long) cq.uniqueResult();
-        q.setFirstResult(pageOffset);
-        q.setMaxResults(pageSize);
+        q.setFirstResult(po);
+        q.setMaxResults(ps);
         /* 获取分页数据 */
         List data = q.list();
         //System.out.println(data.size());
         //if( data.isEmpty()  ) {
-            //System.out.println(data.size());
-            //page.setData(null);
+        //System.out.println(data.size());
+        //page.setData(null);
         //} else {
-            page.setData(data);
+        page.setData(data);
         //}
-        page.setPageOffsset(pageOffset);
-        page.setPageSize(pageSize);
+        page.setPageOffsset(po);
+        page.setPageSize(ps);
         page.setTotalRecord(totalRecord);
         return page;
     }
 
     @Override
+    public Page<T> findPage(String hql, Object[] params, String[] strings) {
+        return this.findPage(hql, params, strings, null);
+    }
+
+    @Override
     public Page<T> findPage(String hql, Object[] params, String string) {
-        return this.findPage(hql, params, new String[]{string});
+        return this.findPage(hql, params, new String[]{string}, null);
     }
 
     @Override
     public Page<T> findPage(String hql, Object[] params) {
-        return this.findPage(hql, params, (String[]) null);
+        return this.findPage(hql, params, null,  null);
     }
 
     @Override
     public Page<T> findPage(String hql, Object param, String[] strings) {
-        return this.findPage(hql, new Object[]{param}, strings);
+        return this.findPage(hql, new Object[]{param}, strings, null);
     }
 
     @Override
     public Page<T> findPage(String hql, Object param, String string) {
-        return this.findPage(hql, new Object[]{param}, new String[]{string});
+        return this.findPage(hql, new Object[]{param}, new String[]{string}, null);
     }
 
     @Override
     public Page<T> findPage(String hql, String[] strings) {
-        return this.findPage(hql, null, strings);
+        return this.findPage(hql, null, strings, null);
     }
 
     @Override
     public Page<T> findPage(String hql, String string) {
-        return this.findPage(hql, null, new String[]{string});
+        return this.findPage(hql, null, new String[]{string}, null);
     }
 
     @Override
     public Page<T> findPage(String hql, Object param) {
-        return this.findPage(hql, new Object[] {param}, (String[])null);
+        return this.findPage(hql, new Object[] {param}, null, null);
     }
 
     @Override
     public Page<T> findPage(String hql) {
-        return this.findPage(hql, null, (String[]) null);
+        return this.findPage(hql, null, null, null);
+    }
+
+    @Override
+    public Long count(String hql, Object[] params) {
+        Query q = getSession().createQuery(hql);
+        if( params!=null ) {
+            for (int i = 0; i < params.length; i++) {
+                q.setParameter(i, params[i]);
+            }
+        }
+        return (Long)q.uniqueResult();
+    }
+
+    @Override
+    public Long count(String hql, Object param) {
+        return count(hql, new Object[]{param});
+    }
+
+    @Override
+    public Long count(String hql) {
+        return count(hql, null);
+    }
+
+    @Override
+    public List pageList(String hql, Object[] params, Integer pageSize) {
+        int po = SystemContext.getPageOffset();
+        int ps;
+        if( pageSize != null){
+            ps = pageSize;
+        }else {
+            ps = SystemContext.getPageSize();
+        }
+        Query q = getSession().createQuery(hql);
+        /** 记录 strings 下标的初始值*/
+        if( params!=null ) {
+            for (int i = 0; i < params.length; i++) {
+                q.setParameter(i, params[i]);
+            }
+        }
+        /* 获取记录条数 */
+        q.setFirstResult(po);
+        q.setMaxResults(ps);
+        return q.list();
     }
 
     @Override
@@ -237,6 +267,76 @@ public class BaseDao<T> implements IBaseDao<T> {
         else
             newhql = hql.replace( oldSub, " select count(*) ");
         return newhql;
+    }
+
+    @Override
+    public T findObjectWithSql(String sql, Object[] args)
+    {
+        SQLQuery sq = getSession().createSQLQuery(sql);
+        if( args != null ){
+            for( int i =0; i<args.length; i++ ) {
+                sq.setParameter( i, args[i] );
+            }
+        }
+        T t = (T) sq.uniqueResult();
+        return t;
+    }
+
+    @Override
+    public T findObjectWithSql(String sql, Object arg) {
+        return this.findObjectWithSql(sql, new Object[]{arg});
+    }
+
+    @Override
+    public T findObjectWithSql(String sql) {
+        return this.findObjectWithSql(sql, null);
+    }
+
+    @Override
+    public List listWithSql(String sql, Object[] params, Integer pageSize) {
+        int po = SystemContext.getPageOffset();
+        int ps;
+        if( pageSize != null){
+            ps = pageSize;
+        }else {
+            ps = SystemContext.getPageSize();
+        }
+        Query q = getSession().createSQLQuery(sql);
+        /** 记录 strings 下标的初始值*/
+        if( params!=null ) {
+            for (int i = 0; i < params.length; i++) {
+                q.setParameter(i, params[i]);
+            }
+        }
+        /* 获取记录条数 */
+        q.setFirstResult(po);
+        q.setMaxResults(ps);
+        return q.list();
+    }
+
+    @Override
+    public List listWithSql(String sql, Object param, Integer pageSize) {
+        return null;
+    }
+
+    @Override
+    public List listWithSql(String sql, Integer pageSize) {
+        return null;
+    }
+
+    @Override
+    public List listWithSql(String sql, Object[] params) {
+        return null;
+    }
+
+    @Override
+    public List listWithSql(String sql, Object param) {
+        return null;
+    }
+
+    @Override
+    public List listWithSql(String sql) {
+        return null;
     }
 
 }

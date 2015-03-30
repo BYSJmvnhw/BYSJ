@@ -26,9 +26,8 @@ import java.sql.Timestamp;
 @Controller
 @RequestMapping("/student")
 public class StudentController {
-    /**
-     * 用于解决Jsonp跨域问题
-     */
+
+    /*** 用于解决Jsonp跨域问题*/
     @ControllerAdvice
     private static class JsonpAdvice extends AbstractJsonpResponseBodyAdvice {
         public JsonpAdvice() {
@@ -40,34 +39,70 @@ public class StudentController {
     private IStudentService studentService;
     //private IUserService userService;
     /**
-     *
-     * @param //cid 教师授课关系 courseTeaching id
+     *  根据教师授课关系id返回选课学生列表的接口
+     * @param ctId 教师授课关系 courseTeaching id
      * @return 学生选课关系json分页，包含学生信息
      */
     @RequestMapping(value = "/studentList", method = RequestMethod.GET)
     @ResponseBody
-    public JSONObject studentList(Integer cid) {
-        return studentService.studentPageByCTId(cid);
+    public JSONObject studentList(Integer ctId) {
+        try{
+            return studentService.studentPageByCTId(ctId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
 }
 
     /**
-     *
-     * @param cid 授课关系 courseTeaching id
-     * @param sid 学生 id
+     *  根据受授课关系id和学生id，返回选课学生的所有作业列表的接口
+     * @param ctId 授课关系 courseTeaching id
+     * @param sId 学生 id
      * @return
      */
-    @RequestMapping(value = "/homeworkInfoList", method = RequestMethod.GET)
+    @RequestMapping(value = "/homeworkList", method = RequestMethod.GET)
     @ResponseBody
-    public JSONObject homeworkInfoList(Integer cid, Integer sid) {
-        return homeworkService.homeworkPage(cid, sid);
+    public JSONObject homeworkInfoList(Integer ctId, Integer sId) {
+        try{
+            return homeworkService.homeworkPage(ctId, sId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
     }
 
+    /**
+     * 根据学生id返回学生详细信息
+     * @param sId 学生id
+     * @return
+     */
     @RequestMapping(value = "/studentDetail", method = RequestMethod.GET)
     @ResponseBody
-    public JSONObject studentDetail(Integer sid) {
-        return studentService.studentDetail(sid);
+    public JSONObject studentDetail(Integer sId) {
+        try {
+            return studentService.studentDetail(sId);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
     }
 
+    /**
+     * 根据授课关系id和学生id，为课程补选学生。
+     * @param ctId 授课关系id
+     * @param sId 学生关系id
+     */
+    @RequestMapping("/appendStudent")
+    @ResponseBody
+    public JSONObject appendStudent(Integer ctId, Integer sId) {
+        try {
+            studentService.addStudent(ctId, sId);
+            return getSuccessResultJsonObject();
+        }catch (Exception e) {
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
 
     /********************************* 管理员功能 ***********************************
      *
@@ -126,7 +161,12 @@ public class StudentController {
     @RequestMapping(value = "/searchStudent", method = RequestMethod.GET)
     @ResponseBody
     public JSONObject searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name) {
-        return studentService.studentPage(campusId, collegeId, majorId, studentNo, name);
+        try{
+            return studentService.studentPage(campusId, collegeId, majorId, studentNo, name);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
     }
 
     public IHomeworkService getHomeworkService() {
@@ -147,12 +187,14 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-/*    public IUserService getUserService() {
-        return userService;
+    private JSONObject getFailResultJsonObject(){
+        JSONObject result = new JSONObject();
+        result.put("status","fail");
+        return result;
     }
-
-    @Resource
-    public void setUserService(IUserService userService) {
-        this.userService = userService;
-    }*/
+    private JSONObject getSuccessResultJsonObject(){
+        JSONObject result = new JSONObject();
+        result.put("status","success");
+        return result;
+    }
 }

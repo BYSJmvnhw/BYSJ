@@ -30,12 +30,6 @@ public interface IStudentService {
 
     public JSONObject studentPage(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name);
 
-/*    public JSONObject studentPage(Integer campusId, Integer collegeId, Integer majorId, String studentNo);
-
-    public JSONObject studentPage(Integer campusId, Integer collegeId, Integer majorId);
-
-    public JSONObject studentPage(Integer campusId, Integer collegeId);
-
-    public JSONObject studentPage(Integer campusId);*/
+    public void addStudent(Integer ctId, Integer sId);
 
 }

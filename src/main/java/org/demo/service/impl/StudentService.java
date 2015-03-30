@@ -25,6 +25,7 @@ public class StudentService implements IStudentService {
     private ICollegeDao collegeDao;
     private IMajorDao majorDao;
     private ICourseSelectingDao courseSelectingDao;
+    private ICourseTeachingDao courseTeachingDao;
 
     @Override
     public HwStudent findStudent(String studentNo) {
@@ -115,7 +116,7 @@ public class StudentService implements IStudentService {
     public JSONObject studentPageByCTId(Integer courseTeachingId) {
         Page cs = courseSelectingDao.courseSelectingPage(courseTeachingId);
         JsonConfig jsonConfig = new JsonConfig();
-        jsonConfig.setExcludes(new String[]{"hibernateLazyInitializer", "handler"/*"hwCourseTeaching",*//*",hwStudent"*/});
+        jsonConfig.setExcludes(new String[]{"hibernateLazyInitializer", "handler","id"});
         jsonConfig.registerJsonValueProcessor(HwStudent.class,
                 new ObjectJsonValueProcessor(new  String[] {"id","studentNo","name"},
                         HwStudent.class));
@@ -131,8 +132,8 @@ public class StudentService implements IStudentService {
         JsonConfig jsonConfig = new JsonConfig();
         jsonConfig.setExcludes(new String[]{"hibernateLazyInitializer", "handler",
                 "hwCourseSelectings","hwHomeworks","deleteFlag"});
-        jsonConfig.registerJsonValueProcessor(HwMajor.class,
-                new ObjectJsonValueProcessor(new String[]{"id","name"}, HwMajor.class));
+        jsonConfig.registerJsonValueProcessor(HwCampus.class,
+                new ObjectJsonValueProcessor(new String[]{"id","name"}, HwCampus.class));
         jsonConfig.registerJsonValueProcessor(HwCollege.class,
                 new ObjectJsonValueProcessor(new String[]{"id","collegeName"},HwCollege.class));
         jsonConfig.registerJsonValueProcessor(HwMajor.class,
@@ -171,6 +172,14 @@ public class StudentService implements IStudentService {
                 new ObjectJsonValueProcessor(new  String[] {"id","name"},
                         HwMajor.class));
         return JSONObject.fromObject(page, jsonConfig);
+    }
+
+    @Override
+    public void addStudent(Integer ctId, Integer sId) {
+        HwCourseSelecting cs = new HwCourseSelecting();
+        cs.setHwCourseTeaching(courseTeachingDao.load(ctId));
+        cs.setHwStudent(studentDao.load(sId));
+        courseSelectingDao.add(cs);
     }
 
     public IStudentDao getStudentDao() {
@@ -216,5 +225,14 @@ public class StudentService implements IStudentService {
     @Resource
     public void setCourseSelectingDao(ICourseSelectingDao courseSelectingDao) {
         this.courseSelectingDao = courseSelectingDao;
+    }
+
+    public ICourseTeachingDao getCourseTeachingDao() {
+        return courseTeachingDao;
+    }
+
+    @Resource
+    public void setCourseTeachingDao(ICourseTeachingDao courseTeachingDao) {
+        this.courseTeachingDao = courseTeachingDao;
     }
 }
