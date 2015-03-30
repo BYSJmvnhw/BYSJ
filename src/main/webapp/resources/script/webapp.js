@@ -190,23 +190,27 @@ define(function(require, exports, module) {
                 that = this;
             var data = $t.find('input, textarea');
             console.log(data, that.model.attributes.cid);
-            this.model.sync('create', that, {
-                url: servicepath + '',
+//            this.model.sync('create', this.model, {
+            $.ajax({
+                type: 'POST',
+                url: servicepath + 'homework/addHomeworkInfo',
                 data: {
-                    title: data[0].value,
-                    hwDesc: data[1].value,
-                    deadline: data[2].value,
-                    cid: that.model.attributes.cid // 授课关系id
+                    jsonObject: JSON.stringify({
+                        title: data[0].value,
+                        hwDesc: data[1].value,
+                        deadline: Date.parse(new Date()),
+                        cid: that.model.attributes.cid
+                    })
                 },
                 dataType: 'json',
                 timeOut: 10000,
                 success: function (data) {
-                    console.log('新增作业', data);
+                    console.log('成功新增作业', data);
                 },
                 error: function (xhr, error, obj) {
                     console.error(error);
                 }
-            })
+            });
         }
     });
 
@@ -272,8 +276,9 @@ define(function(require, exports, module) {
         className: 'student-list',
         tmpl_id: 'student-list',
         events: {
-            'click .add-student': 'addStudent',
-            'click .check-btn': 'checkStuWork'
+            'click .add-student': 'addStudent', // 添加学生
+            'click .check-btn': 'checkStuWork', // 教师查看该生作业
+            'click .alter-btn': 'alterStuWork' // 教师批改该作业
         },
         initialize: function () {
             this.listenTo(this.model, "change", this.render);
@@ -339,6 +344,11 @@ define(function(require, exports, module) {
                 userType: sessionStorage.userType,
                 $worklistwrap: that.model.attributes.$studentlistwrap.parent().next().children('.student-list-wrap')
             });
+        },
+        alterStuWork: function (e) {
+            console.log('批改');
+            var hwid = $(e.currentTarget).attr('data-id');
+            window.open('http://localhost:8080/mvnhk/homework/openword?hwId=' + hwid);
         }
     });
 
@@ -453,7 +463,7 @@ define(function(require, exports, module) {
                 success: function (data) {
                     console.log('作业信息', data);
                     workmodel.set({
-                        worklist: data.data,
+                        worklist: data,
                         cid: id, // 授课关系id
                         userType: sessionStorage.userType,
                         $worklistwrap: that.model.attributes.$courselist.next().children('.work-list-wrap')
