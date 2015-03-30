@@ -598,7 +598,7 @@ define(function(require, exports, module) {
         },
         showInfoTip: function (e) {
             e.stopPropagation();
-            this.model.attributes.unfoldLeftMenu();
+            this.model.attributes.unfoldLeftMenu($(e.currentTarget).attr('data-type'));
         }
     });
 
@@ -607,25 +607,29 @@ define(function(require, exports, module) {
         className: 'hw-dynamic',
         events: {
             'click .d-newestwork-unfold': 'newestworkUnfold',
-            'click .d-newestwork-fold': 'newestworkfold',
+            'click .d-newestwork-fold': 'newestworkFold',
             'click .d-unhand-unfold': 'unhandUnfold',
-            'click .d-unhand-fold': 'unhandfold',
+            'click .d-unhand-fold': 'unhandFold',
             'click .d-feedback-unfold': 'feedbackUnfold',
-            'click .d-feedback-fold': 'feedbackfold'
+            'click .d-feedback-fold': 'feedbackFold'
         },
         tmpl_id: 'hw-dynamic-html',
         initialize: function () {
-            this.render();
+            this.listenTo(this.model, "change", this.render);
         },
         render: function () {
             var ele = tmpl(this.tmpl_id);
             $(this.el).html(ele);
             $('#content').html(this.el);
+            this.preFold(this.model.attributes.tip_type);
         },
         togfold: function ($b, n, fold) {
             $b.siblings('button').show();
             $b.hide();
             fold == true ? $b.parent().next().css('height', '0px') : $b.parent().next().css('height', '113px');
+        },
+        preFold: function (tip_type) {
+            this.$el.find('.d-' + tip_type + '-unfold').click();
         },
         newestworkUnfold: function (e) {
             var that = this,
@@ -643,19 +647,19 @@ define(function(require, exports, module) {
             });
             this.togfold($(e.currentTarget), 1, false);
         },
-        newestworkfold: function (e) {
+        newestworkFold: function (e) {
             this.togfold($(e.currentTarget), 1, true);
         },
         unhandUnfold: function () {
 
         },
-        unhandfold: function () {
+        unhandFold: function () {
 
         },
         feedbackUnfold: function () {
 
         },
-        feedbackfold: function () {
+        feedbackFold: function () {
 
         }
     });
@@ -714,6 +718,7 @@ define(function(require, exports, module) {
         $content: null,
         type: null, // 视图类型
         bar: null, // 视图子类型
+        tip_type: null, // 提示信息类型
         models: {},
         views: {},
         constructor: function (type, bar) {
@@ -863,12 +868,14 @@ define(function(require, exports, module) {
             tipmodel.set({
                 userType: sessionStorage.userType,
                 $info_b: that.$el.find('#info-b'),
-                unfoldLeftMenu: function () {
+                unfoldLeftMenu: function (tip_type) {
+                    that.tip_type = tip_type;
                     that.type = 'hwmanage';
                     that.bar = 'hwdynamic';
-                    appNavigate('main/hwmanage/hwdynamic', that.setSiteTitle(that.type), {trigger: false})
+                    appNavigate('main/hwmanage/hwdynamic', that.setSiteTitle(that.type), {trigger: false});
                     that.closeType(that.$old_el);
                     that.activeBar(that.$old_bar, false);
+//                    that.openType(that.$el.find('#left-nav>.l-menu[data-type="' + that.type + '"]'));
                     that.showState(that.type, that.bar);
                 }
             });
@@ -933,7 +940,13 @@ define(function(require, exports, module) {
             this.views.workinfoview = new WorkInfoView;
         },
         getHwDynamic: function () {
-            new HwDynamicView;
+            var hwdmodel = new TypeModel;
+            new HwDynamicView({
+                model: hwdmodel
+            });
+            hwdmodel.set({
+                tip_type: this.tip_type
+            });
         },
         getCsMailData: function () {
             var that = this;

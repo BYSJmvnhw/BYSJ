@@ -164,8 +164,8 @@
             <div></div>
             <ul>
                 {{if userType == 'STUDENT'}}
-                <li data-type="new-work">最新作业<span>10</span></li>
-                <li data-type="s-unhand">未提交<span>5</span></li>
+                <li data-type="newestwork">最新作业<span>10</span></li>
+                <li data-type="unhand">未提交<span>5</span></li>
                 <li data-type="feedback">作业反馈<span>3</span></li>
                 {{else if userType == 'TEACHER'}}
                 <li data-type="new-hand">最新提交<span>10</span></li>
