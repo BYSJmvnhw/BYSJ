@@ -606,7 +606,12 @@ define(function(require, exports, module) {
         tagName: 'div',
         className: 'hw-dynamic',
         events: {
-
+            'click .d-newestwork-unfold': 'newestworkUnfold',
+            'click .d-newestwork-fold': 'newestworkfold',
+            'click .d-unhand-unfold': 'unhandUnfold',
+            'click .d-unhand-fold': 'unhandfold',
+            'click .d-feedback-unfold': 'feedbackUnfold',
+            'click .d-feedback-fold': 'feedbackfold'
         },
         tmpl_id: 'hw-dynamic-html',
         initialize: function () {
@@ -616,6 +621,42 @@ define(function(require, exports, module) {
             var ele = tmpl(this.tmpl_id);
             $(this.el).html(ele);
             $('#content').html(this.el);
+        },
+        togfold: function ($b, n, fold) {
+            $b.siblings('button').show();
+            $b.hide();
+            fold == true ? $b.parent().next().css('height', '0px') : $b.parent().next().css('height', '113px');
+        },
+        newestworkUnfold: function (e) {
+            var that = this,
+                newestmodel = new TypeModel,
+                newestview = new WorkListView({
+                    model: newestmodel
+                });
+//            newestmodel.sync('read', newestview, {
+//
+//            });
+            newestmodel.set({
+                worklist: [{id: 1, title: '计算这个卡是高科技', deadline: '333333444'}],
+                $worklistwrap: that.$el.find('.d-newestwork-list'),
+                userType: sessionStorage.userType
+            });
+            this.togfold($(e.currentTarget), 1, false);
+        },
+        newestworkfold: function (e) {
+            this.togfold($(e.currentTarget), 1, true);
+        },
+        unhandUnfold: function () {
+
+        },
+        unhandfold: function () {
+
+        },
+        feedbackUnfold: function () {
+
+        },
+        feedbackfold: function () {
+
         }
     });
 

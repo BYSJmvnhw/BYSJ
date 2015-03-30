@@ -1104,7 +1104,8 @@ span.dailog-clear:after {
     line-height: 30px;
 }
 
-.add-student-pre, .add-student-next {
+.add-student-pre, .add-student-next,
+.d-newestwork-title>button, .d-unhand-title>button, .d-feedback-title>button {
     background-color: #fff;
     border: 1px solid #ddd;
     color: #5A7AC3;
@@ -1123,7 +1124,8 @@ span.dailog-clear:after {
     right: 0;
 }
 
-.add-student-pre:hover, .add-student-next:hover {
+.add-student-pre:hover, .add-student-next:hover,
+.d-newestwork-title>button:hover, .d-unhand-title>button:hover, .d-feedback-title>button:hover {
     background-color: #eee;
 }
 
@@ -1375,7 +1377,23 @@ span.dailog-clear:after {
 
 .hw-dynamic>div>div:first-child {
     font-size: 18px;
+    border-bottom: 1px #eee solid;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
     position: relative;
+}
+
+.d-newestwork-title>button, .d-feedback-title>button, .d-unhand-title>button {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.d-newestwork-fold, .d-unhand-fold, .d-feedback-fold {
+    display: none;
+}
+
+.d-newestwork-list, .d-unhand-list, .d-feedback-list {
 }
 
 /*end作业动态*/

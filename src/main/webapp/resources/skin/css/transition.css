@@ -207,3 +207,13 @@ span.t-load-start {
 .t-cs-mail-open {
     right: 0;
 }
+
+.t-newestwork-list, .t-unhand-list, .t-feedback-list {
+    height: 0;
+    overflow: hidden;
+    transition: height 500ms;
+    -o-transition: height 500ms;
+    -webkit-transition: height 500ms;
+    -ms-transition: height 500ms;
+    -moz-transition: height 500ms;
+}
