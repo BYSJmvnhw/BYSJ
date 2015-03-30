@@ -79,6 +79,7 @@
             <tx:method name="get*"  propagation="REQUIRED"/>
             <tx:method name="find*" propagation="REQUIRED"/>
             <tx:method name="load*" propagation="REQUIRED"/>
+            <tx:method name="upload*" propagation="REQUIRED"/>
         </tx:attributes>
     </tx:advice>
     <!-- 配置aop，Spring是通过aop来进行事务管理的  -->

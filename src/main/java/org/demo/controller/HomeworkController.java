@@ -74,9 +74,7 @@ public class HomeworkController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            JSONObject result = new JSONObject();
-            result.put("msg,","fail");
-            return result;
+            return getFailResultJsonObject();
         }
     }
 
@@ -100,9 +98,7 @@ public class HomeworkController {
             return homeworkService.homeworListInfoPage(cid);
         } catch (Exception e) {
             e.printStackTrace();
-            JSONObject result = new JSONObject();
-            result.put("msg","fail");
-            return  result;
+            return getFailResultJsonObject();
         }
     }
 
@@ -124,9 +120,7 @@ public class HomeworkController {
             return homeworkService.homeworkInfoDetail(hwInfoId);
         }catch (Exception e) {
             e.printStackTrace();
-            JSONObject result = new JSONObject();
-            result.put("msg","fail");
-            return  result;
+            return getFailResultJsonObject();
         }
     }
 
@@ -152,9 +146,7 @@ public class HomeworkController {
             return homeworkService.submittedHomeworkPage(hwInfoId, submited);
         }catch (Exception e) {
             e.printStackTrace();
-            JSONObject result = new JSONObject();
-            result.put("msg","fail");
-            return  result;
+            return getFailResultJsonObject();
         }
     }
     /**
@@ -174,16 +166,13 @@ public class HomeworkController {
      @RequestMapping(value = "/addHomeworkInfo", method = RequestMethod.POST)
      @ResponseBody
     public JSONObject addHomeworkInfo(String jsonObject, HttpServletRequest request) {
-         JSONObject result = new JSONObject();
          try {
              HwUser user = (HwUser) request.getSession().getAttribute("loginUser");
              homeworkService.addHomeworkInfo(jsonObject, user);
-             result.put("msg","success");
-             return result;
+             return getSuccessResultJsonObject();
          } catch (Exception e) {
              e.printStackTrace();
-             result.put("msg","fail");
-             return result;
+             return getFailResultJsonObject();
          }
     }
 
@@ -194,16 +183,12 @@ public class HomeworkController {
     @RequestMapping(value = "/deleteHomeworkInfo", method = RequestMethod.POST)
     @ResponseBody
     public JSONObject deleteHomeworkInfo(Integer hwInfoId) throws Exception{
-        JSONObject result = new JSONObject();
         try {
             homeworkService.deleteHomeworkInfo(hwInfoId);
-            result.put("msg","success");
-            return result;
+            return getSuccessResultJsonObject();
         }catch (Exception e) {
             e.printStackTrace();
-            result = new JSONObject();
-            result.put("msg","fail");
-            return result;
+            return getFailResultJsonObject();
         }
         /**同时将级联删除该次作业信息对应的所有学生作业*/
         //return "redirect:showHomeworkInfo";
@@ -218,15 +203,12 @@ public class HomeworkController {
      */
     @RequestMapping(value = "/markHomework", method = RequestMethod.POST)
     public JSONObject markHomework(Integer hwId, String mark, String comment) {
-        JSONObject result = new JSONObject();
         try{
             homeworkService.markHomework(hwId, mark, comment);
-            result.put("msg", "success");
-            return result;
+            return getSuccessResultJsonObject();
         } catch (Exception e){
             e.printStackTrace();
-            result.put("msg", "fail");
-            return result;
+            return getFailResultJsonObject();
         }
     }
 
@@ -234,7 +216,7 @@ public class HomeworkController {
     *  学生作业上传 Controller
     * */
     @RequestMapping(value = "/upload", method = RequestMethod.GET)
-    public String upload() {
+    public String upload(HttpServletRequest request) {
         return "homework/upload";
     }
 
@@ -252,23 +234,15 @@ public class HomeworkController {
         HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
         /**备用目录*/
         String backupPath = request.getServletContext().getRealPath("/doc");
-        JSONObject result = new JSONObject();
         try{
             homeworkService.upload(hw, hwinfoId, user, backupPath);
-            result.put("msg","success");
-            return result;
+            return getSuccessResultJsonObject();
         }catch (Exception e){
             e.printStackTrace();
-            result.put("msg","fail");
-            return result;
+            return getFailResultJsonObject();
         }
     }
 
-/*    @RequestMapping("/unsubmit")
-    @ResponseBody
-        public JSONObject unsubmitted() {
-
-    }*/
 
     public IHomeworkService getHomeworkService() {
         return homeworkService;
@@ -286,5 +260,16 @@ public class HomeworkController {
     @Resource
     public void setStudentService(IStudentService studentService) {
         this.studentService = studentService;
+    }
+
+    private JSONObject getFailResultJsonObject(){
+        JSONObject result = new JSONObject();
+        result.put("msg","fail");
+        return result;
+    }
+    private JSONObject getSuccessResultJsonObject(){
+        JSONObject result = new JSONObject();
+        result.put("msg","success");
+        return result;
     }
 }
