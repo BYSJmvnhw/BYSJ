@@ -156,19 +156,19 @@ define(function(require, exports, module) {
     // 学生上交作业视图，弹框
     var HandInView = DialogView.extend({
         events: {
-            'click .work-submit-sure': 'submitWork',
-            'click .dailog-clear': 'closeHandIn',
-            'change #work-file': 'showFileName'
+            'click .work-submit-sure': 'submitWork', // 点击提交按钮
+            'click .dailog-clear': 'closeHandIn', // 关闭提交窗口
+            'change #work-file': 'showFileName' // 展示上传的文件名
         },
         submitWork: function (e) {
             console.log('上传');
             var name = this.$el.find('#work-file').attr('name');
-            var id = $(e.currentTarget).attr('data-id');
+            var hwinfoId = $(e.currentTarget).attr('data-hwinfoId');
             $.ajax({
                 type: 'post',
-                url: servicepath + 'homework/markHomework',
-                data: {hw: name, hwinfoId: id},
-                dataType: 'json',
+                url: servicepath + 'homework/upload',
+                data: JSON.stringify({hw: name, hwinfoId: hwinfoId}),
+//                dataType: 'json',
                 success: function (data) {
                     console.log(data);
                 },
@@ -183,14 +183,14 @@ define(function(require, exports, module) {
     var AddWorkView = DialogView.extend({
         events: {
             'click .add-work-sure': 'submitAddWork',
-            'click .dailog-clear': 'closeHandIn'
+            'click .dailog-clear': 'closeHandIn',
+            'click #choice-deadline': 'choiceDeadline'
         },
         submitAddWork: function () {
             var $t = this.$el,
                 that = this;
             var data = $t.find('input, textarea');
             console.log(data, that.model.attributes.cid);
-//            this.model.sync('create', this.model, {
             $.ajax({
                 type: 'POST',
                 url: servicepath + 'homework/addHomeworkInfo',
@@ -198,7 +198,7 @@ define(function(require, exports, module) {
                     jsonObject: JSON.stringify({
                         title: data[0].value,
                         hwDesc: data[1].value,
-                        deadline: Date.parse(new Date()),
+                        deadline: Date.parse(new Date(data[2].value)),
                         cid: that.model.attributes.cid
                     })
                 },
@@ -206,11 +206,27 @@ define(function(require, exports, module) {
                 timeOut: 10000,
                 success: function (data) {
                     console.log('成功新增作业', data);
+                    if(data.msg == 'success')
+                        that.closeHandIn(); // 新增成功后，销毁弹框
+                    else
+                        alert('操作失败！');
                 },
                 error: function (xhr, error, obj) {
                     console.error(error);
+                    alert('操作失败！');
                 }
             });
+        },
+        choiceDeadline: function (e) {
+            var that = this;
+            e.stopPropagation();
+            require.async('calendar', function (MyDate) {
+                MyDate.calendar(that.$el.children('.dailog-area'), "4%", 170,
+                    function (date) {
+                        console.log(date.Format("yyyy-MM-dd-HH"));
+                        $(e.currentTarget).val(date.Format("yyyy/MM/dd HH:00"));
+                    });
+            })
         }
     });
 
@@ -382,6 +398,7 @@ define(function(require, exports, module) {
                 cid: that.model.attributes.cid,
                 $wrap: $('#add-work-wrap')
             });
+            require.async('calendar'); // 加载日期选择模块
         },
         showStudentList: function (e) {
             console.log('查看学生的作业列表');
@@ -407,14 +424,14 @@ define(function(require, exports, module) {
         },
         handInWork: function (e) {
             console.log('交作业');
-            var id = $(e.currentTarget).attr('data-id');
+            var hwInfoId = $(e.currentTarget).attr('data-hwInfoId');
             var handinmodel = new TypeModel;
             var handinview = new HandInView({
                 model: handinmodel
             });
             handinmodel.sync('read', handinview, {
                 url: servicepath + 'homework/homeworkInfoDetail',
-                data: {hwInfoId: id},
+                data: {hwInfoId: hwInfoId},
                 dataType: 'json',
                 success: function (data) {
                     console.log('作业详细信息', data);
@@ -612,6 +629,7 @@ define(function(require, exports, module) {
         }
     });
 
+    // 作业动态视图
     var HwDynamicView = Backbone.View.extend({
         tagName: 'div',
         className: 'hw-dynamic',

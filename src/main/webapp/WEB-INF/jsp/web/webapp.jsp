@@ -27,7 +27,8 @@
                 'template': 'template.js',
                 'backbone': 'backbone-min.js',
                 'underscore': 'underscore-min.js',
-                'webapp': 'script/webapp.js?v=201503181523',
+                'webapp': 'script/webapp.js',
+                'calendar': 'script/calendar.js',
                 'webapp.css': 'css/webapp.css',
                 'login.css': 'css/login.css'
             }
