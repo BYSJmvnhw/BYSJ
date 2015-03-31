@@ -292,7 +292,7 @@ public class BaseDao<T> implements IBaseDao<T> {
         return this.findObjectWithSql(sql, null);
     }
 
-    @Override
+    /*@Override
     public List listWithSql(String sql, Object[] params, Integer pageSize) {
         int po = SystemContext.getPageOffset();
         int ps;
@@ -302,31 +302,38 @@ public class BaseDao<T> implements IBaseDao<T> {
             ps = SystemContext.getPageSize();
         }
         Query q = getSession().createSQLQuery(sql);
+        *//** 记录 strings 下标的初始值*//*
+        if( params!=null ) {
+            for (int i = 0; i < params.length; i++) {
+                q.setParameter(i, params[i]);
+            }
+        }
+        *//* 获取记录条数 *//*
+        q.setFirstResult(po);
+        q.setMaxResults(ps);
+        return q.list();
+    }*/
+
+    /*@Override
+    public List listWithSql(String sql, Object param, Integer pageSize) {
+        return null;
+    }*/
+
+    /*@Override
+    public List listWithSql(String sql, Integer pageSize) {
+        return null;
+    }*/
+
+    @Override
+    public List listWithSql(String sql, Object[] params) {
+        Query q = getSession().createSQLQuery(sql);
         /** 记录 strings 下标的初始值*/
         if( params!=null ) {
             for (int i = 0; i < params.length; i++) {
                 q.setParameter(i, params[i]);
             }
         }
-        /* 获取记录条数 */
-        q.setFirstResult(po);
-        q.setMaxResults(ps);
         return q.list();
-    }
-
-    @Override
-    public List listWithSql(String sql, Object param, Integer pageSize) {
-        return null;
-    }
-
-    @Override
-    public List listWithSql(String sql, Integer pageSize) {
-        return null;
-    }
-
-    @Override
-    public List listWithSql(String sql, Object[] params) {
-        return null;
     }
 
     @Override
