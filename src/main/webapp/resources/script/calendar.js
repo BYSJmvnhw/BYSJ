@@ -4,7 +4,7 @@
 
 define(function(require, exports, module) {
 
-    var $ = require('jquery-plugin').$;
+    var $ = require('jquery');
 
     function slideTab(e) {
         function r(n) {
