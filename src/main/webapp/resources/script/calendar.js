@@ -133,9 +133,19 @@ define(function(require, exports, module) {
                 s = '<b class="premonth month" title="上一月"><<</b><span class="btn">' + n.Format("yyyy年MM月") + "</span><b class='nextmonth month' title='下一月'>>></b>",
                 a = '<table style="width:100%;">';
             a += "<tr><th>SUN</th><th>MON</th><th>TUE</th><th>WED</th><th>THU</th><th>FRI</th><th>SAT</th></tr>";
-            for (var l = 1,
-                     c = 0; c < 42; c++) c % 7 == 0 && (a += "<tr>"),
-                c >= n.getDay() && l <= i ? e == r.getFullYear() && t == r.getMonth() && l == r.getDate() ? a += '<td class="today">' + l+++"</td>": a += "<td>" + l+++"</td>": a += "<th></th>",
+            for (var l = 1, c = 0; c < 42; c++)
+                c % 7 == 0 && (a += "<tr>"),
+                c >= n.getDay() && l <= i
+                    ? (
+                        e == r.getFullYear() && t == r.getMonth() && l == r.getDate()
+                        ? a += '<td class="today">' + l++ + "</td>"
+                        : (
+                            r > new Date(e, t, l) // 过去的日期添加over类
+                            ? a += "<td class='over'>" + l++ + "</td>"
+                            : a += "<td>" + l++ + "</td>"
+                        )
+                    )
+                    : a += "<th></th>",
                 c % 7 == 6 && (a += "</tr>");
             a += "</table>",
                 o.html(s),
@@ -164,7 +174,7 @@ define(function(require, exports, module) {
             s.hide().slideDown("fast"),
             u.click(function(e) {
                 var t = e.target;
-                if(t.tagName.toLowerCase() == "td"){
+                if(t.tagName.toLowerCase() == "td" && !t.classList.contains('over')){
                     if(o.html().indexOf("月") > -1){
                         o.html('选择具体时间');
                         var time = '<table>';
@@ -176,8 +186,13 @@ define(function(require, exports, module) {
                     }
                     else if (o.html().indexOf("时间") > -1) {
                         f.setHours(t.innerHTML.split(':')[0]);
-                        s.remove();
-                        n(f);
+                        if(f > new Date){
+                            s.remove();
+                            n(f);
+                        }
+                        else {
+                            alert('截止日期不能是过去的时间');
+                        }
                     }
                     else{
                         f.setMonth(t.dataset.value);

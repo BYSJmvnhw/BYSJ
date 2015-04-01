@@ -359,7 +359,7 @@
             <div>
                 <p>{{value.title}}</p>
                 <p>共{{value.sum}}人，{{value.submitted}}人已提交</p>
-                <p>{{value.deadline.split(' ')[0]}}</p>
+                <p>{{value.deadline.split(':00')[0] + ':00'}}</p>
             </div>
             {{if userType == 'TEACHER'}}
             <div class="student-list-btn t-student-list-btn" data-hwInfoId="{{value.hwInfoId}}">单击批改作业</div>

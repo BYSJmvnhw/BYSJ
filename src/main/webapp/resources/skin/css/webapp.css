@@ -1506,4 +1506,15 @@ span.dailog-clear:after {
     cursor: pointer;
 }
 
+.over {
+    color: gray;
+}
+
+.over:hover {
+    background: none !important;
+    border-radius: 0 !important;
+    color: gray !important;
+    cursor: default !important;
+}
+
 /*end 日期选择器css*/
