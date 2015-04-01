@@ -99,11 +99,11 @@ public class OpenWordController {
 			//poCtrl1.webOpen( homeworkBaseDir + "/doc/test.doc", OpenModeType.docNormalEdit, "张三");
 			poCtrl1.webOpen( realPath + url, OpenModeType.docNormalEdit, name);
 			poCtrl1.setTagId("PageOfficeCtrl1"); //此行必须
-			return "homework/editword";
+			return "web/editword";
 		} catch (Exception e) {
 			e.printStackTrace();
 			poCtrl1.setTagId("PageOfficeCtrl1"); //此行必须，否则PageOffice自带的servlet会报错。
-			return "homework/editword";
+			return "web/editword";
 		}
 	}
 
@@ -122,11 +122,11 @@ public class OpenWordController {
 			message = "保存成功！";
 			//request.setAttribute("message",message);
 			fs.setCustomSaveResult("success");
-			return "homework/savefile";
+			return "web/savefile";
 		}catch (Exception e){
 			e.printStackTrace();
 			fs.setCustomSaveResult("fail");
-			return "homework/savefile";
+			return "web/savefile";
 		}finally {
 			/**
 			 * 必须在跳转到的页面关闭FileSaver，调用 fs.close();
