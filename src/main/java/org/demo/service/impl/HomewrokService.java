@@ -120,7 +120,7 @@ public class HomewrokService implements IHomeworkService {
     }
 
     @Override
-    public JSONArray homeworListInfoPage(Integer courseTeachingId) {
+    public JSONArray    homeworListInfoPage(Integer courseTeachingId) {
         //根据授课关系id统计该门课程每次作业已经上交的人数。
         HwCourseTeaching ct = courseTeachingDao.load(courseTeachingId);
         //根据授课关系id统计该门课程选课总人数，即应交作业总人数。

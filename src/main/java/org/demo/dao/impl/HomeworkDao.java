@@ -64,18 +64,7 @@ public class HomeworkDao extends BaseDao<HwHomework> implements IHomeworkDao {
     @Override
     public List<Object[]> countSubmitted(int courseId, int teacherId) {
 
-/*        String sql = "SELECT DISTINCT MainTable.hwinfo_id, IFNULL(SubTable.subnum,0) AS submitted " +
-                "FROM hw_homework AS MainTable " +
-                "LEFT JOIN  " +
-                "(SELECT  hw_homework.hwinfo_id, COUNT(id) AS subnum FROM hw_homework  WHERE " +
-                "hw_homework.teacher_id = ? " +
-                "AND hw_homework.course_id = ? " +
-                "AND hw_homework.url != '' " +
-                "GROUP BY hwinfo_id) AS SubTable " +
-                "ON MainTable.hwinfo_id = SubTable.hwinfo_id " +
-                "ORDER BY MainTable.hwinfo_id DESC ";*/
-
-        String sql= "SELECT hw_homework_info.id, title, deadline, overtime , FinalTable.submitted FROM hw_homework_info " +
+        /*String sql= "SELECT hw_homework_info.id, title, deadline, overtime , FinalTable.submitted FROM hw_homework_info " +
                 "INNER JOIN " +
                 "(SELECT DISTINCT MainTable.hwinfo_id, IFNULL(SubTable.subnum,0) AS submitted " +
                 "FROM hw_homework AS MainTable " +
@@ -87,9 +76,29 @@ public class HomeworkDao extends BaseDao<HwHomework> implements IHomeworkDao {
                 "GROUP BY hwinfo_id) AS SubTable " +
                 "ON MainTable.hwinfo_id = SubTable.hwinfo_id) AS FinalTable " +
                 "ON hw_homework_info.id = FinalTable.hwinfo_id " +
+                "ORDER BY overtime ASC, deadline ASC";*/
+        String sql =
+                /*最后一级查询查询出其他需要的信息*/
+                "SELECT hw_homework_info.id, title, deadline, overtime , FinalTable.submitted FROM hw_homework_info\n" +
+                "INNER JOIN \n" +
+                /*   #二级子查询出目标课程id和教师id对应的作业信息id记录，
+                并通过左连接将因分组统计而被隐藏的作业信息id记录显示出来，并将null替换为0\n*/
+                "   (SELECT DISTINCT MainTable.hwinfo_id, IFNULL(SubTable.subnum,0) AS submitted \n" +
+                "   FROM hw_homework AS MainTable \n" +
+                "   LEFT JOIN\n" +
+                       /*#第一级子查询查询出目标课程id和教师id对应的作业信息id和分组统计的已交作业对应条数，
+                       已交作业数为0的作业信息id记录将不显示 \n"*/
+                "       (SELECT  hw_homework.hwinfo_id, COUNT(id) AS subnum FROM hw_homework  \n" +
+                "       WHERE hw_homework.teacher_id = ? \n" +
+                "       AND hw_homework.course_id = ? \n" +
+                "       AND hw_homework.url != '' \n" +
+                "       GROUP BY hwinfo_id) AS SubTable \n" +
+                "       ON MainTable.hwinfo_id = SubTable.hwinfo_id\n" +
+                "   WHERE MainTable.teacher_id = ? AND MainTable.course_id = ? ) AS FinalTable \n" +
+                "   ON hw_homework_info.id = FinalTable.hwinfo_id \n" +
                 "ORDER BY overtime ASC, deadline ASC";
 
-        return (List<Object[]>)listWithSql(sql, new Object[]{teacherId, courseId}, null);
+        return (List<Object[]>)listWithSql(sql, new Object[]{teacherId, courseId, teacherId, courseId});
     }
 
     @Override

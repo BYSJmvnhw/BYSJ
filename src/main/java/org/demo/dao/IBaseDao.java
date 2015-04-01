@@ -73,11 +73,11 @@ public interface IBaseDao<T> {
     public String  getCountHql(String hql);
 
     //sql查询分页列表
-    public List  listWithSql(String sql, Object[] params, Integer pageSize);
+    //public List  listWithSql(String sql, Object[] params, Integer pageSize);
 
-    public List listWithSql(String sql, Object param, Integer pageSize);
+    //public List listWithSql(String sql, Object param, Integer pageSize);
 
-    public List listWithSql(String sql,  Integer pageSize);
+    //public List listWithSql(String sql,  Integer pageSize);
 
     public List listWithSql(String sql,  Object[] params);
 
