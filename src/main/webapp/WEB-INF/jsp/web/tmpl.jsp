@@ -358,13 +358,13 @@
         <li class="work-student-list work-has-student">
             <div>
                 <p>{{value.title}}</p>
-                <p>共50人，4人未交</p>
-                <p>{{value.deadline.split(' ')[0]}}</p>
+                <p>共{{value.sum}}人，{{value.submitted}}人已提交</p>
+                <p>{{value.deadline.split(':00')[0] + ':00'}}</p>
             </div>
             {{if userType == 'TEACHER'}}
-            <div class="student-list-btn t-student-list-btn" data-id="{{value.id}}">单击批改作业</div>
+            <div class="student-list-btn t-student-list-btn" data-hwInfoId="{{value.hwInfoId}}">单击批改作业</div>
             {{else if userType == 'STUDENT'}}
-            <div class="hand-in-work t-hand-in" data-id="{{value.id}}">单击交作业</div>
+            <div class="hand-in-work t-hand-in" data-hwInfoId="{{value.hwInfoId}}">单击交作业</div>
             {{/if}}
         </li>
         {{/each}}
@@ -419,8 +419,8 @@
         <textarea name="desc" placeholder="可以填写作业注意事项，难度，要求等信息" required></textarea>
     </div>
     <div class="add-work-deadline">
-        <label>截止日期</label>
-        <input name="deadline" type="datetime" required/>
+        <label for="choice-deadline">截止日期</label>
+        <input id="choice-deadline" name="deadline" type="datetime" required readonly/>
     </div>
     <div class="add-submit">
         <button class="dailog-clear">取消</button>
@@ -479,7 +479,7 @@
     </div>
     <div class="work-submit">
         <button class="dailog-clear">取消</button>
-        <button class="work-submit-sure" data-id="{{detaillist.id}}">提交作业</button>
+        <button class="work-submit-sure" data-hwinfoId="{{detaillist.id}}">提交作业</button>
     </div>
     <!--</div>-->
 </script>
