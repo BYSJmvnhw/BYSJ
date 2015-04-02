@@ -358,6 +358,7 @@
         <!--unhand hand remark-->
         <li class="work-student-list work-unhand-student">
             <div>
+                <p>{{value.courseName}}</p>
                 <p>{{value.title}}</p>
                 <p>共{{value.sum}}人，{{value.submitted}}人已提交</p>
                 <p>{{value.deadline.split(':00')[0] + ':00'}}</p>

@@ -171,17 +171,16 @@ define(function(require, exports, module) {
             formData.append('hwinfoId', hwinfoId);
             flieupload.upload.addEventListener("progress", function (evt) {
                 var  $p = that.model.attributes.$progesss;
+                if (evt.lengthComputable) {
+                    that.closeHandIn();
+                    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+                    $p.css('height', percentComplete.toString() + '%');
+                    $p.text(percentComplete.toString() + '%');
+                }
                 if (evt.loaded == evt.total){
                     $p.parent().replaceClass('work-hand-student', 'work-unhand-student');
                     $p.next().text('单击重新提交');
                     $p.remove();
-                    return;
-                }
-                if (evt.lengthComputable) {
-                    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-                    $p.css('height', percentComplete.toString() + '%');
-                    $p.text(percentComplete.toString() + '%');
-                    that.closeHandIn();
                 }
             }, false);
             flieupload.open("POST", servicepath + 'homework/upload');
@@ -663,49 +662,65 @@ define(function(require, exports, module) {
             this.listenTo(this.model, "change", this.render);
         },
         render: function () {
+            console.log('作业动态');
             var ele = tmpl(this.tmpl_id);
             $(this.el).html(ele);
             $('#content').html(this.el);
-            this.preFold(this.model.attributes.tip_type);
+            this.preFold(this.model.attributes.tip_type); // 打开最新作业选项卡
         },
+        // n 为行数
         togfold: function ($b, n, fold) {
             $b.siblings('button').show();
             $b.hide();
-            fold == true ? $b.parent().next().css('height', '0px') : $b.parent().next().css('height', '113px');
+            fold == true ? $b.parent().next().css('height', '0') : $b.parent().next().css('height', (113 * n).toString() + 'px');
         },
         preFold: function (tip_type) {
+            console.log('打开最新作业');
+            console.log(this.$el.find('.d-' + tip_type + '-unfold'));
             this.$el.find('.d-' + tip_type + '-unfold').click();
         },
-        newestworkUnfold: function (e) {
+        workUnfold: function ($cur, url, type) {
             var that = this,
                 newestmodel = new TypeModel,
                 newestview = new WorkListView({
                     model: newestmodel
                 });
-//            newestmodel.sync('read', newestview, {
-//
-//            });
-            newestmodel.set({
-                worklist: [{id: 1, title: '计算这个卡是高科技', deadline: '333333444'}],
-                $worklistwrap: that.$el.find('.d-newestwork-list'),
-                userType: sessionStorage.userType
+            newestmodel.sync('read', newestview, {
+                url: servicepath + url,
+                data: null,
+                dataType: 'json',
+                success: function (data) {
+                    console.log('最新作业', data);
+                    newestmodel.set({
+                        worklist: data,
+                        $worklistwrap: that.$el.find('.d-' + type + '-list'),
+                        userType: sessionStorage.userType
+                    });
+                    var fn = data.length / 3, pn = parseInt(fn);
+                    that.togfold($cur, fn > pn ? pn + 1 : pn, false);
+                },
+                error: function (o, e) {
+                    console.log(e);
+                }
             });
-            this.togfold($(e.currentTarget), 1, false);
+        },
+        newestworkUnfold: function (e) {
+            this.workUnfold($(e.currentTarget), 'message/recentHomework', 'newestwork');
         },
         newestworkFold: function (e) {
-            this.togfold($(e.currentTarget), 1, true);
+            this.togfold($(e.currentTarget), 0, true);
         },
-        unhandUnfold: function () {
-
+        unhandUnfold: function (e) {
+            this.workUnfold($(e.currentTarget), 'message/recentHomework', 'unhand');
         },
-        unhandFold: function () {
-
+        unhandFold: function (e) {
+            this.togfold($(e.currentTarget), 0, true);
         },
         feedbackUnfold: function () {
 
         },
-        feedbackFold: function () {
-
+        feedbackFold: function (e) {
+            this.togfold($(e.currentTarget), 0, true);
         }
     });
 
@@ -985,12 +1000,12 @@ define(function(require, exports, module) {
             this.views.workinfoview = new WorkInfoView;
         },
         getHwDynamic: function () {
-            var hwdmodel = new TypeModel;
-            new HwDynamicView({
-                model: hwdmodel
-            });
+            var hwdmodel = new TypeModel,
+                hwview = new HwDynamicView({
+                    model: hwdmodel
+                });
             hwdmodel.set({
-                tip_type: this.tip_type
+                tip_type: 'newestwork'
             });
         },
         getCsMailData: function () {
