@@ -26,11 +26,11 @@ public interface IHomeworkService {
 
     public JSONObject courseTeachingPage(HwUser user, Integer startYear, Integer schoolTerm);
 
-    public JSONArray homeworListInfoPage(Integer courseTeachingId);
+    public JSONArray homeworListInfo(Integer courseTeachingId);
 
     public JSONObject homeworkInfoDetail(Integer hwInfoId);
 
-    public void addHomeworkInfo(String jsonObject, HwUser user);
+    public void addHomeworkInfo(String jsonObject, HwUser user) throws Exception;
 
     public void upload(MultipartFile hw, Integer hwinfoId,HwUser user, String backupPath) throws IOException;
 

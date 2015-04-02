@@ -9,8 +9,10 @@ import org.demo.dao.*;
 import org.demo.dao.impl.StudentDao;
 import org.demo.dao.impl.UserDao;
 import org.demo.model.*;
+import org.demo.service.IHomeworkInfoService;
 import org.demo.service.IHomeworkService;
 import org.demo.tool.DateJsonValueProcessor;
+import org.demo.tool.MarkType;
 import org.demo.tool.ObjectJsonValueProcessor;
 import org.demo.tool.Page;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +42,7 @@ public class HomewrokService implements IHomeworkService {
     private IHomeworkInfoDao homeworkInfoDao;
     private IStudentDao studentDao;
     private ITeacherDao teacherDao;
+    private IHomeworkInfoService homeworkInfoService;
 
     @Override
     public void add(HwHomework homework) {
@@ -120,9 +123,21 @@ public class HomewrokService implements IHomeworkService {
     }
 
     @Override
-    public JSONArray    homeworListInfoPage(Integer courseTeachingId) {
+    public JSONArray homeworListInfo(Integer courseTeachingId) {
         //根据授课关系id统计该门课程每次作业已经上交的人数。
         HwCourseTeaching ct = courseTeachingDao.load(courseTeachingId);
+        //取出该任教关系的所有的作业布置信息。
+        //Set<HwHomeworkInfo> hwInfos = ct.getHwHomeworkInfos();
+        //将作业的deadline和当前时间比较，过期的作业标记为过期
+        /*Timestamp now = new java.sql.Timestamp(System.currentTimeMillis());
+        List<HwHomeworkInfo> hwInfoList = new ArrayList<HwHomeworkInfo>();
+        for(HwHomeworkInfo hwInfo : hwInfos) {
+            if( hwInfo.getDeadline().compareTo(now) <0)  {
+                hwInfo.setOvertime(true);
+                hwInfoList.add(hwInfo);
+            }
+        }
+        homeworkInfoService.updateHomeworkInfo(hwInfoList);*/
         //根据授课关系id统计该门课程选课总人数，即应交作业总人数。
         Long sum = courseSelectingDao.countByCtId(courseTeachingId);
         //通过sql连表l查询出所需要的字段
@@ -156,7 +171,7 @@ public class HomewrokService implements IHomeworkService {
     }
 
     @Override
-    public void addHomeworkInfo(String jsonObject, HwUser user) {
+    public void addHomeworkInfo(String jsonObject, HwUser user) throws Exception {
         HwTeacher teacher = teacherDao.load(user.getTypeId());
         /** 将前端传递过来的json字符串解析成JsonObject对象 */
         JSONObject jo = JSONObject.fromObject(jsonObject);
@@ -169,10 +184,15 @@ public class HomewrokService implements IHomeworkService {
         hwinfo.setTitle(jo.getString("title"));
         hwinfo.setHwDesc(jo.getString("hwDesc"));
         hwinfo.setDeadline(new java.sql.Timestamp(jo.getLong("deadline")));
+       // hwinfo.setMarkType(MarkType.valueOf(jo.getString("markType")));
 
         /**往HwHomeworkInfo填入其他信息*/
         hwinfo.setCourseName(courseTeaching.getHwCourse().getCourseName());
         hwinfo.setCreateDate(new java.sql.Timestamp(System.currentTimeMillis()));
+        String emai = courseTeaching.getEmail();
+        if( emai == null || emai.equals("") ){
+            throw new Exception("未设置该课程收件邮箱");
+        }
         hwinfo.setEmail(courseTeaching.getEmail());
         hwinfo.setHwCourseTeaching(courseTeaching);
         hwinfo.setOvertime(false);
@@ -340,5 +360,14 @@ public class HomewrokService implements IHomeworkService {
     @Resource
     public void setTeacherDao(ITeacherDao teacherDao) {
         this.teacherDao = teacherDao;
+    }
+
+    public IHomeworkInfoService getHomeworkInfoService() {
+        return homeworkInfoService;
+    }
+
+    @Resource
+    public void setHomeworkInfoService(IHomeworkInfoService homeworkInfoService) {
+        this.homeworkInfoService = homeworkInfoService;
     }
 }

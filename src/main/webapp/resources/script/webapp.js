@@ -167,6 +167,7 @@ define(function(require, exports, module) {
             $.ajax({
                 type: 'post',
                 url: servicepath + 'homework/upload',
+                enctype: "multipart/form-data",
                 data: JSON.stringify({hw: name, hwinfoId: hwinfoId}),
 //                dataType: 'json',
                 success: function (data) {
