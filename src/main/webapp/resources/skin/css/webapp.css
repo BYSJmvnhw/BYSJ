@@ -794,7 +794,7 @@ footer {
 
 .course-no-work:after,
 .student-no-alter:after,
-.work-no-student:after {
+.work-remark-student:after {
     content: '';
     display: block;
     width: 5px;
@@ -809,7 +809,8 @@ footer {
 
 .course-has-work:after,
 .student-has-alter:after,
-.work-has-student:after {
+.work-unhand-student:after,
+.work-hand-student:after {
     content: '';
     display: block;
     width: 8px;
@@ -821,28 +822,41 @@ footer {
     right: 2px;
 }
 
+.work-hand-student:after {
+    background-color: #fff;
+}
+
 .course-no-work,
 .student-no-alter,
-.work-no-student {
+.work-remark-student {
     border-color: #5CB85C;
 }
 
 .course-no-work:before,
 .student-no-alter:before,
-.work-no-student:before {
+.work-remark-student:before {
     border-top: 35px #5CB85C solid;
+}
+
+
+.course-has-work:before,
+.student-has-alter:before,
+.work-unhand-student:before {
+    border-top: 35px #f0ad4e solid;
+}
+
+.work-hand-student:before {
+    border-top:  35px #5BC0DE solid;
 }
 
 .course-has-work,
 .student-has-alter,
-.work-has-student {
+.work-unhand-student {
     border-color: #f0ad4e;
 }
 
-.course-has-work:before,
-.student-has-alter:before,
-.work-has-student:before {
-    border-top: 35px #f0ad4e solid;
+.work-hand-student {
+    border-color: #5BC0DE;
 }
 
 .course-work-list>div:first-child,
@@ -867,14 +881,30 @@ footer {
 
 .course-no-work>div:last-child,
 .student-no-alter>div:last-child,
-.work-no-student>div:last-child {
+.work-remark-student>div:last-child {
     background-color: #5CB85C;
 }
 
 .course-has-work>div:last-child,
 .student-has-alter>div:last-child,
-.work-has-student>div:last-child {
+.work-unhand-student>div:last-child {
     background-color: #f0ad4e;
+}
+
+.work-hand-student>div:last-child {
+    background-color: #5BC0DE;
+}
+
+/*进度显示*/
+
+.hand-in-progress {
+    position: absolute;
+    bottom: 0;
+    height: 0;
+    width: 100%;
+    background-color: #f0ad4e;
+    text-align: center;
+    color: #fff;
 }
 
 /*end 作业信息样式*/

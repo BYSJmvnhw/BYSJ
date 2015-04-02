@@ -161,21 +161,36 @@ define(function(require, exports, module) {
             'change #work-file': 'showFileName' // 展示上传的文件名
         },
         submitWork: function (e) {
-            console.log('上传');
-            var name = this.$el.find('#work-file').attr('name');
-            var hwinfoId = $(e.currentTarget).attr('data-hwinfoId');
-            $.ajax({
-                type: 'post',
-                url: servicepath + 'homework/upload',
-                data: JSON.stringify({hw: name, hwinfoId: hwinfoId}),
-//                dataType: 'json',
-                success: function (data) {
-                    console.log(data);
-                },
-                error: function (o, e) {
-                    console.log(e);
+            console.log('html5 上传');
+            var that= this,
+                file = this.$el.find('#work-file')[0].files[0],
+                hwinfoId = $(e.currentTarget).attr('data-hwinfoId'),
+                formData = new FormData(),
+                flieupload = new XMLHttpRequest();
+            formData.append('hw', file);
+            formData.append('hwinfoId', hwinfoId);
+            flieupload.upload.addEventListener("progress", function (evt) {
+                var  $p = that.model.attributes.$progesss;
+                if (evt.loaded == evt.total){
+                    $p.parent().replaceClass('work-hand-student', 'work-unhand-student');
+                    $p.next().text('单击重新提交');
+                    $p.remove();
+                    return;
                 }
-            });
+                if (evt.lengthComputable) {
+                    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+                    $p.css('height', percentComplete.toString() + '%');
+                    $p.text(percentComplete.toString() + '%');
+                    that.closeHandIn();
+                }
+            }, false);
+            flieupload.open("POST", servicepath + 'homework/upload');
+            flieupload.onreadystatechange = function () {
+                if(flieupload.readyState == 4 && flieupload.status == 200){
+                    console.log(JSON.parse(flieupload.responseText));
+                }
+            };
+            flieupload.send(formData);
         }
     });
 
@@ -424,11 +439,12 @@ define(function(require, exports, module) {
         },
         handInWork: function (e) {
             console.log('交作业');
-            var hwInfoId = $(e.currentTarget).attr('data-hwInfoId');
-            var handinmodel = new TypeModel;
-            var handinview = new HandInView({
-                model: handinmodel
-            });
+            var that = this,
+                hwInfoId = $(e.currentTarget).attr('data-hwInfoId'),
+                handinmodel = new TypeModel,
+                handinview = new HandInView({
+                    model: handinmodel
+                });
             handinmodel.sync('read', handinview, {
                 url: servicepath + 'homework/homeworkInfoDetail',
                 data: {hwInfoId: hwInfoId},
@@ -438,7 +454,8 @@ define(function(require, exports, module) {
                     handinmodel.set({
                         detaillist: data,
                         op: 'hand-in',
-                        $wrap: $('#hand-in-wrap')
+                        $wrap: $('#hand-in-wrap'),
+                        $progesss: $(e.currentTarget).prev()
                     });
                 },
                 error: function (o, e) {

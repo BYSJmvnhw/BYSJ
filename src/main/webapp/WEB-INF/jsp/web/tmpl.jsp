@@ -355,7 +355,8 @@
     <!--<div class="work-list-t">-->
     <ul>
         {{each worklist as value}}
-        <li class="work-student-list work-has-student">
+        <!--unhand hand remark-->
+        <li class="work-student-list work-unhand-student">
             <div>
                 <p>{{value.title}}</p>
                 <p>共{{value.sum}}人，{{value.submitted}}人已提交</p>
@@ -364,6 +365,7 @@
             {{if userType == 'TEACHER'}}
             <div class="student-list-btn t-student-list-btn" data-hwInfoId="{{value.hwInfoId}}">单击批改作业</div>
             {{else if userType == 'STUDENT'}}
+            <div class="hand-in-progress"><!--进度显示--></div>
             <div class="hand-in-work t-hand-in" data-hwInfoId="{{value.hwInfoId}}">单击交作业</div>
             {{/if}}
         </li>
@@ -474,7 +476,7 @@
     </div>
     <div class="work-upload">
         <label for="work-file">上传作业</label>
-        <input id="work-file" name="work-file" type="file"/>
+        <input id="work-file" name="hw" type="file"/>
         <label></label>
     </div>
     <div class="work-submit">
