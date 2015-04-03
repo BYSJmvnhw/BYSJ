@@ -9,10 +9,9 @@ import org.demo.dao.*;
 import org.demo.dao.impl.StudentDao;
 import org.demo.dao.impl.UserDao;
 import org.demo.model.*;
+import org.demo.service.IHomeworkInfoService;
 import org.demo.service.IHomeworkService;
-import org.demo.tool.DateJsonValueProcessor;
-import org.demo.tool.ObjectJsonValueProcessor;
-import org.demo.tool.Page;
+import org.demo.tool.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,6 +39,7 @@ public class HomewrokService implements IHomeworkService {
     private IHomeworkInfoDao homeworkInfoDao;
     private IStudentDao studentDao;
     private ITeacherDao teacherDao;
+    private IHomeworkInfoService homeworkInfoService;
 
     @Override
     public void add(HwHomework homework) {
@@ -120,30 +120,50 @@ public class HomewrokService implements IHomeworkService {
     }
 
     @Override
-    public JSONArray    homeworListInfoPage(Integer courseTeachingId) {
-        //根据授课关系id统计该门课程每次作业已经上交的人数。
-        HwCourseTeaching ct = courseTeachingDao.load(courseTeachingId);
-        //根据授课关系id统计该门课程选课总人数，即应交作业总人数。
-        Long sum = courseSelectingDao.countByCtId(courseTeachingId);
-        //通过sql连表l查询出所需要的字段
-        List<Object[]> countSubmittedList = homeworkDao.countSubmitted(ct.getHwCourse().getId(), ct.getHwTeacher().getId());
-        //存放返回结果的列表
-        List<HashMap<String,Object>> resultList = new ArrayList<HashMap<String,Object>>();
-        //构造键值
-        for(Object[] o : countSubmittedList) {
-            HashMap<String, Object> resultMap = new HashMap<String, Object>();
-            resultMap.put("hwInfoId", o[0]);
-            resultMap.put("title",o[1]);
-            resultMap.put("deadline",o[2]);
-            resultMap.put("overtime",o[3]);
-            resultMap.put("submitted",o[4]);
-            resultMap.put("sum",sum);
-            resultList.add(resultMap);
-        }
+    public JSONArray homeworListInfo(Integer courseTeachingId, HwUser user) {
         JsonConfig jsonConfig = new JsonConfig();
         jsonConfig.registerJsonValueProcessor(Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd HH:mm:ss"));
-        JSONArray  jsonObject = JSONArray.fromObject(resultList,jsonConfig);
-        return jsonObject;
+        HwCourseTeaching ct = courseTeachingDao.load(courseTeachingId);
+
+        //登录角色为学生。
+        if( user.getUserType() == UserType.STUDENT ){
+            HwStudent student = studentDao.load(user.getTypeId());
+            //HwCourseSelecting cs = courseSelectingDao.findCSByCTAndStudent(ct, student);
+            List<Object[]> studentHwInfoList = homeworkInfoDao.studentHomeworkLsit(ct, student);
+            List<HashMap<String,Object>> studentResultList = new ArrayList<HashMap<String,Object>>();
+            //构造键值
+            for(Object[] o : studentHwInfoList) {
+                HashMap<String, Object> resultMap = new HashMap<String, Object>();
+                resultMap.put("hwInfoId", o[0]);
+                resultMap.put("title",o[1]);
+                resultMap.put("overtime",o[2]);
+                resultMap.put("deadline",o[3]);
+                resultMap.put("status",o[4]);
+                studentResultList.add(resultMap);
+            }
+            return JSONArray.fromObject(studentResultList, jsonConfig);
+        }
+        //登录角色为教师
+        else {
+            //根据授课关系id统计该门课程选课总人数，即应交作业总人数。
+            Long sum = courseSelectingDao.countByCtId(courseTeachingId);
+            //根据授课关系id统计该门课程每次作业已经上交的人数。
+            List<Object[]> countSubmittedList = homeworkDao.countSubmitted(ct.getHwCourse().getId(), ct.getHwTeacher().getId());
+            //存放返回结果的列表
+            List<HashMap<String,Object>> teacherResultList = new ArrayList<HashMap<String,Object>>();
+            //构造键值
+            for(Object[] o : countSubmittedList) {
+                HashMap<String, Object> resultMap = new HashMap<String, Object>();
+                resultMap.put("hwInfoId", o[0]);
+                resultMap.put("title",o[1]);
+                resultMap.put("deadline",o[2]);
+                resultMap.put("overtime",o[3]);
+                resultMap.put("submitted",o[4]);
+                resultMap.put("sum",sum);
+                teacherResultList.add(resultMap);
+            }
+            return JSONArray.fromObject(teacherResultList,jsonConfig);
+        }
     }
 
     @Override
@@ -156,7 +176,7 @@ public class HomewrokService implements IHomeworkService {
     }
 
     @Override
-    public void addHomeworkInfo(String jsonObject, HwUser user) {
+    public void addHomeworkInfo(String jsonObject, HwUser user) throws Exception {
         HwTeacher teacher = teacherDao.load(user.getTypeId());
         /** 将前端传递过来的json字符串解析成JsonObject对象 */
         JSONObject jo = JSONObject.fromObject(jsonObject);
@@ -169,10 +189,16 @@ public class HomewrokService implements IHomeworkService {
         hwinfo.setTitle(jo.getString("title"));
         hwinfo.setHwDesc(jo.getString("hwDesc"));
         hwinfo.setDeadline(new java.sql.Timestamp(jo.getLong("deadline")));
+       // hwinfo.setMarkType(MarkType.valueOf(jo.getString("markType")));
 
         /**往HwHomeworkInfo填入其他信息*/
         hwinfo.setCourseName(courseTeaching.getHwCourse().getCourseName());
         hwinfo.setCreateDate(new java.sql.Timestamp(System.currentTimeMillis()));
+        hwinfo.setDeleteFlag(false);
+        String emai = courseTeaching.getEmail();
+        if( emai == null || emai.equals("") ){
+            throw new Exception("未设置该课程收件邮箱");
+        }
         hwinfo.setEmail(courseTeaching.getEmail());
         hwinfo.setHwCourseTeaching(courseTeaching);
         hwinfo.setOvertime(false);
@@ -201,6 +227,8 @@ public class HomewrokService implements IHomeworkService {
             hw.setStudentNo(cs.getHwStudent().getStudentNo());
             hw.setTitle(hwinfo.getTitle());
             hw.setLastModifyDate(new java.sql.Timestamp(System.currentTimeMillis()));
+            hw.setUrl("");
+            hw.setStatus(HomeworkStatus.UNSUBMITTED);
             homeworkDao.add(hw);
         }
     }
@@ -227,6 +255,7 @@ public class HomewrokService implements IHomeworkService {
         homework.setUrl(url);
         homework.setHwNo(hwNo);
         homework.setSubmitDate(new java.sql.Timestamp(System.currentTimeMillis()));
+        homework.setStatus(HomeworkStatus.SUBMITTED);
         homeworkDao.update(homework);
 
         /**判断预设的目录的是否存在，不存在则使用web应用路径下的默认目录*/
@@ -254,7 +283,7 @@ public class HomewrokService implements IHomeworkService {
 
     @Override
     public void deleteHomeworkInfo(Integer hwInfoId) throws Exception {
-        Page page = homeworkDao.submittedHomeworkPage(hwInfoId, true);
+        /*Page page = homeworkDao.submittedHomeworkPage(hwInfoId, true);
         //没有学生已经提交作业则执行删除
         if( page.getData().isEmpty()) {
             List<HwHomework> hwList = homeworkDao.homeworkList(hwInfoId);
@@ -264,7 +293,10 @@ public class HomewrokService implements IHomeworkService {
             homeworkInfoDao.delete(homeworkInfoDao.load(hwInfoId));
         }else {
             throw new Exception("已有学生提交作业，不可删除作业信息！");
-        }
+        }*/
+        HwHomeworkInfo hwInfo = homeworkInfoDao.load(hwInfoId);
+        hwInfo.setDeleteFlag(true);
+        homeworkInfoDao.update(hwInfo);
     }
 
     @Override
@@ -275,6 +307,7 @@ public class HomewrokService implements IHomeworkService {
         Timestamp timestamp = new java.sql.Timestamp(System.currentTimeMillis());
         homework.setMarkDate(timestamp);
         homework.setLastModifyDate(timestamp);
+        homework.setStatus(HomeworkStatus.MARKED);
         homeworkDao.update(homework);
     }
 
@@ -340,5 +373,14 @@ public class HomewrokService implements IHomeworkService {
     @Resource
     public void setTeacherDao(ITeacherDao teacherDao) {
         this.teacherDao = teacherDao;
+    }
+
+    public IHomeworkInfoService getHomeworkInfoService() {
+        return homeworkInfoService;
+    }
+
+    @Resource
+    public void setHomeworkInfoService(IHomeworkInfoService homeworkInfoService) {
+        this.homeworkInfoService = homeworkInfoService;
     }
 }

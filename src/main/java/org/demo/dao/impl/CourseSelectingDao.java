@@ -2,6 +2,7 @@ package org.demo.dao.impl;
 
 import org.demo.dao.ICourseSelectingDao;
 import org.demo.model.HwCourseSelecting;
+import org.demo.model.HwCourseTeaching;
 import org.demo.model.HwStudent;
 import org.demo.tool.Page;
 import org.springframework.stereotype.Repository;
@@ -39,5 +40,13 @@ public class CourseSelectingDao extends BaseDao<HwCourseSelecting> implements IC
         String hql = "select count(*) from HwCourseSelecting cs where " +
                 "cs.hwCourseTeaching.id = ? ";
         return count(hql, ctId);
+    }
+
+    @Override
+    public HwCourseSelecting findCSByCTAndStudent(HwCourseTeaching courseTeaching, HwStudent student) {
+        String hql = "from HwCourseSelecting cs where " +
+                "cs.hwCourseTeaching = ? " +
+                "and cs.hwStudent = ?";
+        return findObject(hql, new Object[]{courseTeaching, student});
     }
 }

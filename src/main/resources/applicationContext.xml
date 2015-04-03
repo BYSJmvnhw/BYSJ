@@ -72,14 +72,20 @@
         <tx:attributes>
             <!-- 为了提高效率,可以把一些查询之类的方法设置为只读事务  -->
             <tx:method name="*" propagation="REQUIRED"  read-only="true"/>
-            <tx:method name="add*" propagation="REQUIRED"/>
-            <tx:method name="del*" propagation="REQUIRED"/>
-            <tx:method name="update*" propagation="REQUIRED"/>
-            <tx:method name="save*" propagation="REQUIRED"/>
+            <tx:method name="add*" propagation="REQUIRED" rollback-for="true"/>
+            <tx:method name="del*" propagation="REQUIRED" rollback-for="true"/>
+            <tx:method name="update*" propagation="REQUIRED" rollback-for="true"/>
+            <tx:method name="save*" propagation="REQUIRED" rollback-for="true"/>
             <tx:method name="get*"  propagation="REQUIRED"/>
             <tx:method name="find*" propagation="REQUIRED"/>
             <tx:method name="load*" propagation="REQUIRED"/>
-            <tx:method name="upload*" propagation="REQUIRED"/>
+            <tx:method name="upload*" propagation="REQUIRED" rollback-for="true"/>
+            <!--  1. PROPAGATION_REQUIRED: 如果存在一个事务，则支持当前事务。如果没有事务则开启
+                    2. PROPAGATION_SUPPORTS: 如果存在一个事务，支持当前事务。如果没有事务，则非事务的执行
+                    3. PROPAGATION_MANDATORY: 如果已经存在一个事务，支持当前事务。如果没有一个活动的事务，则抛出异常。
+                    4. PROPAGATION_REQUIRES_NEW: 总是开启一个新的事务。如果一个事务已经存在，则将这个存在的事务挂起。
+                    5. PROPAGATION_NOT_SUPPORTED: 总是非事务地执行，并挂起任何存在的事务。
+                    6. PROPAGATION_NEVER: 总是非事务地执行，如果存在一个活动事务，则抛出异常 -->
         </tx:attributes>
     </tx:advice>
     <!-- 配置aop，Spring是通过aop来进行事务管理的  -->

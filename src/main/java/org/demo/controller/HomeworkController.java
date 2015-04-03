@@ -6,6 +6,7 @@ import net.sf.json.JSONObject;
 import org.demo.model.*;
 import org.demo.service.*;
 import org.demo.tool.UserType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,9 +33,10 @@ public class HomeworkController {
         }
     }
 
-    private String homeworkBaseDir;
+    //private String homeworkBaseDir;
     private IHomeworkService homeworkService;
     private IStudentService studentService;
+    private IHomeworkInfoService homeworkInfoService;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("YYYY");
 
@@ -95,7 +97,9 @@ public class HomeworkController {
     @ResponseBody
     public Object homeworkInfoList(Integer cid, HttpServletRequest request)  {
         try {
-            return homeworkService.homeworListInfoPage(cid);
+            HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
+            homeworkInfoService.updateOvertime(cid);
+            return homeworkService.homeworListInfo(cid, user);
         } catch (Exception e) {
             e.printStackTrace();
             return getFailResultJsonObject();
@@ -172,7 +176,9 @@ public class HomeworkController {
              return getSuccessResultJsonObject();
          } catch (Exception e) {
              e.printStackTrace();
-             return getFailResultJsonObject();
+             JSONObject result = getFailResultJsonObject();
+             result.put("msg",e.getMessage());
+             return result;
          }
     }
 
@@ -262,14 +268,23 @@ public class HomeworkController {
         this.studentService = studentService;
     }
 
+    public IHomeworkInfoService getHomeworkInfoService() {
+        return homeworkInfoService;
+    }
+
+    @Resource
+    public void setHomeworkInfoService(IHomeworkInfoService homeworkInfoService) {
+        this.homeworkInfoService = homeworkInfoService;
+    }
+
     private JSONObject getFailResultJsonObject(){
         JSONObject result = new JSONObject();
-        result.put("msg","fail");
+        result.put("status","fail");
         return result;
     }
     private JSONObject getSuccessResultJsonObject(){
         JSONObject result = new JSONObject();
-        result.put("msg","success");
+        result.put("status","success");
         return result;
     }
 }

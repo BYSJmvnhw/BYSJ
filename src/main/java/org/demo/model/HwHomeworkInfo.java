@@ -44,7 +44,7 @@ public class HwHomeworkInfo implements java.io.Serializable {
 	private MarkType markType;
 	private Set<HwHomework> hwHomeworks = new HashSet<HwHomework>(0);
 	private HwCourseTeaching hwCourseTeaching;
-
+	private Boolean deleteFlag;
 	// Constructors
 
 	/**
@@ -203,5 +203,14 @@ public class HwHomeworkInfo implements java.io.Serializable {
 
 	public void setHwCourseTeaching(HwCourseTeaching hwCourseTeaching) {
 		this.hwCourseTeaching = hwCourseTeaching;
+	}
+
+	@Column(name = "delete_flag")
+	public Boolean getDeleteFlag() {
+		return deleteFlag;
+	}
+
+	public void setDeleteFlag(Boolean deleteFlag) {
+		this.deleteFlag = deleteFlag;
 	}
 }

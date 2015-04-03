@@ -28,6 +28,7 @@ public class UserController {
     private IStudentService studentService;
     private ITeacherService teacherService;
     private IUserService userService;
+
     @RequestMapping("/info")
     @ResponseBody
     public JSONObject userInfo(HttpServletRequest request) {
@@ -40,9 +41,7 @@ public class UserController {
             return userService.userInfo(user,userType);
         }catch (Exception e) {
             e.printStackTrace();
-            JSONObject result = new JSONObject();
-            result.put("msg","fail");
-            return result;
+            return getFailResultJsonObject();
         }
     }
 
@@ -54,17 +53,15 @@ public class UserController {
            return userService.userEmail(user);
        }catch (Exception e) {
            e.printStackTrace();
-           JSONObject result = new JSONObject();
-           result.put("msg","fail");
-           return result;
+           return getFailResultJsonObject();
        }
     }
 
-/*    @RequestMapping("/updateUserInfo")
+    @RequestMapping("/updateUserInfo")
     @ResponseBody
     public JSONObject updateUserInfo(HttpServletRequest request){
         return null;
-    }*/
+    }
 
     public IStudentService getStudentService() {
         return studentService;
@@ -91,5 +88,16 @@ public class UserController {
     @Resource
     public void setUserService(IUserService userService) {
         this.userService = userService;
+    }
+
+    private JSONObject getFailResultJsonObject(){
+        JSONObject result = new JSONObject();
+        result.put("status","fail");
+        return result;
+    }
+    private JSONObject getSuccessResultJsonObject(){
+        JSONObject result = new JSONObject();
+        result.put("status","success");
+        return result;
     }
 }

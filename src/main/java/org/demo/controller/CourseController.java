@@ -24,6 +24,12 @@ public class CourseController {
 
     private ICourseService courseService;
 
+    /**
+     * 根据学年，学期和登录教师获取任教课程的邮箱。
+     * @param startYear 学年
+     * @param schoolTerm 学期
+     * @return
+     */
     //邮箱设置返回课程名和邮箱的接口
     @RequestMapping(value = "/email", method = RequestMethod.GET)
     @ResponseBody
@@ -33,19 +39,31 @@ public class CourseController {
             return JSONArray.fromObject(courseService.emailList(startYear, schoolTerm, user));
         } catch (Exception e){
             e.printStackTrace();
-            JSONObject result = new JSONObject();
-            result.put("msg","fail");
-            return result;
+            return getFailResultJsonObject();
         }
     }
 
-    @RequestMapping("/updateEmail")
+    /**
+     * 第一次请求更改邮箱，若邮箱已经验证，则直接修改成功
+     * 若邮箱未验证，将返回提示信息
+     * @param ctId 授课关系id
+     * @param email 新邮箱
+     * @return
+     */
+    @RequestMapping(value = "/updateEmail", method = RequestMethod.POST)
     @ResponseBody
     public JSONObject updateEmail(Integer ctId, String email) {
         return courseService.updateEmail(email, ctId);
     }
 
-    @RequestMapping("/checkEmail")
+    /**
+     * 第一次
+     * @param ctId 授课关系id
+     * @param email 新邮箱
+     * @param checkNumber 验证码
+     * @return
+     */
+    @RequestMapping(value = "/checkEmail", method = RequestMethod.POST)
     @ResponseBody
     public JSONObject checkEmail(Integer ctId, String email, String checkNumber) {
         return courseService.updateAndcheckEmail(ctId, email, checkNumber);
@@ -58,5 +76,16 @@ public class CourseController {
     @Resource
     public void setCourseService(ICourseService courseService) {
         this.courseService = courseService;
+    }
+
+    private JSONObject getFailResultJsonObject(){
+        JSONObject result = new JSONObject();
+        result.put("status","fail");
+        return result;
+    }
+    private JSONObject getSuccessResultJsonObject(){
+        JSONObject result = new JSONObject();
+        result.put("status","success");
+        return result;
     }
 }

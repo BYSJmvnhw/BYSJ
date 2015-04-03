@@ -62,6 +62,7 @@ public class OpenWordController {
 			request.setAttribute("student",student);
 			HwHomeworkInfo hwHomeworkInfo = homework.getHwHomeworkInfo();
 			request.setAttribute("hwInfo", hwHomeworkInfo);
+			request.setAttribute("hw",homework);
 
 			//若找不到配置的磁盘目录，则使用项目下的备用路径
 			String backupPath = request.getServletContext().getRealPath("/doc");
@@ -121,12 +122,13 @@ public class OpenWordController {
 			//fs.showPage(300, 200);
 			message = "保存成功！";
 			//request.setAttribute("message",message);
+			//throw new Exception("123");
 			fs.setCustomSaveResult("success");
-			return "web/savefile";
+			return "homework/savefile";
 		}catch (Exception e){
 			e.printStackTrace();
 			fs.setCustomSaveResult("fail");
-			return "web/savefile";
+			return "homework/savefile";
 		}finally {
 			/**
 			 * 必须在跳转到的页面关闭FileSaver，调用 fs.close();
