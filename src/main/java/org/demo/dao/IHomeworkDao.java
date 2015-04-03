@@ -1,5 +1,6 @@
 package org.demo.dao;
 
+import org.demo.model.HwCourseTeaching;
 import org.demo.model.HwHomework;
 import org.demo.model.HwHomeworkInfo;
 import org.demo.model.HwStudent;

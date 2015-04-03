@@ -175,11 +175,19 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public void addStudent(Integer ctId, Integer sId) {
-        HwCourseSelecting cs = new HwCourseSelecting();
-        cs.setHwCourseTeaching(courseTeachingDao.load(ctId));
-        cs.setHwStudent(studentDao.load(sId));
-        courseSelectingDao.add(cs);
+    public void addStudent(Integer ctId, Integer[] sIdArray) {
+        HwCourseTeaching ct = courseTeachingDao.load(ctId);
+        for( Integer sid : sIdArray){
+            //查询是否已经存在该选课关系
+            HwCourseSelecting cs = courseSelectingDao.findCSByCTAndStudent(ct, studentDao.load(sid));
+            if( cs == null ) {
+                //若不存在该选课关系则增加
+                HwCourseSelecting courseSelecting = new HwCourseSelecting();
+                courseSelecting.setHwCourseTeaching(ct);
+                courseSelecting.setHwStudent(studentDao.load(sid));
+                courseSelectingDao.add(courseSelecting);
+            }
+        }
     }
 
     public IStudentDao getStudentDao() {

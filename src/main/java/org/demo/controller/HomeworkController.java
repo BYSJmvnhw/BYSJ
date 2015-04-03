@@ -97,8 +97,9 @@ public class HomeworkController {
     @ResponseBody
     public Object homeworkInfoList(Integer cid, HttpServletRequest request)  {
         try {
+            HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
             homeworkInfoService.updateOvertime(cid);
-            return homeworkService.homeworListInfo(cid);
+            return homeworkService.homeworListInfo(cid, user);
         } catch (Exception e) {
             e.printStackTrace();
             return getFailResultJsonObject();

@@ -1,6 +1,7 @@
 package org.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.demo.tool.HomeworkStatus;
 import org.demo.tool.MarkType;
 
 import java.sql.Timestamp;
@@ -42,6 +43,7 @@ public class HwHomework implements java.io.Serializable {
 	private Timestamp markDate;
 	private String comment;
 	private Timestamp lastModifyDate;
+	private HomeworkStatus status;
 
 	// Constructors
 
@@ -244,4 +246,12 @@ public class HwHomework implements java.io.Serializable {
 		this.lastModifyDate = lastModifyDate;
 	}
 
+	@Column(name = "status")
+	public HomeworkStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(HomeworkStatus status) {
+		this.status = status;
+	}
 }
