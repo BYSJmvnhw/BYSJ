@@ -26,7 +26,7 @@ public interface IHomeworkService {
 
     public JSONObject courseTeachingPage(HwUser user, Integer startYear, Integer schoolTerm);
 
-    public JSONArray homeworListInfo(Integer courseTeachingId);
+    public JSONArray homeworListInfo(Integer courseTeachingId, HwUser user);
 
     public JSONObject homeworkInfoDetail(Integer hwInfoId);
 

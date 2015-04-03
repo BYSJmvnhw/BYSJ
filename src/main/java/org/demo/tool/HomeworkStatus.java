@@ -7,5 +7,5 @@ public enum HomeworkStatus {
 
     UNSUBMITTED,
     SUBMITTED,
-    MARK
+    MARKED
 }

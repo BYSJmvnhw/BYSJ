@@ -92,9 +92,9 @@ public class StudentController {
      * @param ctId 授课关系id
      * @param sId 学生关系id
      */
-    @RequestMapping("/appendStudent")
+    @RequestMapping(value = "/appendStudent",method = RequestMethod.POST)
     @ResponseBody
-    public JSONObject appendStudent(Integer ctId, Integer sId) {
+    public JSONObject appendStudent(Integer ctId, Integer[] sId) {
         try {
             studentService.addStudent(ctId, sId);
             return getSuccessResultJsonObject();
@@ -158,6 +158,15 @@ public class StudentController {
          return JSONObject.fromObject(result);
      }
 
+    /**
+     *
+     * @param campusId 校区id
+     * @param collegeId 学院id
+     * @param majorId 专业id
+     * @param studentNo 学生学号关键字
+     * @param name 学生姓名关键字
+     * @return
+     */
     @RequestMapping(value = "/searchStudent", method = RequestMethod.GET)
     @ResponseBody
     public JSONObject searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name) {

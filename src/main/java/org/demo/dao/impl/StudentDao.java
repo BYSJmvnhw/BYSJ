@@ -57,6 +57,6 @@ public class StudentDao extends BaseDao<HwStudent> implements IStudentDao {
         for(int i=0; i<str.length; i++) {
             str[i] = stringList.get(i);
         }
-        return findPage(hql.toString(), param.toArray(), str);
+        return findPage(hql.toString(), param.toArray(), str, 20);
     }
 }

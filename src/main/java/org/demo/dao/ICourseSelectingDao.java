@@ -1,6 +1,7 @@
 package org.demo.dao;
 
 import org.demo.model.HwCourseSelecting;
+import org.demo.model.HwCourseTeaching;
 import org.demo.model.HwStudent;
 import org.demo.tool.Page;
 
@@ -17,4 +18,6 @@ public interface ICourseSelectingDao extends IBaseDao<HwCourseSelecting> {
     public List<HwCourseSelecting> courseSelectingList(Integer courseTeachingId);
 
     public Long countByCtId(Integer ctId);
+
+    public HwCourseSelecting findCSByCTAndStudent(HwCourseTeaching courseTeaching, HwStudent student);
 }
