@@ -137,12 +137,7 @@
         </div>
         <div id="content" class="content"></div>
     </section>
-    {{if userType == 'STUDENT'}}
-    <div id="hand-in-wrap"></div>
-    {{else if userType == 'TEACHER'}}
-    <div id="add-work-wrap"></div>
-    <div id="add-student-wrap"></div>
-    {{/if}}
+    <div id="dialog-wrap"></div>
     <footer>
         <div class="line"></div>
         <div class="site-footer">
@@ -283,10 +278,9 @@
     </div>
 </script>
 
-<script type="text/template" id="hw-info">
-    <!--<div class="load-data"></div>-->
-    <section class="course-list">
-        <div class="course-choice">
+<script type="text/template" id="select-course-html">
+    <!--<section class="course-list">-->
+        <!--<div class="course-choice">-->
             <div class="choice-year">
                 <p>学年</p>
                 <select class="startYear">
@@ -307,6 +301,15 @@
             <div class="choice-sure">
                 <button class="choice-sure-btn" type="button">搜索课程</button>
             </div>
+        <!--</div>-->
+    <!--</section>-->
+</script>
+<script type="text/template" id="hw-info">
+    <!--<div class="load-data"></div>-->
+    <section class="course-list">
+        <div class="course-list-title">
+            <div class="set-changepw cs-mail-setting"><strong>课程列表</strong></div>
+            <div class="course-choice">{{include 'select-course-html'}}</div>
         </div>
         <div class="course-list-wrap"></div>
     </section>
@@ -353,7 +356,7 @@
 </script>
 <script type="text/template" id="work-list">
     <!--<div class="work-list-t">-->
-    <ul>
+    <!--<ul>-->
         {{each worklist as value}}
         <!--unhand hand remark-->
         <li class="work-student-list work-unhand-student">
@@ -364,44 +367,56 @@
                 <p>{{value.deadline.split(':00')[0] + ':00'}}</p>
             </div>
             {{if userType == 'TEACHER'}}
-            <div class="student-list-btn t-student-list-btn" data-hwInfoId="{{value.hwInfoId}}">单击批改作业</div>
+            <div class="student-list-btn t-student-list-btn" data-hwInfoId="{{value.hwInfoId}}">
+                <button class="student-list-mark-btn">批改作业</button>
+                <button class="student-list-delete-btn">删除作业</button>
+            </div>
             {{else if userType == 'STUDENT'}}
             <div class="hand-in-progress"><!--进度显示--></div>
             <div class="hand-in-work t-hand-in" data-hwInfoId="{{value.hwInfoId}}">单击交作业</div>
             {{/if}}
         </li>
         {{/each}}
-    </ul>
+    <!--</ul>-->
     {{if userType == 'TEACHER'}}
     <button class="add-work">新增课程作业</button>
     {{/if}}
     <!--</div>-->
 </script>
-<script type="text/template" id="dailog-html">
+<script type="text/template" id="dialog-html">
     <!--<div class="wrap">-->
     <div class="dailog-area {{if op == 'add-student'}}add-student-area{{/if}}">
-        <div class="dailog-title">
-            <p role='title'>
-                {{if op == 'add-work'}}
-                <strong>新增课程作业</strong>
-                {{else if op == 'hand-in'}}
-                <strong>交作业</strong>
-                {{else if op == 'add-student'}}
-                <strong>增加学生</strong>
-                {{/if}}
-            </p>
-        </div>
         {{if op == 'add-work'}}
+        <div class="dailog-title">
+            <p role='title'><strong>新增课程作业</strong></p>
+        </div>
         <div class="dailog-body add-work-dailog-body">
             {{include 'add-work-html'}}
         </div>
         {{else if op == 'hand-in'}}
+        <div class="dailog-title">
+            <p role='title'><strong>交作业</strong></p>
+        </div>
         <div class="dailog-body">
             {{include 'hand-in'}}
         </div>
-        {{else is op == 'add-student'}}
+        {{else if op == 'add-student'}}
+        <div class="dailog-title">
+            <p role='title'><strong>增加学生</strong></p>
+        </div>
         <div class="dailog-body">
             {{include 'add-stu-html'}}
+        </div>
+        {{else if op == 'delete-sure'}}
+        <div class="dailog-title">
+            <p role='title'><strong>操作提示</strong></p>
+        </div>
+        <div class="dailog-body">
+            <p class="delete-sure-text" role="tip">确定删除这个作业吗？<span>（删除后不可恢复）</span></p>
+            <div class="delete-sure-btn">
+                <button class="delete-sure-btn1">确定</button>
+                <button class="delete-sure-btn2">取消</button>
+            </div>
         </div>
         {{/if}}
         <span class="clear dailog-clear" title="关闭窗口"></span>
@@ -433,7 +448,7 @@
 <script type="text/template" id="add-stu-html">
     <div class="add-stu-choice">
         <label>学生姓名或学号</label>
-        <input name="add-stu-text" type="text" />
+        <input name="add-stu-text" type="text" placeholder="输入学号或姓名"/>
         <button class="add-student-search">搜索</button>
         <button class="add-student-pre">上一页</button>
         <button class="add-student-next">下一页</button>
@@ -491,16 +506,20 @@
     <ul>
         {{each studentlist as value}}
         <li class="student-alter-list student-has-alter">
+            {{if view_type == 'hwmanage'}}
             <div>
                 <p>{{value.title}}</p>
                 <p>{{value.studentName}}</p>
                 <p>{{value.studentNo}}</p>
                 <p>{{value.submitDate.split(' ')[0]}}</p>
             </div>
-            {{if view_type == 'hwmanage'}}
             <div class="alter-btn t-alter-btn" data-id="{{value.id}}">单击批改</div>
             {{else if view_type == 'stumanage'}}
-            <div class="check-btn t-check-btn" data-id="{{value.id}}">单击查看{{value.studentName}}的作业列表</div>
+            <div>
+                <p>{{value.hwStudent.name}}</p>
+                <p>{{value.hwStudent.studentNo}}</p>
+            </div>
+            <div class="check-btn t-check-btn" data-id="{{value.hwCourseTeaching.id}}">单击查看{{value.hwStudent.name}}的作业列表</div>
             {{/if}}
         </li>
         {{/each}}
@@ -512,45 +531,37 @@
 </script>
 
 <script type="text/template" id="cs-mail-html">
-    <div class="set-changepw"><strong>设置课程邮箱</strong></div>
-    <div class="cs-mail-list">
-        <ul>
-            <li class="cs-mail-green">
-                <div class="cs-mail-name">
-                    <p>计算机组成原理</p>
-                </div>
-                <div class="cs-mail-adr">
-                    <p>1234566@124.com</p>
-                </div>
-                <div class="cs-mail-btn t-cs-mail">
-                    <button class="cs-mail-change" type="submit">修改</button>
-                    <button class="cs-mail-clear" type="button">取消</button>
-                    <div class="cs-mail-input">
-                        <input class="cs-mail-input1" type="email" placeholder="输入新的邮箱"/>
-                        <input class="cs-mail-input2" type="text" placeholder="邮箱验证码"/>
-                        <button class="cs-mail-sure" type="submit">确认</button>
-                    </div>
-                </div>
-            </li>
-            <li class="cs-mail-green">
-                <div class="cs-mail-name">
-                    <p>计算机组成原理</p>
-                </div>
-                <div class="cs-mail-adr">
-                    <p>1234566@124.com</p>
-                </div>
-                <div class="cs-mail-btn t-cs-mail">
-                    <button class="cs-mail-change" type="submit">修改</button>
-                    <button class="cs-mail-clear" type="button">取消</button>
-                    <div class="cs-mail-input">
-                        <input class="cs-mail-input1" type="email" placeholder="输入新的邮箱"/>
-                        <input class="cs-mail-input2" type="text" placeholder="邮箱验证码"/>
-                        <button class="cs-mail-sure" type="submit">确认</button>
-                    </div>
-                </div>
-            </li>
-        </ul>
+    <div class="cs-mail-title">
+        <div class="set-changepw cs-mail-setting"><strong>设置课程邮箱</strong></div>
+        <div class="course-choice">{{include 'select-course-html'}}</div>
     </div>
+    <div class="cs-mail-list">
+
+    </div>
+</script>
+
+<script type="text/template" id="cs-mail-list-html">
+    <!--<ul>-->
+        {{each courselist as value}}
+        <li class="cs-mail-green">
+            <div class="cs-mail-name">
+                <p>{{value.courseName}}</p>
+            </div>
+            <div class="cs-mail-adr">
+                <p>{{value.email}}</p>
+            </div>
+            <div class="cs-mail-btn t-cs-mail">
+                <button class="cs-mail-change" type="submit">修改</button>
+                <button class="cs-mail-clear" type="button">取消</button>
+                <div class="cs-mail-input">
+                    <input class="cs-mail-input1" type="email" placeholder="输入新的邮箱"/>
+                    <input class="cs-mail-input2" type="text" placeholder="邮箱验证码"/>
+                    <button class="cs-mail-sure" type="submit" data-ctId="{{value.ctId}}">确认</button>
+                </div>
+            </div>
+        </li>
+        {{/each}}
+    <!--</ul>-->
 </script>
 
 <script type="text/template" id="hw-dynamic-html">

@@ -650,6 +650,7 @@ footer {
     width: 760px;
     margin-right: 20px;
     margin-left: 30px;
+    position: relative;
 }
 
 .hw-list-nav {
@@ -662,9 +663,11 @@ footer {
 
 .course-choice {
     overflow: hidden;
-    border-bottom: 1px #EEEEEE solid;
+    /*border-bottom: 1px #EEEEEE solid;*/
     margin-bottom: 10px;
     padding-bottom: 5px;
+    position: absolute;
+    right: 0;
 }
 
 .course-choice>div {
@@ -679,9 +682,9 @@ footer {
     width: 230px;
 }
 
-.choice-sure {
-    width: 100px;
-}
+/*.choice-sure {*/
+    /*width: 100px;*/
+/*}*/
 
 .choice-year p, .choice-term p {
     display: inline-block;
@@ -732,7 +735,7 @@ footer {
     width: 232px;
     margin-bottom: 10px;
     position: relative;
-    cursor: pointer;
+    /*cursor: pointer;*/
     overflow: hidden;
 }
 
@@ -895,6 +898,24 @@ footer {
     background-color: #5BC0DE;
 }
 
+.student-list-btn>button {
+    position: absolute;
+    top: 50%;
+    margin-top: -16px;
+}
+
+.student-list-btn>.student-list-mark-btn {
+    left: 50%;
+    margin-left: -100px !important;
+}
+
+.student-list-btn>.student-list-delete-btn {
+    right: 50%;
+    margin-right: -100px !important;
+}
+
+/*end作业信息*/
+
 /*进度显示*/
 
 .hand-in-progress {
@@ -1045,7 +1066,8 @@ span.dailog-clear:after {
     text-align: right;
 }
 
-.work-submit>button, .add-submit>button {
+.work-submit>button, .add-submit>button, .student-list-btn>button,
+.delete-sure-btn>button {
     color: white;
     font-weight: bold;
     font-size: 16px;
@@ -1054,22 +1076,28 @@ span.dailog-clear:after {
     cursor: pointer;
 }
 
-.dailog-clear {
+.dailog-clear, .student-list-btn>.student-list-delete-btn,
+.delete-sure-btn>.delete-sure-btn1 {
     background-color: #D9534F;
     border: 1px solid #D43F3A;
     margin-right: 20px;
 }
 
-.dailog-clear:hover {
+.dailog-clear:hover, .student-list-btn>.student-list-delete-btn:hover,
+.delete-sure-btn>.delete-sure-btn1:hover {
     background-color: #D43F3A;
 }
 
-.work-submit-sure, .add-work-sure {
+.work-submit-sure, .add-work-sure,
+.student-list-btn>.student-list-mark-btn,
+.delete-sure-btn>.delete-sure-btn2 {
     background-color: #5CB85C;
     border: 1px solid #4CAE4C;
 }
 
-.work-submit-sure:hover, .add-work-sure:hover {
+.work-submit-sure:hover, .add-work-sure:hover,
+.student-list-btn>.student-list-mark-btn:hover,
+.delete-sure-btn>.delete-sure-btn2:hover {
     background-color: #449d44;
 }
 
@@ -1235,6 +1263,30 @@ span.dailog-clear:after {
 
 /*end弹出教师新增学生框*/
 
+/*弹出删除提示框*/
+
+.delete-sure-text {
+    height: 40px;
+    line-height: 40px;
+    text-indent: 30px;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #333;
+}
+
+.delete-sure-text>span {
+    color: #D9534F;
+}
+
+.delete-sure-btn {
+    text-align: right;
+}
+.delete-sure-btn>.delete-sure-btn1 {
+    margin-right: 10px;
+}
+
+/*end弹出删除提示框*/
+
 /*作业信息切换栏目*/
 
 .return-course-list, .return-work-list {
@@ -1319,6 +1371,22 @@ span.dailog-clear:after {
 /*end作业信息切换栏目*/
 
 /*课程邮箱设置*/
+
+.cs-mail-title, .course-list-title {
+    position: relative;
+    height: 40px;
+    border-bottom: 1px #eee solid;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+}
+
+.cs-mail-setting {
+    position: absolute;
+    left: 0;
+    height: 40px;
+    line-height: 40px;
+    border: none;
+}
 
 .cs-mail-list>ul>li {
     border: 1px #eee solid;
