@@ -26,7 +26,7 @@ public class HomeworkInfoDao extends BaseDao<HwHomeworkInfo> implements IHomewor
 
     @Override
     public List studentHomeworkLsit(HwCourseTeaching courseTeaching, HwStudent student) {
-        String hql = "select hwInfo.id, hwInfo.title, hwInfo.overtime, hwInfo.deadline, hw.status  from HwHomework hw " +
+        String hql = "select hwInfo.id, hwInfo.title, hwInfo.courseName, hwInfo.overtime, hwInfo.deadline, hw.status  from HwHomework hw " +
                 "join  hw.hwHomeworkInfo hwInfo " +
                 //"on hw.hwHomeworkInfo.id = hwInfo.id " +
                 "where " +
