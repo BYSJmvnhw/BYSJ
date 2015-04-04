@@ -47,6 +47,12 @@ public class HomewrokService implements IHomeworkService {
             homeworkDao.add(homework);
     }
 
+    /**
+     * 已提交或未提交（未提交的也已经初始化作业对象）的学生作业分页
+     * @param hwInfoId 作业信息id
+     * @param submited 是否已经提交的
+     * @return 分页的JSONObjcet 对象
+     */
     @Override
     public JSONObject submittedHomeworkPage(Integer hwInfoId, boolean submited) {
         Page page = homeworkDao.submittedHomeworkPage(hwInfoId, submited);
@@ -66,6 +72,12 @@ public class HomewrokService implements IHomeworkService {
         homeworkDao.update(homework);
     }
 
+    /**
+     *
+     * @param courseTeachingId 授课关系id
+     * @param studentId 学生id
+     * @return 作业分页JSONObject
+     */
     @Override
     public JSONObject homeworkPage(Integer courseTeachingId, Integer studentId) {
         Page page = homeworkDao.homeworkPage(courseTeachingId, studentId);
