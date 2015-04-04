@@ -515,7 +515,8 @@ footer {
 
 .set-changepw-submit>div>input, .set-mail-submit>div>input,
 .add-work-name>input, .add-work-deadline>input, .add-work-desc>textarea,
-.cs-mail-input1, .cs-mail-input2, .add-stu-choice>input{
+.add-work-marktype>select,
+.cs-mail-input1, .cs-mail-input2, .add-stu-choice>input, .add-stu-choice>select{
     border: 1px #bababa solid;
     padding: 5px;
     width: 180px;
@@ -525,7 +526,8 @@ footer {
 
 .set-changepw-submit>div>input:focus, .set-mail-submit>div>input:focus,
 .add-work-name>input:focus, .add-work-deadline>input:focus, .add-work-desc>textarea:focus,
-.cs-mail-input1:focus, .cs-mail-input2:focus, .add-stu-choice>input:focus {
+.add-work-marktype>select:focus,
+.cs-mail-input1:focus, .cs-mail-input2:focus, .add-stu-choice>input:focus, .add-stu-choice>select:hover {
     border-color: #009ee5;
     outline: none;
 }
@@ -545,7 +547,7 @@ footer {
 }
 
 .set-changepw-submit>button, .set-mail-submit>button,
-.cs-mail-sure, .add-student-search {
+.cs-mail-sure, .add-student-search, .add-student-sure {
     width: 80px;
     color: white;
     background-color: #5CB85C;
@@ -558,7 +560,7 @@ footer {
 }
 
 .set-changepw-submit>button:hover, .set-mail-submit>button:hover,
-.cs-mail-sure:hover, .add-student-search:hover {
+.cs-mail-sure:hover, .add-student-search:hover, .add-student-sure:hover {
     background-color: #449d44;
     border-color: #398439;
 }
@@ -724,13 +726,13 @@ footer {
     border-color: #398439;
 }
 
-.course-list ul, .work-list ul, .student-list ul {
+.course-list ul, .work-list ul, .student-list ul, .d-newestwork-list ul {
     padding-top: 3px;
     overflow: hidden;
     zoom: 1;
 }
 
-.course-list ul li, .work-list ul li, .student-list ul li {
+.course-list ul li, .work-list ul li, .student-list ul li, .d-newestwork-list ul li {
     float: left;
     width: 232px;
     margin-bottom: 10px;
@@ -746,32 +748,58 @@ footer {
 .course-list ul li:hover>.work-list-btn,
 .course-list ul li:hover>.stumanage-list-btn,
 .work-list ul li:hover>.student-list-btn,
+.work-list ul li:hover>.hand-in-work,
 .student-list ul li:hover>.alter-btn,
 .student-list ul li:hover>.check-btn,
-.work-list ul li:hover>.hand-in-work {
+.d-newestwork-list ul li:hover>.hand-in-work,
+.d-newestwork-list ul li:hover>.student-list-btn,
+.student-list-wrap ul li:hover>.student-list-btn {
     top: 0;
+}
+
+.work-list-btn>span,
+.stumanage-list-btn>span,
+.student-list-btn>span,
+.hand-in-work>span,
+.alter-btn>span,
+.check-btn>span,
+.hand-in-work>span,
+.student-list-btn>span,
+.student-list-btn>span {
+    height: 24px;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto auto;
 }
 
 .course-list ul li:nth-child(3n-1),
 .work-list ul li:nth-child(3n-1),
+.d-newestwork-list ul li:nth-child(3n-1),
 .student-list ul li:nth-child(3n-1) {
     margin-right: 15px;
     margin-left: 15px;
 }
 
 .course-list ul li:nth-child(3n-2),
+.d-newestwork-list ul li:nth-child(3n-2),
 .student-list ul li:nth-child(3n-2),
 .work-list ul li:nth-child(3n-2) {
     margin-left: 5px;
 }
 
 .course-list ul li:nth-child(3n),
+.d-newestwork-list ul li:nth-child(3n),
 .student-list ul li:nth-child(3n),
 .work-list ul li:nth-child(3n) {
     margin-right: 5px;
 }
 
 .course-list ul li:last-child,
+.d-newestwork-list ul li:last-child,
 .student-list ul li:last-child,
 .work-list ul li:last-child {
     clear: right;
@@ -786,7 +814,8 @@ footer {
 
 .course-work-list:before,
 .student-alter-list:before,
-.work-student-list:before {
+.work-student-list:before,
+.add-stu-list>ul>li.stu-choiced:before {
     content: '';
     display: block;
     border-left: 35px transparent solid;
@@ -835,12 +864,19 @@ footer {
     border-color: #5CB85C;
 }
 
+li.work-overtime-student {
+    border-color: #bbb;
+}
+
 .course-no-work:before,
 .student-no-alter:before,
 .work-remark-student:before {
     border-top: 35px #5CB85C solid;
 }
 
+li.work-overtime-student:before {
+    border-top: 35px #bbb solid;
+}
 
 .course-has-work:before,
 .student-has-alter:before,
@@ -876,7 +912,7 @@ footer {
     top: -100%;
     height: 100%;
     width: 100%;
-    line-height: 70px;
+    /*line-height: 70px;*/
     text-align: center;
     color: #fff;
     z-index: 1;
@@ -896,6 +932,10 @@ footer {
 
 .work-hand-student>div:last-child {
     background-color: #5BC0DE;
+}
+
+li.work-overtime-student>div:last-child {
+    background-color: #bbb;
 }
 
 .student-list-btn>button {
@@ -1005,9 +1045,9 @@ span.dailog-clear:after {
     line-height: 25px;
 }
 
-.dailog-body>div>label:first-child {
+.dailog-body>div>label{
     display: inline-block;
-    width: 120px;
+    /*width: 120px;*/
     margin-right: 10px;
     text-align: right;
     font-weight: bold;
@@ -1046,6 +1086,7 @@ span.dailog-clear:after {
 
 .work-upload>label:first-child {
     color: #fff;
+    padding: 2px 8px;
     background-color: #5CB85C;
     border: 1px solid #4CAE4C;
     text-align: center !important;
@@ -1109,8 +1150,20 @@ span.dailog-clear:after {
     line-height: 30px;
 }
 
+.add-work-dailog-body>div>label {
+    width: 120px;
+}
+
+.add-work-dailog-body>div {
+    margin-bottom: 10px;
+}
+
 .add-work-dailog-body input, .add-work-dailog-body textarea {
     width: 300px;
+}
+
+.add-work-dailog-body select {
+    width: 312px;
 }
 
 .add-work-course {
@@ -1118,7 +1171,7 @@ span.dailog-clear:after {
 }
 
 .add-work-desc {
-    margin: 10px 0;
+
 }
 
 .add-work-desc textarea {
@@ -1131,9 +1184,8 @@ span.dailog-clear:after {
 }
 
 .add-work-deadline {
-    margin-bottom: 15px;
-}
 
+}
 
 .add-work, .add-student {
     position: absolute;
@@ -1162,15 +1214,30 @@ span.dailog-clear:after {
 
 }
 
-.add-stu-choice>input {
-    margin-right: 40px;
+.add-stu-choice>select.campus-choice {
+    width: 100px;
+    margin-right: 10px;
 }
 
-.add-student-search {
+.add-stu-choice>input, .add-stu-choice>select.college-choice {
+    width: 120px;
+    margin-right: 10px;
+}
+
+.stu-search-result {
+    line-height: 40px;
+    font-weight: bold;
+}
+
+.add-student-search, .add-student-sure {
+    position: absolute;
+    right: 0;
+    top: 50%;
     width: auto;
     font-weight: bold;
     font-size: 16px;
     padding: 0 8px;
+    margin-top: -16px;
     line-height: 30px;
 }
 
@@ -1194,18 +1261,23 @@ span.dailog-clear:after {
     right: 0;
 }
 
+.add-student-sure {
+    right: 150px;
+}
+
 .add-student-pre:hover, .add-student-next:hover,
 .d-newestwork-title>button:hover, .d-unhand-title>button:hover, .d-feedback-title>button:hover {
     background-color: #eee;
 }
 
 .add-stu-list, .add-stu-list>ul {
-    overflow: hidden;
-    zoom: 1;
+    /*overflow: hidden;*/
+    /*zoom: 1;*/
 }
 
 .add-stu-list>ul>li {
-    float: left;
+    /*float: left;*/
+    display: inline-block;
     width: 110px;
     margin-right: 5px;
     margin-left: 5px;
@@ -1220,24 +1292,15 @@ span.dailog-clear:after {
     border-color: #41B8F4;
 }
 
-.add-stu-list>ul>li:hover:before {
-    content: '';
-    display: block;
-    position: absolute;
-    right: 0;
-    top: 0;
-    border-top: 35px #41B8F4 solid;
-    border-left: 35px transparent solid;
-}
-
 .add-stu-list>ul>li:hover>span {
     display: block;
     width: 16px;
     height: 4px;
     position: absolute;
     top: 7px;
-    right: 1px;
-    background-color: #fff;
+    right: -172px;
+    background-color: #FFFFFF;
+    z-index: 100;
 }
 
 .add-stu-list>ul>li:hover>span:before {
@@ -1251,6 +1314,54 @@ span.dailog-clear:after {
     background-color: #fff;
 }
 
+.add-stu-list>ul>li:hover>.stu-list-li-details {
+    display: block;
+}
+
+.add-stu-list>ul>li.stu-choiced {
+    border-color: #41B8F4;
+}
+
+.add-stu-list>ul>li.stu-choiced:before {
+    border-top: 35px #41B8F4 solid;
+}
+
+.add-stu-list>ul>li.stu-choiced:after {
+    content: '';
+    display: block;
+    width: 5px;
+    height: 10px;
+    border-bottom: 4px #fff solid;
+    border-right: 4px #fff solid;
+    position: absolute;
+    top: 1px;
+    right: 6px;
+    transform: rotate(45deg);
+}
+
+.stu-list-li-details {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    top: -5px;
+    left: -5px;
+    width: 300px;
+    padding-left: 5px;
+    border: 5px #41B8F4 solid;
+    z-index: 5;
+}
+
+
+.stu-list-li-details:before {
+    content: '';
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    border-top: 35px #41B8F4 solid;
+    border-left: 35px transparent solid;
+}
+
 .add-student-area {
     width: 750px;
     top: 10%;
@@ -1259,6 +1370,7 @@ span.dailog-clear:after {
 .add-student-page {
     position: relative;
     height: 40px;
+    display: none;
 }
 
 /*end弹出教师新增学生框*/
