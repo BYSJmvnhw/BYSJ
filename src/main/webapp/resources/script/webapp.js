@@ -2,7 +2,6 @@
  * Created by zqc on 2015/3/9.
  */
 
-
 define(function(require, exports, module) {
 
     // 引入模块依赖
@@ -16,18 +15,6 @@ define(function(require, exports, module) {
 
     // ajax请求服务端地址
     var servicepath = 'http://localhost:8080/mvnhk/';
-
-    function ajaxRead (model, view, url, data, fun) {
-        model.sync('read', view, {
-            url: servicepath + url,
-            data: data,
-            dataType: 'json',
-            success: fun,
-            error: function (o, e) {
-                console.log(e);
-            }
-        });
-    }
 
     // 公共模型类
     var TypeModel = Backbone.Model.extend({
@@ -102,7 +89,34 @@ define(function(require, exports, module) {
                 newpw = this.$el.find('#new-pw').val(),
                 surepw = this.$el.find('#sure-pw').val();
             console.log(oldpw, newpw, surepw);
-
+            if(newpw == surepw){
+                $.ajax({
+                    type: 'post',
+                    url: servicepath + 'user/updatePassword',
+                    data: {oldPassword: oldpw, newPassword: newpw},
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log('修改密码', data);
+                        if(data.status == 'success'){
+                            alert('修改成功，请重新登录！');
+                            window.location.href = servicepath + 'web/login'; // 跳转到登录页面
+                        }
+                        else if (data.status == 'error-oldPassword'){
+                            alert('旧密码不正确！');
+                        }
+                        else{
+                            alert('操作失败！');
+                        }
+                    },
+                    error: function (o, e) {
+                        console.log(e);
+                        alert('请检查您的网络问题！');
+                    }
+                });
+            }
+            else {
+                alert('两次密码输入不一致！');
+            }
         },
         changeMail: function () {
             var newmail = this.$el.find('#new-mail').val(),
@@ -111,7 +125,7 @@ define(function(require, exports, module) {
         }
     });
 
-    // 学生管理->学生列表视图
+    // 学生管理->添加学生->弹框->学生列表子视图
     var AddStuListView = Backbone.View.extend({
         tagName: 'ul',
         events: {
@@ -126,9 +140,17 @@ define(function(require, exports, module) {
             var ele = tmpl(this.tmpl_id, this.model.toJSON());
             $(this.el).html(ele);
             this.model.attributes.$wrap.html(this.el);
+            this.delegateEvents(this.events);
         },
-        addStudent: function () {
-
+        addStudent: function (e) {
+            console.log('添加');
+            var $cur = $(e.currentTarget);
+            if($cur.hasClass('stu-choiced')){
+                $cur.removeClass('stu-choiced'); // 取消打勾样式
+            }
+            else {
+                $cur.addClass('stu-choiced'); // 显示打勾样式
+            }
         }
     });
 
@@ -136,7 +158,7 @@ define(function(require, exports, module) {
     var DialogView = Backbone.View.extend({
         tagName: 'div',
         className: 'shade-wrap',
-        tmpl_id: 'dailog-html',
+        tmpl_id: 'dialog-html',
         initialize: function () {
             this.listenTo(this.model, "change", this.render);
         },
@@ -144,53 +166,67 @@ define(function(require, exports, module) {
             var ele = tmpl(this.tmpl_id, this.model.toJSON());
             $(this.el).html(ele);
             this.model.attributes.$wrap.html(this.el);
+            this.delegateEvents(this.events);
         },
-        closeHandIn: function () {
+        closeDialog: function () {
             this.$el.hide(300);
+        }
+    });
+
+    // 学生上交作业 [视图][弹框]
+    var HandInView = DialogView.extend({
+        events: {
+            'click .work-submit-sure': 'submitWork', // 点击提交按钮
+            'click .dailog-clear': 'closeDialog', // 关闭提交窗口
+            'change #work-file': 'showFileName' // 展示上传的文件名
+        },
+        submitWork: function (e) {
+            console.log('html5 上传');
+            var that= this,
+                file = this.$el.find('#work-file')[0].files[0],
+                hwinfoId = $(e.currentTarget).attr('data-hwinfoId'),
+                formData = new FormData(),
+                flieupload = new XMLHttpRequest();
+            formData.append('hw', file);
+            formData.append('hwinfoId', hwinfoId);
+            flieupload.upload.addEventListener("progress", function (evt) {
+                var  $p = that.model.attributes.$progesss;
+                if (evt.lengthComputable) {
+                    that.closeDialog();
+                    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+                    $p.css('height', percentComplete.toString() + '%');
+                    $p.text(percentComplete.toString() + '%');
+                }
+                if (evt.loaded == evt.total){
+                    $p.parent().replaceClass('work-hand-student', 'work-unhand-student');
+                    $p.next().text('单击重新提交');
+                    $p.remove();
+                }
+            }, false);
+            flieupload.open("POST", servicepath + 'homework/upload');
+            flieupload.onreadystatechange = function () {
+                if(flieupload.readyState == 4 && flieupload.status == 200){
+                    console.log(JSON.parse(flieupload.responseText));
+                }
+            };
+            flieupload.send(formData);
         },
         showFileName: function (e) { // 显示上传文件的名字
             $(e.currentTarget).next().html($(e.currentTarget).val().split('\\').pop());
         }
     });
 
-    // 学生上交作业视图，弹框
-    var HandInView = DialogView.extend({
-        events: {
-            'click .work-submit-sure': 'submitWork', // 点击提交按钮
-            'click .dailog-clear': 'closeHandIn', // 关闭提交窗口
-            'change #work-file': 'showFileName' // 展示上传的文件名
-        },
-        submitWork: function (e) {
-            console.log('上传');
-            var name = this.$el.find('#work-file').attr('name');
-            var hwinfoId = $(e.currentTarget).attr('data-hwinfoId');
-            $.ajax({
-                type: 'post',
-                url: servicepath + 'homework/upload',
-                enctype: "multipart/form-data",
-                data: JSON.stringify({hw: name, hwinfoId: hwinfoId}),
-//                dataType: 'json',
-                success: function (data) {
-                    console.log(data);
-                },
-                error: function (o, e) {
-                    console.log(e);
-                }
-            });
-        }
-    });
-
-    // 教师新增作业，弹框
+    // 作业管理->作业信息->课程列表->作业列表->新增作业 [视图][弹框][教师]
     var AddWorkView = DialogView.extend({
         events: {
             'click .add-work-sure': 'submitAddWork',
-            'click .dailog-clear': 'closeHandIn',
+            'click .dailog-clear': 'closeDialog',
             'click #choice-deadline': 'choiceDeadline'
         },
         submitAddWork: function () {
             var $t = this.$el,
                 that = this;
-            var data = $t.find('input, textarea');
+            var data = $t.find('input, textarea, select');
             console.log(data, that.model.attributes.cid);
             $.ajax({
                 type: 'POST',
@@ -199,7 +235,8 @@ define(function(require, exports, module) {
                     jsonObject: JSON.stringify({
                         title: data[0].value,
                         hwDesc: data[1].value,
-                        deadline: Date.parse(new Date(data[2].value)),
+                        markType: data[2].value,
+                        deadline: Date.parse(new Date(data[3].value)),
                         cid: that.model.attributes.cid
                     })
                 },
@@ -207,8 +244,10 @@ define(function(require, exports, module) {
                 timeOut: 10000,
                 success: function (data) {
                     console.log('成功新增作业', data);
-                    if(data.msg == 'success')
-                        that.closeHandIn(); // 新增成功后，销毁弹框
+                    if(data.status == 'success'){
+                        that.closeDialog(); // 新增成功后，销毁弹框
+                        that.model.attributes.fetchWorklist(); // 刷新作业列表
+                    }
                     else
                         alert('操作失败！');
                 },
@@ -231,12 +270,14 @@ define(function(require, exports, module) {
         }
     });
 
-    // 学生信息-增加学生-学生列表弹框，教师才有
+    // 学生管理->学生信息->增加学生 [视图][弹框][教师]
     var AddStuView = DialogView.extend({
         events: {
             'click .add-work-sure': 'submitAddWork',
-            'click .dailog-clear': 'closeHandIn',
+            'click .dailog-clear': 'closeDialog',
+            'keydown input[name="add-stu-text"]': 'enterSearchStu',
             'click .add-student-search': 'searchStu',
+            'click .add-student-sure': 'addSure',
             'click .add-student-pre': 'preStu',
             'click .add-student-next': 'nextStu'
         },
@@ -247,10 +288,16 @@ define(function(require, exports, module) {
             var ele = tmpl(this.tmpl_id, this.model.toJSON());
             $(this.el).html(ele);
             this.model.attributes.$wrap.html(this.el);
-            this.getStudentData('', this.curpage);
+        },
+        enterSearchStu: function (e) {
+            if((e.keyCode || e.which) == 13){
+                this.keyword = $(e.currentTarget).val();
+                this.getStudentData(1, 1, this.keyword, 0);
+            }
         },
         searchStu: function (e) {
             this.keyword = $(e.currentTarget).prev().val();
+            this.getStudentData(1, 1, this.keyword, 0);
         },
         preStu: function () {
             if(this.curpage > 1)
@@ -260,43 +307,122 @@ define(function(require, exports, module) {
             if(this.curpage < this.maxpage)
                 this.getStudentData(this.keyword, this.curpage + 1);
         },
-        getStudentData: function (keyword, page) {
+        showPage: function () {
+            this.$el.find('.add-student-page').show();
+        },
+        getStudentData: function (campusId, collegeId, keyword, page) {
             var that = this;
-            var stumodel = new TypeModel;
-            var stuview = new AddStuListView({
-                model: stumodel
+            this.stumodel = this.stumodel || new TypeModel;
+            this.stuview = this.stuview || new AddStuListView({
+                model: this.stumodel
             });
-//            stumodel.sync('read', stuview, {
-//                url: servicepath + '',
-//                data: {cid: id},
-//                dataType: 'json',
-//                success: function (data) {
-//                    console.log('学生列表', data);
-//                    stumodel.set({
-//                    });
-//                },
-//                error: function (o, e) {
-//                    console.log(e);
-//                }
-//            });
-            stumodel.set({
-                name: 'name',
-                No: '20112100168',
-                $wrap: that.model.attributes.$wrap.find('.add-stu-list')
+            this.stumodel.sync('read', this.stuview, {
+                url: servicepath + 'student/searchStudent',
+                data: {
+                    campusId: campusId,
+                    collegeId: collegeId,
+                    studentNo: parseInt(keyword) || '',
+                    name: keyword.replace(/\d+/g,'')
+                },
+                dataType: 'json',
+                success: function (data) {
+                    console.log('学生列表', data);
+                    that.stumodel.set({
+                        studentlist: data.data,
+                        $wrap: that.model.attributes.$wrap.find('.add-stu-list'),
+                        rand: Math.random()
+                    });
+                    that.showPage(); // 显示确认按钮
+                },
+                error: function (o, e) {
+                    console.log(e);
+                }
+            });
+        },
+        addSure: function (e) {
+            var that = this,
+                i,
+                stulist = {ctId: that.model.attributes.ctId, sId: []},
+                select = $(e.currentTarget).parent().prev().find('li.stu-choiced');
+            console.log(select);
+            for(i = 0; i < select.length; i ++) {
+                stulist.sId.push(select[i].getAttribute('data-sId'));
+            }
+            console.log(stulist);
+            $.ajax({
+                type: 'post',
+                url: servicepath + 'student/appendStudent',
+                data: stulist,
+                dataType: 'json',
+                success: function (data) {
+                    console.log('添加append', data);
+                    if(data.status == 'success'){
+                        alert('添加成功');
+                        select.removeClass('stu-choiced'); // 取消选中
+                    }
+                    else {
+                        alert('操作失败');
+                    }
+                },
+                error: function (o, e) {
+                    console.log(e);
+                    alert('操作失败，请检查您的网络问题！');
+                }
             });
         }
     });
 
-    // 学生视图类，教师才有
+    // 作业管理->作业信息->课程列表->作业列表->确认删除作业 [视图][弹框][教师]
+    var DeleteWorkView = DialogView.extend({
+        events: {
+            'click .delete-sure-btn1': 'deleteSure', // 执行删除操作
+            'click .dailog-clear': 'closeDialog', // 关闭提交窗口
+            'click .delete-sure-btn2': 'closeDialog' // 关闭提交窗口
+        },
+        deleteSure: function () {
+            console.log('删除');
+            var that = this;
+            $.ajax({
+                type: 'post',
+                url: servicepath + 'homework/deleteHomeworkInfo',
+                data: {hwInfoId: this.model.attributes.hwInfoId},
+                dataType: 'json',
+                success: function (data) {
+                    console.log('学生作业', data);
+                    if(data.status == 'success'){
+                        // 删除作业列表视图上的作业，动画效果
+                        that.model.attributes.$workli.hide(1000, function () {
+                            this.remove();
+                        });
+                    }
+                },
+                error: function (o, e) {
+                    console.log(e);
+                }
+            });
+            that.closeDialog();
+        }
+    });
+
+    // 邮箱修改验证
+    var AuthcodeView = DialogView.extend({
+        events: {
+            'click .dailog-clear': 'closeDialog', // 关闭提交窗口
+            'click .auth-code-sure-btn1': 'closeDialog', // 关闭提交窗口
+            'click .auth-code-sure-btn2': 'submitAuthcode' // 提交验证码
+        },
+        submitAuthcode: function () {
+            var code = this.$el.find('input').val();
+            if(this.model.attributes.submitAuthcode(code)){
+                this.closeDialog();
+            }
+        }
+    });
+
+    // 学生列表 [父类]
     var StudentListView = Backbone.View.extend({
         tagName: 'div',
         className: 'student-list',
-        tmpl_id: 'student-list',
-        events: {
-            'click .add-student': 'addStudent', // 添加学生
-            'click .check-btn': 'checkStuWork', // 教师查看该生作业
-            'click .alter-btn': 'alterStuWork' // 教师批改该作业
-        },
         initialize: function () {
             this.listenTo(this.model, "change", this.render);
         },
@@ -304,14 +430,26 @@ define(function(require, exports, module) {
             console.log('render-stuentwork');
             var ele = tmpl(this.tmpl_id, this.model.toJSON());
             $(this.el).html(ele);
-            this.model.attributes.$studentlistwrap.html(this.el);
+            this.model.attributes.$wrap3.html(this.el);
+            this.delegateEvents(this.events); // 视图渲染完后绑定所有事件
+        }
+    });
+
+    // 学生管理->学生信息->课程列表->学生列表 [视图][教师]
+    var StumanageStudentListView = StudentListView.extend({
+        tmpl_id: 'stumanage-student-list-html',
+        events: {
+            'click .add-student': 'addStudentDlg', // 添加学生
+            'click .check-btn': 'checkStuWork' // 教师查看该生作业业
         },
-        addStudent: function () {
+        addStudentDlg: function (e) {
             console.log('添加学生');
-            var addstumodel = new TypeModel;
-            var addstuview = new AddStuView({
-                model: addstumodel
-            });
+            var that = this,
+                ctId = $(e.currentTarget).attr('data-ctId'),
+                addstumodel = new TypeModel,
+                addstuview = new AddStuView({
+                    model: addstumodel
+                });
 //            addstumodel.sync('read', addstuview, {
 //                url: servicepath + '',
 //                data: {cid: id},
@@ -327,40 +465,55 @@ define(function(require, exports, module) {
 //                }
 //            });
             addstumodel.set({
-                studentlist: [{name: 'aaaa'}],
+                ctId: ctId,
                 op: 'add-student',
-                $wrap: $('#add-student-wrap')
+                $wrap: $('#dialog-wrap')
             });
         },
         // 教师查看单个学生该课程的所有作业
-        checkStuWork: function () {
-            var that = this;
-            var worklistmodel = new TypeModel;
-            var worklistview = new WorkListView({
-                model: worklistmodel
+        checkStuWork: function (e) {
+            var that = this,
+                $cur = $(e.currentTarget),
+                ctId = $cur.attr('data-ctId'),
+                sId = $cur.attr('data-sId');
+            this.worklistmodel = this.worklistmodel || new TypeModel;
+            this.worklistview = this.worklistview ||new StuManageWorkListView({
+                model: this.worklistmodel
             });
-            this.model.attributes.$studentlistwrap.parent().parent().replaceClass('hw-content-wrap-3', 'hw-content-wrap-2')
-//            worklistmodel.sync('read', worklistview, {
-//                url: servicepath + '',
-//                data: null,
-//                dataType: 'json',
-//                success: function (data) {
-//                    console.log('该学生的课程作业', data);
-//                    worklistmodel.set({
-//                    });
-//                },
-//                error: function (o, e) {
-//                    console.log(e);
-//                }
+            this.model.attributes.$wrap3.parent().parent().replaceClass('hw-content-wrap-3', 'hw-content-wrap-2')
+            this.worklistmodel.sync('read', this.worklistview, {
+                url: servicepath + 'student/homeworkList',
+                data: {ctId: ctId, sId: sId},
+                dataType: 'json',
+                success: function (data) {
+                    console.log('该学生的课程作业', data);
+                    that.worklistmodel.set({
+                        worklist: data.data,
+                        view_type: 'stumanage',
+                        userType: sessionStorage.userType,
+                        $wrap2: that.model.attributes.$wrap3.parent().next().children('.student-list-wrap')
+                    });
+                },
+                error: function (o, e) {
+                    console.log(e);
+                }
+            });
+//            worklistmodel.set({
+//                worklist: [{
+//                    title: '计算机组成原理第一次作业',
+//                    deadline: '2014nian1'
+//                }],
+//                userType: sessionStorage.userType,
+//                $wrap2: that.model.attributes.$wrap3.parent().next().children('.student-list-wrap')
 //            });
-            worklistmodel.set({
-                worklist: [{
-                    title: '计算机组成原理第一次作业',
-                    deadline: '2014nian1'
-                }],
-                userType: sessionStorage.userType,
-                $worklistwrap: that.model.attributes.$studentlistwrap.parent().next().children('.student-list-wrap')
-            });
+        }
+    });
+
+    // 作业管理->作业信息->课程列表->课程作业列表->学生列表 [视图][教师]
+    var HwmanageStudentListView = StudentListView.extend({
+        tmpl_id: 'hwmanage-student-list-html',
+        events: {
+            'click .alter-btn': 'alterStuWork' // 教师批改该作业
         },
         alterStuWork: function (e) {
             console.log('批改');
@@ -369,16 +522,9 @@ define(function(require, exports, module) {
         }
     });
 
-    //作业视图类
+    //  作业列表 [父类]
     var WorkListView = Backbone.View.extend({
-        tagName: 'div',
-        className: 'work-list',
-        tmpl_id: 'work-list',
-        events: {
-            'click .add-work': 'addWork', // 教师添加作业
-            'click .student-list-btn': 'showStudentList', // 教师查看该作业提交情况
-            'click .hand-in-work': 'handInWork' // 学生交作业
-        },
+        tagName: 'ul',
         initialize: function () {
             this.listenTo(this.model, "change", this.render);
         },
@@ -386,50 +532,33 @@ define(function(require, exports, module) {
             console.log('render-work');
             var ele = tmpl(this.tmpl_id, this.model.toJSON());
             $(this.el).html(ele);
-            this.model.attributes.$worklistwrap.html(this.el);
+            this.model.attributes.$wrap2.html(this.el);
+            this.delegateEvents(this.events); // 视图渲染完后绑定所有事件
         },
-        addWork: function () {
-            var that = this,
-                addworkmodel = new TypeModel,
-                addworkview = new AddWorkView({
-                model: addworkmodel
-            });
-            addworkmodel.set({
-                op: 'add-work',
-                cid: that.model.attributes.cid,
-                $wrap: $('#add-work-wrap')
-            });
-            require.async('calendar'); // 加载日期选择模块
-        },
-        showStudentList: function (e) {
-            console.log('查看学生的作业列表');
-            var that = this;
-            this.model.attributes.$worklistwrap.parent().parent().replaceClass('hw-content-wrap-3', 'hw-content-wrap-2')
-            var studentmodel = new TypeModel;
-            var studentview = new StudentListView({
-                model: studentmodel
-            });
-            studentmodel.sync('read', studentview, {
-                url: servicepath + 'homework/homeworkList',
-                data: {hwInfoId: 1, submited: true},
-                dataType: 'json',
-                success: function (data) {
-                    console.log('学生作业', data);
-                    studentmodel.set({
-                        studentlist: data.data,
-                        view_type: 'hwmanage',
-                        $studentlistwrap: that.model.attributes.$worklistwrap.parent().next().children('.student-list-wrap')
-                    });
-                }
-            });
+        nextSection: function () {
+            var $section2 = this.model.attributes.$wrap2.parent();
+            $section2.parent().replaceClass('hw-content-wrap-3', 'hw-content-wrap-2');
+            return $section2;
+        }
+    });
+
+    // 作业管理->作业信息->课程列表->作业列表 [视图][教师][学生]
+    var hwManageWorkListView = WorkListView.extend({
+        tmpl_id: 'hwmanage-work-list-html',
+        events: {
+            'click .add-work': 'addWork', // 教师添加作业
+            'click .student-list-delete-btn': 'deleteWork', // 教师删除作业
+            'click .student-list-mark-btn': 'showStudentList', // 教师查看该作业每个学生的提交
+            'click .hand-in-work': 'handInWork' // 学生交作业
         },
         handInWork: function (e) {
             console.log('交作业');
-            var hwInfoId = $(e.currentTarget).attr('data-hwInfoId');
-            var handinmodel = new TypeModel;
-            var handinview = new HandInView({
-                model: handinmodel
-            });
+            var that = this,
+                hwInfoId = $(e.currentTarget).attr('data-hwInfoId'),
+                handinmodel = new TypeModel,
+                handinview = new HandInView({
+                    model: handinmodel
+                });
             handinmodel.sync('read', handinview, {
                 url: servicepath + 'homework/homeworkInfoDetail',
                 data: {hwInfoId: hwInfoId},
@@ -439,97 +568,180 @@ define(function(require, exports, module) {
                     handinmodel.set({
                         detaillist: data,
                         op: 'hand-in',
-                        $wrap: $('#hand-in-wrap')
+                        $wrap: $('#dialog-wrap'),
+                        $progesss: $(e.currentTarget).prev()
                     });
                 },
                 error: function (o, e) {
                     console.log(e);
                 }
             });
+        },
+        addWork: function (e) {
+            var that = this,
+                csname = $(e.currentTarget).attr('data-csname'),
+                addworkmodel = new TypeModel,
+                addworkview = new AddWorkView({
+                    model: addworkmodel
+                });
+            addworkmodel.set({
+                op: 'add-work',
+                cid: that.model.attributes.cid,
+                csname: csname,
+                fetchWorklist: function () {
+                    that.model.fetch({
+                        url: servicepath + 'homework/homeworkInfoList',
+                        data: {cid: that.model.attributes.cid},
+                        success: function (m, d)  { m.set({worklist: d});}
+                    });
+                },
+                $wrap: $('#dialog-wrap')
+            });
+            require.async('calendar'); // 加载日期选择模块
+        },
+        // 教师删除作业
+        deleteWork: function (e) {
+            console.log('删除作业');
+            var that = this,
+                $p = $(e.currentTarget).parent(),
+                hwInfoId = $p.attr('data-hwinfoid'),
+                dialogmodel = new TypeModel(),
+                dialogview = new DeleteWorkView({
+                    model: dialogmodel
+                });
+            dialogmodel.set({
+                op: 'delete-sure',
+                hwInfoId: hwInfoId,
+                $workli: $p.parent(),
+                $wrap: $('#dialog-wrap')
+            });
+        },
+        // 学生作业列表
+        showStudentList: function (e) {
+            console.log('查看学生的作业列表');
+            var that = this,
+                $section2 = this.nextSection(),
+                hwInfoId = $(e.currentTarget).parent().attr('data-hwinfoid');
+            this.studentmodel = this.studentmodel || new TypeModel;
+            this.studentview = this.studentview || new HwmanageStudentListView({
+                model: this.studentmodel
+            });
+            that.studentmodel.sync('read', that.studentview, {
+                url: servicepath + 'homework/homeworkList',
+                data: {hwInfoId: hwInfoId, submited: true},
+                dataType: 'json',
+                success: function (data) {
+                    console.log('学生作业', data);
+                    that.studentmodel.set({
+                        studentlist: data.data,
+                        $wrap3: $section2.next().children('.student-list-wrap')
+                    });
+                }
+            });
         }
     });
 
-    // 课程视图类
-    var CourseView = Backbone.View.extend({
+    // 学生管理->学生信息->课程列表->学生列表->学生该课程作业列表 [视图][教师]
+    var StuManageWorkListView = WorkListView.extend({
+        tmpl_id: 'stumanage-work-list-html',
+        events: {
+            'click .stumanage-mark-work-btn': 'markStudentWork' // 教师查看该作业每个学生的提交
+        },
+        markStudentWork: function (e) {
+            console.log('批改');
+            var hwid = $(e.currentTarget).attr('data-hwInfoId');
+            window.open('http://localhost:8080/mvnhk/homework/openword?hwId=' + hwid);
+        }
+    });
+
+    // 课程列表 [父类]
+    var CourseListView = Backbone.View.extend({
         tagName: 'div',
         className: 'course-list',
-        tmpl_id: 'course-list',
-        events: {
-            'click .work-list-btn': 'showWorkList', // 查看该课程的作业列表
-            'click .stumanage-list-btn': 'showStudentList' // 查看该课程所有学生
-        },
         initialize: function () {
-            _.bindAll(this, 'render');
             this.listenTo(this.model, "change", this.render);
         },
         render: function () {
             console.log('render-course');
             var ele = tmpl(this.tmpl_id, this.model.toJSON());
             $(this.el).html(ele);
-            this.model.attributes.$courselist.children('.course-list-wrap').html(this.el);
+            this.model.attributes.$wrap1.html(this.el);
+            this.delegateEvents(this.events);
+        },
+        nextSection: function () {
+            var $section1 = this.model.attributes.$wrap1.parent();
+            $section1.parent().replaceClass('hw-content-wrap-2', 'hw-content-wrap-1');
+            return $section1;
+        }
+    });
+
+    // 作业管理->作业信息->课程列表 [视图][教师]
+    var HwmanageCourseListView = CourseListView.extend({
+        tmpl_id: 'hwmanage-course-list-html',
+        events: {
+            'click .work-list-btn': 'showWorkList' // 查看该课程的作业列表
         },
         showWorkList: function (e) {
-            var that = this;
-            this.model.attributes.$courselist.parent().replaceClass('hw-content-wrap-2', 'hw-content-wrap-1');
+            var that = this,
+                $section1 = that.nextSection();
             var id = $(e.currentTarget).attr('data-id');
-            var workmodel = new TypeModel;
-            var workview = new WorkListView({model: workmodel});
-            workmodel.sync('read', workview, {
+            this.workmodel = this.workmodel || new TypeModel();
+            this.workview = this.workview || new hwManageWorkListView({model: this.workmodel});
+            that.workmodel.sync('read', that.workview, {
                 url: servicepath + 'homework/homeworkInfoList',
                 data: {cid: id},
                 dataType: 'json',
                 success: function (data) {
                     console.log('作业信息', data);
-                    workmodel.set({
+                    that.workmodel.set({
                         worklist: data,
                         cid: id, // 授课关系id
                         userType: sessionStorage.userType,
-                        $worklistwrap: that.model.attributes.$courselist.next().children('.work-list-wrap')
+                        $wrap2: $section1.next().children('.work-list-wrap')
                     });
                 },
                 error: function (o, e) {
                     console.log(e);
                 }
             });
+        }
+    });
+
+    // 学生管理->学生信息->课程列表 [视图][教师]
+    var StumanageCourseListView = CourseListView.extend({
+        tmpl_id: 'stumanage-course-list-html',
+        events: {
+            'click .stumanage-list-btn': 'showStudentList' // 查看该课程所有学生
         },
         showStudentList: function (e) {
             console.log('查看该课程的所有学生');
-            var that = this;
-            this.model.attributes.$courselist.parent().replaceClass('hw-content-wrap-2', 'hw-content-wrap-1');
+            var that = this,
+                $section1 = that.nextSection();
             var id = $(e.currentTarget).attr('data-id');
-            var stulistmodel = new TypeModel;
-            var stulistview = new StudentListView({
-                model: stulistmodel
+            this.stulistmodel = this.stulistmodel || new TypeModel;
+            this.stulistview = this.stulistview || new StumanageStudentListView({
+                model: this.stulistmodel
             });
-//            stulistmodel.sync('read', stulistview, {
-//                url: servicepath + '',
-//                data: {cid: id},
-//                dataType: 'json',
-//                success: function (data) {
-//                    console.log('作业信息', data);
-//                    stulistmodel.set({
-//                        userType: sessionStorage.userType,
-//                        $worklist: that.model.attributes.$courselist.next()
-//                    });
-//                },
-//                error: function (o, e) {
-//                    console.log(e);
-//                }
-//            });
-            stulistmodel.set({
-                view_type: 'stumanage',
-                studentlist: [{
-                    title: '计算机组成原理',
-                    studentName: 'chehhh',
-                    studentNo: '223333323',
-                    submitDate: '2014nian1'
-                }],
-                $studentlistwrap: that.model.attributes.$courselist.next().children('.work-list-wrap')
+            this.stulistmodel.sync('read', that.stulistview, {
+                url: servicepath + 'student/studentList',
+                data: {ctId: id},
+                dataType: 'json',
+                success: function (data) {
+                    console.log('学生信息', data);
+                    that.stulistmodel.set({
+                        view_type: 'stumanage',
+                        studentlist: data.data,
+                        $wrap3: $section1.next().children('.work-list-wrap')
+                    });
+                },
+                error: function (o, e) {
+                    console.log(e);
+                }
             });
         }
     });
 
-    // 信息模版
+    // 作业管理、学生管理 [父类]
     var HwInfoView = Backbone.View.extend({
         tagName: 'div',
         className: 'hw-content-wrap hw-content-wrap-k hw-content-wrap-1',
@@ -538,10 +750,6 @@ define(function(require, exports, module) {
             'click .return-course-btn': 'slideHwContentWrap', // 返回课程列表
             'click .return-work-btn': 'slideHwContentWrap', // 返回作业列表
             'click .choice-sure-btn': 'termCourse' // 搜索按钮
-        },
-        initialize: function () {
-            this.render(); // 初始化作业信息基本视图
-            this.getCourseData(2011, 1);
         },
         render: function () {
             console.log('render-hwinfo');
@@ -561,21 +769,16 @@ define(function(require, exports, module) {
         },
         getCourseData: function (year, term) {
             var that = this;
-            var coursemodel = new TypeModel;
-            var courseview = new CourseView({
-                model: coursemodel
-            });
             that.$el.find('.course-list-wrap').html('正在加载');
-            coursemodel.sync('read', courseview, {
+            that.coursemodel.sync('read', this.courseview, {
                 url: servicepath + 'homework/courseList',
                 data: {startYear: year, schoolTerm: term},
                 dataType: 'json',
                 success: function (data) {
                     console.log('课程信息', data);
-                    coursemodel.set({
+                    that.coursemodel.set({
                         courselist: data.data,
-                        view_type: that.view_type,
-                        $courselist: that.$el.children('.course-list')
+                        $wrap1: that.$el.find('.course-list-wrap')
                     });
                 },
                 error: function (o, e) {
@@ -585,17 +788,29 @@ define(function(require, exports, module) {
         }
     });
 
-    // 作业信息视图
+    // 作业管理 [视图][教师][学生]
     var WorkInfoView = HwInfoView.extend({
-        view_type: 'hwmanage'
+        view_type: 'hwmanage',
+        initialize: function () {
+            this.render(); // 初始化作业信息基本视图
+            this.coursemodel = new TypeModel;
+            this.courseview = new HwmanageCourseListView({model: this.coursemodel});
+            this.getCourseData(2011, 1);
+        }
     });
 
-    // 学生信息视图
+    // 学生管理 [视图][教师]
     var StuInfoView = HwInfoView.extend({
-        view_type: 'stumanage'
+        view_type: 'stumanage',
+        initialize: function () {
+            this.render(); // 初始化作业信息基本视图
+            this.coursemodel = new TypeModel;
+            this.courseview = new StumanageCourseListView({model: this.coursemodel});
+            this.getCourseData(2011, 1);
+        }
     });
 
-    // 动态提示信息视图
+    // 主页动态提示信息 [视图]
     var TipInfoView = Backbone.View.extend({
         tagName: 'div',
         className: 'info-b',
@@ -630,7 +845,7 @@ define(function(require, exports, module) {
         }
     });
 
-    // 作业动态视图
+    // 作业管理->作业动态 [视图][学生]
     var HwDynamicView = Backbone.View.extend({
         tagName: 'div',
         className: 'hw-dynamic',
@@ -647,57 +862,72 @@ define(function(require, exports, module) {
             this.listenTo(this.model, "change", this.render);
         },
         render: function () {
+            console.log('作业动态');
             var ele = tmpl(this.tmpl_id);
             $(this.el).html(ele);
             $('#content').html(this.el);
-            this.preFold(this.model.attributes.tip_type);
+            this.preFold(this.model.attributes.tip_type); // 打开最新作业选项卡
         },
+        // n 为行数
         togfold: function ($b, n, fold) {
             $b.siblings('button').show();
             $b.hide();
-            fold == true ? $b.parent().next().css('height', '0px') : $b.parent().next().css('height', '113px');
+            fold == true ? $b.parent().next().css('height', '0') : $b.parent().next().css('height', (113 * n).toString() + 'px');
         },
         preFold: function (tip_type) {
+            console.log('打开最新作业');
+            console.log(this.$el.find('.d-' + tip_type + '-unfold'));
             this.$el.find('.d-' + tip_type + '-unfold').click();
         },
-        newestworkUnfold: function (e) {
+        workUnfold: function ($cur, url, type) {
             var that = this,
                 newestmodel = new TypeModel,
-                newestview = new WorkListView({
+                newestview = new hwManageWorkListView({
                     model: newestmodel
                 });
-//            newestmodel.sync('read', newestview, {
-//
-//            });
-            newestmodel.set({
-                worklist: [{id: 1, title: '计算这个卡是高科技', deadline: '333333444'}],
-                $worklistwrap: that.$el.find('.d-newestwork-list'),
-                userType: sessionStorage.userType
+            newestmodel.sync('read', newestview, {
+                url: servicepath + url,
+                data: null,
+                dataType: 'json',
+                success: function (data) {
+                    console.log('最新作业', data);
+                    newestmodel.set({
+                        worklist: data,
+                        $wrap2: that.$el.find('.d-' + type + '-list'),
+                        userType: sessionStorage.userType
+                    });
+                    var fn = data.length / 3, pn = parseInt(fn);
+                    that.togfold($cur, fn > pn ? pn + 1 : pn, false);
+                },
+                error: function (o, e) {
+                    console.log(e);
+                }
             });
-            this.togfold($(e.currentTarget), 1, false);
+        },
+        newestworkUnfold: function (e) {
+            this.workUnfold($(e.currentTarget), 'message/recentHomework', 'newestwork');
         },
         newestworkFold: function (e) {
-            this.togfold($(e.currentTarget), 1, true);
+            this.togfold($(e.currentTarget), 0, true);
         },
-        unhandUnfold: function () {
-
+        unhandUnfold: function (e) {
+            this.workUnfold($(e.currentTarget), 'message/recentHomework', 'unhand');
         },
-        unhandFold: function () {
-
+        unhandFold: function (e) {
+            this.togfold($(e.currentTarget), 0, true);
         },
         feedbackUnfold: function () {
 
         },
-        feedbackFold: function () {
-
+        feedbackFold: function (e) {
+            this.togfold($(e.currentTarget), 0, true);
         }
     });
 
-    // 课程邮箱设置视图
-    var CsMailView = Backbone.View.extend({
-        tagName: 'div',
-        className: 'cs-mail-wrap',
-        tmpl_id: 'cs-mail-html',
+    // 课程邮箱设置->课程邮箱列表子视图
+    var CsMailListView = Backbone.View.extend({
+        tagName: 'ul',
+        tmpl_id: 'cs-mail-list-html',
         events: {
             'click .cs-mail-change': 'changeMail',
             'click .cs-mail-clear': 'clear',
@@ -711,6 +941,7 @@ define(function(require, exports, module) {
             var ele = tmpl(this.tmpl_id, this.model.toJSON());
             $(this.el).html(ele);
             this.model.attributes.$wrap.html(this.el);
+            this.delegateEvents(this.events);
         },
         changeMail: function (e) {
             var $cur = $(e.currentTarget);
@@ -720,15 +951,122 @@ define(function(require, exports, module) {
         },
         clear: function (e) {
             var $cur = $(e.currentTarget);
-            $(e.currentTarget).parent().removeClass('t-cs-mail-open');
+            $cur.parent().removeClass('t-cs-mail-open');
             $cur.prev().show();
+            $cur.next().children('.cs-mail-input2').hide(); // 隐藏验证码框
+            $cur.next().children('.cs-mail-input1').val(); // 清空输入框
+            $cur.next().children('.cs-mail-input2').val(''); // 制空验证码框
             $cur.hide();
         },
         submitMail: function (e) {
-            var $cur = $(e.currentTarget);
-            var mail = $cur.prev().prev().val(),
-                ac = $cur.prev().val();
-            console.log(mail, ac);
+            var that = this,
+                $cur = $(e.currentTarget),
+                mail = $cur.prev().val(),
+                ctId = $cur.attr('data-ctId');
+            $.ajax({
+                type: 'post',
+                url: servicepath + 'course/updateEmail',
+                data: {ctId: ctId, email: mail},
+                dataType: 'json',
+                success: function (data) {
+                    console.log('更改课程邮箱', data);
+                    that.validateMail(data, $cur.parent().parent().prev().children(), mail, ctId);
+                },
+                error: function (o, e) {
+                    console.log(e);
+                    alert('您的网络出问题啦！');
+                }
+            });
+        },
+        validateMail: function (d, $el, mail, ctId) {
+            if(d.status == 'success'){
+                alert('邮箱更改成功！');
+                $el.html(mail);
+            }
+            else if(d.status == 'no validated'){
+                this.authcodemodel =  new TypeModel;
+                this.authcodeview = new AuthcodeView({
+                    model: this.authcodemodel
+                });
+                this.authcodemodel.set({
+                    op: 'auth-code',
+                    mail: mail,
+                    mail_url: '',
+                    submitAuthcode: function (auth_code) {
+                        $.ajax({
+                            type: 'post',
+                            url: servicepath + 'course/checkEmail',
+                            data: {ctId: ctId, email: mail, checkNumber: auth_code},
+                            dataType: 'json',
+                            success: function (data) {
+                                console.log('更改课程邮箱', data);
+                                if(data.status == 'success'){
+                                    $el.html(mail);
+                                    return true;
+                                }
+                                else {
+                                    alert("操作失败");
+                                }
+                            },
+                            error: function (o, e) {
+                                console.log(e);
+                            }
+                        });
+                    },
+                    $wrap: $('#dialog-wrap'),
+                    rand: Math.random()
+                });
+            }
+            else {
+                alert('操作失败，请联系管理员。');
+            }
+        }
+    });
+
+    // 课程邮箱设置视图
+    var CsMailView = Backbone.View.extend({
+        tagName: 'div',
+        className: 'cs-mail-wrap',
+        tmpl_id: 'cs-mail-html',
+        events: {
+            'click .choice-sure-btn': 'choiceTerm'
+        },
+        initialize: function () {
+            this.listenTo(this.model, "change", this.render);
+        },
+        render: function () {
+            var ele = tmpl(this.tmpl_id, {});
+            $(this.el).html(ele);
+            this.model.attributes.$wrap.html(this.el);
+            this.getCourseData(2011, 1);
+        },
+        getCourseData: function (year, term) {
+            var that = this;
+            this.csmaillistmodel = this.mailmodel || new TypeModel;
+            this.csmaillistview = this.csmaillistview || new CsMailListView({
+                model: this.csmaillistmodel
+            });
+            this.csmaillistmodel.sync('read', this.csmaillistview, {
+                url: servicepath + 'course/email',
+                data: {startYear: year, schoolTerm: term},
+                dataType: 'json',
+                success: function (data) {
+                    console.log('课程邮箱设置', data);
+                    that.csmaillistmodel.set({
+                        courselist: data,
+                        $wrap: that.$el.children('.cs-mail-list'),
+                        random: Math.random()
+                    });
+                },
+                error: function (o, e) {
+                    console.log(e);
+                }
+            });
+        },
+        choiceTerm: function () {
+            var startYear = this.$el.find('.startYear').val(),
+                schoolTerm = this.$el.find('.schoolTerm').val();
+            this.getCourseData(startYear, schoolTerm);
         }
     });
 
@@ -942,65 +1280,42 @@ define(function(require, exports, module) {
             that.views.settingview = new SettingView({
                 model: that.models.settingmodel
             });
-
-//            that.models.settingmodel.sync('read', that.views.settingview, {
-//                url: servicepath + '',
-//                data: null,
-//                dataType: 'json',
-//                success: function (data) {
-//                    console.log('设置中心！', data);
-//                    that.models.settingmodel.set({
-//                        userType: sessionStorage.userType
-//                    });
-//                },
-//                error: function (o, e) {
-//                    console.log(e);
-//                }
-//            });
-            console.log('setting');
-            that.models.settingmodel.set({
-                userType: sessionStorage.userType,
-                $content: that.$content,
-                random: Math.random()
+            that.models.settingmodel.sync('read', that.views.settingview, {
+                url: servicepath + 'user/email',
+                data: null,
+                dataType: 'json',
+                success: function (data) {
+                    console.log('设置中心！', data);
+                    that.models.settingmodel.set({
+                        data: data,
+                        userType: sessionStorage.userType,
+                        $content: that.$content,
+                        random: Math.random()
+                    });
+                },
+                error: function (o, e) {
+                    console.log(e);
+                }
             });
-
         },
         getHwInfoData: function () { // 获取课程信息
             this.views.workinfoview = new WorkInfoView;
         },
         getHwDynamic: function () {
-            var hwdmodel = new TypeModel;
-            new HwDynamicView({
-                model: hwdmodel
-            });
+            var hwdmodel = new TypeModel,
+                hwview = new HwDynamicView({
+                    model: hwdmodel
+                });
             hwdmodel.set({
-                tip_type: this.tip_type
+                tip_type: 'newestwork'
             });
         },
         getCsMailData: function () {
-            var that = this;
-            this.models.csmailmodel = new TypeModel;
-            this.views.csmailview = new CsMailView({
-                model: this.models.csmailmodel
-            });
-//            this.models.csmailmodel.sync('read', this.views.csmailview, {
-//                url: servicepath + '',
-//                data: null,
-//                dataType: 'json',
-//                success: function (data) {
-//                    console.log('课程邮箱', data);
-//                    that.models.csmailmodel.set({
-//                        userType: sessionStorage.userType,
-//                        data: data,
-//                        random: Math.random()
-//                    });
-//                },
-//                error: function (o, e) {
-//                    console.log(e);
-//                }
-//            });
-            this.models.csmailmodel.set({
-                $wrap: that.$content
+            this.models.mailmodel = new TypeModel;
+            new CsMailView({model: this.models.mailmodel});
+            this.models.mailmodel.set({
+                $wrap: this.$content,
+                rand: Math.random()
             });
         },
         GetStuInfoData: function () {
@@ -1027,7 +1342,7 @@ define(function(require, exports, module) {
     // 对外提供接口
     module.exports = {
         appView: function (type, bar) {
-            console.log('创建webapp对象');
+            console.log('%c创建webapp对象', 'font-size:20px');
             if(window.appview){
                 appview.constructor(type,bar); // 传入初始参数，改变原有对象
             }

@@ -26,7 +26,7 @@
                 font-family: "Helvetica Neue",Helvetica,Microsoft Yahei,Hiragino Sans GB,WenQuanYi Micro Hei,sans-serif;
             }
             .editwork-wrap {
-                width: 1265px;
+                width: 1310px;
                 position: absolute;
                 left: 0;
                 right: 0;
@@ -37,7 +37,7 @@
                 margin-top: 10px;
             }
             .editwork {
-                width:865px;
+                width: 900px;
             }
             .work-wrap {
                 position: absolute;
