@@ -89,7 +89,34 @@ define(function(require, exports, module) {
                 newpw = this.$el.find('#new-pw').val(),
                 surepw = this.$el.find('#sure-pw').val();
             console.log(oldpw, newpw, surepw);
-
+            if(newpw == surepw){
+                $.ajax({
+                    type: 'post',
+                    url: servicepath + 'user/updatePassword',
+                    data: {oldPassword: oldpw, newPassword: newpw},
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log('修改密码', data);
+                        if(data.status == 'success'){
+                            alert('修改成功，请重新登录！');
+                            window.location.href = servicepath + 'web/login'; // 跳转到登录页面
+                        }
+                        else if (data.status == 'error-oldPassword'){
+                            alert('旧密码不正确！');
+                        }
+                        else{
+                            alert('操作失败！');
+                        }
+                    },
+                    error: function (o, e) {
+                        console.log(e);
+                        alert('请检查您的网络问题！');
+                    }
+                });
+            }
+            else {
+                alert('两次密码输入不一致！');
+            }
         },
         changeMail: function () {
             var newmail = this.$el.find('#new-mail').val(),
@@ -139,6 +166,7 @@ define(function(require, exports, module) {
             var ele = tmpl(this.tmpl_id, this.model.toJSON());
             $(this.el).html(ele);
             this.model.attributes.$wrap.html(this.el);
+            this.delegateEvents(this.events);
         },
         closeDialog: function () {
             this.$el.hide(300);
@@ -198,7 +226,7 @@ define(function(require, exports, module) {
         submitAddWork: function () {
             var $t = this.$el,
                 that = this;
-            var data = $t.find('input, textarea');
+            var data = $t.find('input, textarea, select');
             console.log(data, that.model.attributes.cid);
             $.ajax({
                 type: 'POST',
@@ -207,8 +235,8 @@ define(function(require, exports, module) {
                     jsonObject: JSON.stringify({
                         title: data[0].value,
                         hwDesc: data[1].value,
-                        markType: '',
-                        deadline: Date.parse(new Date(data[2].value)),
+                        markType: data[2].value,
+                        deadline: Date.parse(new Date(data[3].value)),
                         cid: that.model.attributes.cid
                     })
                 },
@@ -347,7 +375,7 @@ define(function(require, exports, module) {
     // 作业管理->作业信息->课程列表->作业列表->确认删除作业 [视图][弹框][教师]
     var DeleteWorkView = DialogView.extend({
         events: {
-            'click .delete-sure-btn1': 'deleteSure', // 关闭提交窗口
+            'click .delete-sure-btn1': 'deleteSure', // 执行删除操作
             'click .dailog-clear': 'closeDialog', // 关闭提交窗口
             'click .delete-sure-btn2': 'closeDialog' // 关闭提交窗口
         },
@@ -373,6 +401,21 @@ define(function(require, exports, module) {
                 }
             });
             that.closeDialog();
+        }
+    });
+
+    // 邮箱修改验证
+    var AuthcodeView = DialogView.extend({
+        events: {
+            'click .dailog-clear': 'closeDialog', // 关闭提交窗口
+            'click .auth-code-sure-btn1': 'closeDialog', // 关闭提交窗口
+            'click .auth-code-sure-btn2': 'submitAuthcode' // 提交验证码
+        },
+        submitAuthcode: function () {
+            var code = this.$el.find('input').val();
+            if(this.model.attributes.submitAuthcode(code)){
+                this.closeDialog();
+            }
         }
     });
 
@@ -898,6 +941,7 @@ define(function(require, exports, module) {
             var ele = tmpl(this.tmpl_id, this.model.toJSON());
             $(this.el).html(ele);
             this.model.attributes.$wrap.html(this.el);
+            this.delegateEvents(this.events);
         },
         changeMail: function (e) {
             var $cur = $(e.currentTarget);
@@ -910,44 +954,72 @@ define(function(require, exports, module) {
             $cur.parent().removeClass('t-cs-mail-open');
             $cur.prev().show();
             $cur.next().children('.cs-mail-input2').hide(); // 隐藏验证码框
+            $cur.next().children('.cs-mail-input1').val(); // 清空输入框
+            $cur.next().children('.cs-mail-input2').val(''); // 制空验证码框
             $cur.hide();
         },
         submitMail: function (e) {
-            var $cur = $(e.currentTarget);
-            var mail = $cur.prev().prev().val(),
-                ctId = $cur.attr('data-ctId').val(),
-                auth_code = $cur.prev().val();
-            console.log(mail, auth_code);
-//            if(auth_code == ''){
-//                $.ajax({
-//                    type: 'post',
-//                    url: servicepath + 'course/updateEmail',
-//                    data: {ctId: ctId, email: mail},
-//                    dataType: 'json',
-//                    success: function (data) {
-//                        console.log('更改课程邮箱', data);
-//
-//                    },
-//                    error: function (o, e) {
-//                        console.log(e);
-//                    }
-//                });
-//            }
-//            else {
-//                $.ajax({
-//                    type: 'post',
-//                    url: servicepath + 'course/checkEmail',
-//                    data: {ctId: ctId, email: mail, checkNumber: auth_code},
-//                    dataType: 'json',
-//                    success: function (data) {
-//                        console.log('更改课程邮箱', data);
-//
-//                    },
-//                    error: function (o, e) {
-//                        console.log(e);
-//                    }
-//                });
-//            }
+            var that = this,
+                $cur = $(e.currentTarget),
+                mail = $cur.prev().val(),
+                ctId = $cur.attr('data-ctId');
+            $.ajax({
+                type: 'post',
+                url: servicepath + 'course/updateEmail',
+                data: {ctId: ctId, email: mail},
+                dataType: 'json',
+                success: function (data) {
+                    console.log('更改课程邮箱', data);
+                    that.validateMail(data, $cur.parent().parent().prev().children(), mail, ctId);
+                },
+                error: function (o, e) {
+                    console.log(e);
+                    alert('您的网络出问题啦！');
+                }
+            });
+        },
+        validateMail: function (d, $el, mail, ctId) {
+            if(d.status == 'success'){
+                alert('邮箱更改成功！');
+                $el.html(mail);
+            }
+            else if(d.status == 'no validated'){
+                this.authcodemodel =  new TypeModel;
+                this.authcodeview = new AuthcodeView({
+                    model: this.authcodemodel
+                });
+                this.authcodemodel.set({
+                    op: 'auth-code',
+                    mail: mail,
+                    mail_url: '',
+                    submitAuthcode: function (auth_code) {
+                        $.ajax({
+                            type: 'post',
+                            url: servicepath + 'course/checkEmail',
+                            data: {ctId: ctId, email: mail, checkNumber: auth_code},
+                            dataType: 'json',
+                            success: function (data) {
+                                console.log('更改课程邮箱', data);
+                                if(data.status == 'success'){
+                                    $el.html(mail);
+                                    return true;
+                                }
+                                else {
+                                    alert("操作失败");
+                                }
+                            },
+                            error: function (o, e) {
+                                console.log(e);
+                            }
+                        });
+                    },
+                    $wrap: $('#dialog-wrap'),
+                    rand: Math.random()
+                });
+            }
+            else {
+                alert('操作失败，请联系管理员。');
+            }
         }
     });
 
@@ -971,7 +1043,7 @@ define(function(require, exports, module) {
         getCourseData: function (year, term) {
             var that = this;
             this.csmaillistmodel = this.mailmodel || new TypeModel;
-            this.csmaillistview = this.csmailview || new CsMailListView({
+            this.csmaillistview = this.csmaillistview || new CsMailListView({
                 model: this.csmaillistmodel
             });
             this.csmaillistmodel.sync('read', this.csmaillistview, {
@@ -1208,28 +1280,23 @@ define(function(require, exports, module) {
             that.views.settingview = new SettingView({
                 model: that.models.settingmodel
             });
-
-//            that.models.settingmodel.sync('read', that.views.settingview, {
-//                url: servicepath + '',
-//                data: null,
-//                dataType: 'json',
-//                success: function (data) {
-//                    console.log('设置中心！', data);
-//                    that.models.settingmodel.set({
-//                        userType: sessionStorage.userType
-//                    });
-//                },
-//                error: function (o, e) {
-//                    console.log(e);
-//                }
-//            });
-            console.log('setting');
-            that.models.settingmodel.set({
-                userType: sessionStorage.userType,
-                $content: that.$content,
-                random: Math.random()
+            that.models.settingmodel.sync('read', that.views.settingview, {
+                url: servicepath + 'user/email',
+                data: null,
+                dataType: 'json',
+                success: function (data) {
+                    console.log('设置中心！', data);
+                    that.models.settingmodel.set({
+                        data: data,
+                        userType: sessionStorage.userType,
+                        $content: that.$content,
+                        random: Math.random()
+                    });
+                },
+                error: function (o, e) {
+                    console.log(e);
+                }
             });
-
         },
         getHwInfoData: function () { // 获取课程信息
             this.views.workinfoview = new WorkInfoView;
@@ -1275,7 +1342,7 @@ define(function(require, exports, module) {
     // 对外提供接口
     module.exports = {
         appView: function (type, bar) {
-            console.log('创建webapp对象');
+            console.log('%c创建webapp对象', 'font-size:20px');
             if(window.appview){
                 appview.constructor(type,bar); // 传入初始参数，改变原有对象
             }

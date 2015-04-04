@@ -215,7 +215,7 @@
     <div class="pw-info">
         <div class="p-name">
             <label><strong>登陆账号</strong></label>
-            <label>20112100167</label>
+            <label>{{data.username}}</label>
         </div>
         <div class="p-name">
             <label><strong>密码</strong></label>
@@ -245,7 +245,7 @@
     <div class="mail-info">
         <div class="p-name">
             <label><strong>当前邮箱</strong></label>
-            <label>1234567@126.com</label>
+            <label>{{data.email}}</label>
         </div>
         <div class="p-name">
             <label><strong>邮箱状态</strong></label>
@@ -501,26 +501,43 @@
         <div class="dailog-body">
             {{include 'add-stu-html'}}
         </div>
-        {{else if op == 'delete-sure'}}
+        {{else}}
         <div class="dailog-title">
             <p role='title'><strong>操作提示</strong></p>
         </div>
         <div class="dailog-body">
-            <p class="delete-sure-text" role="tip">确定删除这个作业吗？<span>（删除后不可恢复）</span></p>
-            <div class="delete-sure-btn">
-                <button class="delete-sure-btn1">确定</button>
-                <button class="delete-sure-btn2">取消</button>
-            </div>
+            {{include op}}
         </div>
         {{/if}}
         <span class="clear dailog-clear" title="关闭窗口"></span>
     </div>
     <!--</div>-->
 </script>
+<script type="text/template" id="delete-sure">
+    <p class="delete-sure-text" role="tip">确定删除这个作业吗？<span>（删除后不可恢复）</span></p>
+    <div class="delete-sure-btn">
+        <button class="delete-sure-btn1">确定</button>
+        <button class="delete-sure-btn2">取消</button>
+    </div>
+</script>
+<script type="text/template" id="auth-code">
+    <div class="auth-code-sure-text" role="tip">
+        <p>系统检测到您的邮箱账号尚未验证，【验证码】已经发送到您邮箱<p>
+        <p><a href="{{mail_url}}">点此登陆邮箱{{mail}}</a></p>
+        <div class="auth-code">
+            <label>填写邮箱验证码</label>
+            <input type="text" name="mail"/>
+        </div>
+    </div>
+    <div class="auth-code-sure-btn">
+        <button class="auth-code-sure-btn1">取消</button>
+        <button class="auth-code-sure-btn2">提交并修改</button>
+    </div>
+</script>
 <script type="text/template" id="add-work-html">
     <div class="add-work-course">
         <label>课程名</label>
-        <label>{{csname}}</label>
+        <p>{{csname}}</p>
     </div>
     <div class="add-work-name">
         <label>作业名</label>
@@ -533,9 +550,12 @@
     <div class="add-work-marktype">
         <label>评分标准</label>
         <select>
-            <option value="LEVEL" selected></option>
-            <option value=""></option>
-            <option value=""></option>
+            <option value="HUNDRED" selected>百分制</option>
+            <option value="TEN">十分制</option>
+            <option value="FIVE">五分制</option>
+            <option value="CHAR_LEVEL">ABCDE等级制</option>
+            <option value="CHINESE_LEVEL">优秀、良好、一般、差等级制</option>
+            <option value="PASSING">合格、不合格等级制</option>
         </select>
     </div>
     <div class="add-work-deadline">
@@ -651,7 +671,7 @@
                 <button class="cs-mail-clear" type="button">取消</button>
                 <div class="cs-mail-input">
                     <input class="cs-mail-input1" type="email" placeholder="输入新的邮箱"/>
-                    <input class="cs-mail-input2" type="text" placeholder="邮箱验证码"/>
+                    <!--<input class="cs-mail-input2" type="text" placeholder="邮箱验证码"/>-->
                     <button class="cs-mail-sure" type="submit" data-ctId="{{value.ctId}}">确认</button>
                 </div>
             </div>

@@ -515,7 +515,7 @@ footer {
 
 .set-changepw-submit>div>input, .set-mail-submit>div>input,
 .add-work-name>input, .add-work-deadline>input, .add-work-desc>textarea,
-.add-work-marktype>select,
+.add-work-marktype>select, .auth-code>input,
 .cs-mail-input1, .cs-mail-input2, .add-stu-choice>input, .add-stu-choice>select{
     border: 1px #bababa solid;
     padding: 5px;
@@ -526,7 +526,7 @@ footer {
 
 .set-changepw-submit>div>input:focus, .set-mail-submit>div>input:focus,
 .add-work-name>input:focus, .add-work-deadline>input:focus, .add-work-desc>textarea:focus,
-.add-work-marktype>select:focus,
+.add-work-marktype>select:focus, .auth-code>input:focus,
 .cs-mail-input1:focus, .cs-mail-input2:focus, .add-stu-choice>input:focus, .add-stu-choice>select:hover {
     border-color: #009ee5;
     outline: none;
@@ -1108,7 +1108,7 @@ span.dailog-clear:after {
 }
 
 .work-submit>button, .add-submit>button, .student-list-btn>button,
-.delete-sure-btn>button {
+.delete-sure-btn>button, .auth-code-sure-btn>button {
     color: white;
     font-weight: bold;
     font-size: 16px;
@@ -1118,27 +1118,29 @@ span.dailog-clear:after {
 }
 
 .dailog-clear, .student-list-btn>.student-list-delete-btn,
-.delete-sure-btn>.delete-sure-btn1 {
+.delete-sure-btn>.delete-sure-btn1, .auth-code-sure-btn>.auth-code-sure-btn1 {
     background-color: #D9534F;
     border: 1px solid #D43F3A;
     margin-right: 20px;
 }
 
 .dailog-clear:hover, .student-list-btn>.student-list-delete-btn:hover,
-.delete-sure-btn>.delete-sure-btn1:hover {
+.delete-sure-btn>.delete-sure-btn1:hover, .auth-code-sure-btn>.auth-code-sure-btn1:hover {
     background-color: #D43F3A;
 }
 
 .work-submit-sure, .add-work-sure,
 .student-list-btn>.student-list-mark-btn,
-.delete-sure-btn>.delete-sure-btn2 {
+.delete-sure-btn>.delete-sure-btn2,
+.auth-code-sure-btn>.auth-code-sure-btn2 {
     background-color: #5CB85C;
     border: 1px solid #4CAE4C;
 }
 
 .work-submit-sure:hover, .add-work-sure:hover,
 .student-list-btn>.student-list-mark-btn:hover,
-.delete-sure-btn>.delete-sure-btn2:hover {
+.delete-sure-btn>.delete-sure-btn2:hover,
+.auth-code-sure-btn>.auth-code-sure-btn2:hover {
     background-color: #449d44;
 }
 
@@ -1148,6 +1150,7 @@ span.dailog-clear:after {
 
 .add-work-dailog-body {
     line-height: 30px;
+    margin-top: 5px;
 }
 
 .add-work-dailog-body>div>label {
@@ -1166,8 +1169,8 @@ span.dailog-clear:after {
     width: 312px;
 }
 
-.add-work-course {
-
+.add-work-course>p {
+    display: inline-block;
 }
 
 .add-work-desc {
@@ -1377,8 +1380,8 @@ span.dailog-clear:after {
 
 /*弹出删除提示框*/
 
-.delete-sure-text {
-    height: 40px;
+.delete-sure-text, .auth-code-sure-text {
+    /*height: 40px;*/
     line-height: 40px;
     text-indent: 30px;
     padding-bottom: 5px;
@@ -1390,14 +1393,30 @@ span.dailog-clear:after {
     color: #D9534F;
 }
 
-.delete-sure-btn {
+.delete-sure-btn, .auth-code-sure-btn {
     text-align: right;
 }
-.delete-sure-btn>.delete-sure-btn1 {
+.delete-sure-btn>.delete-sure-btn1, .auth-code-sure-btn>.auth-code-sure-btn1 {
     margin-right: 10px;
 }
 
 /*end弹出删除提示框*/
+
+/*弹出验证码框*/
+
+.auth-code {
+
+}
+
+.auth-code>label{
+    font-weight: bold;
+}
+
+.auth-code>input {
+    width: 100px;
+}
+
+/*end弹出验证码框*/
 
 /*作业信息切换栏目*/
 
