@@ -201,7 +201,7 @@ public class HomewrokService implements IHomeworkService {
         hwinfo.setTitle(jo.getString("title"));
         hwinfo.setHwDesc(jo.getString("hwDesc"));
         hwinfo.setDeadline(new java.sql.Timestamp(jo.getLong("deadline")));
-       // hwinfo.setMarkType(MarkType.valueOf(jo.getString("markType")));
+        hwinfo.setMarkType(MarkType.valueOf(jo.getString("markType")));
 
         /**往HwHomeworkInfo填入其他信息*/
         hwinfo.setCourseName(courseTeaching.getHwCourse().getCourseName());
@@ -239,6 +239,7 @@ public class HomewrokService implements IHomeworkService {
             hw.setStudentNo(cs.getHwStudent().getStudentNo());
             hw.setTitle(hwinfo.getTitle());
             hw.setLastModifyDate(new java.sql.Timestamp(System.currentTimeMillis()));
+            hw.setMarkType(hwinfo.getMarkType());
             hw.setUrl("");
             hw.setStatus(HomeworkStatus.UNSUBMITTED);
             homeworkDao.add(hw);
