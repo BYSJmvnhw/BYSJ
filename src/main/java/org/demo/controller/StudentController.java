@@ -10,10 +10,7 @@ import org.demo.tool.DateJsonValueProcessor;
 import org.demo.tool.ObjectJsonValueProcessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.AbstractJsonpResponseBodyAdvice;
 
 import javax.annotation.Resource;
@@ -37,6 +34,7 @@ public class StudentController {
 
     private IHomeworkService homeworkService;
     private IStudentService studentService;
+    private ICollegeService collegeService;
     //private IUserService userService;
     /**
      *  根据教师授课关系id返回选课学生列表的接口
@@ -92,9 +90,9 @@ public class StudentController {
      * @param ctId 授课关系id
      * @param sId 学生关系id
      */
-    @RequestMapping(value = "/appendStudent",method = RequestMethod.POST)
+    @RequestMapping(value = "/appendStudent",method = RequestMethod.GET)
     @ResponseBody
-    public JSONObject appendStudent(Integer ctId, Integer[] sId) {
+    public JSONObject appendStudent(Integer ctId, @RequestParam("sId[]") Integer[] sId) {
         try {
             studentService.addStudent(ctId, sId);
             return getSuccessResultJsonObject();
@@ -178,6 +176,23 @@ public class StudentController {
         }
     }
 
+/*********************************  ***********************************/
+
+    /**
+     * 获取每个校区  所有学院组成的数组
+     * @return
+     */
+    @RequestMapping("/collegeList")
+    @ResponseBody
+    public Object collegeList(){
+        try{
+            return collegeService.allCollege();
+        }catch (Exception e) {
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
+
     public IHomeworkService getHomeworkService() {
         return homeworkService;
     }
@@ -194,6 +209,15 @@ public class StudentController {
     @Resource
     public void setStudentService(IStudentService studentService) {
         this.studentService = studentService;
+    }
+
+    public ICollegeService getCollegeService() {
+        return collegeService;
+    }
+
+    @Resource
+    public void setCollegeService(ICollegeService collegeService) {
+        this.collegeService = collegeService;
     }
 
     private JSONObject getFailResultJsonObject(){

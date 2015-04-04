@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Page<T> {
     private List<T> data = new ArrayList<T>(0);
-    private int pageOffsset;
+    private int pageOffset;
     private int pageSize;
     private long totalRecord;
 
@@ -21,12 +21,12 @@ public class Page<T> {
         this.data = data;
     }
 
-    public int getPageOffsset() {
-        return pageOffsset;
+    public int getPageOffset() {
+        return pageOffset;
     }
 
-    public void setPageOffsset(int pageOffsset) {
-        this.pageOffsset = pageOffsset;
+    public void setPageOffset(int pageOffset) {
+        this.pageOffset = pageOffset;
     }
 
     public int getPageSize() {

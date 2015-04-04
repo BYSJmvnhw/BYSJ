@@ -156,14 +156,8 @@ public class BaseDao<T> implements IBaseDao<T> {
         q.setMaxResults(ps);
         /* 获取分页数据 */
         List data = q.list();
-        //System.out.println(data.size());
-        //if( data.isEmpty()  ) {
-        //System.out.println(data.size());
-        //page.setData(null);
-        //} else {
         page.setData(data);
-        //}
-        page.setPageOffsset(po);
+        page.setPageOffset(po);
         page.setPageSize(ps);
         page.setTotalRecord(totalRecord);
         return page;

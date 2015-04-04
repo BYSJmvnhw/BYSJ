@@ -55,6 +55,21 @@ public class MessageController {
         }
     }
 
+    /**
+     * 根据登录学生获取 未提交作业数，最近作业数，未查看反馈数
+     */
+    @RequestMapping("/message")
+    @ResponseBody
+    public Object message(HttpServletRequest request) {
+        try{
+            HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
+            return messageService.message(user);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
+
     public IMessageService getMessageService() {
         return messageService;
     }

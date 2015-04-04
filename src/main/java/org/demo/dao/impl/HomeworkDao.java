@@ -1,10 +1,8 @@
 package org.demo.dao.impl;
 
 import org.demo.dao.IHomeworkDao;
-import org.demo.model.HwCourseTeaching;
-import org.demo.model.HwHomework;
-import org.demo.model.HwHomeworkInfo;
-import org.demo.model.HwStudent;
+import org.demo.model.*;
+import org.demo.tool.HomeworkStatus;
 import org.demo.tool.Page;
 import org.springframework.stereotype.Repository;
 
@@ -70,7 +68,7 @@ public class HomeworkDao extends BaseDao<HwHomework> implements IHomeworkDao {
         //通过sql连表l查询出所需要的字段
         String sql =
                 /*最后一级查询查询出其他需要的信息*/
-                "SELECT hw_homework_info.id, title, deadline, overtime , FinalTable.submitted FROM hw_homework_info\n" +
+                "SELECT hw_homework_info.id, title, course_name,  deadline, overtime , FinalTable.submitted FROM hw_homework_info\n" +
                 "INNER JOIN \n" +
                 /*   #二级子查询出目标课程id和教师id对应的作业信息id记录，
                 并通过左连接将因分组统计而被隐藏的作业信息id记录显示出来，并将null替换为0\n*/
@@ -100,5 +98,32 @@ public class HomeworkDao extends BaseDao<HwHomework> implements IHomeworkDao {
                 "and hw.hwHomeworkInfo.overtime = false " +
                 "and hw.hwHomeworkInfo.deadline > ? ";
         return list(hql, new Object[]{sId, time});
+    }
+
+    @Override
+    public Long countUnsubmitted(HwStudent student) {
+        String hql = "select count(1) from HwHomework hw where " +
+                "hw.hwStudent = ? " +
+                "and hw.url = '' ";
+        return count(hql, student);
+    }
+
+    @Override
+    public Long countRecentHomework(HwStudent student, Timestamp timestamp) {
+        String hql = "select count(1) from HwHomework hw where " +
+                "hw.hwStudent = ? " +
+                "and hw.hwHomeworkInfo.deadline > ? ";
+        return count(hql, new Object[]{student ,timestamp});
+    }
+
+    @Override
+    public Long countFeedback(HwStudent student) {
+        String hql = "select count(1) from HwHomework hw where " +
+                "hw.hwStudent = ? " +
+                //作业已经批改完
+                "and hw.status = ?  " +
+                //反馈未被学生查看
+                "and hw.checkedFlag = false";
+        return count(hql, new Object[]{student, HomeworkStatus.MARKED});
     }
 }

@@ -66,6 +66,24 @@ public class CollegeService implements ICollegeService{
         return resultList;
     }
 
+    @Override
+    public Map allCollege() {
+        List<HwCampus> allCampus = campusDao.allCampus();
+        Map<Integer,List<Map<String ,Object>>> resultMap = new HashMap<Integer,List<Map<String, Object>>>();
+        for( HwCampus campus : allCampus){
+            List<HwCollege> collegeList = collegeDao.collegeList(campus);
+            List<Map<String ,Object>> resultList = new ArrayList<Map<String ,Object>>();
+            for( HwCollege college : collegeList ){
+                Map<String,Object> collegeView = new HashMap<String,Object>();
+                collegeView.put("collegeId",college.getId());
+                collegeView.put("collegeName", college.getCollegeName());
+                resultList.add(collegeView);
+            }
+            resultMap.put(campus.getId(), resultList);
+        }
+        return resultMap;
+    }
+
     @Resource
     public void setCollegeDao(ICollegeDao collegeDao) {
         this.collegeDao = collegeDao;
