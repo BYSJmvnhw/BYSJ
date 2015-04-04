@@ -34,6 +34,7 @@ public class StudentController {
 
     private IHomeworkService homeworkService;
     private IStudentService studentService;
+    private ICollegeService collegeService;
     //private IUserService userService;
     /**
      *  根据教师授课关系id返回选课学生列表的接口
@@ -177,7 +178,20 @@ public class StudentController {
 
 /*********************************  ***********************************/
 
-   // public
+    /**
+     * 获取每个校区  所有学院组成的数组
+     * @return
+     */
+    @RequestMapping("/collegeList")
+    @ResponseBody
+    public Object collegeList(){
+        try{
+            return collegeService.allCollege();
+        }catch (Exception e) {
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
 
     public IHomeworkService getHomeworkService() {
         return homeworkService;
@@ -195,6 +209,15 @@ public class StudentController {
     @Resource
     public void setStudentService(IStudentService studentService) {
         this.studentService = studentService;
+    }
+
+    public ICollegeService getCollegeService() {
+        return collegeService;
+    }
+
+    @Resource
+    public void setCollegeService(ICollegeService collegeService) {
+        this.collegeService = collegeService;
     }
 
     private JSONObject getFailResultJsonObject(){
