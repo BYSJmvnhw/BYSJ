@@ -1,9 +1,6 @@
 package org.demo.dao;
 
-import org.demo.model.HwCourseTeaching;
-import org.demo.model.HwHomework;
-import org.demo.model.HwHomeworkInfo;
-import org.demo.model.HwStudent;
+import org.demo.model.*;
 import org.demo.tool.Page;
 
 import java.sql.Timestamp;
@@ -27,5 +24,11 @@ public interface IHomeworkDao extends IBaseDao<HwHomework> {
     public List<Object[]> countSubmitted(int courseId, int teacherId);
 
     public List<HwHomework> recentHomework(Integer sId, Timestamp time);
+
+    public Long countUnsubmitted(HwStudent student);
+
+    public Long countRecentHomework(HwStudent student ,Timestamp timestamp);
+
+    public Long countFeedback(HwStudent student);
 
 }

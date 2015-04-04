@@ -5,15 +5,20 @@ import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import org.demo.dao.IHomeworkDao;
 import org.demo.dao.IHomeworkInfoDao;
+import org.demo.dao.IStudentDao;
 import org.demo.model.HwHomework;
 import org.demo.model.HwHomeworkInfo;
+import org.demo.model.HwStudent;
+import org.demo.model.HwUser;
 import org.demo.service.IMessageService;
 import org.demo.tool.DateJsonValueProcessor;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.awt.*;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.List;
 
 /**
  * Created by jzchen on 2015/3/28 0028.
@@ -23,6 +28,7 @@ public class MessageService implements IMessageService{
 
     private IHomeworkDao homeworkDao;
     private IHomeworkInfoDao homeworkInfoDao;
+    private IStudentDao studentDao;
     @Override
     public JSONArray unSubmitedHomeworkList(Integer sId) {
         List<HwHomework> hwList = homeworkDao.unSubmitted(sId);
@@ -62,6 +68,21 @@ public class MessageService implements IMessageService{
         return JSONArray.fromObject(hwInfoList,jsonConfig);
     }
 
+    @Override
+    public Map message(HwUser user) {
+        HwStudent student = studentDao.load(user.getTypeId());
+        Long countUnsubmitted = homeworkDao.countUnsubmitted(student);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -1);
+        Long countRecentHomework = homeworkDao.countRecentHomework(student, new Timestamp(calendar.getTimeInMillis()));
+        Long countFeedback = homeworkDao.countFeedback(student);
+        Map<String,Object> resultMap = new HashMap<String, Object>();
+        resultMap.put("unsubmitted",countUnsubmitted);
+        resultMap.put("recentHomework",countRecentHomework);
+        resultMap.put("feedback",countFeedback);
+        return resultMap;
+    }
+
     public IHomeworkDao getHomeworkDao() {
         return homeworkDao;
     }
@@ -78,5 +99,14 @@ public class MessageService implements IMessageService{
     @Resource
     public void setHomeworkInfoDao(IHomeworkInfoDao homeworkInfoDao) {
         this.homeworkInfoDao = homeworkInfoDao;
+    }
+
+    public IStudentDao getStudentDao() {
+        return studentDao;
+    }
+
+    @Resource
+    public void setStudentDao(IStudentDao studentDao) {
+        this.studentDao = studentDao;
     }
 }

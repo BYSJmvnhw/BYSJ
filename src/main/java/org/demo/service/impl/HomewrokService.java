@@ -95,7 +95,7 @@ public class HomewrokService implements IHomeworkService {
         newPage.setData(list);
         newPage.setPageSize(page.getPageSize());
         newPage.setTotalRecord(page.getTotalRecord());
-        newPage.setPageOffsset(page.getPageOffsset());
+        newPage.setPageOffset(page.getPageOffset());
 
         JsonConfig jsonConfig = new JsonConfig();
         /**过滤简单属性*/
