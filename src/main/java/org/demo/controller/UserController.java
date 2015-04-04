@@ -11,6 +11,7 @@ import org.demo.tool.ObjectJsonValueProcessor;
 import org.demo.tool.UserType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
@@ -29,10 +30,12 @@ public class UserController {
     private ITeacherService teacherService;
     private IUserService userService;
 
+    /**
+     * 获取登录用户的个人详细信息
+     */
     @RequestMapping("/info")
     @ResponseBody
     public JSONObject userInfo(HttpServletRequest request) {
-
         /**获取登录用户信息*/
         HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
         UserType userType = (UserType)request.getSession().getAttribute("userType");
@@ -45,9 +48,12 @@ public class UserController {
         }
     }
 
+    /**
+     * 修改邮箱之前获取登录用户的邮箱和用户名username
+     */
     @RequestMapping("/email")
     @ResponseBody
-    public JSONObject userEmail(HttpServletRequest request) {
+    public Object userEmail(HttpServletRequest request) {
         HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
        try {
            return userService.userEmail(user);
@@ -55,6 +61,23 @@ public class UserController {
            e.printStackTrace();
            return getFailResultJsonObject();
        }
+    }
+
+    /**
+     * 修改用户密码
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     */
+    @RequestMapping(value = "/updatePassword",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject updatePassword(String oldPassword, String newPassword, HttpServletRequest request) {
+        try{
+            HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
+            return userService.updatePassword(oldPassword, newPassword, user);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
     }
 
     @RequestMapping("/updateUserInfo")

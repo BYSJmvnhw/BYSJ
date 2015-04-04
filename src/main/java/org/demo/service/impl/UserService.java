@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
+import java.util.*;
 
 /**
  * Created by jzchen on 2015/1/14.
@@ -97,8 +98,26 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public JSONObject userEmail(HwUser user) {
-        return JSONObject.fromObject( userDao.load(user.getId()).getEmail());
+    public Map userEmail(HwUser user) {
+        Map<String,Object> resultMap = new HashMap<String, Object>();
+        resultMap.put("username",user.getUsername());
+        resultMap.put("email",user.getEmail());
+        return resultMap;
+    }
+
+    @Override
+    public JSONObject updatePassword(String oldPassword, String newPassword, HwUser user) {
+        JSONObject result = new JSONObject();
+        String truePassword = user.getPassword();
+        if( oldPassword.equals(truePassword) ) {
+            user.setPassword(newPassword);
+            userDao.update(user);
+            result.put("status","success");
+            return result;
+        } else {
+            result.put("status", "error-oldPassword");
+            return result;
+        }
     }
 
 
