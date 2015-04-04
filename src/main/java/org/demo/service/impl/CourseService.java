@@ -117,8 +117,8 @@ public class CourseService implements ICourseService {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            jsonresult.put("status","fail");
-            jsonresult.put("msg","该邮箱未验证，验证码已发送到此邮箱");
+            jsonresult.put("status","no validated");
+            //jsonresult.put("msg","");
             return jsonresult;
         }else { //邮箱存在
             //但邮箱未验证
@@ -131,8 +131,8 @@ public class CourseService implements ICourseService {
                     e.printStackTrace();
                 }
                 //
-                jsonresult.put("status","fail");
-                jsonresult.put("msg","该邮箱未验证，验证码已发送到此邮箱");
+                jsonresult.put("status","no validated");
+                //jsonresult.put("msg","该邮箱未验证，验证码已发送到此邮箱");
                 return jsonresult;
             }else {
                 //邮箱此前已经验证过，更新邮箱
