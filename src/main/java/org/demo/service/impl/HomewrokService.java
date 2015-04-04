@@ -151,6 +151,7 @@ public class HomewrokService implements IHomeworkService {
                 resultMap.put("overtime",o[2]);
                 resultMap.put("deadline",o[3]);
                 resultMap.put("status",o[4]);
+                resultMap.put("courseName", o[5]);
                 studentResultList.add(resultMap);
             }
             return JSONArray.fromObject(studentResultList, jsonConfig);
@@ -171,6 +172,7 @@ public class HomewrokService implements IHomeworkService {
                 resultMap.put("deadline",o[2]);
                 resultMap.put("overtime",o[3]);
                 resultMap.put("submitted",o[4]);
+                resultMap.put("courseName",o[5]);
                 resultMap.put("sum",sum);
                 teacherResultList.add(resultMap);
             }
