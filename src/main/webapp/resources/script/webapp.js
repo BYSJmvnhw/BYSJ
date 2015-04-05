@@ -29,7 +29,12 @@ define(function(require, exports, module) {
     // @param type 检测类型(mail num int null chinese eg)
     // @param value 待检测的值
     function checkInput (type, value) {
-
+        var reg = {
+            mail: /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/,
+            chinese: /^[\u4e00-\u9fa5]+$/,
+            authcode: /^[0-9][0-9]{9,9}[0-9]$/
+        };
+        return reg[type] ? reg[type].test(value) : console.warn('不存在的类型');
     }
 
     // 公共模型类
@@ -61,6 +66,7 @@ define(function(require, exports, module) {
         }
     });
 
+    // ajax远程数据加载进度条
     var LoadTipView = Backbone.View.extend({
         tagName: 'div',
         className: 'loadtip-wrap',
@@ -259,6 +265,9 @@ define(function(require, exports, module) {
                 that = this;
             var data = $t.find('input, textarea, select');
             console.log(data, that.model.attributes.cid);
+            if(data[0].value == ''){$(data[0]).focus();return;}
+            if(data[1].value == ''){$(data[1]).focus();return;}
+            if(data[3].value == ''){$(data[3]).focus();return;}
             $.ajax({
                 type: 'POST',
                 url: servicepath + 'homework/addHomeworkInfo',
@@ -1237,18 +1246,6 @@ define(function(require, exports, module) {
             var tipview = new TipInfoView({
                 model: tipmodel
             });
-//            tipmodel.sync('read', tipview, {
-//                url: servicepath + 'user/info',
-//                data: null,
-//                dataType: 'json',
-//                success: function (data) {
-//                checkSession(data.status);
-//                    console.log('提示数据！', data);
-//                    tipmodel.set({
-//                        userType: localStorage.userType
-//                    });
-//                }
-//            });
             tipmodel.set({
                 userType: localStorage.userType,
                 $info_b: that.$el.find('#info-b'),

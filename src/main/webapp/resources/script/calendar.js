@@ -167,7 +167,7 @@ define(function(require, exports, module) {
             t.toString().indexOf("%") < 1 && (t += "px"),
             s.css({
                 left: '153px',
-                top: '292px',
+                top: '350px',
                 width: '332px'
             }),
             l(),
