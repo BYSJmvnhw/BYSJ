@@ -57,8 +57,8 @@ define(function(require, exports, module) {
                 success: function (data) {
                     if(data.msg == 'success'){
                         console.log('登陆成功', data);
-                        sessionStorage.userType = data.userType; // 记录全局用户类型
-                        sessionStorage.trueName = data.trueName; // 记录全局用户类型
+                        localStorage.userType = data.userType; // 记录全局用户类型
+                        localStorage.trueName = data.trueName; // 记录全局用户类型
                         that.loginSuccess('man', 'info');
                     }
                     else{
@@ -133,9 +133,9 @@ define(function(require, exports, module) {
                 if(that.view == null){ // 登陆后，用户主动刷新页面
                     require.async(['webapp', 'webapp.css'], function (webapp) {
                         // 执行主页面渲染
-                        that.$main_el.html(tmpl(that.$mainhtml.attr('id'), {
-                            userType: sessionStorage.userType,
-                            trueName: sessionStorage.trueName
+                        that.$main_el.html(tmpl('main-html', {
+                            userType: localStorage.userType,
+                            trueName: localStorage.trueName
                         }));
                         // 执行主页面各种事件绑定，数据加载
                         webapp.appView(type, bar);
@@ -144,9 +144,9 @@ define(function(require, exports, module) {
                 else { // 从登陆界面进入主界面
                     require.async(['webapp', 'webapp.css'], function (webapp) {
                         // 执行主页面渲染
-                        that.$main_el.html(tmpl(that.$mainhtml.attr('id'), {
-                            userType: sessionStorage.userType,
-                            username: sessionStorage.userName
+                        that.$main_el.html(tmpl('main-html', {
+                            userType: localStorage.userType,
+                            trueName: localStorage.trueName
                         }));
                         // 执行主页面各种事件绑定，数据加载
                         webapp.appView(type, bar);

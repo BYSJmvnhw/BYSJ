@@ -5,16 +5,24 @@
 define(function(require, exports, module) {
 
     // 引入模块依赖
-    var $ = require('jquery-plugin').$;
-    var _ = require('underscore');
-    var Backbone = require('backbone');
-    var tmpl = require('template');
+    var $ = require('jquery-plugin').$; // jq,dom处理模块
+    var _ = require('underscore'); // 框架依赖模块
+    var Backbone = require('backbone'); // 主框架模块
+    var tmpl = require('template'); // js模板引擎模块
 
     // 使用cmd时需要手动引入$
     Backbone.$ = $;
 
     // ajax请求服务端地址
     var servicepath = 'http://localhost:8080/mvnhk/';
+
+    // 检测服务端session是否过期，若过期则跳转到登陆页面
+    function checkSession(status) {
+        if(status == 'timeout'){
+            alert('会话已过期，请重新登录！');
+            window.location.href = servicepath + 'web/login';
+        }
+    }
 
     // 公共模型类
     var TypeModel = Backbone.Model.extend({
@@ -67,6 +75,7 @@ define(function(require, exports, module) {
             var ele = tmpl(this.tmpl_id, this.model.toJSON());
             $(this.el).html(ele);
             this.model.attributes.$content.html(this.el);
+            this.delegateEvents(this.events);
         },
         unfoldChangePW: function (e) {
             $(e.currentTarget).next().replaceClass('t-changepw-submit-open', 't-changepw-submit-close');
@@ -96,6 +105,7 @@ define(function(require, exports, module) {
                     data: {oldPassword: oldpw, newPassword: newpw},
                     dataType: 'json',
                     success: function (data) {
+                        checkSession(data.status);
                         console.log('修改密码', data);
                         if(data.status == 'success'){
                             alert('修改成功，请重新登录！');
@@ -107,10 +117,6 @@ define(function(require, exports, module) {
                         else{
                             alert('操作失败！');
                         }
-                    },
-                    error: function (o, e) {
-                        console.log(e);
-                        alert('请检查您的网络问题！');
                     }
                 });
             }
@@ -243,6 +249,7 @@ define(function(require, exports, module) {
                 dataType: 'json',
                 timeOut: 10000,
                 success: function (data) {
+                    checkSession(data.status);
                     console.log('成功新增作业', data);
                     if(data.status == 'success'){
                         that.closeDialog(); // 新增成功后，销毁弹框
@@ -250,10 +257,6 @@ define(function(require, exports, module) {
                     }
                     else
                         alert('操作失败！');
-                },
-                error: function (xhr, error, obj) {
-                    console.error(error);
-                    alert('操作失败！');
                 }
             });
         },
@@ -326,6 +329,7 @@ define(function(require, exports, module) {
                 },
                 dataType: 'json',
                 success: function (data) {
+                    checkSession(data.status);
                     console.log('学生列表', data);
                     that.stumodel.set({
                         studentlist: data.data,
@@ -333,9 +337,6 @@ define(function(require, exports, module) {
                         rand: Math.random()
                     });
                     that.showPage(); // 显示确认按钮
-                },
-                error: function (o, e) {
-                    console.log(e);
                 }
             });
         },
@@ -355,6 +356,7 @@ define(function(require, exports, module) {
                 data: stulist,
                 dataType: 'json',
                 success: function (data) {
+                    checkSession(data.status);
                     console.log('添加append', data);
                     if(data.status == 'success'){
                         alert('添加成功');
@@ -363,10 +365,6 @@ define(function(require, exports, module) {
                     else {
                         alert('操作失败');
                     }
-                },
-                error: function (o, e) {
-                    console.log(e);
-                    alert('操作失败，请检查您的网络问题！');
                 }
             });
         }
@@ -388,6 +386,7 @@ define(function(require, exports, module) {
                 data: {hwInfoId: this.model.attributes.hwInfoId},
                 dataType: 'json',
                 success: function (data) {
+                    checkSession(data.status);
                     console.log('学生作业', data);
                     if(data.status == 'success'){
                         // 删除作业列表视图上的作业，动画效果
@@ -395,9 +394,6 @@ define(function(require, exports, module) {
                             this.remove();
                         });
                     }
-                },
-                error: function (o, e) {
-                    console.log(e);
                 }
             });
             that.closeDialog();
@@ -455,13 +451,11 @@ define(function(require, exports, module) {
 //                data: {cid: id},
 //                dataType: 'json',
 //                success: function (data) {
+//                checkSession(data.status);
 //                    console.log('作业信息', data);
 //                    addstumodel.set({
 //
 //                    });
-//                },
-//                error: function (o, e) {
-//                    console.log(e);
 //                }
 //            });
             addstumodel.set({
@@ -486,16 +480,14 @@ define(function(require, exports, module) {
                 data: {ctId: ctId, sId: sId},
                 dataType: 'json',
                 success: function (data) {
+                    checkSession(data.status);
                     console.log('该学生的课程作业', data);
                     that.worklistmodel.set({
                         worklist: data.data,
                         view_type: 'stumanage',
-                        userType: sessionStorage.userType,
+                        userType: localStorage.userType,
                         $wrap2: that.model.attributes.$wrap3.parent().next().children('.student-list-wrap')
                     });
-                },
-                error: function (o, e) {
-                    console.log(e);
                 }
             });
 //            worklistmodel.set({
@@ -503,7 +495,7 @@ define(function(require, exports, module) {
 //                    title: '计算机组成原理第一次作业',
 //                    deadline: '2014nian1'
 //                }],
-//                userType: sessionStorage.userType,
+//                userType: localStorage.userType,
 //                $wrap2: that.model.attributes.$wrap3.parent().next().children('.student-list-wrap')
 //            });
         }
@@ -564,6 +556,7 @@ define(function(require, exports, module) {
                 data: {hwInfoId: hwInfoId},
                 dataType: 'json',
                 success: function (data) {
+                    checkSession(data.status);
                     console.log('作业详细信息', data);
                     handinmodel.set({
                         detaillist: data,
@@ -571,9 +564,6 @@ define(function(require, exports, module) {
                         $wrap: $('#dialog-wrap'),
                         $progesss: $(e.currentTarget).prev()
                     });
-                },
-                error: function (o, e) {
-                    console.log(e);
                 }
             });
         },
@@ -592,7 +582,10 @@ define(function(require, exports, module) {
                     that.model.fetch({
                         url: servicepath + 'homework/homeworkInfoList',
                         data: {cid: that.model.attributes.cid},
-                        success: function (m, d)  { m.set({worklist: d});}
+                        success: function (m, d) {
+                            checkSession(d.status);
+                            m.set({worklist: d});
+                        }
                     });
                 },
                 $wrap: $('#dialog-wrap')
@@ -631,6 +624,7 @@ define(function(require, exports, module) {
                 data: {hwInfoId: hwInfoId, submited: true},
                 dataType: 'json',
                 success: function (data) {
+                    checkSession(data.status);
                     console.log('学生作业', data);
                     that.studentmodel.set({
                         studentlist: data.data,
@@ -693,15 +687,13 @@ define(function(require, exports, module) {
                 dataType: 'json',
                 success: function (data) {
                     console.log('作业信息', data);
+                    checkSession(data.status);
                     that.workmodel.set({
                         worklist: data,
                         cid: id, // 授课关系id
-                        userType: sessionStorage.userType,
+                        userType: localStorage.userType,
                         $wrap2: $section1.next().children('.work-list-wrap')
                     });
-                },
-                error: function (o, e) {
-                    console.log(e);
                 }
             });
         }
@@ -727,15 +719,13 @@ define(function(require, exports, module) {
                 data: {ctId: id},
                 dataType: 'json',
                 success: function (data) {
+                    checkSession(data.status);
                     console.log('学生信息', data);
                     that.stulistmodel.set({
                         view_type: 'stumanage',
                         studentlist: data.data,
                         $wrap3: $section1.next().children('.work-list-wrap')
                     });
-                },
-                error: function (o, e) {
-                    console.log(e);
                 }
             });
         }
@@ -755,6 +745,7 @@ define(function(require, exports, module) {
             console.log('render-hwinfo');
             $(this.el).html(tmpl(this.tmpl_id, {view_type: this.view_type}));
             $('#content').html(this.el);
+            this.delegateEvents(this.events);
         },
         slideHwContentWrap: function (e) {
             console.log('返回成功');
@@ -775,14 +766,12 @@ define(function(require, exports, module) {
                 data: {startYear: year, schoolTerm: term},
                 dataType: 'json',
                 success: function (data) {
+                    checkSession(data.status);
                     console.log('课程信息', data);
                     that.coursemodel.set({
                         courselist: data.data,
                         $wrap1: that.$el.find('.course-list-wrap')
                     });
-                },
-                error: function (o, e) {
-                    console.log(e);
                 }
             });
         }
@@ -890,17 +879,15 @@ define(function(require, exports, module) {
                 data: null,
                 dataType: 'json',
                 success: function (data) {
+                    checkSession(data.status);
                     console.log('最新作业', data);
                     newestmodel.set({
                         worklist: data,
                         $wrap2: that.$el.find('.d-' + type + '-list'),
-                        userType: sessionStorage.userType
+                        userType: localStorage.userType
                     });
                     var fn = data.length / 3, pn = parseInt(fn);
                     that.togfold($cur, fn > pn ? pn + 1 : pn, false);
-                },
-                error: function (o, e) {
-                    console.log(e);
                 }
             });
         },
@@ -969,12 +956,9 @@ define(function(require, exports, module) {
                 data: {ctId: ctId, email: mail},
                 dataType: 'json',
                 success: function (data) {
+                    checkSession(data.status);
                     console.log('更改课程邮箱', data);
                     that.validateMail(data, $cur.parent().parent().prev().children(), mail, ctId);
-                },
-                error: function (o, e) {
-                    console.log(e);
-                    alert('您的网络出问题啦！');
                 }
             });
         },
@@ -999,6 +983,7 @@ define(function(require, exports, module) {
                             data: {ctId: ctId, email: mail, checkNumber: auth_code},
                             dataType: 'json',
                             success: function (data) {
+                                checkSession(data.status);
                                 console.log('更改课程邮箱', data);
                                 if(data.status == 'success'){
                                     $el.html(mail);
@@ -1007,9 +992,6 @@ define(function(require, exports, module) {
                                 else {
                                     alert("操作失败");
                                 }
-                            },
-                            error: function (o, e) {
-                                console.log(e);
                             }
                         });
                     },
@@ -1051,15 +1033,13 @@ define(function(require, exports, module) {
                 data: {startYear: year, schoolTerm: term},
                 dataType: 'json',
                 success: function (data) {
+                    checkSession(data.status);
                     console.log('课程邮箱设置', data);
                     that.csmaillistmodel.set({
                         courselist: data,
                         $wrap: that.$el.children('.cs-mail-list'),
                         random: Math.random()
                     });
-                },
-                error: function (o, e) {
-                    console.log(e);
                 }
             });
         },
@@ -1223,17 +1203,15 @@ define(function(require, exports, module) {
 //                data: null,
 //                dataType: 'json',
 //                success: function (data) {
+//                checkSession(data.status);
 //                    console.log('提示数据！', data);
 //                    tipmodel.set({
-//                        userType: sessionStorage.userType
+//                        userType: localStorage.userType
 //                    });
-//                },
-//                error: function (o, e) {
-//                    console.log(e);
 //                }
 //            });
             tipmodel.set({
-                userType: sessionStorage.userType,
+                userType: localStorage.userType,
                 $info_b: that.$el.find('#info-b'),
                 unfoldLeftMenu: function (tip_type) {
                     that.tip_type = tip_type;
@@ -1261,22 +1239,19 @@ define(function(require, exports, module) {
                 data: null,
                 dataType: 'json',
                 success: function (data) {
+                    checkSession(data.status);
                     console.log('个人数据加载成功！', data);
                     that.models.infomodel.set({
-                        userType: sessionStorage.userType,
+                        userType: localStorage.userType,
                         data: data,
                         random: Math.random()
                     });
-                },
-                error: function (o, e) {
-                    console.log(e);
                 }
             });
         },
         getSettingData: function () {
             var that = this;
-//            that.models.settingmodel ? that.models.settingmodel.render() : that.models.settingmodel = new TypeModel();
-            that.models.settingmodel = that.models.settingmodel || new TypeModel();
+            that.models.settingmodel = new TypeModel;
             that.views.settingview = new SettingView({
                 model: that.models.settingmodel
             });
@@ -1285,28 +1260,29 @@ define(function(require, exports, module) {
                 data: null,
                 dataType: 'json',
                 success: function (data) {
+                    checkSession(data.status);
                     console.log('设置中心！', data);
                     that.models.settingmodel.set({
                         data: data,
-                        userType: sessionStorage.userType,
-                        $content: that.$content,
-                        random: Math.random()
+                        userType: localStorage.userType,
+                        $content: that.$content
                     });
-                },
-                error: function (o, e) {
-                    console.log(e);
                 }
             });
         },
         getHwInfoData: function () { // 获取课程信息
-            this.views.workinfoview = new WorkInfoView;
+            if(this.views.workinfoview)
+                this.views.workinfoview.initialize();
+            else
+                this.views.workinfoview = new WorkInfoView;
         },
         getHwDynamic: function () {
-            var hwdmodel = new TypeModel,
-                hwview = new HwDynamicView({
-                    model: hwdmodel
-                });
-            hwdmodel.set({
+            if(this.models.hwdmodel && this.views.hwdview)
+            this.models.hwdmodel = new TypeModel;
+            this.views.hwview = new HwDynamicView({
+                model: this.models.hwdmodel
+            });
+            this.views.hwdmodel.set({
                 tip_type: 'newestwork'
             });
         },
@@ -1329,11 +1305,9 @@ define(function(require, exports, module) {
                 dataType: 'json',
                 timeOut: 10000,
                 success: function (data) {
+                    checkSession(data.status);
                     console.log('退出', data);
                     appNavigate('login', '登陆作业网', {trigger: true});
-                },
-                error: function (xhr, error, obj) {
-                    console.error(error);
                 }
             });
         }
@@ -1349,6 +1323,16 @@ define(function(require, exports, module) {
             else{
                 window.appview = new AppView(type, bar); // 新建view对象
             }
+            // ajax全局请求设置
+            $.ajaxSetup({
+                ifModified: true,
+                timeout: 5000,
+                error: function (xhr, error_txt, error_obj) {
+                    console.warn('ajax请求出错，错误xhr：' + xhr);
+                    console.warn('ajax请求出错，错误信息：' + error_txt);
+                    console.warn('ajax请求出错，错误obj：' + error_obj);
+                }
+            });
         }
     }
 
