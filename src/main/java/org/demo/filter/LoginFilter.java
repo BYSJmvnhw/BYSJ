@@ -1,5 +1,7 @@
 package org.demo.filter;
 
+import net.sf.json.JSONObject;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,16 +21,22 @@ public class LoginFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
                          FilterChain filterChain) throws IOException, ServletException {
 
-        //基于http协议的servlet
+        //转换为基于http协议的servlet
         HttpServletRequest request = (HttpServletRequest)servletRequest;
         HttpServletResponse response = (HttpServletResponse)servletResponse;
 
         //获取访问的 url 链接.
         String requestURI = request.getRequestURI().substring(request.getRequestURI().indexOf("/",1), request.getRequestURI().length());
         String resourceURI = "";
+        String singlePageURI = "";
+        //若链接长度大于10，则截取20个字符的子串
         if( request.getRequestURI().length() - request.getRequestURI().indexOf("/",1) > 10 ) {
             resourceURI = request.getRequestURI().substring( request.getRequestURI().indexOf("/", 1),
                     request.getRequestURI().indexOf( "/", 1)+ 10  );
+        }
+        if( request.getRequestURI().length() - request.getRequestURI().indexOf("/",1) > 4 ) {
+            singlePageURI = request.getRequestURI().substring( request.getRequestURI().indexOf("/", 1),
+                    request.getRequestURI().indexOf( "/", 1)+4  );
         }
         //String onePageAppURI =  request.getRequestURI().substring(request.getRequestURI().indexOf("/", 1),
          //       request.getRequestURI().indexOf("/", 1) + 4);
@@ -45,11 +53,19 @@ public class LoginFilter implements Filter {
         {
             //取得session. 如果没有session则自动会创建一个, 我们用false表示没有取得到session则设置为session为空.
             HttpSession session = request.getSession(false);
-            //如果session中没有任何东西.
+            //如果session中没有任何东西
             if( session == null || session.getAttribute("loginUser")==null)
             {
-                response.sendRedirect(request.getContextPath() + "/web/login");
-                return;
+                if( singlePageURI.equals("/web") ) {
+                    response.sendRedirect(request.getContextPath() + "/web/login");
+                    return;
+                }else {
+                    //response.setContentType("application/json");
+                    JSONObject result = new JSONObject();
+                    result.put("status","timeout");
+                    response.getWriter().print(result);
+                    return;
+                }
             }
 
         }
