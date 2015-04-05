@@ -152,6 +152,7 @@
     </footer>
 </script>
 
+<%--动态提示--%>
 <script type="text/template" id="info-tip-html">
     <!--<div class="info-b">-->
         <span id="info-btn" class="info-btn"></span>
@@ -172,6 +173,7 @@
     <!--</div>-->
 </script>
 
+<%--个人中心--%>
 <script type="text/template" id="man-info">
     <div class="personal-info">
         <div class="p-name">
@@ -278,6 +280,41 @@
     </div>
 </script>
 
+<%--课程管理--%>
+<script type="text/template" id="cs-mail-html">
+    <div class="cs-mail-title">
+        <div class="set-changepw cs-mail-setting"><strong>设置课程邮箱</strong></div>
+        <div class="course-choice">{{include 'select-course-html'}}</div>
+    </div>
+    <div class="cs-mail-list">
+
+    </div>
+</script>
+<script type="text/template" id="cs-mail-list-html">
+    <!--<ul>-->
+    {{each courselist as value}}
+    <li class="cs-mail-green">
+        <div class="cs-mail-name">
+            <p>{{value.courseName}}</p>
+        </div>
+        <div class="cs-mail-adr">
+            <p>{{value.email}}</p>
+        </div>
+        <div class="cs-mail-btn t-cs-mail">
+            <button class="cs-mail-change" type="submit">修改</button>
+            <button class="cs-mail-clear" type="button">取消</button>
+            <div class="cs-mail-input">
+                <input class="cs-mail-input1" type="email" placeholder="输入新的邮箱"/>
+                <!--<input class="cs-mail-input2" type="text" placeholder="邮箱验证码"/>-->
+                <button class="cs-mail-sure" type="submit" data-ctId="{{value.ctId}}">确认</button>
+            </div>
+        </div>
+    </li>
+    {{/each}}
+    <!--</ul>-->
+</script>
+
+<%--作业管理--%>
 <script type="text/template" id="select-course-html">
     <!--<section class="course-list">-->
         <!--<div class="course-choice">-->
@@ -335,28 +372,6 @@
         </div>
         <div class="student-list-wrap"></div>
     </section>
-</script>
-<script type="text/template" id="course-list">
-    <ul>
-        {{each courselist as value}}
-        <li class="course-work-list course-has-work">
-            <div>
-                <p>{{value.hwCourse.courseName}}</p>
-                <p>课程人数：40人</p>
-            </div>
-            {{if view_type == 'hwmanage'}}
-            <div class="work-list-btn t-work-list-btn" data-id="{{value.id}}">
-                <span>单击查看该课程作业列表</span>
-            </div>
-            {{else if view_type == 'stumanage'}}
-            <div class="stumanage-list-btn t-stumanage-list-btn" data-id="{{value.id}}">
-                <span>单击查看该课程学生列表</span>
-            </div>
-            {{/if}}
-        </li>
-        {{/each}}
-    </ul>
-    <!--</div>-->
 </script>
 <script type="text/template" id="hwmanage-course-list-html">
     <ul>
@@ -476,7 +491,35 @@
     <button class="add-student" data-ctId="{{studentlist[0].hwCourseTeaching.id}}">添加学生</button>
     <!--</div>-->
 </script>
+<%--作业动态--%>
+<script type="text/template" id="hw-dynamic-html">
+    <div class="d-newestwork">
+        <div class="d-newestwork-title">
+            <strong>最新作业</strong>
+            <button class="d-newestwork-unfold">展开</button>
+            <button class="d-newestwork-fold">收起</button>
+        </div>
+        <div class="d-newestwork-list t-newestwork-list"></div>
+    </div>
+    <div class="d-unhand">
+        <div class="d-unhand-title">
+            <strong>未提交</strong>
+            <button class="d-unhand-unfold">展开</button>
+            <button class="d-unhand-fold">收起</button>
+        </div>
+        <div class="d-unhand-list t-unhand-list"></div>
+    </div>
+    <div class="d-feedback">
+        <div class="d-feedback-title">
+            <strong>作业反馈</strong>
+            <button class="d-feedback-unfold">展开</button>
+            <button class="d-feedback-fold">收起</button>
+        </div>
+        <div class="d-feedback-list t-feedback-list"></div>
+    </div>
+</script>
 
+<%--弹框--%>
 <script type="text/template" id="dialog-html">
     <!--<div class="wrap">-->
     <div class="dailog-area {{if op == 'add-student'}}add-student-area{{/if}}">
@@ -645,64 +688,12 @@
     <!--</div>-->
 </script>
 
-
-<script type="text/template" id="cs-mail-html">
-    <div class="cs-mail-title">
-        <div class="set-changepw cs-mail-setting"><strong>设置课程邮箱</strong></div>
-        <div class="course-choice">{{include 'select-course-html'}}</div>
-    </div>
-    <div class="cs-mail-list">
-
-    </div>
-</script>
-
-<script type="text/template" id="cs-mail-list-html">
-    <!--<ul>-->
-        {{each courselist as value}}
-        <li class="cs-mail-green">
-            <div class="cs-mail-name">
-                <p>{{value.courseName}}</p>
-            </div>
-            <div class="cs-mail-adr">
-                <p>{{value.email}}</p>
-            </div>
-            <div class="cs-mail-btn t-cs-mail">
-                <button class="cs-mail-change" type="submit">修改</button>
-                <button class="cs-mail-clear" type="button">取消</button>
-                <div class="cs-mail-input">
-                    <input class="cs-mail-input1" type="email" placeholder="输入新的邮箱"/>
-                    <!--<input class="cs-mail-input2" type="text" placeholder="邮箱验证码"/>-->
-                    <button class="cs-mail-sure" type="submit" data-ctId="{{value.ctId}}">确认</button>
-                </div>
-            </div>
-        </li>
-        {{/each}}
-    <!--</ul>-->
-</script>
-
-<script type="text/template" id="hw-dynamic-html">
-    <div class="d-newestwork">
-        <div class="d-newestwork-title">
-            <strong>最新作业</strong>
-            <button class="d-newestwork-unfold">展开</button>
-            <button class="d-newestwork-fold">收起</button>
+<%--进度加载条--%>
+<script type="text/template" id="loadtip-html">
+    <div class="loadtip-wrap">
+        <div class="lg-shade-tip loadtip-progess">
+            <p><strong>正在加载中...</strong></p>
+            <span class="t-load t-load-start"></span>
         </div>
-        <div class="d-newestwork-list t-newestwork-list"></div>
-    </div>
-    <div class="d-unhand">
-        <div class="d-unhand-title">
-            <strong>未提交</strong>
-            <button class="d-unhand-unfold">展开</button>
-            <button class="d-unhand-fold">收起</button>
-        </div>
-        <div class="d-unhand-list t-unhand-list"></div>
-    </div>
-    <div class="d-feedback">
-        <div class="d-feedback-title">
-            <strong>作业反馈</strong>
-            <button class="d-feedback-unfold">展开</button>
-            <button class="d-feedback-fold">收起</button>
-        </div>
-        <div class="d-feedback-list t-feedback-list"></div>
     </div>
 </script>

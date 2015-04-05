@@ -79,9 +79,7 @@ define(function(require, exports, module) {
         showLoad: function () {
             var $shade = this.$el.find('#lg-shade');
             $shade.show();
-            setTimeout(function () {
-                $shade.find('.t-load').addClass('t-load-start');
-            }, 100);
+            $shade.find('.t-load').addClass('t-load-start');
         },
         hideLoad: function () {
             var $shade = this.$el.find('#lg-shade');

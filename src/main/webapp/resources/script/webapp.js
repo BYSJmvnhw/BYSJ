@@ -17,11 +17,19 @@ define(function(require, exports, module) {
     var servicepath = 'http://localhost:8080/mvnhk/';
 
     // 检测服务端session是否过期，若过期则跳转到登陆页面
-    function checkSession(status) {
+    // @param status 后台session状态
+    function checkSession (status) {
         if(status == 'timeout'){
             alert('会话已过期，请重新登录！');
             window.location.href = servicepath + 'web/login';
         }
+    }
+
+    // 用正则检测输入是否符合预期
+    // @param type 检测类型(mail num int null chinese eg)
+    // @param value 待检测的值
+    function checkInput (type, value) {
+
     }
 
     // 公共模型类
@@ -50,6 +58,23 @@ define(function(require, exports, module) {
             console.log('render');
             var ele = tmpl(this.tmpl_id, this.model.toJSON());
             this.$content.html(ele);
+        }
+    });
+
+    var LoadTipView = Backbone.View.extend({
+        tagName: 'div',
+        className: 'loadtip-wrap',
+        events: {},
+        constructor: function ($wrap) {
+            Backbone.View.apply(this, arguments);
+            this.$wrap = $wrap;
+            this.render();
+        },
+        render: function () {
+            console.log('render 加载进度显示');
+            var ele = $('#loadtip-html').html();
+            $(this.el).html(ele);
+            this.$wrap.html(this.el);
         }
     });
 
@@ -247,7 +272,6 @@ define(function(require, exports, module) {
                     })
                 },
                 dataType: 'json',
-                timeOut: 10000,
                 success: function (data) {
                     checkSession(data.status);
                     console.log('成功新增作业', data);
@@ -314,11 +338,13 @@ define(function(require, exports, module) {
             this.$el.find('.add-student-page').show();
         },
         getStudentData: function (campusId, collegeId, keyword, page) {
-            var that = this;
+            var that = this,
+                $wrap = that.model.attributes.$wrap.find('.add-stu-list');
             this.stumodel = this.stumodel || new TypeModel;
             this.stuview = this.stuview || new AddStuListView({
                 model: this.stumodel
             });
+            var loadtip = new LoadTipView($wrap);
             this.stumodel.sync('read', this.stuview, {
                 url: servicepath + 'student/searchStudent',
                 data: {
@@ -333,10 +359,11 @@ define(function(require, exports, module) {
                     console.log('学生列表', data);
                     that.stumodel.set({
                         studentlist: data.data,
-                        $wrap: that.model.attributes.$wrap.find('.add-stu-list'),
+                        $wrap: $wrap,
                         rand: Math.random()
                     });
                     that.showPage(); // 显示确认按钮
+                    loadtip = null;
                 }
             });
         },
@@ -446,18 +473,6 @@ define(function(require, exports, module) {
                 addstuview = new AddStuView({
                     model: addstumodel
                 });
-//            addstumodel.sync('read', addstuview, {
-//                url: servicepath + '',
-//                data: {cid: id},
-//                dataType: 'json',
-//                success: function (data) {
-//                checkSession(data.status);
-//                    console.log('作业信息', data);
-//                    addstumodel.set({
-//
-//                    });
-//                }
-//            });
             addstumodel.set({
                 ctId: ctId,
                 op: 'add-student',
@@ -469,12 +484,15 @@ define(function(require, exports, module) {
             var that = this,
                 $cur = $(e.currentTarget),
                 ctId = $cur.attr('data-ctId'),
-                sId = $cur.attr('data-sId');
+                sId = $cur.attr('data-sId'),
+                $wrap2 = that.model.attributes.$wrap3.parent().next().children('.student-list-wrap'),
+                loadtip = new LoadTipView($wrap);
             this.worklistmodel = this.worklistmodel || new TypeModel;
             this.worklistview = this.worklistview ||new StuManageWorkListView({
                 model: this.worklistmodel
             });
             this.model.attributes.$wrap3.parent().parent().replaceClass('hw-content-wrap-3', 'hw-content-wrap-2')
+
             this.worklistmodel.sync('read', this.worklistview, {
                 url: servicepath + 'student/homeworkList',
                 data: {ctId: ctId, sId: sId},
@@ -486,8 +504,9 @@ define(function(require, exports, module) {
                         worklist: data.data,
                         view_type: 'stumanage',
                         userType: localStorage.userType,
-                        $wrap2: that.model.attributes.$wrap3.parent().next().children('.student-list-wrap')
+                        $wrap2: $wrap2
                     });
+                    loadtip = null;
                 }
             });
 //            worklistmodel.set({
@@ -546,6 +565,8 @@ define(function(require, exports, module) {
         handInWork: function (e) {
             console.log('交作业');
             var that = this,
+                $progress = $(e.currentTarget).prev(),
+                loadtip = new LoadTipView($progress),
                 hwInfoId = $(e.currentTarget).attr('data-hwInfoId'),
                 handinmodel = new TypeModel,
                 handinview = new HandInView({
@@ -562,8 +583,9 @@ define(function(require, exports, module) {
                         detaillist: data,
                         op: 'hand-in',
                         $wrap: $('#dialog-wrap'),
-                        $progesss: $(e.currentTarget).prev()
+                        $progesss: $progress
                     });
+                    loadtip = null;
                 }
             });
         },
@@ -614,6 +636,8 @@ define(function(require, exports, module) {
             console.log('查看学生的作业列表');
             var that = this,
                 $section2 = this.nextSection(),
+                $wrap3 = $section2.next().children('.student-list-wrap'),
+                loadtip = new LoadTipView($wrap3),
                 hwInfoId = $(e.currentTarget).parent().attr('data-hwinfoid');
             this.studentmodel = this.studentmodel || new TypeModel;
             this.studentview = this.studentview || new HwmanageStudentListView({
@@ -628,8 +652,9 @@ define(function(require, exports, module) {
                     console.log('学生作业', data);
                     that.studentmodel.set({
                         studentlist: data.data,
-                        $wrap3: $section2.next().children('.student-list-wrap')
+                        $wrap3: $wrap3
                     });
+                    loadtip = null;
                 }
             });
         }
@@ -677,7 +702,9 @@ define(function(require, exports, module) {
         },
         showWorkList: function (e) {
             var that = this,
-                $section1 = that.nextSection();
+                $section1 = that.nextSection(),
+                $wrap2 = $section1.next().children('.work-list-wrap'),
+                loadtip = new LoadTipView($wrap2);
             var id = $(e.currentTarget).attr('data-id');
             this.workmodel = this.workmodel || new TypeModel();
             this.workview = this.workview || new hwManageWorkListView({model: this.workmodel});
@@ -692,8 +719,9 @@ define(function(require, exports, module) {
                         worklist: data,
                         cid: id, // 授课关系id
                         userType: localStorage.userType,
-                        $wrap2: $section1.next().children('.work-list-wrap')
+                        $wrap2: $wrap2
                     });
+                    loadtip = null;
                 }
             });
         }
@@ -708,7 +736,9 @@ define(function(require, exports, module) {
         showStudentList: function (e) {
             console.log('查看该课程的所有学生');
             var that = this,
-                $section1 = that.nextSection();
+                $section1 = that.nextSection(),
+                $wrap3 = $section1.next().children('.work-list-wrap'),
+                loadtip = new LoadTipView($wrap3);
             var id = $(e.currentTarget).attr('data-id');
             this.stulistmodel = this.stulistmodel || new TypeModel;
             this.stulistview = this.stulistview || new StumanageStudentListView({
@@ -724,8 +754,9 @@ define(function(require, exports, module) {
                     that.stulistmodel.set({
                         view_type: 'stumanage',
                         studentlist: data.data,
-                        $wrap3: $section1.next().children('.work-list-wrap')
+                        $wrap3: $wrap3
                     });
+                    loadtip = null;
                 }
             });
         }
@@ -759,7 +790,9 @@ define(function(require, exports, module) {
             this.getCourseData(startYear, schoolTerm);
         },
         getCourseData: function (year, term) {
-            var that = this;
+            var that = this,
+                $wrap1 = that.$el.find('.course-list-wrap'),
+                loadtip = new LoadTipView($wrap1);
             that.$el.find('.course-list-wrap').html('正在加载');
             that.coursemodel.sync('read', this.courseview, {
                 url: servicepath + 'homework/courseList',
@@ -770,8 +803,9 @@ define(function(require, exports, module) {
                     console.log('课程信息', data);
                     that.coursemodel.set({
                         courselist: data.data,
-                        $wrap1: that.$el.find('.course-list-wrap')
+                        $wrap1: $wrap1
                     });
+                    loadtip = null;
                 }
             });
         }
@@ -870,6 +904,8 @@ define(function(require, exports, module) {
         },
         workUnfold: function ($cur, url, type) {
             var that = this,
+                $wrap2 = that.$el.find('.d-' + type + '-list'),
+                loadtip = new LoadTipView($wrap2),
                 newestmodel = new TypeModel,
                 newestview = new hwManageWorkListView({
                     model: newestmodel
@@ -883,11 +919,12 @@ define(function(require, exports, module) {
                     console.log('最新作业', data);
                     newestmodel.set({
                         worklist: data,
-                        $wrap2: that.$el.find('.d-' + type + '-list'),
+                        $wrap2: $wrap2,
                         userType: localStorage.userType
                     });
                     var fn = data.length / 3, pn = parseInt(fn);
                     that.togfold($cur, fn > pn ? pn + 1 : pn, false);
+                    loadtip = null;
                 }
             });
         },
@@ -1023,9 +1060,11 @@ define(function(require, exports, module) {
             this.getCourseData(2011, 1);
         },
         getCourseData: function (year, term) {
-            var that = this;
-            this.csmaillistmodel = this.mailmodel || new TypeModel;
-            this.csmaillistview = this.csmaillistview || new CsMailListView({
+            var that = this,
+                $wrap = that.$el.children('.cs-mail-list'),
+                loadtip = new  LoadTipView($wrap);
+            this.csmaillistmodel = new TypeModel;
+            this.csmaillistview = new CsMailListView({
                 model: this.csmaillistmodel
             });
             this.csmaillistmodel.sync('read', this.csmaillistview, {
@@ -1037,9 +1076,10 @@ define(function(require, exports, module) {
                     console.log('课程邮箱设置', data);
                     that.csmaillistmodel.set({
                         courselist: data,
-                        $wrap: that.$el.children('.cs-mail-list'),
+                        $wrap: $wrap,
                         random: Math.random()
                     });
+                    loadtip = null;
                 }
             });
         },
@@ -1142,7 +1182,6 @@ define(function(require, exports, module) {
             var $temp_el = $(e.currentTarget),
                 $ul = $temp_el.next(); // 获取ul元素
             this.type = $temp_el.attr('data-type'); // 获取用户点击的菜单项type
-            console.log($ul.css('height'))
             if (this.$old_el[0] === $ul[0]) {
                 if ($ul.css('height') == '0px') {
                     this.openType($ul);
@@ -1227,13 +1266,13 @@ define(function(require, exports, module) {
         },
         getInfoData: function () {
             var that = this;
-//            that.models.infomodel ? that.models.infomodel.render() : that.models.infomodel = new TypeModel();
-            that.models.infomodel = that.models.infomodel || new TypeModel();
+            that.models.infomodel = new TypeModel();
             that.views.infoview = new TypeView({
                 model: that.models.infomodel,
                 tmpl_id: 'man-info',
                 $content: that.$content
             });
+            var loadtip = new LoadTipView(this.$content);
             that.models.infomodel.sync('read', that.views.infoview, {
                 url: servicepath + 'user/info',
                 data: null,
@@ -1243,9 +1282,9 @@ define(function(require, exports, module) {
                     console.log('个人数据加载成功！', data);
                     that.models.infomodel.set({
                         userType: localStorage.userType,
-                        data: data,
-                        random: Math.random()
+                        data: data
                     });
+                    loadtip = null; // 解除引用
                 }
             });
         },
@@ -1255,6 +1294,7 @@ define(function(require, exports, module) {
             that.views.settingview = new SettingView({
                 model: that.models.settingmodel
             });
+            var loadtip = new LoadTipView(this.$content);
             that.models.settingmodel.sync('read', that.views.settingview, {
                 url: servicepath + 'user/email',
                 data: null,
@@ -1267,35 +1307,53 @@ define(function(require, exports, module) {
                         userType: localStorage.userType,
                         $content: that.$content
                     });
+                    loadtip = null;
                 }
             });
         },
         getHwInfoData: function () { // 获取课程信息
-            if(this.views.workinfoview)
-                this.views.workinfoview.initialize();
+            if(this.views.workinfoview){
+                this.views.workinfoview.constructor();
+                this.views.workinfoview.render();
+            }
             else
                 this.views.workinfoview = new WorkInfoView;
         },
         getHwDynamic: function () {
-            if(this.models.hwdmodel && this.views.hwdview)
-            this.models.hwdmodel = new TypeModel;
-            this.views.hwview = new HwDynamicView({
-                model: this.models.hwdmodel
-            });
-            this.views.hwdmodel.set({
-                tip_type: 'newestwork'
-            });
+            if(this.models.hwdmodel && this.views.hwdview){
+                this.views.hwdview.constructor();
+                this.views.hwdview.render();
+            }
+            else {
+                this.models.hwdmodel = new TypeModel;
+                this.views.hwdview = new HwDynamicView({
+                    model: this.models.hwdmodel
+                });
+                this.models.hwdmodel.set({
+                    tip_type: 'newestwork'
+                });
+            }
         },
         getCsMailData: function () {
-            this.models.mailmodel = new TypeModel;
-            new CsMailView({model: this.models.mailmodel});
-            this.models.mailmodel.set({
-                $wrap: this.$content,
-                rand: Math.random()
-            });
+            if(this.models.mailmodel && this.views.mailview){
+                this.views.mailview.constructor();
+                this.views.mailview.render();
+            }
+            else {
+                this.models.mailmodel = new TypeModel;
+                this.views.mailview = new CsMailView({model: this.models.mailmodel});
+                this.models.mailmodel.set({
+                    $wrap: this.$content
+                });
+            }
         },
         GetStuInfoData: function () {
-            this.views.stuinfoview = new StuInfoView;
+            if(this.views.stuinfoview){
+                this.views.stuinfoview.constructor();
+                this.views.stuinfoview.render();
+            }
+            else
+                this.views.stuinfoview = new StuInfoView;
         },
         exitApp: function () {
             $.ajax({
@@ -1303,7 +1361,6 @@ define(function(require, exports, module) {
                 type: 'get',
                 data: null,
                 dataType: 'json',
-                timeOut: 10000,
                 success: function (data) {
                     checkSession(data.status);
                     console.log('退出', data);
@@ -1334,6 +1391,5 @@ define(function(require, exports, module) {
                 }
             });
         }
-    }
-
+    };
 });
