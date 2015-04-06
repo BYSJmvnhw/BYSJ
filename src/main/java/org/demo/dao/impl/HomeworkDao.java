@@ -3,6 +3,7 @@ package org.demo.dao.impl;
 import org.demo.dao.IHomeworkDao;
 import org.demo.model.*;
 import org.demo.tool.HomeworkStatus;
+import org.demo.tool.MarkType;
 import org.demo.tool.Page;
 import org.springframework.stereotype.Repository;
 
@@ -64,7 +65,7 @@ public class HomeworkDao extends BaseDao<HwHomework> implements IHomeworkDao {
     }
 
     @Override
-    public List<Object[]> countSubmitted(int courseId, int teacherId) {
+    public List<Object[]> countSubmitted(Integer courseId, Integer teacherId) {
         //通过sql连表l查询出所需要的字段
         String sql =
                 /*最后一级查询查询出其他需要的信息*/
@@ -101,6 +102,15 @@ public class HomeworkDao extends BaseDao<HwHomework> implements IHomeworkDao {
     }
 
     @Override
+    public List<HwHomework> feedback(Integer sId) {
+        String hql = "from HwHomework hw where " +
+                "hw.hwStudent.id = ? " +
+                "and hw.status = ? " +
+                "and hw.checkedFlag = false ";
+        return list(hql, new Object[]{sId, HomeworkStatus.MARKED});
+    }
+
+    @Override
     public Long countUnsubmitted(HwStudent student) {
         String hql = "select count(1) from HwHomework hw where " +
                 "hw.hwStudent = ? " +
@@ -125,5 +135,13 @@ public class HomeworkDao extends BaseDao<HwHomework> implements IHomeworkDao {
                 //反馈未被学生查看
                 "and hw.checkedFlag = false";
         return count(hql, new Object[]{student, HomeworkStatus.MARKED});
+    }
+
+    @Override
+    public Object findCommentByHwInfoId(Integer hwInfoId, HwStudent student) {
+        String hql = "select hw.comment from HwHomework hw where " +
+                "hw.hwHomeworkInfo.id = ? " +
+                "and hw.hwStudent = ? ";
+        return findObject(hql, new Object[]{hwInfoId,student} );
     }
 }

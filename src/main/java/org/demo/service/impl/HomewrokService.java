@@ -326,6 +326,25 @@ public class HomewrokService implements IHomeworkService {
         homeworkDao.update(homework);
     }
 
+    @Override
+    public Map<String,Object>  comment(Integer hwInfoId, HwUser user) {
+        HwStudent student = studentDao.load(user.getTypeId());
+        String comment =  (String)homeworkDao.findCommentByHwInfoId(hwInfoId, student);
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        resultMap.put("comment",comment);
+        return resultMap;
+    }
+
+    @Override
+    public void updateCheckedFlag(Integer hwInfoId, HwUser user) {
+        HwStudent student = studentDao.load(user.getTypeId());
+        HwHomework homework = homeworkDao.findHomework(hwInfoId, student);
+        if( !homework.getCheckedFlag() ){
+            homework.setCheckedFlag(true);
+            homeworkDao.update(homework);
+        }
+    }
+
 
     public IHomeworkDao getHomeworkDao() {
         return homeworkDao;

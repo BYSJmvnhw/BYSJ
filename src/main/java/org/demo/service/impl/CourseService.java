@@ -99,6 +99,7 @@ public class CourseService implements ICourseService {
         JSONObject jsonresult = new JSONObject();
         jsonresult.clear();
         String smptPost = GetPost.getSmptPost(email);
+        System.out.println(email);
         if( smptPost == null || smptPost.equals("")) {
             jsonresult.put("status","fail");
             jsonresult.put("msg","邮箱格式不合法");

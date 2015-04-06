@@ -28,4 +28,6 @@ public interface IUserService {
 
     public JSONObject updatePassword(String oldPassword, String newPassword, HwUser user);
 
+    public JSONObject updateEmail(String email, HwUser user);
+
 }

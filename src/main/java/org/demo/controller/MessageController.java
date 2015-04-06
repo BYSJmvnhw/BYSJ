@@ -48,8 +48,25 @@ public class MessageController {
     public Object recentHomework(HttpServletRequest request){
         try{
             HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
-            return messageService.recentHomework(user.getTypeId());
+            return messageService.recentHomeworkList(user.getTypeId());
         }catch (Exception e) {
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
+
+    /**
+     * 学生登录提示信息，获取未读作业反馈
+     * @param request HttpRequest请求，用于获取当前登录用户
+     * @return
+     */
+    @RequestMapping(value = "/feedback", method = RequestMethod.GET)
+    @ResponseBody
+    public Object feedback(HttpServletRequest request) {
+        try {
+            HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
+            return messageService.feedback(user.getTypeId());
+        } catch (Exception e) {
             e.printStackTrace();
             return getFailResultJsonObject();
         }

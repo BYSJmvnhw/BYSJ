@@ -33,20 +33,21 @@ public class LoginService implements ILoginService{
             if( user.getPassword().equals( password) ) {
 
                 // 登录用户所能访问的url列表
-                List<String> urlList = new ArrayList<String>();
+                List<String> permissionList = new ArrayList<String>();
                 //登录用户的角色列表
                 List<String> roleList = new ArrayList<String>();
                 for(HwRole r : user.getHwRoles() ){
                     roleList.add(r.getRoleName());
                     for(HwPermission p : r.getHwPermissions()) {
-                        urlList.add(p.getUrl());
+                        permissionList.add(p.getUrl());
+                        System.out.println(p.getUrl());
                     }
                 }
 
                 request.getSession().setAttribute("loginUser", user);
                 request.getSession().setAttribute("userType",user.getUserType());
                 request.getSession().setAttribute("roleList",roleList);
-                request.getSession().setAttribute("urlList", urlList);
+                request.getSession().setAttribute("permissionList", permissionList);
 
                 return true;
             }else {

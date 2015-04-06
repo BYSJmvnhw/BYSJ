@@ -48,11 +48,30 @@ public class MessageService implements IMessageService{
     }
 
     @Override
-    public JSONArray recentHomework(Integer sId) {
+    public JSONArray recentHomeworkList(Integer sId) {
         Calendar calendar  = Calendar.getInstance();
         //一个月之内的所有为到期作业，供重复提交。
         calendar.add(Calendar.MONTH, -1);
         List<HwHomework> hwList = homeworkDao.recentHomework(sId, new java.sql.Timestamp(calendar.getTimeInMillis()));
+        List<Map<String,Object>> hwInfoList = new ArrayList<Map<String, Object>>();
+        for(HwHomework hw : hwList){
+            HwHomeworkInfo hwInfo = hw.getHwHomeworkInfo();
+            Map<String,Object> hwInfoMap = new HashMap<String, Object>();
+            hwInfoMap.put("hwInfoId",hwInfo.getId());
+            hwInfoMap.put("courseName",hwInfo.getCourseName());
+            hwInfoMap.put("title",hwInfo.getTitle());
+            hwInfoMap.put("deadline",hwInfo.getDeadline());
+            hwInfoMap.put("status",hw.getStatus());
+            hwInfoList.add(hwInfoMap);
+        }
+        JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.registerJsonValueProcessor(Timestamp.class, new DateJsonValueProcessor());
+        return JSONArray.fromObject(hwInfoList,jsonConfig);
+    }
+
+    @Override
+    public JSONArray feedback(Integer sId) {
+        List<HwHomework> hwList = homeworkDao.feedback(sId);
         List<Map<String,Object>> hwInfoList = new ArrayList<Map<String, Object>>();
         for(HwHomework hw : hwList){
             HwHomeworkInfo hwInfo = hw.getHwHomeworkInfo();
