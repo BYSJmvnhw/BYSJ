@@ -129,7 +129,7 @@ define(function(require, exports, module) {
             }
             else if(part == 'main'){ // 应用程序主界面
                 if(that.view == null){ // 登陆后，用户主动刷新页面
-                    require.async(['webapp', 'webapp.css'], function (webapp) {
+                    require.async(['webapp-' + localStorage.userType.toLowerCase(), 'webapp.css'], function (webapp) {
                         // 执行主页面渲染
                         that.$main_el.html(tmpl('main-html', {
                             userType: localStorage.userType,
@@ -140,7 +140,7 @@ define(function(require, exports, module) {
                     });
                 }
                 else { // 从登陆界面进入主界面
-                    require.async(['webapp', 'webapp.css'], function (webapp) {
+                    require.async(['webapp-' + localStorage.userType.toLowerCase(), 'webapp.css'], function (webapp) {
                         // 执行主页面渲染
                         that.$main_el.html(tmpl('main-html', {
                             userType: localStorage.userType,

@@ -228,15 +228,15 @@
             <div class="set-changepw-submit t-changepw-submit t-changepw-submit-close">
                 <div class="set-changepw-old">
                     <label for="old-pw">旧密码</label>
-                    <input id="old-pw" name="old-pw" type="password" />
+                    <input id="old-pw" name="old-pw" type="password" placeholder="请输入旧密码"/>
                 </div>
                 <div class="set-changepw-new">
                     <label for="new-pw">新密码</label>
-                    <input id="new-pw" name="new-pw" type="password" />
+                    <input id="new-pw" name="new-pw" type="password" placeholder="请输入8位以上字符的新密码"/>
                 </div>
                 <div class="set-changepw-sure">
                     <label for="sure-pw">确认密码</label>
-                    <input id="sure-pw" name="sure-pw" type="password" />
+                    <input id="sure-pw" name="sure-pw" type="password" placeholder="请确认密码"/>
                 </div>
                 <span class="fold-changepw" id="fold-changepw">收起</span>
                 <button id="changepw-sure" type="button">确认</button>
@@ -267,11 +267,11 @@
             <div class="set-mail-submit t-mail-submit t-mail-submit-close">
                 <div class="set-mail-new">
                     <label for="new-mail">新邮箱：</label>
-                    <input id="new-mail" name="new-mail" type="email" />
+                    <input id="new-mail" name="new-mail" type="email" placeholder="请输入新邮箱"/>
                 </div>
                 <div class="set-mail-sure">
                     <label for="sure-mail">验证码：</label>
-                    <input id="sure-mail" name="sure-mail" type="email" />
+                    <input id="sure-mail" name="sure-mail" type="email" placeholder="输入邮箱验证码"/>
                 </div>
                 <span class="fold-mail" id="fold-mail">收起</span>
                 <button id="mail-sure" type="button">确认</button>
@@ -305,7 +305,6 @@
             <button class="cs-mail-clear" type="button">取消</button>
             <div class="cs-mail-input">
                 <input class="cs-mail-input1" type="email" placeholder="输入新的邮箱"/>
-                <!--<input class="cs-mail-input2" type="text" placeholder="邮箱验证码"/>-->
                 <button class="cs-mail-sure" type="submit" data-ctId="{{value.ctId}}">确认</button>
             </div>
         </div>
@@ -345,7 +344,7 @@
     <!--<div class="load-data"></div>-->
     <section class="course-list">
         <div class="course-list-title">
-            <div class="set-changepw cs-mail-setting"><strong>课程列表</strong></div>
+            <div class="set-changepw cs-mail-setting"><strong>课程列表{{tip}}</strong></div>
             <div class="course-choice">{{include 'select-course-html'}}</div>
         </div>
         <div class="course-list-wrap"></div>
@@ -425,11 +424,55 @@
     <button class="add-work" data-csname="{{worklist[0].courseName}}">新增课程作业</button>
     {{else if userType == 'STUDENT'}}
     {{each worklist as value}}
-    <li class="work-student-list
-    {{if value.status == 'UNSUBMITTED'}}work-unhand-student
-    {{else if value.status == 'SUBMITTED'}}work-hand-student
-    {{else if value.status == 'MARKED'}}work-remark-student{{/if}}
-    {{if value.overtime == true}}work-overtime-student{{/if}}">
+    {{if value.status == 'UNSUBMITTED'}}
+    <li class="work-student-list work-unhand-student {{if value.overtime == true}}work-overtime-student{{/if}}">
+        <div>
+            <p>{{value.courseName}}</p>
+            <p>{{value.title}}</p>
+            <p>{{value.deadline.split(':00')[0] + ':00'}}</p>
+        </div>
+        <div class="hand-in-progress"><!--进度显示--></div>
+        {{if value.overtime == true}}
+        <div class="hand-in-work t-hand-in" data-hwInfoId="{{value.hwInfoId}}">
+            <span class="hand-in-work-detail">作业详细信息</span>
+        </div>
+        {{else}}
+        <div class="hand-in-work t-hand-in" data-hwInfoId="{{value.hwInfoId}}"><span>单击交作业</span></div>
+        {{/if}}
+    </li>
+    {{else if value.status == 'SUBMITTED'}}
+    <li class="work-student-list work-hand-student {{if value.overtime == true}}work-overtime-student{{/if}}">
+        <div>
+            <p>{{value.courseName}}</p>
+            <p>{{value.title}}</p>
+            <p>{{value.deadline.split(':00')[0] + ':00'}}</p>
+        </div>
+        <div class="hand-in-progress"><!--进度显示--></div>
+        {{if value.overtime == true}}
+        <div class="hand-in-work t-hand-in" data-hwInfoId="{{value.hwInfoId}}">
+            <span class="hand-in-work-detail">作业详细信息</span>
+        </div>
+        {{else}}
+        <div class="hand-in-work t-hand-in" data-hwInfoId="{{value.hwInfoId}}">
+            <span>重新交作业</span>
+        </div>
+        {{/if}}
+    </li>
+    {{else if value.status == 'MARKED'}}
+    <li class="work-student-list work-remark-student {{if value.overtime == true}}work-overtime-student{{/if}}">
+        <div>
+            <p>{{value.courseName}}</p>
+            <p>{{value.title}}</p>
+            <p>{{value.deadline.split(':00')[0] + ':00'}}</p>
+        </div>
+        <div class="hand-in-progress"><!--进度显示--></div>
+        <div class="hand-in-work t-hand-in" data-hwInfoId="{{value.hwInfoId}}">
+            <span class="hand-in-work-detail">作业详细信息</span>
+            <span class="hand-in-work-feedback">作业反馈</span>
+        </div>
+    </li>
+    {{else}}
+    <li class="work-student-list work-unhand-student">
         <div>
             <p>{{value.courseName}}</p>
             <p>{{value.title}}</p>
@@ -438,6 +481,7 @@
         <div class="hand-in-progress"><!--进度显示--></div>
         <div class="hand-in-work t-hand-in" data-hwInfoId="{{value.hwInfoId}}"><span>单击交作业</span></div>
     </li>
+    {{/if}}
     {{/each}}
     {{/if}}
     <!--</div>-->
@@ -534,7 +578,7 @@
         <div class="dailog-title">
             <p role='title'><strong>交作业</strong></p>
         </div>
-        <div class="dailog-body">
+        <div class="dailog-body hand-in-dailog-body">
             {{include 'hand-in'}}
         </div>
         {{else if op == 'add-student'}}
@@ -570,6 +614,7 @@
         <div class="auth-code">
             <label>填写邮箱验证码</label>
             <input type="text" name="mail"/>
+            <button class="auth-code-send-btn">重发(60)</button>
         </div>
     </div>
     <div class="auth-code-sure-btn">
@@ -644,14 +689,14 @@
         <p><strong>{{value.name}}</strong></p>
         <p>{{value.studentNo}}</p>
         <span></span>
-        <div class="stu-list-li-details" title="点击添加该学生">
-            <p><strong>姓名：</strong>{{value.name}}</p>
-            <p><strong>学号：</strong>{{value.studentNo}}</p>
-            <p><strong>性别：</strong>{{value.sex}}</p>
-            <p><strong>校区学院：</strong>{{value.hwCampus.name}}校区{{value.hwCollege.collegeName}}</p>
-            <p><strong>年级专业：</strong>{{value.hwMajor.name}}</p>
-        </div>
     </li>
+    <div class="stu-list-li-details" title="点击添加该学生">
+        <p><strong>姓名：</strong>{{value.name}}</p>
+        <p><strong>学号：</strong>{{value.studentNo}}</p>
+        <p><strong>性别：</strong>{{value.sex}}</p>
+        <p><strong>校区学院：</strong>{{value.hwCampus.name}}校区{{value.hwCollege.collegeName}}</p>
+        <p><strong>年级专业：</strong>{{value.hwMajor.name}}</p>
+    </div>
     {{/each}}
     <%--</ul>--%>
 </script>
@@ -690,10 +735,10 @@
 
 <%--进度加载条--%>
 <script type="text/template" id="loadtip-html">
-    <div class="loadtip-wrap">
+    <!--<div class="loadtip-wrap">-->
         <div class="lg-shade-tip loadtip-progess">
             <p><strong>正在加载中...</strong></p>
             <span class="t-load t-load-start"></span>
         </div>
-    </div>
+    <!--</div>-->
 </script>

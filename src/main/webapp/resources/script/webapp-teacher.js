@@ -1,5 +1,5 @@
 /**
- * Created by zqc on 2015/3/9.
+ * Created by 郑权才 on 15-4-6.
  */
 
 define(function(require, exports, module) {
@@ -13,155 +13,43 @@ define(function(require, exports, module) {
     // 使用cmd时需要手动引入$
     Backbone.$ = $;
 
+    var CommonObject = require('webapp-common');
+
     // ajax请求服务端地址
-    var servicepath = 'http://localhost:8080/mvnhk/';
+    var servicepath = CommonObject.servicepath,
 
-    // 检测服务端session是否过期，若过期则跳转到登陆页面
-    // @param status 后台session状态
-    function checkSession (status) {
-        if(status == 'timeout'){
-            alert('会话已过期，请重新登录！');
-            window.location.href = servicepath + 'web/login';
-        }
-    }
+        // 检测服务端session是否过期，若过期则跳转到登陆页面
+        // @param status 后台session状态
+        checkSession = CommonObject.checkSession,
 
-    // 用正则检测输入是否符合预期
-    // @param type 检测类型(mail num int null chinese eg)
-    // @param value 待检测的值
-    function checkInput (type, value) {
-        var reg = {
-            mail: /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/,
-            chinese: /^[\u4e00-\u9fa5]+$/,
-            authcode: /^[0-9]{11,11}$/,
-            pw: /^([0-9]|[A-z]|\W){3,}$/, // 密码输入框，至少8位
-            empty: /^$/
-        };
-        return reg[type] ? reg[type].test(value) : console.warn('不存在的类型');
-    }
+        // 用正则检测输入是否符合预期
+        // @param type 检测类型(mail num int null chinese eg)
+        // @param value 待检测的值
+        checkInput = CommonObject.checkInput,
 
-    // 公共模型类
-    var TypeModel = Backbone.Model.extend({
-        defaults: {
-            userType: localStorage.userType // 模型默认变量
-        }
-    });
+        // 公共模型类
+        TypeModel = CommonObject.TypeModel,
 
-    // 公共类视图模板
-    var TypeView = Backbone.View.extend({
-        model: null,
-        tmpl_id: null,
-        $content: null,
-        constructor: function (obj) {
-            console.log(obj);
-            this.model = obj.model;
-            this.tmpl_id = obj.tmpl_id;
-            this.$content = obj.$content;
-            this.listenTo(this.model, "change", this.render);
-        },
-        initialize: function () {
-            _.bindAll(this, 'render');
-        },
-        render: function () {
-            console.log('render');
-            var ele = tmpl(this.tmpl_id, this.model.toJSON());
-            this.$content.html(ele);
-        }
-    });
+        // 公共类视图模板
+        TypeView = CommonObject.TypeView,
 
-    // ajax远程数据加载进度条
-    var LoadTipView = Backbone.View.extend({
-        tagName: 'div',
-        className: 'loadtip-wrap',
-        events: {},
-        constructor: function ($wrap) {
-            Backbone.View.apply(this, arguments);
-            this.$wrap = $wrap;
-            this.render();
-        },
-        render: function () {
-            console.log('render 加载进度显示');
-            var ele = $('#loadtip-html').html();
-            $(this.el).html(ele);
-            this.$wrap.html(this.el);
-        }
-    });
+        // ajax远程数据加载进度条
+        LoadTipView = CommonObject.LoadTipView,
 
-    // 设置中心视图，学生，教师兼有
-    var SettingView = Backbone.View.extend({
-         tagName: 'div',
-        className: 'setting-wrap',
-        tmpl_id: 'setting-html',
-        events: {
-            'click #set-changepw-btn': 'unfoldChangePW', // 修改密码按钮，点击显示修改部分
-            'click #set-mail-btn': 'unfoldChangeMail', // 更改邮箱设置
-            'click #fold-changepw': 'foldChangePW', // 折叠
-            'click #fold-mail': 'foldChangeMail', // 折叠
-            'click #changepw-sure': 'changePW', // 确认修改密码
-            'click #mail-sure': 'changeMail', // 确认修改邮箱
-            'change #mail-state': 'setMailState' // 开启/关闭邮箱收发功能
-        },
-        initialize: function () {
-            this.listenTo(this.model, "change", this.render);
-        },
-        render: function () {
-            console.log('render-setting');
-            var ele = tmpl(this.tmpl_id, this.model.toJSON());
-            $(this.el).html(ele);
-            this.model.attributes.$content.html(this.el);
-            this.delegateEvents(this.events);
-        },
-        unfoldChangePW: function (e) {
-            $(e.currentTarget).next().replaceClass('t-changepw-submit-open', 't-changepw-submit-close');
-        },
-        unfoldChangeMail: function (e) {
-            $(e.currentTarget).next().replaceClass('t-mail-submit-open', 't-mail-submit-close');
-        },
-        foldChangeMail: function (e) {
-            $(e.currentTarget).parent().replaceClass('t-mail-submit-close', 't-mail-submit-open');
-        },
-        foldChangePW: function (e) {
-            $(e.currentTarget).parent().replaceClass('t-changepw-submit-close', 't-changepw-submit-open');
-        },
-        setMailState: function (e) {
-            var $cur = $(e.currentTarget);
-            $cur.get(0).checked ? $cur.parent().replaceClass('t-mail-open', 't-mail-close') : $cur.parent().replaceClass('t-mail-close', 't-mail-open');
-        },
-        changePW: function (e) {
-            var pw = $(e.currentTarget).parent().find('input');
-            if(checkInput('empty', pw[0].value)){pw[0].focus();return;}
-            if(!checkInput('pw', pw[1].value)){pw[1].focus();return;}
-            if(pw[1].value == pw[2].value){
-                $.ajax({
-                    type: 'post',
-                    url: servicepath + 'user/updatePassword',
-                    data: {oldPassword: pw[1].value, newPassword: pw[2].value},
-                    dataType: 'json',
-                    success: function (data) {
-                        checkSession(data.status);
-                        console.log('修改密码', data);
-                        if(data.status == 'success'){
-                            alert('修改成功，请重新登录！');
-                            window.location.href = servicepath + 'web/login'; // 跳转到登录页面
-                        }
-                        else if (data.status == 'error-oldPassword'){
-                            alert('旧密码不正确！');
-                        }
-                        else{
-                            alert('操作失败！');
-                        }
-                    }
-                });
-            }
-            else {
-                alert('两次密码输入不一致！');
-            }
-        },
-        changeMail: function (e) {
-            var val = $(e.currentTarget).parent().find('input');
-            if(!checkInput('mail', val[0].value)){val[0].focus();return;}
-            if(!checkInput('authcode', val[1].value)){val[1].focus();return;}
-        }
-    });
+        // 设置中心视图，学生，教师兼有
+        SettingView = CommonObject.SettingView,
+
+        // 弹出框公共视图类
+        DialogView = CommonObject.FDialogView,
+
+        //  作业列表 [父类]
+        WorkListView = CommonObject.FWorkListView,
+
+        // 课程列表 [父类]
+        CourseListView = CommonObject.FCourseListView,
+
+        // 作业管理、学生管理 [父类]
+        HwInfoView = CommonObject.FHwInfoView;
 
     // 学生管理->添加学生->弹框->学生列表子视图
     var AddStuListView = Backbone.View.extend({
@@ -189,68 +77,6 @@ define(function(require, exports, module) {
             else {
                 $cur.addClass('stu-choiced'); // 显示打勾样式
             }
-        }
-    });
-
-    // 弹出框公共视图类
-    var DialogView = Backbone.View.extend({
-        tagName: 'div',
-        className: 'shade-wrap',
-        tmpl_id: 'dialog-html',
-        initialize: function () {
-            this.listenTo(this.model, "change", this.render);
-        },
-        render: function () {
-            var ele = tmpl(this.tmpl_id, this.model.toJSON());
-            $(this.el).html(ele);
-            this.model.attributes.$wrap.html(this.el);
-            this.delegateEvents(this.events);
-        },
-        closeDialog: function () {
-            this.$el.hide(300);
-        }
-    });
-
-    // 学生上交作业 [视图][弹框]
-    var HandInView = DialogView.extend({
-        events: {
-            'click .work-submit-sure': 'submitWork', // 点击提交按钮
-            'click .dailog-clear': 'closeDialog', // 关闭提交窗口
-            'change #work-file': 'showFileName' // 展示上传的文件名
-        },
-        submitWork: function (e) {
-            console.log('html5 上传');
-            var that= this,
-                file = this.$el.find('#work-file')[0].files[0],
-                hwinfoId = $(e.currentTarget).attr('data-hwinfoId'),
-                formData = new FormData(),
-                flieupload = new XMLHttpRequest();
-            formData.append('hw', file);
-            formData.append('hwinfoId', hwinfoId);
-            flieupload.upload.addEventListener("progress", function (evt) {
-                var  $p = that.model.attributes.$progesss;
-                if (evt.lengthComputable) {
-                    that.closeDialog();
-                    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-                    $p.css('height', percentComplete.toString() + '%');
-                    $p.text(percentComplete.toString() + '%');
-                }
-                if (evt.loaded == evt.total){
-                    $p.parent().replaceClass('work-hand-student', 'work-unhand-student');
-                    $p.next().text('单击重新提交');
-                    $p.remove();
-                }
-            }, false);
-            flieupload.open("POST", servicepath + 'homework/upload');
-            flieupload.onreadystatechange = function () {
-                if(flieupload.readyState == 4 && flieupload.status == 200){
-                    console.log(JSON.parse(flieupload.responseText));
-                }
-            };
-            flieupload.send(formData);
-        },
-        showFileName: function (e) { // 显示上传文件的名字
-            $(e.currentTarget).next().html($(e.currentTarget).val().split('\\').pop());
         }
     });
 
@@ -497,9 +323,9 @@ define(function(require, exports, module) {
                 ctId = $cur.attr('data-ctId'),
                 sId = $cur.attr('data-sId'),
                 $wrap2 = that.model.attributes.$wrap3.parent().next().children('.student-list-wrap'),
-                loadtip = new LoadTipView($wrap);
-            this.worklistmodel = this.worklistmodel || new TypeModel;
-            this.worklistview = this.worklistview ||new StuManageWorkListView({
+                loadtip = new LoadTipView($wrap2);
+            this.worklistmodel = new TypeModel;
+            this.worklistview = new StuManageWorkListView({
                 model: this.worklistmodel
             });
             this.model.attributes.$wrap3.parent().parent().replaceClass('hw-content-wrap-3', 'hw-content-wrap-2')
@@ -539,26 +365,6 @@ define(function(require, exports, module) {
             console.log('批改');
             var hwid = $(e.currentTarget).attr('data-id');
             window.open('http://localhost:8080/mvnhk/homework/openword?hwId=' + hwid);
-        }
-    });
-
-    //  作业列表 [父类]
-    var WorkListView = Backbone.View.extend({
-        tagName: 'ul',
-        initialize: function () {
-            this.listenTo(this.model, "change", this.render);
-        },
-        render: function () {
-            console.log('render-work');
-            var ele = tmpl(this.tmpl_id, this.model.toJSON());
-            $(this.el).html(ele);
-            this.model.attributes.$wrap2.html(this.el);
-            this.delegateEvents(this.events); // 视图渲染完后绑定所有事件
-        },
-        nextSection: function () {
-            var $section2 = this.model.attributes.$wrap2.parent();
-            $section2.parent().replaceClass('hw-content-wrap-3', 'hw-content-wrap-2');
-            return $section2;
         }
     });
 
@@ -682,27 +488,6 @@ define(function(require, exports, module) {
         }
     });
 
-    // 课程列表 [父类]
-    var CourseListView = Backbone.View.extend({
-        tagName: 'div',
-        className: 'course-list',
-        initialize: function () {
-            this.listenTo(this.model, "change", this.render);
-        },
-        render: function () {
-            console.log('render-course');
-            var ele = tmpl(this.tmpl_id, this.model.toJSON());
-            $(this.el).html(ele);
-            this.model.attributes.$wrap1.html(this.el);
-            this.delegateEvents(this.events);
-        },
-        nextSection: function () {
-            var $section1 = this.model.attributes.$wrap1.parent();
-            $section1.parent().replaceClass('hw-content-wrap-2', 'hw-content-wrap-1');
-            return $section1;
-        }
-    });
-
     // 作业管理->作业信息->课程列表 [视图][教师]
     var HwmanageCourseListView = CourseListView.extend({
         tmpl_id: 'hwmanage-course-list-html',
@@ -770,54 +555,6 @@ define(function(require, exports, module) {
         }
     });
 
-    // 作业管理、学生管理 [父类]
-    var HwInfoView = Backbone.View.extend({
-        tagName: 'div',
-        className: 'hw-content-wrap hw-content-wrap-k hw-content-wrap-1',
-        tmpl_id: 'hw-info',
-        events: {
-            'click .return-course-btn': 'slideHwContentWrap', // 返回课程列表
-            'click .return-work-btn': 'slideHwContentWrap', // 返回作业列表
-            'click .choice-sure-btn': 'termCourse' // 搜索按钮
-        },
-        render: function () {
-            console.log('render-hwinfo');
-            $(this.el).html(tmpl(this.tmpl_id, {view_type: this.view_type}));
-            $('#content').html(this.el);
-            this.delegateEvents(this.events);
-        },
-        slideHwContentWrap: function (e) {
-            console.log('返回成功');
-            var back = parseInt($(e.currentTarget).attr('data-back')),
-                cur = parseInt($(e.currentTarget).attr('data-cur'));
-            this.$el.replaceClass('hw-content-wrap-' + back.toString(), 'hw-content-wrap-' + cur.toString());
-        },
-        termCourse: function () {
-            var startYear = this.$el.find('.startYear').val(),
-                schoolTerm = this.$el.find('.schoolTerm').val();
-            this.getCourseData(startYear, schoolTerm);
-        },
-        getCourseData: function (year, term) {
-            var that = this,
-                $wrap1 = that.$el.find('.course-list-wrap'),
-                loadtip = new LoadTipView($wrap1);
-            that.coursemodel.sync('read', this.courseview, {
-                url: servicepath + 'homework/courseList',
-                data: {startYear: year, schoolTerm: term},
-                dataType: 'json',
-                success: function (data) {
-                    checkSession(data.status);
-                    console.log('课程信息', data);
-                    that.coursemodel.set({
-                        courselist: data.data,
-                        $wrap1: $wrap1
-                    });
-                    loadtip = null;
-                }
-            });
-        }
-    });
-
     // 作业管理 [视图][教师][学生]
     var WorkInfoView = HwInfoView.extend({
         view_type: 'hwmanage',
@@ -837,120 +574,6 @@ define(function(require, exports, module) {
             this.coursemodel = new TypeModel;
             this.courseview = new StumanageCourseListView({model: this.coursemodel});
             this.getCourseData(2011, 1);
-        }
-    });
-
-    // 主页动态提示信息 [视图]
-    var TipInfoView = Backbone.View.extend({
-        tagName: 'div',
-        className: 'info-b',
-        tmpl_id: 'info-tip-html',
-        events: {
-            'click #info-btn': 'showTip', // 显示信息提示框
-            'click #info-tip>ul>li': 'showInfoTip' // 单击提示条时加载相应信息
-        },
-        initialize: function () {
-            var that = this;
-            this.listenTo(this.model, "change", this.render);
-            $('body').on('click', function () {
-                that.hideTip(that);
-            });
-        },
-        render: function () {
-            console.log('render-tip');
-            var ele = tmpl(this.tmpl_id, this.model.toJSON());
-            $(this.el).html(ele);
-            this.model.attributes.$info_b.html(this.el);
-        },
-        showTip: function (e) {
-            e.stopPropagation();
-            this.$el.find('#info-tip').show(200);
-        },
-        hideTip: function (obj) {
-            obj.$el.find('#info-tip').hide(200);
-        },
-        showInfoTip: function (e) {
-            e.stopPropagation();
-            this.model.attributes.unfoldLeftMenu($(e.currentTarget).attr('data-type'));
-        }
-    });
-
-    // 作业管理->作业动态 [视图][学生]
-    var HwDynamicView = Backbone.View.extend({
-        tagName: 'div',
-        className: 'hw-dynamic',
-        events: {
-            'click .d-newestwork-unfold': 'newestworkUnfold',
-            'click .d-newestwork-fold': 'newestworkFold',
-            'click .d-unhand-unfold': 'unhandUnfold',
-            'click .d-unhand-fold': 'unhandFold',
-            'click .d-feedback-unfold': 'feedbackUnfold',
-            'click .d-feedback-fold': 'feedbackFold'
-        },
-        tmpl_id: 'hw-dynamic-html',
-        initialize: function () {
-            this.listenTo(this.model, "change", this.render);
-        },
-        render: function () {
-            console.log('作业动态');
-            var ele = tmpl(this.tmpl_id);
-            $(this.el).html(ele);
-            $('#content').html(this.el);
-            this.preFold(this.model.attributes.tip_type); // 打开最新作业选项卡
-        },
-        // n 为行数
-        togfold: function ($b, n, fold) {
-            $b.siblings('button').show();
-            $b.hide();
-            fold == true ? $b.parent().next().css('height', '0') : $b.parent().next().css('height', (113 * n).toString() + 'px');
-        },
-        preFold: function (tip_type) {
-            console.log('打开最新作业');
-            console.log(this.$el.find('.d-' + tip_type + '-unfold'));
-            this.$el.find('.d-' + tip_type + '-unfold').click();
-        },
-        workUnfold: function ($cur, url, type) {
-            var that = this,
-                $wrap2 = that.$el.find('.d-' + type + '-list'),
-                loadtip = new LoadTipView($wrap2),
-                newestmodel = new TypeModel,
-                newestview = new hwManageWorkListView({
-                    model: newestmodel
-                });
-            newestmodel.sync('read', newestview, {
-                url: servicepath + url,
-                data: null,
-                dataType: 'json',
-                success: function (data) {
-                    checkSession(data.status);
-                    console.log('最新作业', data);
-                    newestmodel.set({
-                        worklist: data,
-                        $wrap2: $wrap2
-                    });
-                    var fn = data.length / 3, pn = parseInt(fn);
-                    that.togfold($cur, fn > pn ? pn + 1 : pn, false);
-                    loadtip = null;
-                }
-            });
-        },
-        newestworkUnfold: function (e) {
-            this.workUnfold($(e.currentTarget), 'message/recentHomework', 'newestwork');
-        },
-        newestworkFold: function (e) {
-            this.togfold($(e.currentTarget), 0, true);
-        },
-        unhandUnfold: function (e) {
-            this.workUnfold($(e.currentTarget), 'message/recentHomework', 'unhand');
-        },
-        unhandFold: function (e) {
-            this.togfold($(e.currentTarget), 0, true);
-        },
-        feedbackUnfold: function () {
-
-        },
-        feedbackFold: function (e) {
-            this.togfold($(e.currentTarget), 0, true);
         }
     });
 
@@ -1099,109 +722,11 @@ define(function(require, exports, module) {
     });
 
     // 应用总视图
-    var AppView = Backbone.View.extend({ // 滑动视图，应用程序主视图类
-        el: $('#main'),
-        events: {
-            'click #nav-main>li>ul>li': 'showStateData', // 顶栏菜单
-            'click #left-nav>.l-menu': 'togSlide', // 左侧菜单栏选项事件
-            'click #left-nav>ul>li': 'showBarInfo', // 点击左侧菜单栏显示对应信息
-            'click #exit': 'exitApp' // 退出系统
-        },
-        $old_el: null,
-        $old_bar: null,
-        $tip_btn: null,
-        $content: null,
-        type: null, // 视图类型
-        bar: null, // 视图子类型
-        tip_type: null, // 提示信息类型
-        models: {},
-        views: {},
-        constructor: function (type, bar) {
-            Backbone.View.apply(this, arguments);
-            this.type = type;
-            this.bar = bar;
-            this.render();
-        },
+    var AppView = CommonObject.FAppView.extend({ // 滑动视图，应用程序主视图类
         initialize: function () {
-            _.bindAll(this, 'render');
             this.$old_el = $('#left-nav .l-menu').first().next();
             this.$content = $('#content');
             console.log('初始化webapp');
-            this.getTipData(); // 获取提示数据
-        },
-        initView: function () {
-            var that = this;
-            setTimeout(function () { // 待视图对象初始化后，恢复到刷新前状态
-                that.showState(that.type, that.bar);
-            }, 100);
-        },
-        render: function () {
-            // 执行渲染
-            this.initView();
-        },
-        // 获取页面title
-        setSiteTitle: function (type) {
-            switch (type) {
-                case 'man': return '作业网-个人中心';
-                case 'csmanage': return '作业网-课程管理';
-                case 'hwmanage': return '作业网-作业管理';
-                case 'stumanage': return '作业网-学生管理';
-                default : return '作业网';
-            }
-        },
-        closeType: function ($type) {
-            var nli = $type.children().length;
-            $type.removeClass('t-open' + nli);
-            $type.prev().find('span.t-rotate').removeClass('t-rotate-open');
-            return $type;
-        },
-        openType: function ($type) {
-            var nli = $type.children().length;
-            $type.addClass('t-open' + nli);
-            $type.prev().find('span.t-rotate').addClass('t-rotate-open');
-            return $type;
-        },
-        activeBar: function ($bar, active) {
-            if(active){
-                $bar.addClass('l-active');
-            }
-            else{
-                $bar.removeClass('l-active');
-            }
-            return $bar;
-        },
-        showState: function (type, bar) {
-            var $that_type = this.$el.find('#left-nav>.l-menu[data-type="' + type + '"]');
-            var $that_bar = $that_type.next().find('li[data-bar="' + bar + '"]');
-            this.$old_bar = $that_bar;
-            $that_bar.click();
-            this.$old_el = this.openType($that_type.next());
-        },
-        showStateData: function (e) {
-            var $ele = $(e.currentTarget);
-            this.type = $ele.parent().attr('data-type');
-            this.bar = $ele.attr('data-bar');
-            appNavigate('main/' + this.type + '/' + this.bar, this.setSiteTitle(this.type), {trigger: false});
-            this.closeType(this.$old_el);
-            this.activeBar(this.$old_bar, false);
-            this.showState(this.type, this.bar);
-        },
-        togSlide: function (e) { // 滑动切换
-            var $temp_el = $(e.currentTarget),
-                $ul = $temp_el.next(); // 获取ul元素
-            this.type = $temp_el.attr('data-type'); // 获取用户点击的菜单项type
-            if (this.$old_el[0] === $ul[0]) {
-                if ($ul.css('height') == '0px') {
-                    this.openType($ul);
-                }
-                else {
-                    this.closeType($ul);
-                }
-            }
-            else {
-                this.closeType(this.$old_el);
-                this.$old_el = this.openType($ul);
-            }
         },
         showBarInfo: function (e) {
             var that = this,
@@ -1226,60 +751,12 @@ define(function(require, exports, module) {
                 case  'hwmanage/hwinfo':
                     that.getHwInfoData();
                     break;
-                case 'hwmanage/hwdynamic':
-                    that.getHwDynamic();
-                    break;
                 case  'stumanage/stuinfo':
                     this.GetStuInfoData();
-                    break;
-                case 'stumanage/':
-                    console.log(this.type+this.bar);
                     break;
                 default:
                     console.log('没有找到相关类型');
             }
-        },
-        getTipData: function () {
-            var that = this;
-            var tipmodel = new TypeModel;
-            var tipview = new TipInfoView({
-                model: tipmodel
-            });
-            tipmodel.set({
-                $info_b: that.$el.find('#info-b'),
-                unfoldLeftMenu: function (tip_type) {
-                    that.tip_type = tip_type;
-                    that.type = 'hwmanage';
-                    that.bar = 'hwdynamic';
-                    appNavigate('main/hwmanage/hwdynamic', that.setSiteTitle(that.type), {trigger: false});
-                    that.closeType(that.$old_el);
-                    that.activeBar(that.$old_bar, false);
-                    that.showState(that.type, that.bar);
-                }
-            });
-        },
-        getInfoData: function () {
-            var that = this;
-            that.models.infomodel = new TypeModel();
-            that.views.infoview = new TypeView({
-                model: that.models.infomodel,
-                tmpl_id: 'man-info',
-                $content: that.$content
-            });
-            var loadtip = new LoadTipView(this.$content);
-            that.models.infomodel.sync('read', that.views.infoview, {
-                url: servicepath + 'user/info',
-                data: null,
-                dataType: 'json',
-                success: function (data) {
-                    checkSession(data.status);
-                    console.log('个人数据加载成功！', data);
-                    that.models.infomodel.set({
-                        data: data
-                    });
-                    loadtip = null; // 解除引用
-                }
-            });
         },
         getSettingData: function () {
             var that = this;
@@ -1311,21 +788,6 @@ define(function(require, exports, module) {
             else
                 this.views.workinfoview = new WorkInfoView;
         },
-        getHwDynamic: function () {
-            if(this.models.hwdmodel && this.views.hwdview){
-                this.views.hwdview.constructor();
-                this.views.hwdview.render();
-            }
-            else {
-                this.models.hwdmodel = new TypeModel;
-                this.views.hwdview = new HwDynamicView({
-                    model: this.models.hwdmodel
-                });
-                this.models.hwdmodel.set({
-                    tip_type: 'newestwork'
-                });
-            }
-        },
         getCsMailData: function () {
             if(this.models.mailmodel && this.views.mailview){
                 this.views.mailview.constructor();
@@ -1346,19 +808,6 @@ define(function(require, exports, module) {
             }
             else
                 this.views.stuinfoview = new StuInfoView;
-        },
-        exitApp: function () {
-            $.ajax({
-                url: servicepath + 'login/logout',
-                type: 'get',
-                data: null,
-                dataType: 'json',
-                success: function (data) {
-                    checkSession(data.status);
-                    console.log('退出', data);
-                    appNavigate('login', '登陆作业网', {trigger: true});
-                }
-            });
         }
     });
 
