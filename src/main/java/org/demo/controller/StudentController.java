@@ -111,36 +111,56 @@ public class StudentController {
         return "student/addStudent";
     }
 
+    /**
+     * 管理员添加学生
+     * @param jsonObject 前端学生基本数据序列化成的字符串
+     * @param request HttpServletRequest 获取当前登录管理员，用于 createId
+     * @return JsonObject 结果
+     */
     @RequestMapping(value = "/addStudent", method = RequestMethod.POST)
     @ResponseBody
-    public JSONObject addStudent( String jsonObject, HttpServletRequest request) {
-        /**判登录*/
-        HwUser createUser =  ((HwUser)request.getSession().getAttribute("loginUser"));
-        JSONObject jo = JSONObject.fromObject(jsonObject);
-        HwStudent st = studentService.findStudent(jo.getString("studentNo"));
-        if( st != null) {
-            String result = "{'result':'该学生已存在'}";
-            return JSONObject.fromObject(result);
+    public JSONObject addStudent(String jsonObject, HttpServletRequest request) {
+        try {
+            //获取的当前登录用户
+            HwUser createUser =  ((HwUser)request.getSession().getAttribute("loginUser"));
+            JSONObject jo = JSONObject.fromObject(jsonObject);
+            return studentService.addStrdentAndUser(jo, createUser);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return getFailResultJsonObject();
         }
-        studentService.addStrdentAndUser(jo, createUser);
-        String result = "{'result':'添加学生成功'}";
-        return JSONObject.fromObject(result);
     }
 
-    @RequestMapping(value = "/deleteStudent", method = RequestMethod.GET)
+    /**
+     * 管理员删除学生
+     * @param sId 欲删除的学生id
+     */
+    @RequestMapping(value = "/deleteStudent", method = RequestMethod.POST)
     @ResponseBody
-    public JSONObject deleteStudent(Integer sid) {
-        studentService.deleteStudnetAndUser(sid);
-        String result = "{'result' : '添加删除标记成功'}";
-        return JSONObject.fromObject(result);
+    public JSONObject deleteStudent(Integer sId) {
+        try {
+            studentService.deleteStudnetAndUser(sId);
+            return getSuccessResultJsonObject();
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
     }
 
+    /**
+     * 更新学生以及对应用户信息的接口
+     * @param jsonObject 前端学生基本数据序列化成的字符串
+     */
     @RequestMapping(value = "/updateStudent", method = RequestMethod.POST)
     @ResponseBody
-    public JSONObject updateStudent(String json) {
-        studentService.updateStudnetAndUser(json);
-        String result = "{'result' : '更新学生信息成功'}";
-        return JSONObject.fromObject(result);
+    public JSONObject updateStudent(String jsonObject) {
+        try {
+            studentService.updateStudnetAndUser(jsonObject);
+            return getSuccessResultJsonObject();
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
     }
 
     @RequestMapping(value = "/addCourseSelecting", method = RequestMethod.GET)
@@ -157,7 +177,7 @@ public class StudentController {
      }
 
     /**
-     *
+     * 根据校区id，学院id，专业id，学生学号关键字，学生姓名关键字搜索学生列表
      * @param campusId 校区id
      * @param collegeId 学院id
      * @param majorId 专业id

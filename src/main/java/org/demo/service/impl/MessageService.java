@@ -40,6 +40,7 @@ public class MessageService implements IMessageService{
             hwInfoMap.put("courseName",hwInfo.getCourseName());
             hwInfoMap.put("title",hwInfo.getTitle());
             hwInfoMap.put("deadline",hwInfo.getDeadline());
+            hwInfoMap.put("status",hw.getStatus());
             hwInfoList.add(hwInfoMap);
         }
         JsonConfig jsonConfig = new JsonConfig();
@@ -80,6 +81,7 @@ public class MessageService implements IMessageService{
             hwInfoMap.put("courseName",hwInfo.getCourseName());
             hwInfoMap.put("title",hwInfo.getTitle());
             hwInfoMap.put("deadline",hwInfo.getDeadline());
+            hwInfoMap.put("status",hw.getStatus());
             hwInfoList.add(hwInfoMap);
         }
         JsonConfig jsonConfig = new JsonConfig();

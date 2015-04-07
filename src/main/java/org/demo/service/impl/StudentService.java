@@ -22,6 +22,7 @@ public class StudentService implements IStudentService {
 
     private IStudentDao studentDao;
     private IUserDao userDao;
+    private ICampusDao campusDao;
     private ICollegeDao collegeDao;
     private IMajorDao majorDao;
     private ICourseSelectingDao courseSelectingDao;
@@ -44,14 +45,18 @@ public class StudentService implements IStudentService {
         student.setStudentNo(jsonObject.getString("studentNo"));
         student.setName(jsonObject.getString("name"));
         student.setSex(jsonObject.getString("sex"));
+        student.setEmail(jsonObject.getString("email"));
         student.setClass_(jsonObject.getString("cla"));
         student.setGrade(jsonObject.getString("grade"));
+        student.setHwCampus(campusDao.load(jsonObject.getInt("campusId")));
         student.setHwCollege(collegeDao.load(jsonObject.getInt("collegeId")));
         student.setHwMajor(majorDao.load(jsonObject.getInt("majorId")));
         studentDao.update(student);
         HwUser user = userDao.findUserByTypeId(jsonObject.getInt("id"));
         user.setUsername(jsonObject.getString("studentNo"));
+        user.setPassword(jsonObject.getString("password"));
         user.setTrueName(jsonObject.getString("name"));
+        user.setEmail(jsonObject.getString("email"));
         userDao.update(user);
     }
 
@@ -66,50 +71,64 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public void addStrdentAndUser(JSONObject jo, HwUser createUser) {
+    public JSONObject addStrdentAndUser(JSONObject jo, HwUser createUser) {
+        HwStudent st = this.findStudent(jo.getString("studentNo"));
+        JSONObject result = new JSONObject();
+        if( st != null) {
+            result.put("status","success");
+            result.put("msg","student-exists");
+            return result;
+        }
+        //声明一个学生
         HwStudent student;
-        HwStudent st = studentDao.findDeleteStudnet(jo.getString("studentNo"));
-        if( st != null ) {
-            student = st;
+        //查看该学号对应的学生是否被标记删除，是则使用该记录，否则新建学生对象
+        HwStudent deleteStudnet = studentDao.findDeleteStudnet(jo.getString("studentNo"));
+        if( deleteStudnet != null ) {
+            student = deleteStudnet;
         }else {
             student = new HwStudent();
         }
         student.setStudentNo(jo.getString("studentNo"));
         student.setName(jo.getString("name"));
         student.setSex(jo.getString("sex"));
-        student.setClass_(jo.getString("cla"));
-        //student.setEmail(jo.getString("email"));
         student.setGrade(jo.getString("grade"));
+        student.setClass_(jo.getString("cla"));
+        student.setEmail(jo.getString("email"));
+        student.setHwCampus(campusDao.load(jo.getInt("campusId")));
         student.setHwCollege(collegeDao.load(jo.getInt("collegeId")));
         student.setHwMajor(majorDao.load(jo.getInt("majorId")));
         student.setDeleteFlag(false);
-        if( st != null ) {
+        if( deleteStudnet != null ) {
             studentDao.update(student);
         }else {
             studentDao.add(student);
         }
 
+        //添加学生对应的用户
         HwUser user;
-        if( st != null ) {
-            user = userDao.findUserByTypeId(st.getId());
+        if( deleteStudnet != null ) {
+            user = userDao.findUserByTypeId(deleteStudnet.getId());
         }else {
             user = new HwUser();
         }
         user.setUsername(jo.getString("studentNo"));
         user.setPassword(jo.getString("studentNo"));
         user.setTrueName(jo.getString("name"));
+        user.setEmail(jo.getString("email"));
         user.setCreateDate(new java.sql.Timestamp(System.currentTimeMillis()));
         user.setUserType(UserType.STUDENT);
         user.setTypeId(student.getId());
         user.setCreateId(createUser.getId());
         user.setCreateUsername(createUser.getUsername());
         user.setDeleteFlag(false);
-        if( st != null ) {
+        if( deleteStudnet != null ) {
             userDao.update(user);
         }else {
             userDao.add(user);
         }
-
+        result.clear();
+        result.put("status","success");
+        return result;
     }
 
     @Override
@@ -242,5 +261,14 @@ public class StudentService implements IStudentService {
     @Resource
     public void setCourseTeachingDao(ICourseTeachingDao courseTeachingDao) {
         this.courseTeachingDao = courseTeachingDao;
+    }
+
+    public ICampusDao getCampusDao() {
+        return campusDao;
+    }
+
+    @Resource
+    public void setCampusDao(ICampusDao campusDao) {
+        this.campusDao = campusDao;
     }
 }
