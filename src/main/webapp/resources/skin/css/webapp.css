@@ -182,7 +182,7 @@ header {
 
 .info-btn:after {content: ''; clear: both;}
 
-.info-btn:before {
+.info-btn-tip:before {
     content: '';
     display: block;
     width: 10px;
@@ -726,13 +726,15 @@ footer {
     border-color: #398439;
 }
 
-.course-list ul, .work-list ul, .student-list ul, .d-newestwork-list ul {
+.course-list ul, .work-list ul, .student-list ul,
+.d-newestwork-list ul,  .d-unhand-list ul, .d-feedback-list ul {
     padding-top: 3px;
     overflow: hidden;
     zoom: 1;
 }
 
-.course-list ul li, .work-list ul li, .student-list ul li, .d-newestwork-list ul li {
+.course-list ul li, .work-list ul li, .student-list ul li,
+.d-newestwork-list ul li, .d-unhand-list ul li, .d-feedback-list ul li {
     float: left;
     width: 232px;
     margin-bottom: 10px;
@@ -752,6 +754,8 @@ footer {
 .student-list ul li:hover>.alter-btn,
 .student-list ul li:hover>.check-btn,
 .d-newestwork-list ul li:hover>.hand-in-work,
+.d-unhand-list ul li:hover>.hand-in-work,
+.d-feedback-list ul li:hover>.hand-in-work,
 .d-newestwork-list ul li:hover>.student-list-btn,
 .student-list-wrap ul li:hover>.student-list-btn {
     top: 0;
@@ -763,22 +767,49 @@ footer {
 .hand-in-work>span,
 .alter-btn>span,
 .check-btn>span,
-.hand-in-work>span,
 .student-list-btn>span,
-.student-list-btn>span {
+.student-list-btn>span,
+.hand-in-work>.work-marked-btn {
     height: 24px;
-    cursor: pointer;
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
-    margin: auto auto;
+    margin: auto 0;
 }
+
+.work-list-btn>span,
+.stumanage-list-btn>span,
+.student-list-btn>span,
+.hand-in-work>span,
+.alter-btn>span,
+.check-btn>span,
+.student-list-btn>span,
+.student-list-btn>span,
+.hand-in-work>.work-marked-btn>span {
+    cursor: pointer;
+    margin: auto 8px;
+}
+
+.work-list-btn>span:hover,
+.stumanage-list-btn>span:hover,
+.student-list-btn>span:hover,
+.hand-in-work>span:hover,
+.alter-btn>span:hover,
+.check-btn>span:hover,
+.student-list-btn>span:hover,
+.student-list-btn>span:hover,
+.hand-in-work>.work-marked-btn>span:hover {
+    font-weight: bolder;
+}
+
 
 .course-list ul li:nth-child(3n-1),
 .work-list ul li:nth-child(3n-1),
 .d-newestwork-list ul li:nth-child(3n-1),
+.d-unhand-list ul li:nth-child(3n-1),
+.d-feedback-list ul li:nth-child(3n-1),
 .student-list ul li:nth-child(3n-1) {
     margin-right: 15px;
     margin-left: 15px;
@@ -786,6 +817,7 @@ footer {
 
 .course-list ul li:nth-child(3n-2),
 .d-newestwork-list ul li:nth-child(3n-2),
+.d-feedback-list ul li:nth-child(3n-2),
 .student-list ul li:nth-child(3n-2),
 .work-list ul li:nth-child(3n-2) {
     margin-left: 5px;
@@ -793,6 +825,7 @@ footer {
 
 .course-list ul li:nth-child(3n),
 .d-newestwork-list ul li:nth-child(3n),
+.d-feedback-list ul li:nth-child(3n),
 .student-list ul li:nth-child(3n),
 .work-list ul li:nth-child(3n) {
     margin-right: 5px;
@@ -800,6 +833,7 @@ footer {
 
 .course-list ul li:last-child,
 .d-newestwork-list ul li:last-child,
+.d-feedback-list ul li:last-child,
 .student-list ul li:last-child,
 .work-list ul li:last-child {
     clear: right;
@@ -1066,6 +1100,10 @@ span.dailog-clear:after {
     margin-top: 10px;
 }
 
+.hand-in-dailog-body>div>label:first-child {
+    width: 120px;
+}
+
 .hand-in-desc {
     overflow: hidden;
     zoom: 1;
@@ -1112,7 +1150,8 @@ span.dailog-clear:after {
 
 .work-submit, .add-submit {
     border-top: 1px solid #333;
-    padding-top: 15px;
+    padding-top: 10px;
+    margin-top: 10px;
     text-align: right;
 }
 
@@ -1680,6 +1719,7 @@ span.dailog-clear:after {
 }
 
 .d-newestwork-list, .d-unhand-list, .d-feedback-list {
+    position: relative;
 }
 
 /*end作业动态*/

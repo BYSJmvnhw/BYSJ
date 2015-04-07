@@ -95,7 +95,6 @@
     </nav>
     <header>
         <div class="bg">
-        <div id="info-b">
            <!--提示信息-->
         </div>
     </header>
@@ -155,14 +154,18 @@
 <%--动态提示--%>
 <script type="text/template" id="info-tip-html">
     <!--<div class="info-b">-->
-        <span id="info-btn" class="info-btn"></span>
+        {{if (data.feedback + data.unsubmitted + data.recentHomework) > 0}}
+        <span id="info-btn" class="info-btn info-btn-tip"></span>
+        {{else}}
+        <span id="info-btn" class="info-btn info-btn-tip"></span>
+        {{/if}}
         <div id="info-tip" class="info-tip">
             <div></div>
             <ul>
                 {{if userType == 'STUDENT'}}
-                <li data-type="newestwork">最新作业<span>10</span></li>
-                <li data-type="unhand">未提交<span>5</span></li>
-                <li data-type="feedback">作业反馈<span>3</span></li>
+                <li data-type="newestwork">最新作业<span>{{data.feedback}}</span></li>
+                <li data-type="unhand">未提交<span>{{data.unsubmitted}}</span></li>
+                <li data-type="feedback">作业反馈<span>{{data.recentHomework}}</span></li>
                 {{else if userType == 'TEACHER'}}
                 <li data-type="new-hand">最新提交<span>10</span></li>
                 <li data-type="unalter">未批改<span>5</span></li>
@@ -437,7 +440,9 @@
             <span class="hand-in-work-detail">作业详细信息</span>
         </div>
         {{else}}
-        <div class="hand-in-work t-hand-in" data-hwInfoId="{{value.hwInfoId}}"><span>单击交作业</span></div>
+        <div class="hand-in-work t-hand-in">
+            <span class="hand-in-work-btn" data-hwInfoId="{{value.hwInfoId}}">交作业</span>
+        </div>
         {{/if}}
     </li>
     {{else if value.status == 'SUBMITTED'}}
@@ -449,12 +454,12 @@
         </div>
         <div class="hand-in-progress"><!--进度显示--></div>
         {{if value.overtime == true}}
-        <div class="hand-in-work t-hand-in" data-hwInfoId="{{value.hwInfoId}}">
-            <span class="hand-in-work-detail">作业详细信息</span>
+        <div class="hand-in-work t-hand-in">
+            <span class="hand-in-work-detail" data-hwInfoId="{{value.hwInfoId}}">作业详细信息</span>
         </div>
         {{else}}
-        <div class="hand-in-work t-hand-in" data-hwInfoId="{{value.hwInfoId}}">
-            <span>重新交作业</span>
+        <div class="hand-in-work t-hand-in">
+            <span class="hand-in-work-btn" data-hwInfoId="{{value.hwInfoId}}">重新交作业</span>
         </div>
         {{/if}}
     </li>
@@ -466,9 +471,11 @@
             <p>{{value.deadline.split(':00')[0] + ':00'}}</p>
         </div>
         <div class="hand-in-progress"><!--进度显示--></div>
-        <div class="hand-in-work t-hand-in" data-hwInfoId="{{value.hwInfoId}}">
-            <span class="hand-in-work-detail">作业详细信息</span>
-            <span class="hand-in-work-feedback">作业反馈</span>
+        <div class="hand-in-work t-hand-in">
+            <div class="work-marked-btn">
+                <span class="hand-in-work-detail" data-hwInfoId="{{value.hwInfoId}}">作业详细信息</span>
+                <span class="hand-in-work-feedback" data-hwInfoId="{{value.hwInfoId}}">作业反馈</span>
+            </div>
         </div>
     </li>
     {{else}}
@@ -479,7 +486,9 @@
             <p>{{value.deadline.split(':00')[0] + ':00'}}</p>
         </div>
         <div class="hand-in-progress"><!--进度显示--></div>
-        <div class="hand-in-work t-hand-in" data-hwInfoId="{{value.hwInfoId}}"><span>单击交作业</span></div>
+        <div class="hand-in-work t-hand-in">
+            <span class="hand-in-work-btn" data-hwInfoId="{{value.hwInfoId}}">交作业</span>
+        </div>
     </li>
     {{/if}}
     {{/each}}
@@ -587,6 +596,13 @@
         </div>
         <div class="dailog-body">
             {{include 'add-stu-html'}}
+        </div>
+        {{else if op == 'work-feedback'}}
+        <div class="dailog-title">
+            <p role='title'><strong>作业反馈</strong></p>
+        </div>
+        <div class="dailog-body hand-in-dailog-body">
+            {{include 'work-feedback-html'}}
         </div>
         {{else}}
         <div class="dailog-title">
@@ -703,34 +719,49 @@
 <script type="text/template" id="hand-in">
     <div class="hand-in-course">
         <label>课程名</label>
-        <label>{{detaillist.courseName}}</label>
+        <label>{{workdata.courseName}}</label>
     </div>
     <div class="hand-in-name">
         <label>作业名</label>
-        <label>{{detaillist.title}}</label>
+        <label>{{workdata.title}}</label>
     </div>
     <div class="hand-in-desc">
         <label>作业说明</label>
-        <label>{{detaillist.hwDesc}}</label>
+        <label>{{workdata.hwDesc}}</label>
     </div>
     <div class="hand-in-create">
         <label>作业发布时间</label>
-        <label>{{detaillist.createDate}}</label>
+        <label>{{workdata.createDate}}</label>
     </div>
     <div class="hand-in-deadline">
         <label>截止上交时间</label>
-        <label>{{detaillist.deadline}}</label>
+        <label>{{workdata.deadline}}</label>
     </div>
+    {{if !detail}}
     <div class="work-upload">
         <label for="work-file">上传作业</label>
         <input id="work-file" name="hw" type="file"/>
         <label></label>
     </div>
+    {{/if}}
     <div class="work-submit">
         <button class="dailog-clear">取消</button>
-        <button class="work-submit-sure" data-hwinfoId="{{detaillist.id}}">提交作业</button>
+        <button class="work-submit-sure" data-hwinfoId="{{workdata.id}}">提交作业</button>
     </div>
     <!--</div>-->
+</script>
+<script type="text/template" id="work-feedback-html">
+    <div class="work-feedback-score">
+        <label>作业得分</label>
+        <label>100</label>
+    </div>
+    <div class="work-feedback-comment">
+        <label>教师评语</label>
+        <label>{{workdata.comment}}</label>
+    </div>
+    <div class="work-submit">
+        <button class="dailog-clear">关闭</button>
+    </div>
 </script>
 
 <%--进度加载条--%>

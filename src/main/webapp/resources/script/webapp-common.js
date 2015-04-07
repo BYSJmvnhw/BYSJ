@@ -173,12 +173,14 @@ define(function(require, exports, module) {
         className: 'shade-wrap',
         tmpl_id: 'dialog-html',
         initialize: function () {
+            this.$wrap = $('#dialog-wrap');
             this.listenTo(this.model, "change", this.render);
         },
         render: function () {
             var ele = tmpl(this.tmpl_id, this.model.toJSON());
             $(this.el).html(ele);
-            this.model.attributes.$wrap.html(this.el);
+            this.$wrap.html(this.el);
+            this.$el.show();
             this.delegateEvents(this.events);
         },
         closeDialog: function () {
@@ -291,7 +293,6 @@ define(function(require, exports, module) {
         $content: null,
         type: null, // 视图类型
         bar: null, // 视图子类型
-        tip_type: null, // 提示信息类型
         models: {},
         views: {},
         constructor: function (type, bar) {

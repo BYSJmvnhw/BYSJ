@@ -25,14 +25,8 @@ define(function(require, exports, module) {
         // 公共模型类
         TypeModel = CommonObject.TypeModel,
 
-        // 公共类视图模板
-        TypeView = CommonObject.TypeView,
-
         // ajax远程数据加载进度条
         LoadTipView = CommonObject.LoadTipView,
-
-        // 设置中心视图，学生，教师兼有
-        SettingView = CommonObject.SettingView,
 
         // 弹出框公共视图类
         DialogView = CommonObject.FDialogView,
@@ -46,7 +40,7 @@ define(function(require, exports, module) {
         // 作业管理、学生管理 [父类]
         HwInfoView = CommonObject.FHwInfoView;
 
-    // 学生上交作业 [视图][弹框]
+    // 学生上交作业、查看作业详细、查看作业反馈 [视图][弹框]
     var HandInView = DialogView.extend({
         events: {
             'click .work-submit-sure': 'submitWork', // 点击提交按钮
@@ -72,7 +66,7 @@ define(function(require, exports, module) {
                 }
                 if (evt.loaded == evt.total){
                     $p.parent().replaceClass('work-hand-student', 'work-unhand-student');
-                    $p.next().text('单击重新提交');
+                    $p.next().find('span').text('重新交作业');
                     $p.remove();
                 }
             }, false);
@@ -93,105 +87,53 @@ define(function(require, exports, module) {
     var hwmanageWorkListView = WorkListView.extend({
         tmpl_id: 'hwmanage-work-list-html',
         events: {
-            'click .add-work': 'addWork', // 教师添加作业
-            'click .student-list-delete-btn': 'deleteWork', // 教师删除作业
-            'click .student-list-mark-btn': 'showStudentList', // 教师查看该作业每个学生的提交
-            'click .hand-in-work': 'handInWork' // 学生交作业
+            'click .hand-in-work-feedback': 'showFeedback',
+            'click .hand-in-work-detail': 'showDetail',
+            'click .hand-in-work-btn': 'handInWork' // 学生交作业
         },
-        handInWork: function (e) {
-            console.log('交作业');
-            var that = this,
-                $progress = $(e.currentTarget).prev(),
-                loadtip = new LoadTipView($progress),
-                hwInfoId = $(e.currentTarget).attr('data-hwInfoId'),
-                handinmodel = new TypeModel,
-                handinview = new HandInView({
-                    model: handinmodel
-                });
-            handinmodel.sync('read', handinview, {
-                url: servicepath + 'homework/homeworkInfoDetail',
+        hmodel: {},
+        hview: {},
+        getWorkData: function (type, url, hwInfoId, model_data) {
+            var that = this;
+            this.hmodel[type] = this.hmodel[type] || new TypeModel;
+            this.hview[type] = this.hview[type] || new HandInView({
+                model: this.hmodel[type]
+            });
+            that.hmodel[type].sync('read', that.hview[type], {
+                url: servicepath + url,
                 data: {hwInfoId: hwInfoId},
                 dataType: 'json',
                 success: function (data) {
                     checkSession(data.status);
-                    console.log('作业详细信息', data);
-                    handinmodel.set({
-                        detaillist: data,
-                        op: 'hand-in',
-                        $wrap: $('#dialog-wrap'),
-                        $progesss: $progress
-                    });
-                    loadtip = null;
+                    console.log('作业信息弹框', data);
+                    model_data.workdata = data;
+                    that.hmodel[type].set(model_data);
+                    !that.hmodel[type].changedAttributes() && that.hview[type].render();
                 }
             });
         },
-        addWork: function (e) {
-            var that = this,
-                csname = $(e.currentTarget).attr('data-csname'),
-                addworkmodel = new TypeModel,
-                addworkview = new AddWorkView({
-                    model: addworkmodel
-                });
-            addworkmodel.set({
-                op: 'add-work',
-                cid: that.model.attributes.cid,
-                csname: csname,
-                fetchWorklist: function () {
-                    that.model.fetch({
-                        url: servicepath + 'homework/homeworkInfoList',
-                        data: {cid: that.model.attributes.cid},
-                        success: function (m, d) {
-                            checkSession(d.status);
-                            m.set({worklist: d});
-                        }
-                    });
-                },
-                $wrap: $('#dialog-wrap')
-            });
-            require.async('calendar'); // 加载日期选择模块
-        },
-        // 教师删除作业
-        deleteWork: function (e) {
-            console.log('删除作业');
-            var that = this,
-                $p = $(e.currentTarget).parent(),
-                hwInfoId = $p.attr('data-hwinfoid'),
-                dialogmodel = new TypeModel(),
-                dialogview = new DeleteWorkView({
-                    model: dialogmodel
-                });
-            dialogmodel.set({
-                op: 'delete-sure',
-                hwInfoId: hwInfoId,
-                $workli: $p.parent(),
-                $wrap: $('#dialog-wrap')
+        handInWork: function (e) {
+            console.log('交作业');
+            var $progress = $(e.currentTarget).parent().prev(),
+                hwInfoId = $(e.currentTarget).attr('data-hwInfoId');
+            this.getWorkData('handin', 'homework/homeworkInfoDetail', hwInfoId, {
+                op: 'hand-in',
+                $progesss: $progress
             });
         },
-        // 学生作业列表
-        showStudentList: function (e) {
-            console.log('查看学生的作业列表');
-            var that = this,
-                $section2 = this.nextSection(),
-                $wrap3 = $section2.next().children('.student-list-wrap'),
-                loadtip = new LoadTipView($wrap3),
-                hwInfoId = $(e.currentTarget).parent().attr('data-hwinfoid');
-            this.studentmodel = this.studentmodel || new TypeModel;
-            this.studentview = this.studentview || new HwmanageStudentListView({
-                model: this.studentmodel
-            });
-            that.studentmodel.sync('read', that.studentview, {
-                url: servicepath + 'homework/homeworkList',
-                data: {hwInfoId: hwInfoId, submited: true},
-                dataType: 'json',
-                success: function (data) {
-                    checkSession(data.status);
-                    console.log('学生作业', data);
-                    that.studentmodel.set({
-                        studentlist: data.data,
-                        $wrap3: $wrap3
-                    });
-                    loadtip = null;
-                }
+        showFeedback: function (e) {
+            console.log('作业反馈');
+            var hwInfoId = $(e.currentTarget).attr('data-hwInfoId');
+           this.getWorkData('feedback', 'homework/comment', hwInfoId, {
+               op: 'work-feedback'
+           });
+        },
+        showDetail: function (e) {
+            console.log('作业详细');
+            var hwInfoId = $(e.currentTarget).attr('data-hwInfoId');
+            this.getWorkData('detail', 'homework/homeworkInfoDetail', hwInfoId, {
+                op: 'hand-in',
+                detail: true
             });
         }
     });
@@ -287,6 +229,8 @@ define(function(require, exports, module) {
             'click .d-feedback-unfold': 'feedbackUnfold',
             'click .d-feedback-fold': 'feedbackFold'
         },
+        dmodel: {},
+        dview: {},
         tmpl_id: 'hw-dynamic-html',
         initialize: function () {
             this.listenTo(this.model, "change", this.render);
@@ -313,22 +257,23 @@ define(function(require, exports, module) {
         workUnfold: function ($cur, url, type) {
             var that = this,
                 $wrap2 = that.$el.find('.d-' + type + '-list'),
-                loadtip = new LoadTipView($wrap2),
-                newestmodel = new TypeModel,
-                newestview = new hwmanageWorkListView({
-                    model: newestmodel
-                });
-            newestmodel.sync('read', newestview, {
+                loadtip = new LoadTipView($wrap2);
+            this.dmodel[type] = this.dmodel[type] || new TypeModel;
+            this.dview[type] = this.dview[type] || new hwmanageWorkListView({
+                model: this.dmodel[type]
+            });
+            that.dmodel[type].sync('read', that.dview[type], {
                 url: servicepath + url,
                 data: null,
                 dataType: 'json',
                 success: function (data) {
                     checkSession(data.status);
-                    console.log('最新作业', data);
-                    newestmodel.set({
+                    console.log('动态', data);
+                    that.dmodel[type].set({
                         worklist: data,
                         $wrap2: $wrap2
                     });
+                    !that.dmodel[type].changedAttributes() && that.dview[type].render();
                     var fn = data.length / 3, pn = parseInt(fn);
                     that.togfold($cur, fn > pn ? pn + 1 : pn, false);
                     loadtip = null;
@@ -342,13 +287,13 @@ define(function(require, exports, module) {
             this.togfold($(e.currentTarget), 0, true);
         },
         unhandUnfold: function (e) {
-            this.workUnfold($(e.currentTarget), 'message/recentHomework', 'unhand');
+            this.workUnfold($(e.currentTarget), 'message/unSubmited', 'unhand');
         },
         unhandFold: function (e) {
             this.togfold($(e.currentTarget), 0, true);
         },
-        feedbackUnfold: function () {
-
+        feedbackUnfold: function (e) {
+            this.workUnfold($(e.currentTarget), 'message/feedback', 'feedback');
         },
         feedbackFold: function (e) {
             this.togfold($(e.currentTarget), 0, true);
@@ -357,6 +302,7 @@ define(function(require, exports, module) {
 
     // 应用总视图
     var AppView = CommonObject.FAppView.extend({ // 滑动视图，应用程序主视图类
+        tip_type: 'newestwork', // 提示信息类型
         initialize: function () {
             _.bindAll(this, 'render');
             this.$old_el = $('#left-nav .l-menu').first().next();
@@ -393,20 +339,32 @@ define(function(require, exports, module) {
         },
         getTipData: function () {
             var that = this;
-            var tipmodel = new TypeModel;
-            var tipview = new TipInfoView({
-                model: tipmodel
+            this.models.tipmodel = this.models.tipmodel || new TypeModel;
+            this.views.tipview = this.views.tipview || new TipInfoView({
+                model: this.models.tipmodel
             });
-            tipmodel.set({
-                $info_b: that.$el.find('#info-b'),
-                unfoldLeftMenu: function (tip_type) {
-                    that.tip_type = tip_type;
-                    that.type = 'hwmanage';
-                    that.bar = 'hwdynamic';
-                    appNavigate('main/hwmanage/hwdynamic', that.setSiteTitle(that.type), {trigger: false});
-                    that.closeType(that.$old_el);
-                    that.activeBar(that.$old_bar, false);
-                    that.showState(that.type, that.bar);
+            that.models.tipmodel.sync('read', that.views.tipview, {
+                url: servicepath + 'message/message',
+                data: null,
+                dataType: 'json',
+                success: function (data) {
+                    console.log('提示信息', data);
+                    checkSession(data.status);
+                    that.models.tipmodel.set({
+                        data: data,
+                        $info_b: that.$el.find('.bg'),
+                        unfoldLeftMenu: function (tip_type) {
+                            that.tip_type = tip_type;
+                            console.log(that.tip_type);
+                            that.type = 'hwmanage';
+                            that.bar = 'hwdynamic';
+                            appNavigate('main/hwmanage/hwdynamic', that.setSiteTitle(that.type), {trigger: false});
+                            that.closeType(that.$old_el);
+                            that.activeBar(that.$old_bar, false);
+                            that.showState(that.type, that.bar);
+                        }
+                    });
+                    !that.models.tipmodel.changedAttributes() && that.views.tipview.render();
                 }
             });
         },
@@ -418,18 +376,14 @@ define(function(require, exports, module) {
                 this.views.workinfoview = new WorkInfoView;
         },
         getHwDynamic: function () {
-            if(this.models.hwdmodel && this.views.hwdview){
-                this.views.hwdview.render();
-            }
-            else {
-                this.models.hwdmodel = new TypeModel;
-                this.views.hwdview = new HwDynamicView({
-                    model: this.models.hwdmodel
-                });
-                this.models.hwdmodel.set({
-                    tip_type: 'newestwork'
-                });
-            }
+            this.models.hwdmodel = this.models.hwdmodel || new TypeModel;
+            this.views.hwdview = this.views.hwdview || new HwDynamicView({
+                model: this.models.hwdmodel
+            });
+            this.models.hwdmodel.set({
+                tip_type: this.tip_type
+            });
+            !this.models.hwdmodel.changedAttributes() && this.views.hwdview.render();
         }
     });
 
