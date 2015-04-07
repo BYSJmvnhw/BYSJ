@@ -20,7 +20,7 @@ public interface IStudentService {
 
     public void deleteStudnetAndUser(Integer id);
 
-    public void addStrdentAndUser(JSONObject jsonObject, HwUser createUser);
+    public JSONObject addStrdentAndUser(JSONObject jsonObject, HwUser createUser);
 
     public JSONObject studentPageByCTId(Integer courseTeachingId);
 

@@ -20,15 +20,18 @@
   $("#submit").click(function(){
     $.ajax({
       method: "POST",
-      url: "addStudent",
+      url: "updateStudent",
       data:{
         jsonObject: JSON.stringify(
                 {
+                  id: 4,
+                  password: "22222",
+                  campusId: 1,
                   majorId: 1,
                   collegeId: 1,
                   studentNo: "studentNo",
                   name: "name1",
-                  sex: "男",
+                  sex: "女",
                   grade: "grade1",
                   cla: "class1",
                   email: "666666"
