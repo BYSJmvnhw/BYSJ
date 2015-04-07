@@ -40,6 +40,7 @@ public class MessageService implements IMessageService{
             hwInfoMap.put("courseName",hwInfo.getCourseName());
             hwInfoMap.put("title",hwInfo.getTitle());
             hwInfoMap.put("deadline",hwInfo.getDeadline());
+            hwInfoMap.put("overtime",hwInfo.getOvertime());
             hwInfoMap.put("status",hw.getStatus());
             hwInfoList.add(hwInfoMap);
         }
@@ -62,6 +63,7 @@ public class MessageService implements IMessageService{
             hwInfoMap.put("courseName",hwInfo.getCourseName());
             hwInfoMap.put("title",hwInfo.getTitle());
             hwInfoMap.put("deadline",hwInfo.getDeadline());
+            hwInfoMap.put("overtime",hwInfo.getOvertime());
             hwInfoMap.put("status",hw.getStatus());
             hwInfoList.add(hwInfoMap);
         }
@@ -81,6 +83,7 @@ public class MessageService implements IMessageService{
             hwInfoMap.put("courseName",hwInfo.getCourseName());
             hwInfoMap.put("title",hwInfo.getTitle());
             hwInfoMap.put("deadline",hwInfo.getDeadline());
+            hwInfoMap.put("overtime",hwInfo.getOvertime());
             hwInfoMap.put("status",hw.getStatus());
             hwInfoList.add(hwInfoMap);
         }
