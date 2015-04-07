@@ -90,7 +90,7 @@ public class StudentController {
      * @param ctId 授课关系id
      * @param sId 学生关系id
      */
-    @RequestMapping(value = "/appendStudent",method = RequestMethod.GET)
+    @RequestMapping(value = "/appendStudent",method = RequestMethod.POST)
     @ResponseBody
     public JSONObject appendStudent(Integer ctId, @RequestParam("sId[]") Integer[] sId) {
         try {

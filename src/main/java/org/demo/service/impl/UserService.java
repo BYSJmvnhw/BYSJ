@@ -101,7 +101,8 @@ public class UserService implements IUserService {
     public Map userEmail(HwUser user) {
         Map<String,Object> resultMap = new HashMap<String, Object>();
         resultMap.put("username",user.getUsername());
-        resultMap.put("email",user.getEmail());
+        HwUser newUser = userDao.load(user.getId());
+        resultMap.put("email",newUser.getEmail());
         return resultMap;
     }
 
@@ -118,6 +119,11 @@ public class UserService implements IUserService {
             result.put("status", "error-oldPassword");
             return result;
         }
+    }
+
+    @Override
+    public JSONObject updateEmail(String email, HwUser user) {
+        return null;
     }
 
 

@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Map;
 
 /**
  * Created by jzchen on 2015/1/25.
@@ -249,6 +250,24 @@ public class HomeworkController {
         }
     }
 
+    /**
+     * 根据作业信息id和当前登录用户获取用户该次作业评价
+     * @param hwInfoId 作业信息id
+     * @param request http 请求
+     */
+    @RequestMapping(value = "/comment", method = RequestMethod.GET)
+    @ResponseBody
+    public Object feedBack(Integer hwInfoId, HttpServletRequest request) {
+        try {
+            HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
+            Map resultMap =  homeworkService.comment(hwInfoId, user);
+            homeworkService.updateCheckedFlag(hwInfoId, user);
+            return resultMap;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
 
     public IHomeworkService getHomeworkService() {
         return homeworkService;

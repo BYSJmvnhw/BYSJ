@@ -80,6 +80,19 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "/updateEmail",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject updateEmail(String email, HttpServletRequest request){
+        try{
+            HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
+            userService.updateEmail(email, user);
+            return null;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
+
     @RequestMapping("/updateUserInfo")
     @ResponseBody
     public JSONObject updateUserInfo(HttpServletRequest request){

@@ -14,7 +14,9 @@ public interface IMessageService {
 
     public JSONArray unSubmitedHomeworkList(Integer sId);
 
-    public JSONArray recentHomework(Integer sId);
+    public JSONArray recentHomeworkList(Integer sId);
+
+    public JSONArray  feedback(Integer sId);
 
     public Map message(HwUser user);
 }

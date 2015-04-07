@@ -19,16 +19,20 @@ public interface IHomeworkDao extends IBaseDao<HwHomework> {
 
     public List<HwHomework> homeworkList(Integer hwInfoId);
 
+    public List<Object[]> countSubmitted(Integer courseId, Integer teacherId);
+
     public List<HwHomework>  unSubmitted(Integer sId);
 
-    public List<Object[]> countSubmitted(int courseId, int teacherId);
-
     public List<HwHomework> recentHomework(Integer sId, Timestamp time);
+
+    public List<HwHomework> feedback(Integer sId);
 
     public Long countUnsubmitted(HwStudent student);
 
     public Long countRecentHomework(HwStudent student ,Timestamp timestamp);
 
     public Long countFeedback(HwStudent student);
+
+    public Object findCommentByHwInfoId(Integer hwInfoId, HwStudent student);
 
 }

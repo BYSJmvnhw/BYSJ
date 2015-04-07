@@ -6,6 +6,7 @@ import org.demo.model.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Created by jzchen on 2015/1/14.
@@ -37,4 +38,8 @@ public interface IHomeworkService {
     public void deleteHomeworkInfo(Integer hwInfoId) throws Exception;
 
     public void markHomework(Integer I, String mark, String comment);
+
+    public Map<String,Object> comment(Integer hwInfoId, HwUser user);
+
+    public void updateCheckedFlag(Integer hwInfoId, HwUser user);
 }
