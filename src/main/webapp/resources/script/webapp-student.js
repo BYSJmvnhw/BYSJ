@@ -175,10 +175,9 @@ define(function(require, exports, module) {
     var WorkInfoView = HwInfoView.extend({
         view_type: 'hwmanage',
         initialize: function () {
-            this.render(); // 初始化作业信息基本视图
             this.coursemodel = new TypeModel;
             this.courseview = new HwmanageCourseListView({model: this.coursemodel});
-            this.getCourseData(2011, 1);
+            this.render(); // 初始化作业信息基本视图
         }
     });
 

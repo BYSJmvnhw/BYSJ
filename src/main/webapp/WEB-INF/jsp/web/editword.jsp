@@ -7,6 +7,8 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8" %>
+<%@ page import="org.demo.model.HwHomeworkInfo" %>
+<%@ page import="org.demo.tool.MarkType" %>
 <%@ taglib uri="http://java.pageoffice.cn" prefix="po" %>
 <!DOCTYPE html>
 <html lang="zn">
@@ -94,7 +96,7 @@
             }
             .mark-comment>textarea {
                 width: 355px;
-                height: 200px;
+                height: 100px;
                 border: 1px solid #BABABA;
                 font-size: 18px;
                 padding: 5px;
@@ -165,7 +167,6 @@
             }
         </style>
     </head>
-
     <body>
         <div class="editwork-wrap">
             <section id="editwork" class="editwork">
@@ -214,17 +215,22 @@
                             <option>做得非常好0</option>
                         </select>
                         <div id="select0-shade" class="select0-shade"></div>
-                        <textarea id="work-remark" placeholder="请填写作业评语"></textarea>
+                        <textarea id="work-comment" placeholder="请填写作业评语">做得非常好，继续加油！</textarea>
                         <div id="textarea-shade" class="textarea-shade"></div>
                     </div>
                     <div class="mark">
                         <label>作业评分</label>
+                        <%--<% if(${requestScope.hwInfo.markType} == 'LEVEL'){%>--%>
+                        <% HwHomeworkInfo hwInfo = (HwHomeworkInfo)request.getAttribute("hwInfo");
+                            if(hwInfo.getMarkType() == MarkType.CHINESE_LEVEL){%>
                         <select id="select-mark">
                             <option selected>优秀</option>
                             <option>良好</option>
                             <option>合格</option>
                             <option>不合格</option>
                         </select>
+                        <%}
+                        else if ((hwInfo.getMarkType() == MarkType.CHAR_LEVEL)%>
                         <div id="select-shade" class="select-shade"></div>
                     </div>
                     <div class="mark-btn">
@@ -237,6 +243,7 @@
             var editWork = {
                 $editwork: $('#editwork'),
                 edit: $("#PageOfficeCtrl1")[0],
+                hwId: '${requestScope.hw.id}',
                 init: function () {
                     this.$editwork.css('height', (window.innerHeight - 15) + 'px');
                     this.edit.Caption = "${requestScope.hwInfo.title}";
@@ -252,7 +259,21 @@
                     $('#select-comment').change(function () {
                         $(this).siblings('textarea').val(this.value);
                     });
-                    $('mark-sure').click(function () {
+                    $('#mark-sure').click(function (e) {
+                        var mark = $('#select-mark').val(),
+                            comment = $('#work-comment').val();
+                        $.ajax({
+                            type: 'post',
+                            url: 'http://localhost:8080/mvnhk/homework/markHomework',
+                            data: {hwId: that.hwId, mark: mark, comment: comment},
+                            dataType: 'json',
+                            success: function (data) {
+                                console.log(data);
+                            },
+                            error: function () {
+
+                            }
+                        });
                         that.edit.WebSave();
                     });
                 },

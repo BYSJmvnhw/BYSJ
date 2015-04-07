@@ -411,16 +411,21 @@
     <!--unhand hand remark-->
     {{if userType == 'TEACHER'}}
     {{each worklist as value}}
-    <li class="work-student-list work-unhand-student">
+    <li class="work-student-list work-hand-student {{if value.overtime}}work-overtime-student{{/if}}">
         <div>
             <p>{{value.courseName}}</p>
             <p>{{value.title}}</p>
             <p>共{{value.sum}}人，{{value.submitted}}人已提交</p>
-            <p>{{value.deadline.split(':00')[0] + ':00'}}</p>
+            <p class="deadline-time">{{value.deadline.split(':00')[0] + ':00'}}</p>
+            <div class="work-submit-counts" style="height: {{value.submitted / value.sum * 116}}px"><!--数据可视化区域--></div>
         </div>
-        <div class="student-list-btn t-student-list-btn" data-hwInfoId="{{value.hwInfoId}}">
-            <button class="student-list-mark-btn">批改作业</button>
-            <button class="student-list-delete-btn">删除作业</button>
+        <div class="student-list-btn t-student-list-btn">
+            <!--<button class="student-list-mark-btn">批改作业</button>-->
+            <!--<button class="student-list-delete-btn">删除作业</button>-->
+            <div class="student-list-allbtn">
+                <span class="student-list-mark-btn" data-hwInfoId="{{value.hwInfoId}}">批改作业</span>
+                <span class="student-list-delete-btn" data-hwInfoId="{{value.hwInfoId}}">删除作业</span>
+            </div>
         </div>
     </li>
     {{/each}}
@@ -509,28 +514,61 @@
     </li>
     {{/each}}
 </script>
+<script type="text/template" id="hwmanage-student-list-html0">
+<!--<ul>-->
+    {{each studentlist as value}}
+    {{if value.status == 'SUBMITTED'}}
+    <li class="student-alter-list student-hand-alter">
+        <div>
+            <p>{{value.title}}</p>
+            <p>{{value.studentName}}</p>
+            <p>{{value.studentNo}}</p>
+            <p>{{value.submitDate.replace(/(:\d{2,2})$/, '')}}</p>
+        </div>
+        <div class="alter-btn t-alter-btn" data-id="{{value.id}}"><span>单击批改</span></div>
+    </li>
+    {{else if value.status == 'UNSUBMITTED'}}
+    <li class="student-alter-list student-unhand-alter">
+        <div>
+            <p>{{value.title}}</p>
+            <p>{{value.studentName}}</p>
+            <p>{{value.studentNo}}</p>
+            <p>{{value.submitDate.replace(/(:\d{2,2})$/, '')}}</p>
+        </div>
+        <!--<div class="alter-btn t-alter-btn" data-id="{{value.id}}"><span>单击批改</span></div>-->
+        <div class="nononno" data-id="{{value.id}}"><span>未提交作业</span></div>
+    </li>
+    {{else if value.status == 'MARKED'}}
+    <li class="student-alter-list student-marked-alter">
+        <div>
+            <p>{{value.title}}</p>
+            <p>{{value.studentName}}</p>
+            <p>{{value.studentNo}}</p>
+            <p>{{value.submitDate.replace(/(:\d{2,2})$/, '')}}</p>
+        </div>
+        <div class="alter-btn t-alter-btn" data-id="{{value.id}}"><span>重新批改</span></div>
+    </li>
+    {{/if}}
+    {{/each}}
+<!--</ul>-->
+</script>
 <script type="text/template" id="hwmanage-student-list-html">
     <!--<div class="student-list-t">-->
     <ul>
-        {{each studentlist as value}}
-        <li class="student-alter-list student-has-alter">
-            <div>
-                <p>{{value.title}}</p>
-                <p>{{value.studentName}}</p>
-                <p>{{value.studentNo}}</p>
-                <p>{{value.submitDate.split(' ')[0]}}</p>
-            </div>
-            <div class="alter-btn t-alter-btn" data-id="{{value.id}}"><span>单击批改</span></div>
-        </li>
-        {{/each}}
+    {{include 'hwmanage-student-list-html0'}}
     </ul>
+    <div class="student-list-classify">
+        <!--hand-part unhand-part-->
+        <button class="student-list-classify-hand choice-part" data-hwInfoId="{{hwInfoId}}">已提交</button>
+        <button class="student-list-classify-unhand" data-hwInfoId="{{hwInfoId}}">未提交</button>
+    </div>
     <!--</div>-->
 </script>
 <script type="text/template" id="stumanage-student-list-html">
     <!--<div class="student-list-t">-->
     <ul>
         {{each studentlist as value}}
-        <li class="student-alter-list student-has-alter">
+        <li class="student-alter-list student-hand-alter">
             <div>
                 <p>{{value.hwStudent.name}}</p>
                 <p>{{value.hwStudent.studentNo}}</p>

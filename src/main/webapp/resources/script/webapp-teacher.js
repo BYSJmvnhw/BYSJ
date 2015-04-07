@@ -359,12 +359,41 @@ define(function(require, exports, module) {
     var HwmanageStudentListView = StudentListView.extend({
         tmpl_id: 'hwmanage-student-list-html',
         events: {
-            'click .alter-btn': 'alterStuWork' // 教师批改该作业
+            'click .alter-btn': 'alterStuWork', // 教师批改该作业
+            'click .student-list-classify-unhand': 'showUnhandList', // 查看未提交名单
+            'click .student-list-classify-hand': 'showHandList' // 产看已提交名单
         },
         alterStuWork: function (e) {
             console.log('批改');
             var hwid = $(e.currentTarget).attr('data-id');
             window.open('http://localhost:8080/mvnhk/homework/openword?hwId=' + hwid);
+        },
+        getStudentData: function (hwInfoId, submited) {
+            var that = this;
+            $.ajax({
+                url: servicepath + 'homework/homeworkList',
+                data: {hwInfoId: hwInfoId, submited: submited},
+                dataType: 'json',
+                success: function (data) {
+                    checkSession(data.status);
+                    console.log('学生作业', data);
+                    that.$el.find('ul').html(tmpl(that.tmpl_id + '0', {studentlist: data.data}));
+                }
+            });
+        },
+        showUnhandList: function (e) {
+            var $cur = $(e.currentTarget),
+                hwInfoId = $cur.attr('data-hwInfoId');
+            $cur.siblings('button').removeClass('choice-part');
+            $cur.addClass('choice-part');
+            this.getStudentData(hwInfoId, false);
+        },
+        showHandList: function (e) {
+            var $cur = $(e.currentTarget),
+                hwInfoId = $cur.attr('data-hwInfoId');
+            $cur.siblings('button').removeClass('choice-part');
+            $cur.addClass('choice-part');
+            this.getStudentData(hwInfoId, true);
         }
     });
 
@@ -374,35 +403,7 @@ define(function(require, exports, module) {
         events: {
             'click .add-work': 'addWork', // 教师添加作业
             'click .student-list-delete-btn': 'deleteWork', // 教师删除作业
-            'click .student-list-mark-btn': 'showStudentList', // 教师查看该作业每个学生的提交
-            'click .hand-in-work': 'handInWork' // 学生交作业
-        },
-        handInWork: function (e) {
-            console.log('交作业');
-            var that = this,
-                $progress = $(e.currentTarget).prev(),
-                loadtip = new LoadTipView($progress),
-                hwInfoId = $(e.currentTarget).attr('data-hwInfoId'),
-                handinmodel = new TypeModel,
-                handinview = new HandInView({
-                    model: handinmodel
-                });
-            handinmodel.sync('read', handinview, {
-                url: servicepath + 'homework/homeworkInfoDetail',
-                data: {hwInfoId: hwInfoId},
-                dataType: 'json',
-                success: function (data) {
-                    checkSession(data.status);
-                    console.log('作业详细信息', data);
-                    handinmodel.set({
-                        detaillist: data,
-                        op: 'hand-in',
-                        $wrap: $('#dialog-wrap'),
-                        $progesss: $progress
-                    });
-                    loadtip = null;
-                }
-            });
+            'click .student-list-mark-btn': 'showStudentList' // 教师查看该作业每个学生的提交
         },
         addWork: function (e) {
             var that = this,
@@ -446,32 +447,37 @@ define(function(require, exports, module) {
                 $wrap: $('#dialog-wrap')
             });
         },
-        // 学生作业列表
-        showStudentList: function (e) {
-            console.log('查看学生的作业列表');
+        getStudentData: function (hwInfoId, submited) {
             var that = this,
                 $section2 = this.nextSection(),
                 $wrap3 = $section2.next().children('.student-list-wrap'),
-                loadtip = new LoadTipView($wrap3),
-                hwInfoId = $(e.currentTarget).parent().attr('data-hwinfoid');
+                loadtip = new LoadTipView($wrap3);
             this.studentmodel = this.studentmodel || new TypeModel;
             this.studentview = this.studentview || new HwmanageStudentListView({
                 model: this.studentmodel
             });
             that.studentmodel.sync('read', that.studentview, {
                 url: servicepath + 'homework/homeworkList',
-                data: {hwInfoId: hwInfoId, submited: true},
+                data: {hwInfoId: hwInfoId, submited: submited},
                 dataType: 'json',
                 success: function (data) {
                     checkSession(data.status);
                     console.log('学生作业', data);
                     that.studentmodel.set({
                         studentlist: data.data,
+                        hwInfoId: hwInfoId,
                         $wrap3: $wrap3
                     });
+                    !that.studentmodel.changedAttributes() && that.studentview.render();
                     loadtip = null;
                 }
             });
+        },
+        // 学生作业列表
+        showStudentList: function (e) {
+            console.log('查看学生的作业列表');
+            var hwInfoId = $(e.currentTarget).attr('data-hwinfoid');
+            this.getStudentData(hwInfoId, true);
         }
     });
 
@@ -555,14 +561,13 @@ define(function(require, exports, module) {
         }
     });
 
-    // 作业管理 [视图][教师][学生]
+    // 作业管理 [视图][教师]
     var WorkInfoView = HwInfoView.extend({
         view_type: 'hwmanage',
         initialize: function () {
-            this.render(); // 初始化作业信息基本视图
             this.coursemodel = new TypeModel;
             this.courseview = new HwmanageCourseListView({model: this.coursemodel});
-            this.getCourseData(2011, 1);
+            this.render(); // 初始化作业信息基本视图
         }
     });
 
@@ -570,10 +575,9 @@ define(function(require, exports, module) {
     var StuInfoView = HwInfoView.extend({
         view_type: 'stumanage',
         initialize: function () {
-            this.render(); // 初始化作业信息基本视图
             this.coursemodel = new TypeModel;
             this.courseview = new StumanageCourseListView({model: this.coursemodel});
-            this.getCourseData(2011, 1);
+            this.render(); // 初始化作业信息基本视图
         }
     });
 
@@ -781,31 +785,22 @@ define(function(require, exports, module) {
             });
         },
         getHwInfoData: function () { // 获取课程信息
-            if(this.views.workinfoview){
-                this.views.workinfoview.constructor();
-                this.views.workinfoview.initialize();
-            }
+            if(this.views.workinfoview)
+                this.views.workinfoview.render();
             else
                 this.views.workinfoview = new WorkInfoView;
         },
         getCsMailData: function () {
-            if(this.models.mailmodel && this.views.mailview){
-                this.views.mailview.constructor();
-                this.views.mailview.render();
-            }
-            else {
-                this.models.mailmodel = new TypeModel;
-                this.views.mailview = new CsMailView({model: this.models.mailmodel});
-                this.models.mailmodel.set({
-                    $wrap: this.$content
-                });
-            }
+            this.models.mailmodel = this.models.mailmodel || new TypeModel;
+            this.views.mailview = this.views.mailview || new CsMailView({model: this.models.mailmodel});
+            this.models.mailmodel.set({
+                $wrap: this.$content
+            });
+            !this.models.mailmodel.changedAttributes() && this.views.mailview.render();
         },
         GetStuInfoData: function () {
-            if(this.views.stuinfoview){
-                this.views.stuinfoview.constructor();
-                this.views.stuinfoview.initialize();
-            }
+            if(this.views.stuinfoview)
+                this.views.stuinfoview.render();
             else
                 this.views.stuinfoview = new StuInfoView;
         }

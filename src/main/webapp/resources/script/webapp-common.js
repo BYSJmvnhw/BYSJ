@@ -239,11 +239,15 @@ define(function(require, exports, module) {
             'click .return-work-btn': 'slideHwContentWrap', // 返回作业列表
             'click .choice-sure-btn': 'termCourse' // 搜索按钮
         },
+        cur: 1,
         render: function () {
             console.log('render-hwinfo');
             $(this.el).html(tmpl(this.tmpl_id, {view_type: this.view_type}));
             $('#content').html(this.el);
             this.delegateEvents(this.events);
+            console.log(this.cur);
+            this.el.className = this.el.className.replace(/[\d]$/, '1');
+            this.getCourseData(2011, 1);
         },
         slideHwContentWrap: function (e) {
             console.log('返回成功');
@@ -430,6 +434,7 @@ define(function(require, exports, module) {
                     checkSession(data.status);
                     console.log('退出', data);
                     appNavigate('login', '登陆作业网', {trigger: true});
+                    appview = null;
                 }
             });
         }
@@ -448,7 +453,7 @@ define(function(require, exports, module) {
         SettingView: SettingView,
         LoadTipView: LoadTipView,
         TypeView: TypeView,
-        TypeModel: TypeModel,
+        TypeModel: TypeModel
     };
 });
 

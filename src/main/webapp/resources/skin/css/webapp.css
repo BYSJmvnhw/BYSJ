@@ -643,7 +643,7 @@ footer {
 
 .hw-content-wrap {
     /*position: absolute;*/
-    width: 24300px;
+    width: 2430px;
     overflow: hidden;
 }
 
@@ -708,7 +708,7 @@ footer {
     border-color: #009ee5;
 }
 
-.choice-sure button, .add-work, .add-student {
+.choice-sure button, .add-work, .add-student, .student-list-classify>button {
     background-color: #5cb85c;
     border: 1px #4cae4c solid;
     min-width: 90px;
@@ -721,7 +721,8 @@ footer {
     cursor: pointer;
 }
 
-.choice-sure button:hover, .add-work:hover, .add-student:hover {
+.choice-sure button:hover, .add-work:hover, .add-student:hover,
+.student-list-classify>button:hover, .student-list-classify>button.choice-part {
     background-color: #449d44;
     border-color: #398439;
 }
@@ -767,8 +768,7 @@ footer {
 .hand-in-work>span,
 .alter-btn>span,
 .check-btn>span,
-.student-list-btn>span,
-.student-list-btn>span,
+.student-list-btn>.student-list-allbtn,
 .hand-in-work>.work-marked-btn {
     height: 24px;
     position: absolute;
@@ -785,8 +785,7 @@ footer {
 .hand-in-work>span,
 .alter-btn>span,
 .check-btn>span,
-.student-list-btn>span,
-.student-list-btn>span,
+.student-list-btn>.student-list-allbtn>span,
 .hand-in-work>.work-marked-btn>span {
     cursor: pointer;
     margin: auto 8px;
@@ -794,12 +793,11 @@ footer {
 
 .work-list-btn>span:hover,
 .stumanage-list-btn>span:hover,
-.student-list-btn>span:hover,
 .hand-in-work>span:hover,
 .alter-btn>span:hover,
 .check-btn>span:hover,
 .student-list-btn>span:hover,
-.student-list-btn>span:hover,
+.student-list-btn>.student-list-allbtn>span:hover,
 .hand-in-work>.work-marked-btn>span:hover {
     font-weight: bolder;
 }
@@ -858,8 +856,29 @@ footer {
     top: 0;
 }
 
+.work-submit-counts {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: #5BC0DE;
+    width: 100%;
+    z-index: -10;
+    opacity: 0.6;
+}
+
+.work-overtime-student .work-submit-counts {
+    background-color: #bbb;
+}
+
+.deadline-time {
+    font-weight: bold;
+    /*color: #D9534F;*/
+}
+
 .course-no-work:after,
-.student-no-alter:after,
+.student-marked-alter:after,
 .work-remark-student:after {
     content: '';
     display: block;
@@ -874,7 +893,8 @@ footer {
 }
 
 .course-has-work:after,
-.student-has-alter:after,
+.student-unhand-alter:after,
+.student-hand-alter:after,
 .work-unhand-student:after,
 .work-hand-student:after {
     content: '';
@@ -888,12 +908,13 @@ footer {
     right: 2px;
 }
 
-.work-hand-student:after {
+.work-hand-student:after,
+.student-hand-alter:after {
     background-color: #fff;
 }
 
 .course-no-work,
-.student-no-alter,
+.student-marked-alter,
 .work-remark-student {
     border-color: #5CB85C;
 }
@@ -903,7 +924,7 @@ li.work-overtime-student {
 }
 
 .course-no-work:before,
-.student-no-alter:before,
+.student-marked-alter:before,
 .work-remark-student:before {
     border-top: 35px #5CB85C solid;
 }
@@ -913,22 +934,23 @@ li.work-overtime-student:before {
 }
 
 .course-has-work:before,
-.student-has-alter:before,
+.student-unhand-alter:before,
 .work-unhand-student:before {
     border-top: 35px #f0ad4e solid;
 }
 
-.work-hand-student:before {
+.work-hand-student:before,
+.student-hand-alter:before {
     border-top:  35px #5BC0DE solid;
 }
 
 .course-has-work,
-.student-has-alter,
+.student-unhand-alter,
 .work-unhand-student {
     border-color: #f0ad4e;
 }
 
-.work-hand-student {
+.work-hand-student, .student-hand-alter {
     border-color: #5BC0DE;
 }
 
@@ -953,18 +975,18 @@ li.work-overtime-student:before {
 }
 
 .course-no-work>div:last-child,
-.student-no-alter>div:last-child,
+.student-marked-alter>div:last-child,
 .work-remark-student>div:last-child {
     background-color: #5CB85C;
 }
 
 .course-has-work>div:last-child,
-.student-has-alter>div:last-child,
+.student-unhand-alter>div:last-child,
 .work-unhand-student>div:last-child {
     background-color: #f0ad4e;
 }
 
-.work-hand-student>div:last-child {
+.work-hand-student>div:last-child, .student-hand-alter>div:last-child {
     background-color: #5BC0DE;
 }
 
@@ -991,6 +1013,24 @@ li.work-overtime-student>div:last-child {
 .course-list-wrap {
     position: relative;
     min-height: 200px;
+}
+
+.student-list-classify {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.student-list-classify>button {
+    line-height: 25px;
+}
+
+.student-list-classify-unhand {
+
+}
+
+.student-list-classify-hand {
+    margin-right: 15px;
 }
 
 /*end作业信息*/
