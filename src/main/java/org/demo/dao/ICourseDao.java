@@ -10,4 +10,9 @@ import org.demo.tool.Page;
 public interface ICourseDao extends IBaseDao<HwCourse> {
 
     public Page<HwCourse> coursePage(Integer campusId, Integer collegeId, Integer majorId,  String courseNo, String courseName);
+
+    public HwCourse findCourse(String courseNo);
+
+    public HwCourse findDeleteCourse(String courseNo);
+
 }

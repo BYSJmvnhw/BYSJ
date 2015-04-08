@@ -33,16 +33,20 @@ public class StudentService implements IStudentService {
     private IHomeworkInfoDao homeworkInfoDao;
     private IHomeworkDao homeworkDao;
 
+    //根据学号查找学生
     @Override
     public HwStudent findStudent(String studentNo) {
         return studentDao.findStudnetByStudentNo(studentNo);
     }
 
+    //根据id查找学生
     @Override
     public HwStudent load(Integer id) {
         return studentDao.load(id);
     }
 
+    //管理员功能
+    // 根据前端传递的json字符串数据更新学生已经对应的用户的信息
     @Override
     public void updateStudnetAndUser(String json) {
         JSONObject jsonObject = JSONObject.fromObject(json);
@@ -65,6 +69,8 @@ public class StudentService implements IStudentService {
         userDao.update(user);
     }
 
+    //管理员
+    //根据id对学生和对应的用户标记为删除
     @Override
     public void deleteStudnetAndUser(Integer id) {
         HwStudent student = studentDao.load(id);
@@ -75,13 +81,16 @@ public class StudentService implements IStudentService {
         userDao.update(user);
     }
 
+    //管理员
+    //根据前端传递的json字符串数据新建学生和对应的用户，
+    // 或恢复被标记删除的学生和对应的用户记录
     @Override
     public JSONObject addStrdentAndUser(JSONObject jo, HwUser createUser) {
         HwStudent st = this.findStudent(jo.getString("studentNo"));
         JSONObject result = new JSONObject();
         if( st != null) {
-            result.put("status","success");
-            result.put("msg","student-exists");
+            result.put("status","existing");
+            //result.put("msg","student-exists");
             return result;
         }
         //声明一个学生
@@ -136,6 +145,7 @@ public class StudentService implements IStudentService {
         return result;
     }
 
+    //根据授课id查询学生分页
     @Override
     public JSONObject studentPageByCTId(Integer courseTeachingId) {
         Page cs = courseSelectingDao.courseSelectingPage(courseTeachingId);
@@ -150,6 +160,7 @@ public class StudentService implements IStudentService {
         return JSONObject.fromObject(cs, jsonConfig);
     }
 
+    //根据id查询学生信息详细
     @Override
     public JSONObject studentDetail(Integer id) {
         HwStudent student = studentDao.load(id);
@@ -165,6 +176,8 @@ public class StudentService implements IStudentService {
         return JSONObject.fromObject(student, jsonConfig);
     }
 
+    //管理员
+    //根据学生id 和 授课id数组，为该学生增加一个或多个选课关系
     @Override
     public void addCourseSelecting(Integer sId, Integer[] ctId) {
         HwStudent student = studentDao.load(sId);
@@ -199,8 +212,9 @@ public class StudentService implements IStudentService {
         }
     }
 
+    //搜索学生分页
     @Override
-    public JSONObject studentPage(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name) {
+    public JSONObject searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name) {
         Page page =  studentDao.searchStudent(campusId, collegeId, majorId, studentNo, name);
         JsonConfig jsonConfig = new JsonConfig();
         jsonConfig.setExcludes(new String[]{"hibernateLazyInitializer", "handler","hwCourseSelectings","hwHomeworks","deleteFlag"});
@@ -216,6 +230,8 @@ public class StudentService implements IStudentService {
         return JSONObject.fromObject(page, jsonConfig);
     }
 
+    //教师
+    //根据授课id和学生id数组，为某课程增加学生的选课关系
     @Override
     public void addStudent(Integer ctId, Integer[] sIdArray) {
         HwCourseTeaching ct = courseTeachingDao.load(ctId);

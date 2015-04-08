@@ -88,6 +88,25 @@ public class CourseController {
         }
     }
 
+    /**
+     * 根据参数增加课程
+     * @param campusId 校区id
+     * @param collegeId 学院id
+     * @param majorId 专业id
+     * @param courseNo 课程编号
+     * @param courseName 课程名
+     * @return
+     */
+    @RequestMapping(value = "/addCourse", method = RequestMethod.POST)
+    @ResponseBody
+    public Object addCourse(Integer campusId, Integer collegeId, Integer majorId, String courseNo, String courseName){
+        try {
+            return courseService.addCourse(campusId ,collegeId, majorId, courseNo, courseName);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
 
 
     public ICourseService getCourseService() {

@@ -116,7 +116,7 @@ public class StudentController {
     @ResponseBody
     public JSONObject searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name) {
         try{
-            return studentService.studentPage(campusId, collegeId, majorId, studentNo, name);
+            return studentService.searchStudent(campusId, collegeId, majorId, studentNo, name);
         }catch (Exception e){
             e.printStackTrace();
             return getFailResultJsonObject();
