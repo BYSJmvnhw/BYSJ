@@ -202,16 +202,17 @@ public class HomeworkController {
     }
 
     /**
-     *
+     * 为作业评分和写评语
      * @param hwId 作业id
      * @param mark 分数
      * @param comment 评语
      * @return json请求结果
      */
     @RequestMapping(value = "/markHomework", method = RequestMethod.POST)
+    @ResponseBody
     public JSONObject markHomework(Integer hwId, String mark, String comment) {
         try{
-            homeworkService.markHomework(hwId, mark, comment);
+            homeworkService.updateHomework(hwId, mark, comment);
             return getSuccessResultJsonObject();
         } catch (Exception e){
             e.printStackTrace();

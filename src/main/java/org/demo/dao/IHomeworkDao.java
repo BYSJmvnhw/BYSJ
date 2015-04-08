@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface IHomeworkDao extends IBaseDao<HwHomework> {
 
-    public Page<HwHomework>homeworkPage(Integer courseTeachingId, Integer studentId);
+    public  List homeworkList(Integer courseTeachingId, Integer studentId);
 
     public Page<HwHomework> submittedHomeworkPage(Integer hwInfoId, boolean submited);
 

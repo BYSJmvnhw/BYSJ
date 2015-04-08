@@ -17,11 +17,23 @@ import java.util.List;
 @Repository
 public class HomeworkDao extends BaseDao<HwHomework> implements IHomeworkDao {
     @Override
-    public Page<HwHomework> homeworkPage(Integer courseTeachingId, Integer studentId) {
-        String hql = "from HwHomework hw where " +
+    public List homeworkList(Integer courseTeachingId, Integer studentId) {
+        /*String hql = "from HwHomework hw where " +
                 "hw.hwHomeworkInfo.hwCourseTeaching.id = ? " +
-                "and hw.hwStudent.id = ?";
-        return findPage(hql, new Object[]{courseTeachingId, studentId});
+                "and hw.hwStudent.id = ? " +
+                "order by hw.hwHomeworkInfo.overtime";*/
+         String hql = "select hw.id, hw.checkedFlag, hw.hwNo,  hw.lastModifyDate, hw.mark, hw.markDate, " +
+                 "hw.markType, hw.status, hw.studentName, hw.studentNo, hw.submitDate, hw.title, hw.url, " +
+                 "hwInfo.deadline, hwInfo.overtime, hwInfo.courseName " +
+                 "from HwHomework hw join hw.hwHomeworkInfo hwInfo " +
+                 "where hwInfo.hwCourseTeaching.id = ? " +
+                 "and hw.hwStudent.id = ? " +
+                 "order by hwInfo.overtime, hw.status, hwInfo.deadline ";
+
+
+
+
+        return list(hql, new Object[]{courseTeachingId, studentId});
     }
 
     @Override
@@ -60,7 +72,8 @@ public class HomeworkDao extends BaseDao<HwHomework> implements IHomeworkDao {
         String hql = "from HwHomework hw where " +
                 "hw.hwStudent.id = ? " +
                 "and hw.url = '' " +
-                "and hw.hwHomeworkInfo.overtime = false ";
+                "and hw.hwHomeworkInfo.overtime = false " +
+                "order by hw.hwHomeworkInfo.deadline";
         return list(hql, sId);
     }
 
@@ -96,8 +109,9 @@ public class HomeworkDao extends BaseDao<HwHomework> implements IHomeworkDao {
     public List<HwHomework> recentHomework(Integer sId, Timestamp time) {
         String hql = "from HwHomework  hw where " +
                 "hw.hwStudent.id =  ? " +
-                "and hw.hwHomeworkInfo.overtime = false " +
-                "and hw.hwHomeworkInfo.deadline > ? ";
+                //"and hw.hwHomeworkInfo.overtime = false " +
+                "and hw.hwHomeworkInfo.deadline > ? " +
+                "order by hw.hwHomeworkInfo.overtime, hw.hwHomeworkInfo.deadline";
         return list(hql, new Object[]{sId, time});
     }
 
@@ -106,7 +120,8 @@ public class HomeworkDao extends BaseDao<HwHomework> implements IHomeworkDao {
         String hql = "from HwHomework hw where " +
                 "hw.hwStudent.id = ? " +
                 "and hw.status = ? " +
-                "and hw.checkedFlag = false ";
+                "and hw.checkedFlag = false " +
+                "order by hw.hwHomeworkInfo.deadline";
         return list(hql, new Object[]{sId, HomeworkStatus.MARKED});
     }
 
@@ -114,7 +129,8 @@ public class HomeworkDao extends BaseDao<HwHomework> implements IHomeworkDao {
     public Long countUnsubmitted(HwStudent student) {
         String hql = "select count(1) from HwHomework hw where " +
                 "hw.hwStudent = ? " +
-                "and hw.url = '' ";
+                "and hw.url = '' " +
+                "and hw.hwHomeworkInfo.overtime = false ";
         return count(hql, student);
     }
 
@@ -139,7 +155,7 @@ public class HomeworkDao extends BaseDao<HwHomework> implements IHomeworkDao {
 
     @Override
     public Object findCommentByHwInfoId(Integer hwInfoId, HwStudent student) {
-        String hql = "select hw.comment from HwHomework hw where " +
+        String hql = "select hw.comment, hw.mark from HwHomework hw where " +
                 "hw.hwHomeworkInfo.id = ? " +
                 "and hw.hwStudent = ? ";
         return findObject(hql, new Object[]{hwInfoId,student} );

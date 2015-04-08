@@ -6,6 +6,7 @@ import org.demo.model.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,9 +20,9 @@ public interface IHomeworkService {
 
     public void update(HwHomework homework);
 
-    public JSONObject homeworkPage(Integer courseTeachingId, Integer studentId);
+    public List homeworkList(Integer courseTeachingId, Integer studentId);
 
-    public JSONObject submittedHomeworkPage(Integer hwInfoId, boolean submited);
+    public JSONObject submittedHomeworkPage(Integer hwInfoId, boolean submitted);
 
     public JSONObject courseSelectingPage(HwUser user, Integer startYear, Integer schoolTerm);
 
@@ -37,7 +38,7 @@ public interface IHomeworkService {
 
     public void deleteHomeworkInfo(Integer hwInfoId) throws Exception;
 
-    public void markHomework(Integer I, String mark, String comment);
+    public void updateHomework(Integer I, String mark, String comment);
 
     public Map<String,Object> comment(Integer hwInfoId, HwUser user);
 

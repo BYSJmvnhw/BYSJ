@@ -6,12 +6,15 @@ import net.sf.json.JsonConfig;
 import org.demo.dao.*;
 import org.demo.model.*;
 import org.demo.service.IStudentService;
+import org.demo.tool.HomeworkStatus;
 import org.demo.tool.ObjectJsonValueProcessor;
 import org.demo.tool.Page;
 import org.demo.tool.UserType;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by jzchen on 2015/1/14.
@@ -27,6 +30,8 @@ public class StudentService implements IStudentService {
     private IMajorDao majorDao;
     private ICourseSelectingDao courseSelectingDao;
     private ICourseTeachingDao courseTeachingDao;
+    private IHomeworkInfoDao homeworkInfoDao;
+    private IHomeworkDao homeworkDao;
 
     @Override
     public HwStudent findStudent(String studentNo) {
@@ -161,19 +166,37 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public JSONObject addCourseSelecting(String json) {
-        JSONArray jsonArray = JSONArray.fromObject(json);
-        System.out.println(jsonArray.toString());
-        for( Object o : jsonArray ) {
-            JSONObject jsonObject = (JSONObject)o;
-            System.out.println(jsonObject.getInt("cid"));
-            System.out.println(jsonObject.getInt("tid"));
-            HwCourseSelecting cs = new HwCourseSelecting();
-            cs.setHwStudent(studentDao.load(jsonObject.getInt("sid")));
-//            cs.setHwCourseTeaching();
-        }
+    public void addCourseSelecting(Integer sId, Integer[] ctId) {
+        HwStudent student = studentDao.load(sId);
+        for( Integer ctid : ctId ) {
+            HwCourseTeaching ct = courseTeachingDao.load(ctid);
+            HwCourseSelecting cs = courseSelectingDao.findCSByCTAndStudent(ct, student);
+            if( cs == null ){
+                HwCourseSelecting courseSelecting = new HwCourseSelecting();
+                courseSelecting.setHwStudent(student);
+                courseSelecting.setHwCourseTeaching(ct);
+                courseSelectingDao.add(courseSelecting);
 
-        return null;
+                //为该学生初始化补选的课程所有已布置的作业。
+                Set<HwHomeworkInfo>  homeworkInfos = ct.getHwHomeworkInfos();
+                for( HwHomeworkInfo hwInfo : homeworkInfos ){
+                    HwHomework hw = new HwHomework();
+                    hw.setHwStudent(student);
+                    hw.setHwCourse(ct.getHwCourse());
+                    hw.setCheckedFlag(false);
+                    hw.setHwHomeworkInfo(hwInfo);
+                    hw.setHwTeacher(ct.getHwTeacher());
+                    hw.setStudentName(student.getName());
+                    hw.setStudentNo(student.getStudentNo());
+                    hw.setTitle(hwInfo.getTitle());
+                    hw.setLastModifyDate(new java.sql.Timestamp(System.currentTimeMillis()));
+                    hw.setMarkType(hwInfo.getMarkType());
+                    hw.setUrl("");
+                    hw.setStatus(HomeworkStatus.UNSUBMITTED);
+                    homeworkDao.add(hw);
+                }
+            }
+        }
     }
 
     @Override
@@ -203,10 +226,31 @@ public class StudentService implements IStudentService {
                 //若不存在该选课关系则增加
                 HwCourseSelecting courseSelecting = new HwCourseSelecting();
                 courseSelecting.setHwCourseTeaching(ct);
-                courseSelecting.setHwStudent(studentDao.load(sid));
+                HwStudent student = studentDao.load(sid);
+                courseSelecting.setHwStudent(student);
                 courseSelectingDao.add(courseSelecting);
+
+                //为每个补选课的学生初始化该课程所有已布置的作业。
+                Set<HwHomeworkInfo>  homeworkInfos = ct.getHwHomeworkInfos();
+                for( HwHomeworkInfo hwInfo : homeworkInfos ){
+                    HwHomework hw = new HwHomework();
+                    hw.setHwStudent(student);
+                    hw.setHwCourse(ct.getHwCourse());
+                    hw.setCheckedFlag(false);
+                    hw.setHwHomeworkInfo(hwInfo);
+                    hw.setHwTeacher(ct.getHwTeacher());
+                    hw.setStudentName(student.getName());
+                    hw.setStudentNo(student.getStudentNo());
+                    hw.setTitle(hwInfo.getTitle());
+                    hw.setLastModifyDate(new java.sql.Timestamp(System.currentTimeMillis()));
+                    hw.setMarkType(hwInfo.getMarkType());
+                    hw.setUrl("");
+                    hw.setStatus(HomeworkStatus.UNSUBMITTED);
+                    homeworkDao.add(hw);
+                }
             }
         }
+
     }
 
     public IStudentDao getStudentDao() {
@@ -270,5 +314,23 @@ public class StudentService implements IStudentService {
     @Resource
     public void setCampusDao(ICampusDao campusDao) {
         this.campusDao = campusDao;
+    }
+
+    public IHomeworkInfoDao getHomeworkInfoDao() {
+        return homeworkInfoDao;
+    }
+
+    @Resource
+    public void setHomeworkInfoDao(IHomeworkInfoDao homeworkInfoDao) {
+        this.homeworkInfoDao = homeworkInfoDao;
+    }
+
+    public IHomeworkDao getHomeworkDao() {
+        return homeworkDao;
+    }
+
+    @Resource
+    public void setHomeworkDao(IHomeworkDao homeworkDao) {
+        this.homeworkDao = homeworkDao;
     }
 }
