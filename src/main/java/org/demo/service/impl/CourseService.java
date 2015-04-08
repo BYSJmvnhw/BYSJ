@@ -31,6 +31,8 @@ public class CourseService implements ICourseService {
     private IEmailService emailService;
     private String systemEmail;
     private String systemEmailPass;
+    private ICampusDao campusDao;
+    private IMajorDao majorDao;
 
     @Override
     public HwCourse load(Integer cid) {
@@ -216,6 +218,38 @@ public class CourseService implements ICourseService {
         return courseTeachingPage;
     }
 
+    @Override
+    public JSONObject addCourse(Integer campusId, Integer collegeId, Integer majorId, String courseNo, String courseName) {
+        JSONObject result = new JSONObject();
+        HwCourse c = courseDao.findCourse(courseNo);
+        if( c != null){
+            result.put("status","existing");
+            return result;
+        }else {
+            HwCourse course;
+            HwCourse deleteCourse = courseDao.findDeleteCourse(courseNo);
+            if( deleteCourse != null  ){
+                course = deleteCourse;
+            }else {
+                course = new HwCourse();
+            }
+            course.setDeleteFlag(false);
+            course.setHwCampus(campusDao.load(campusId));
+            course.setHwCollege(collegeDao.load(collegeId));
+            course.setHwMajor(majorDao.load(majorId));
+            course.setCourseNo(courseNo);
+            course.setCourseName(courseName);
+            if( deleteCourse != null  ){
+                courseDao.update(course);
+            }else {
+                courseDao.add(course);
+            }
+            result.clear();
+            result.put("status","success");
+            return result;
+        }
+    }
+
 
     @Resource
     public void setCourseDao(ICourseDao courseDao) {
@@ -253,5 +287,23 @@ public class CourseService implements ICourseService {
     @Value("${password}")
     public void setSystemEmailPass(String systemEmailPass) {
         this.systemEmailPass = systemEmailPass;
+    }
+
+    public ICampusDao getCampusDao() {
+        return campusDao;
+    }
+
+    @Resource
+    public void setCampusDao(ICampusDao campusDao) {
+        this.campusDao = campusDao;
+    }
+
+    public IMajorDao getMajorDao() {
+        return majorDao;
+    }
+
+    @Resource
+    public void setMajorDao(IMajorDao majorDao) {
+        this.majorDao = majorDao;
     }
 }

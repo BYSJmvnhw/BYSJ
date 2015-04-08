@@ -33,6 +33,6 @@ public interface IHomeworkDao extends IBaseDao<HwHomework> {
 
     public Long countFeedback(HwStudent student);
 
-    public Object findCommentByHwInfoId(Integer hwInfoId, HwStudent student);
+    public Object feedbackDetail(Integer hwInfoId, HwStudent student);
 
 }

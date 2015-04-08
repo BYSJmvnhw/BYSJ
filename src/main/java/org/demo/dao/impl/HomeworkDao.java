@@ -154,8 +154,8 @@ public class HomeworkDao extends BaseDao<HwHomework> implements IHomeworkDao {
     }
 
     @Override
-    public Object findCommentByHwInfoId(Integer hwInfoId, HwStudent student) {
-        String hql = "select hw.comment, hw.mark from HwHomework hw where " +
+    public Object feedbackDetail(Integer hwInfoId, HwStudent student) {
+        String hql = "select hw.comment, hw.mark, hw.markType from HwHomework hw where " +
                 "hw.hwHomeworkInfo.id = ? " +
                 "and hw.hwStudent = ? ";
         return findObject(hql, new Object[]{hwInfoId,student} );

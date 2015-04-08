@@ -44,4 +44,20 @@ public class CourseDao extends BaseDao<HwCourse> implements ICourseDao {
         }
         return findPage(hql.toString(), param.toArray(), str, 20);
     }
+
+    @Override
+    public HwCourse findCourse(String courseNo) {
+        String hql = "from HwCourse c where " +
+                "c.courseNo = ? " +
+                "and c.deleteFlag = false ";
+        return findObject(hql,courseNo);
+    }
+
+    @Override
+    public HwCourse findDeleteCourse(String courseNo) {
+        ;String hql = "from HwCourse c where " +
+                "c.courseNo = ? " +
+                "and c.deleteFlag = true ";
+        return findObject(hql,courseNo);
+    }
 }

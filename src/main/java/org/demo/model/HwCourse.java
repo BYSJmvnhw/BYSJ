@@ -35,6 +35,7 @@ public class HwCourse implements java.io.Serializable {
 	private HwMajor hwMajor;
 	private String courseNo;
 	private String courseName;
+	private Boolean deleteFlag;
 	private Set<HwHomework> hwHomeworks = new HashSet<HwHomework>(0);
 	private Set<HwCourseTeaching> hwCourseTeachings = new HashSet<HwCourseTeaching>(0);
 
@@ -140,5 +141,14 @@ public class HwCourse implements java.io.Serializable {
 
 	public void setHwMajor(HwMajor hwMajor) {
 		this.hwMajor = hwMajor;
+	}
+
+	@Column(name = "delete_flag")
+	public Boolean getDeleteFlag() {
+		return deleteFlag;
+	}
+
+	public void setDeleteFlag(Boolean deleteFlag) {
+		this.deleteFlag = deleteFlag;
 	}
 }

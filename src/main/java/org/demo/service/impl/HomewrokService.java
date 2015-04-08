@@ -75,7 +75,7 @@ public class HomewrokService implements IHomeworkService {
     }
 
     /**
-     *
+     * 学生管理，根据授课关系id，学生id，查询该生该门课程所有布置的作业详细信息列表
      * @param courseTeachingId 授课关系id
      * @param studentId 学生id
      * @return 作业分页JSONObject
@@ -89,14 +89,14 @@ public class HomewrokService implements IHomeworkService {
             homeworkView.put("id", hw[0]);
             homeworkView.put("checkFlag", hw[1]);
             homeworkView.put("hwNo", hw[2]);
-            homeworkView.put("lastModifyDate",hw[3]);
+            homeworkView.put("lastModifyDate",simpleDateFormat.format(hw[3]));
             homeworkView.put("mark",hw[4]);
-            homeworkView.put("markDate",hw[5]);
+            homeworkView.put("markDate",hw[5]); //可能为空，
             homeworkView.put("markType",hw[6]);
             homeworkView.put("status",hw[7]);
             homeworkView.put("studentName",hw[8]);
             homeworkView.put("studentNo",hw[9]);
-            homeworkView.put("submitDate",hw[10]);
+            homeworkView.put("submitDate",hw[10]); //可能为空，未格式化
             homeworkView.put("title",hw[11]);
             homeworkView.put("url",hw[12]);
             homeworkView.put("deadline",simpleDateFormat.format(hw[13]));
@@ -104,28 +104,11 @@ public class HomewrokService implements IHomeworkService {
             homeworkView.put("courseName",hw[15]);
             homeworkViewList.add(homeworkView);
         }
-        //JsonConfig jsonConfig = new JsonConfig();
-        //jsonConfig.registerJsonValueProcessor(Timestamp.class, new DateJsonValueProcessor());
-        //return JSONArray.fromObject(homeworkViewList,jsonConfig);
+
         return homeworkViewList;
-
-        /*"select hw.id, hw.checkedFlag, hw.hwNo, , hw.lastModifyDate, hw.mark, hw.markDate, " +
-                "hw.markType, hw.status, hw.studentName, hw.studentNo, hw.submitDate, hw.title, hw.url " +
-                "hwInfo.deadline, hwInfo.overtime, hwInfo.courseName";*/
-
-
-        /*JsonConfig jsonConfig = new JsonConfig();
-        *//**过滤简单属性*//*
-        jsonConfig.setExcludes(new String[] {"hibernateLazyInitializer", "handler","hwCourse","hwStudent",
-                "hwTeacher","hwHomeworkInfo"});
-        *//**过滤复杂属性 hwHomeworkInfo*//*
-        jsonConfig.registerJsonValueProcessor(HwHomeworkInfo.class,
-                new ObjectJsonValueProcessor(new String[]{"id","title","deadline","createDate","overtime"}, HwHomework.class));
-        *//**自解析Timestamp属性，避免JsonObject自动解析 *//*
-        jsonConfig.registerJsonValueProcessor(Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));
-        return JSONObject.fromObject(page, jsonConfig);*/
     }
 
+    //根据学年，学期，当前登录学生用户筛选选课关系、课程列表分页
     @Override
     public JSONObject courseSelectingPage(HwUser user, Integer startYear, Integer schoolTerm) {
         HwStudent student = studentDao.load(user.getTypeId());
@@ -152,6 +135,7 @@ public class HomewrokService implements IHomeworkService {
         return JSONObject.fromObject(newPage, jsonConfig);
     }
 
+    //根据学年，学期，当前登录教师用户筛选选课关系、课程列表分页
     @Override
     public JSONObject courseTeachingPage(HwUser user, Integer startYear, Integer schoolTerm) {
         HwTeacher teacher = teacherDao.load(user.getTypeId());
@@ -164,6 +148,8 @@ public class HomewrokService implements IHomeworkService {
         return JSONObject.fromObject(page, jsonConfig);
     }
 
+    //根据授课关系id，当前登录用户类型返回相应的课程作业信息。
+    //教师显示每次作业的统计信息，学生显示每次作业自己的上交/评分情况
     @Override
     public JSONArray homeworListInfo(Integer courseTeachingId, HwUser user) {
         JsonConfig jsonConfig = new JsonConfig();
@@ -213,6 +199,7 @@ public class HomewrokService implements IHomeworkService {
         }
     }
 
+    //根据信息id查看作业信息详细
     @Override
     public JSONObject homeworkInfoDetail(Integer hwInfoId) {
         JsonConfig jsonConfig = new JsonConfig();
@@ -222,6 +209,7 @@ public class HomewrokService implements IHomeworkService {
         return JSONObject.fromObject(homeworkInfoDao.load(hwInfoId), jsonConfig);
     }
 
+    //教师布置作业，同时为每个选课的学生初始化该次作业信息对应的作业对象
     @Override
     public void addHomeworkInfo(String jsonObject, HwUser user) throws Exception {
         HwTeacher teacher = teacherDao.load(user.getTypeId());
@@ -281,6 +269,7 @@ public class HomewrokService implements IHomeworkService {
         }
     }
 
+    //学生上传作业
     @Override
     public void upload(MultipartFile hw, Integer hwinfoId,HwUser user, String backupPath ) throws IOException {
         HwHomeworkInfo hwinfo = homeworkInfoDao.load(hwinfoId);
@@ -329,8 +318,9 @@ public class HomewrokService implements IHomeworkService {
         }
     }
 
+    //删除作业信息，同时将级联删除该次作业信息对应的所有学生作业
     @Override
-    public void deleteHomeworkInfo(Integer hwInfoId) throws Exception {
+    public void deleteHomeworkInfo(Integer hwInfoId){
         /*Page page = homeworkDao.submittedHomeworkPage(hwInfoId, true);
         //没有学生已经提交作业则执行删除
         if( page.getData().isEmpty()) {
@@ -342,11 +332,19 @@ public class HomewrokService implements IHomeworkService {
         }else {
             throw new Exception("已有学生提交作业，不可删除作业信息！");
         }*/
-        HwHomeworkInfo hwInfo = homeworkInfoDao.load(hwInfoId);
+       /* HwHomeworkInfo hwInfo = homeworkInfoDao.load(hwInfoId);
         hwInfo.setDeleteFlag(true);
-        homeworkInfoDao.update(hwInfo);
+        homeworkInfoDao.update(hwInfo)*/;
+
+        List<HwHomework> homeworkList = homeworkDao.homeworkList(hwInfoId);
+        for( HwHomework hw : homeworkList ){
+            homeworkDao.delete(hw);
+        }
+        homeworkInfoDao.delete(homeworkInfoDao.load(hwInfoId));
+
     }
 
+    //教师批改完作业之后更新作业信息。
     @Override
     public void updateHomework(Integer hwId, String mark, String comment) {
         HwHomework homework = homeworkDao.load(hwId);
@@ -359,15 +357,19 @@ public class HomewrokService implements IHomeworkService {
         homeworkDao.update(homework);
     }
 
+    //返回当前登录学生某次作业的评评语
     @Override
     public Map<String,Object>  comment(Integer hwInfoId, HwUser user) {
         HwStudent student = studentDao.load(user.getTypeId());
-        String comment =  (String)homeworkDao.findCommentByHwInfoId(hwInfoId, student);
+        Object[] hw =  (Object[])homeworkDao.feedbackDetail(hwInfoId, student);
         Map<String, Object> resultMap = new HashMap<String, Object>();
-        resultMap.put("comment",comment);
+        resultMap.put("comment",hw[0]);
+        resultMap.put("mark",hw[1]);
+        resultMap.put("markType",hw[2]);
         return resultMap;
     }
 
+    //标记该反馈为已读
     @Override
     public void updateCheckedFlag(Integer hwInfoId, HwUser user) {
         HwStudent student = studentDao.load(user.getTypeId());

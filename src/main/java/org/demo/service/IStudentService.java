@@ -28,7 +28,7 @@ public interface IStudentService {
 
     public void addCourseSelecting(Integer sId, Integer[] ctId);
 
-    public JSONObject studentPage(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name);
+    public JSONObject searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name);
 
     public void addStudent(Integer ctId, Integer[] sIdArray);
 

@@ -184,7 +184,7 @@ public class HomeworkController {
     }
 
     /**
-     * 删除了
+     * 删除作业信息，同时将级联删除该次作业信息对应的所有学生作业
      * @param hwInfoId 需要删除的作业信息id
      * */
     @RequestMapping(value = "/deleteHomeworkInfo", method = RequestMethod.POST)
@@ -197,8 +197,6 @@ public class HomeworkController {
             e.printStackTrace();
             return getFailResultJsonObject();
         }
-        /**同时将级联删除该次作业信息对应的所有学生作业*/
-        //return "redirect:showHomeworkInfo";
     }
 
     /**
@@ -262,6 +260,7 @@ public class HomeworkController {
         try {
             HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
             Map resultMap =  homeworkService.comment(hwInfoId, user);
+            //标记反馈为已读
             homeworkService.updateCheckedFlag(hwInfoId, user);
             return resultMap;
         } catch (Exception e) {

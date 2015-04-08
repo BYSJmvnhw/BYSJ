@@ -30,5 +30,5 @@ public interface ICourseService {
     public Page searchCourseTeaching(Integer campustId, Integer collegeId, Integer MajorId,
                                      Integer startYear, Integer schoolTerm, String courseName, String teacherName );
 
-
+    public JSONObject addCourse(Integer campusId, Integer collegeId, Integer majorId, String courseNo, String courseName);
 }
