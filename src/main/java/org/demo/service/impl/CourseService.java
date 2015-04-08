@@ -7,6 +7,7 @@ import org.demo.model.*;
 import org.demo.service.ICourseService;
 import org.demo.service.IEmailService;
 import org.demo.tool.GetPost;
+import org.demo.tool.Page;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -171,6 +172,48 @@ public class CourseService implements ICourseService {
             jsonresult.put("status","fail");
             return jsonresult;
         }
+    }
+
+    @Override
+    public Page searchCourse(Integer campusId, Integer collegeId, Integer majorId,  String courseNo, String courseName) {
+        Page<HwCourse> coursePage = courseDao.coursePage(campusId, collegeId, majorId, courseNo, courseName);
+        List<HwCourse> courseList = coursePage.getData();
+        List  courseViewList = new ArrayList();
+        for( HwCourse course : courseList ){
+            Map<String,Object> courseView = new HashMap<String, Object>();
+            courseView.put("courseId", course.getId());
+            courseView.put("campusName", course.getHwCampus().getName());
+            courseView.put("collegeName", course.getHwCollege().getCollegeName());
+            courseView.put("majorName", course.getHwMajor().getName());
+            courseView.put("courseNo",course.getCourseNo());
+            courseView.put("courseName", course.getCourseName());
+            courseViewList.add(courseView);
+        }
+        coursePage.setData(courseViewList);
+        return coursePage;
+    }
+
+    @Override
+    public Page searchCourseTeaching(Integer campusId, Integer collegeId, Integer majorId,
+                                     Integer startYear, Integer schoolTerm, String courseName, String teacherName) {
+        Page<HwCourseTeaching> courseTeachingPage =
+                courseTeachingDao.courseTeachingPage(campusId, collegeId, majorId, startYear, schoolTerm, courseName, teacherName);
+        List<HwCourseTeaching> courseTeachingList = courseTeachingPage.getData();
+        List ctViewList = new ArrayList();
+        for( HwCourseTeaching ct : courseTeachingList ){
+            Map<String,Object> ctViewMap = new HashMap<String, Object>();
+            ctViewMap.put("ctId",ct.getId());
+            ctViewMap.put("campusName",ct.getHwCourse().getHwCampus().getName());
+            ctViewMap.put("collegeName",ct.getHwCourse().getHwCollege().getCollegeName());
+            ctViewMap.put("majorName",ct.getHwCourse().getHwMajor().getName());
+            ctViewMap.put("startYear",ct.getStartYear());
+            ctViewMap.put("schoolTerm",ct.getSchoolTerm());
+            ctViewMap.put("courseName",ct.getHwCourse().getCourseName());
+            ctViewMap.put("teacherName",ct.getHwTeacher().getName());
+            ctViewList.add(ctViewMap);
+        }
+        courseTeachingPage.setData(ctViewList);
+        return courseTeachingPage;
     }
 
 

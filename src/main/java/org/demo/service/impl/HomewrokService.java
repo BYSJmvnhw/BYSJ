@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.NotDirectoryException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -40,6 +41,7 @@ public class HomewrokService implements IHomeworkService {
     private IStudentDao studentDao;
     private ITeacherDao teacherDao;
     private IHomeworkInfoService homeworkInfoService;
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public void add(HwHomework homework) {
@@ -50,12 +52,12 @@ public class HomewrokService implements IHomeworkService {
     /**
      * 已提交或未提交（未提交的也已经初始化作业对象）的学生作业分页
      * @param hwInfoId 作业信息id
-     * @param submited 是否已经提交的
+     * @param submitted 是否已经提交的
      * @return 分页的JSONObjcet 对象
      */
     @Override
-    public JSONObject submittedHomeworkPage(Integer hwInfoId, boolean submited) {
-        Page page = homeworkDao.submittedHomeworkPage(hwInfoId, submited);
+    public JSONObject submittedHomeworkPage(Integer hwInfoId, boolean submitted) {
+        Page page = homeworkDao.submittedHomeworkPage(hwInfoId, submitted);
         JsonConfig jsonConfig = new JsonConfig();
         jsonConfig.setExcludes(new String[] { "hibernateLazyInitializer", "handler","hwCourse","hwHomeworkInfo","hwTeacher","hwStudent"});
         jsonConfig.registerJsonValueProcessor(Timestamp.class, new DateJsonValueProcessor("yyyy-MM-dd HH:mm:ss"));
@@ -79,18 +81,49 @@ public class HomewrokService implements IHomeworkService {
      * @return 作业分页JSONObject
      */
     @Override
-    public JSONObject homeworkPage(Integer courseTeachingId, Integer studentId) {
-        Page page = homeworkDao.homeworkPage(courseTeachingId, studentId);
-        JsonConfig jsonConfig = new JsonConfig();
-        /**过滤简单属性*/
+    public List homeworkList(Integer courseTeachingId, Integer studentId) {
+        List<Object[]> homeworkList = homeworkDao.homeworkList(courseTeachingId, studentId);
+        List<Map<String,Object>> homeworkViewList = new ArrayList<Map<String, Object>>();
+        for( Object[] hw : homeworkList ){
+            Map<String, Object> homeworkView = new HashMap<String, Object>();
+            homeworkView.put("id", hw[0]);
+            homeworkView.put("checkFlag", hw[1]);
+            homeworkView.put("hwNo", hw[2]);
+            homeworkView.put("lastModifyDate",hw[3]);
+            homeworkView.put("mark",hw[4]);
+            homeworkView.put("markDate",hw[5]);
+            homeworkView.put("markType",hw[6]);
+            homeworkView.put("status",hw[7]);
+            homeworkView.put("studentName",hw[8]);
+            homeworkView.put("studentNo",hw[9]);
+            homeworkView.put("submitDate",hw[10]);
+            homeworkView.put("title",hw[11]);
+            homeworkView.put("url",hw[12]);
+            homeworkView.put("deadline",simpleDateFormat.format(hw[13]));
+            homeworkView.put("overtime",hw[14]);
+            homeworkView.put("courseName",hw[15]);
+            homeworkViewList.add(homeworkView);
+        }
+        //JsonConfig jsonConfig = new JsonConfig();
+        //jsonConfig.registerJsonValueProcessor(Timestamp.class, new DateJsonValueProcessor());
+        //return JSONArray.fromObject(homeworkViewList,jsonConfig);
+        return homeworkViewList;
+
+        /*"select hw.id, hw.checkedFlag, hw.hwNo, , hw.lastModifyDate, hw.mark, hw.markDate, " +
+                "hw.markType, hw.status, hw.studentName, hw.studentNo, hw.submitDate, hw.title, hw.url " +
+                "hwInfo.deadline, hwInfo.overtime, hwInfo.courseName";*/
+
+
+        /*JsonConfig jsonConfig = new JsonConfig();
+        *//**过滤简单属性*//*
         jsonConfig.setExcludes(new String[] {"hibernateLazyInitializer", "handler","hwCourse","hwStudent",
                 "hwTeacher","hwHomeworkInfo"});
-        /**过滤复杂属性 hwHomeworkInfo*/
+        *//**过滤复杂属性 hwHomeworkInfo*//*
         jsonConfig.registerJsonValueProcessor(HwHomeworkInfo.class,
                 new ObjectJsonValueProcessor(new String[]{"id","title","deadline","createDate","overtime"}, HwHomework.class));
-        /**自解析Timestamp属性，避免JsonObject自动解析 */
+        *//**自解析Timestamp属性，避免JsonObject自动解析 *//*
         jsonConfig.registerJsonValueProcessor(Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));
-        return JSONObject.fromObject(page, jsonConfig);
+        return JSONObject.fromObject(page, jsonConfig);*/
     }
 
     @Override
@@ -315,7 +348,7 @@ public class HomewrokService implements IHomeworkService {
     }
 
     @Override
-    public void markHomework(Integer hwId, String mark, String comment) {
+    public void updateHomework(Integer hwId, String mark, String comment) {
         HwHomework homework = homeworkDao.load(hwId);
         homework.setMark(mark);
         homework.setComment(comment);

@@ -35,6 +35,7 @@ public class StudentController {
     private IHomeworkService homeworkService;
     private IStudentService studentService;
     private ICollegeService collegeService;
+    private ICourseService courseService;
     //private IUserService userService;
     /**
      *  根据教师授课关系id返回选课学生列表的接口
@@ -60,9 +61,9 @@ public class StudentController {
      */
     @RequestMapping(value = "/homeworkList", method = RequestMethod.GET)
     @ResponseBody
-    public JSONObject homeworkInfoList(Integer ctId, Integer sId) {
+    public Object homeworkInfoList(Integer ctId, Integer sId) {
         try{
-            return homeworkService.homeworkPage(ctId, sId);
+            return homeworkService.homeworkList(ctId, sId);
         }catch (Exception e){
             e.printStackTrace();
             return getFailResultJsonObject();
@@ -102,10 +103,29 @@ public class StudentController {
         }
     }
 
-    /********************************* 管理员功能 ***********************************
-     *
+    /**
+     * 根据校区id，学院id，专业id，学生学号关键字，学生姓名关键字搜索学生列表
+     * @param campusId 校区id
+     * @param collegeId 学院id
+     * @param majorId 专业id
+     * @param studentNo 学生学号关键字
+     * @param name 学生姓名关键字
      * @return
      */
+    @RequestMapping(value = "/searchStudent", method = RequestMethod.GET)
+    @ResponseBody
+    public JSONObject searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name) {
+        try{
+            return studentService.studentPage(campusId, collegeId, majorId, studentNo, name);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
+
+    ///////////////////////////////////////管理员功能///////////////////////////////////////
+
+
     @RequestMapping(value = "/addStudent", method = RequestMethod.GET)
     public String addStudent() {
         return "student/addStudent";
@@ -163,40 +183,54 @@ public class StudentController {
         }
     }
 
-    @RequestMapping(value = "/addCourseSelecting", method = RequestMethod.GET)
-    public String addCourseSelecting() {
-        return "student/addCourseSelecting";
-    }
-
-    @RequestMapping(value = "/addCourseSelecting", method = RequestMethod.POST)
-    @ResponseBody
-     public JSONObject addCourseSelecting(String json) {
-         studentService.addCourseSelecting(json);
-         String result = "{'result' : 'chenggong'}";
-         return JSONObject.fromObject(result);
-     }
 
     /**
-     * 根据校区id，学院id，专业id，学生学号关键字，学生姓名关键字搜索学生列表
+     * 根据各种条件筛选授课关系
      * @param campusId 校区id
      * @param collegeId 学院id
      * @param majorId 专业id
-     * @param studentNo 学生学号关键字
-     * @param name 学生姓名关键字
+     * @param startYear 年份
+     * @param schoolTerm 学期
+     * @param courseName 课程名
+     * @param teacherName 教师id
      * @return
      */
-    @RequestMapping(value = "/searchStudent", method = RequestMethod.GET)
+    @RequestMapping("/searchCourseTeaching")
     @ResponseBody
-    public JSONObject searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name) {
-        try{
-            return studentService.studentPage(campusId, collegeId, majorId, studentNo, name);
+    public Object searchCourseTeaching(Integer campusId, Integer collegeId, Integer majorId,
+                                       Integer startYear, Integer schoolTerm, String courseName, String teacherName) {
+        try {
+            return courseService.searchCourseTeaching(campusId, collegeId, majorId, startYear, schoolTerm, courseName, teacherName);
         }catch (Exception e){
             e.printStackTrace();
             return getFailResultJsonObject();
         }
     }
 
-/*********************************  ***********************************/
+//    @RequestMapping(value = "/addCourseSelecting", method = RequestMethod.GET)
+//    public String addCourseSelecting() {
+//        return "student/addCourseSelecting";
+//    }
+
+    /**
+     * 根据学生id，授课关系id数组，为学生增加选课关系
+     * @param sId 学生id
+     * @param ctId 授课关系id数组
+     * @return
+     */
+    @RequestMapping(value = "/addCourseSelecting", method = RequestMethod.POST)
+    @ResponseBody
+     public JSONObject addCourseSelecting(Integer sId, @RequestParam("ctId[]") Integer[] ctId) {
+         try {
+             studentService.addCourseSelecting(sId, ctId);
+             return getSuccessResultJsonObject();
+         }catch (Exception e){
+             e.printStackTrace();
+             return getFailResultJsonObject();
+         }
+     }
+
+
 
     /**
      * 获取每个校区  所有学院组成的数组
@@ -238,6 +272,15 @@ public class StudentController {
     @Resource
     public void setCollegeService(ICollegeService collegeService) {
         this.collegeService = collegeService;
+    }
+
+    public ICourseService getCourseService() {
+        return courseService;
+    }
+
+    @Resource
+    public void setCourseService(ICourseService courseService) {
+        this.courseService = courseService;
     }
 
     private JSONObject getFailResultJsonObject(){

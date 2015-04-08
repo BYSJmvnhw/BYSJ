@@ -69,6 +69,27 @@ public class CourseController {
         return courseService.updateAndcheckEmail(ctId, email, checkNumber);
     }
 
+    /**
+     * 根据各种条件筛选课程
+     * @param campusId 校区id
+     * @param collegeId 学院id
+     * @param majorId 专业id
+     * @param courseName 课程名
+     * @return
+     */
+    @RequestMapping("/searchCourse")
+    @ResponseBody
+    public Object searchCourse(Integer campusId, Integer collegeId, Integer majorId, String courseNo, String courseName) {
+        try {
+            return courseService.searchCourse(campusId, collegeId, majorId, courseNo, courseName);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
+
+
+
     public ICourseService getCourseService() {
         return courseService;
     }

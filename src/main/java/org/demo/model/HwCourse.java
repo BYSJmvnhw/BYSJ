@@ -30,13 +30,12 @@ public class HwCourse implements java.io.Serializable {
 	// Fields
 
 	private Integer id;
+	private HwCampus hwCampus;
 	private HwCollege hwCollege;
+	private HwMajor hwMajor;
 	private String courseNo;
 	private String courseName;
 	private Set<HwHomework> hwHomeworks = new HashSet<HwHomework>(0);
-	//private Set<HwCourseSelecting> hwCourseSelectings = new HashSet<HwCourseSelecting>(0);
-	//private Set<HwHomeworkInfo> hwHomeworkInfos = new HashSet<HwHomeworkInfo>(0);
-	//private Set<HwTeacher> hwTeachers = new HashSet<HwTeacher>(0);
 	private Set<HwCourseTeaching> hwCourseTeachings = new HashSet<HwCourseTeaching>(0);
 
 	// Constructors
@@ -114,34 +113,6 @@ public class HwCourse implements java.io.Serializable {
 		this.hwHomeworks = hwHomeworks;
 	}
 
-	//@JsonBackReference
-/*	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwCourse")
-	public Set<HwCourseSelecting> getHwCourseSelectings() {
-		return this.hwCourseSelectings;
-	}
-
-	public void setHwCourseSelectings(Set<HwCourseSelecting> hwCourseSelectings) {
-		this.hwCourseSelectings = hwCourseSelectings;
-	}*/
-	//@JsonBackReference
-/*	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwCourse")
-	public Set<HwHomeworkInfo> getHwHomeworkInfos() {
-		return this.hwHomeworkInfos;
-	}
-
-	public void setHwHomeworkInfos(Set<HwHomeworkInfo> hwHomeworkInfos) {
-		this.hwHomeworkInfos = hwHomeworkInfos;
-	}*/
-	//@JsonBackReference
-/*	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwCourses")
-	public Set<HwTeacher> getHwTeachers() {
-		return this.hwTeachers;
-	}
-
-	public void setHwTeachers(Set<HwTeacher> hwTeachers) {
-		this.hwTeachers = hwTeachers;
-	}*/
-
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hwCourse")
 	public Set<HwCourseTeaching> getHwCourseTeachings() {
 		return hwCourseTeachings;
@@ -149,5 +120,25 @@ public class HwCourse implements java.io.Serializable {
 
 	public void setHwCourseTeachings(Set<HwCourseTeaching> hwCourseTeachings) {
 		this.hwCourseTeachings = hwCourseTeachings;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "campus_id")
+	public HwCampus getHwCampus() {
+		return hwCampus;
+	}
+
+	public void setHwCampus(HwCampus hwCampus) {
+		this.hwCampus = hwCampus;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "major_id")
+	public HwMajor getHwMajor() {
+		return hwMajor;
+	}
+
+	public void setHwMajor(HwMajor hwMajor) {
+		this.hwMajor = hwMajor;
 	}
 }
