@@ -45,8 +45,9 @@ nav {
 .nav-main>li {
     display: inline-block;
     float: left;
-    padding: 17px 20px;
+    padding: 0 20px;
     font-size: 19px;
+    line-height: 59px;
     color: #4fc5c7;
     cursor: pointer;
     position: relative;
@@ -1521,6 +1522,23 @@ span.dailog-clear:after {
 }
 
 /*end弹出删除提示框*/
+
+/*弹出反馈框*/
+
+.work-feedback-comment {
+    overflow: hidden;
+}
+
+.work-feedback-comment>label:nth-child(2) {
+    float: right;
+    width: 370px;
+}
+
+.work-feedback-comment + .work-submit>button {
+    margin-right: 0;
+}
+
+/*end弹出反馈框*/
 
 /*弹出验证码框*/
 

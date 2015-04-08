@@ -441,8 +441,8 @@
         </div>
         <div class="hand-in-progress"><!--进度显示--></div>
         {{if value.overtime == true}}
-        <div class="hand-in-work t-hand-in" data-hwInfoId="{{value.hwInfoId}}">
-            <span class="hand-in-work-detail">作业详细信息</span>
+        <div class="hand-in-work t-hand-in">
+            <span class="hand-in-work-detail"  data-hwInfoId="{{value.hwInfoId}}">作业详细信息</span>
         </div>
         {{else}}
         <div class="hand-in-work t-hand-in">
@@ -502,7 +502,15 @@
 </script>
 <script type="text/template" id="stumanage-work-list-html">
     {{each worklist as value}}
-    <li class="work-student-list {{if value.url == ''}}work-unhand-student{{else}}work-hand-student{{/if}}">
+    {{if value.status == 'UNSUBMITTED'}}
+    <li class="work-student-list work-unhand-student {{if value.overtime == true}}work-overtime-student{{/if}}">
+    {{else if value.status == 'SUBMITTED'}}
+    <li class="work-student-list work-hand-student {{if value.overtime == true}}work-overtime-student{{/if}}">
+    {{else if value.status == 'MARKED'}}
+    <li class="work-student-list work-remark-student {{if value.overtime == true}}work-overtime-student{{/if}}">
+    {{else}}
+    <li class="work-student-list work-unhand-student">
+    {{/if}}
         <div>
             <p>{{value.title}}</p>
             <p>{{value.studentName}}</p>
@@ -767,6 +775,22 @@
         <label>作业说明</label>
         <label>{{workdata.hwDesc}}</label>
     </div>
+    <div class="hand-in-markstand">
+        <label>评分标准</label>
+        {{if workdata.markType == 'HUNDRED'}}
+        <label>百分制</label>
+        {{else if workdata.markType == 'TEN'}}
+        <label>十分制</label>
+        {{else if workdata.markType == 'FIVE'}}
+        <label>五分制</label>
+        {{else if workdata.markType == 'CHAR_LEVEL'}}
+        <label>ABCDE等级制</label>
+        {{else if workdata.markType == 'CHINESE_LEVEL'}}
+        <label>优秀、良好、一般、差等级制</label>
+        {{else}}
+        <label>合格、不合格等级制</label>
+        {{/if}}
+    </div>
     <div class="hand-in-create">
         <label>作业发布时间</label>
         <label>{{workdata.createDate}}</label>
@@ -791,7 +815,7 @@
 <script type="text/template" id="work-feedback-html">
     <div class="work-feedback-score">
         <label>作业得分</label>
-        <label>100</label>
+        <label>{{workdata.mark}}</label>
     </div>
     <div class="work-feedback-comment">
         <label>教师评语</label>

@@ -304,17 +304,17 @@ define(function(require, exports, module) {
         },
         addStudentDlg: function (e) {
             console.log('添加学生');
-            var that = this,
-                ctId = $(e.currentTarget).attr('data-ctId'),
-                addstumodel = new TypeModel,
-                addstuview = new AddStuView({
-                    model: addstumodel
+            var ctId = $(e.currentTarget).attr('data-ctId');
+            this.addstumodel = this.addstumodel || new TypeModel;
+            this.addstuview = this.addstuview || new AddStuView({
+                    model: this.addstumodel
                 });
-            addstumodel.set({
+            this.addstumodel.set({
                 ctId: ctId,
                 op: 'add-student',
                 $wrap: $('#dialog-wrap')
             });
+            !this.addstumodel.changedAttributes() && this.addstuview.render();
         },
         // 教师查看单个学生该课程的所有作业
         checkStuWork: function (e) {
@@ -324,8 +324,8 @@ define(function(require, exports, module) {
                 sId = $cur.attr('data-sId'),
                 $wrap2 = that.model.attributes.$wrap3.parent().next().children('.student-list-wrap'),
                 loadtip = new LoadTipView($wrap2);
-            this.worklistmodel = new TypeModel;
-            this.worklistview = new StuManageWorkListView({
+            this.worklistmodel = this.worklistmodel || new TypeModel;
+            this.worklistview = this.worklistview || new StuManageWorkListView({
                 model: this.worklistmodel
             });
             this.model.attributes.$wrap3.parent().parent().replaceClass('hw-content-wrap-3', 'hw-content-wrap-2')
@@ -338,20 +338,14 @@ define(function(require, exports, module) {
                     checkSession(data.status);
                     console.log('该学生的课程作业', data);
                     that.worklistmodel.set({
-                        worklist: data.data,
+                        worklist: data,
                         view_type: 'stumanage',
                         $wrap2: $wrap2
                     });
+                    !that.worklistmodel.changedAttributes() && that.worklistview.render();
                     loadtip = null;
                 }
             });
-//            worklistmodel.set({
-//                worklist: [{
-//                    title: '计算机组成原理第一次作业',
-//                    deadline: '2014nian1'
-//                }],
-//                $wrap2: that.model.attributes.$wrap3.parent().next().children('.student-list-wrap')
-//            });
         }
     });
 
@@ -506,8 +500,8 @@ define(function(require, exports, module) {
                 $wrap2 = $section1.next().children('.work-list-wrap'),
                 loadtip = new LoadTipView($wrap2);
             var id = $(e.currentTarget).attr('data-id');
-            this.workmodel = new TypeModel();
-            this.workview = new hwManageWorkListView({model: this.workmodel});
+            this.workmodel = this.workmodel || new TypeModel();
+            this.workview = this.workview || new hwManageWorkListView({model: this.workmodel});
             that.workmodel.sync('read', that.workview, {
                 url: servicepath + 'homework/homeworkInfoList',
                 data: {cid: id},
@@ -520,6 +514,7 @@ define(function(require, exports, module) {
                         cid: id, // 授课关系id
                         $wrap2: $wrap2
                     });
+                    !that.workmodel.changedAttributes() && that.workview.render();
                     loadtip = null;
                 }
             });
@@ -555,6 +550,7 @@ define(function(require, exports, module) {
                         studentlist: data.data,
                         $wrap3: $wrap3
                     });
+                    !that.stulistmodel.changedAttributes() && that.stulistview.render();
                     loadtip = null;
                 }
             });
