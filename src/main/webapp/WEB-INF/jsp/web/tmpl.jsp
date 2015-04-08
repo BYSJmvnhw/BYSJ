@@ -672,7 +672,7 @@
 <script type="text/template" id="auth-code">
     <div class="auth-code-sure-text" role="tip">
         <p>系统检测到您的邮箱账号尚未验证，【验证码】已经发送到您邮箱<p>
-        <p><a href="{{mail_url}}">点此登陆邮箱{{mail}}</a></p>
+        <p><a href="{{mail_url}}" target="_blank">点此登陆邮箱{{mail}}</a></p>
         <div class="auth-code">
             <label>填写邮箱验证码</label>
             <input type="text" name="mail"/>

@@ -617,6 +617,12 @@ define(function(require, exports, module) {
             'click .cs-mail-clear': 'clear',
             'click .cs-mail-sure': 'submitMail'
         },
+        mail_urls: {
+            sohu: 'http://mail.sohu.com/',
+            sina: 'http://mail.sina.com.cn/',
+            qq: 'https://mail.qq.com/cgi-bin/loginpage',
+            163: 'http://mail.163.com/'
+        },
         initialize: function () {
             this.listenTo(this.model, "change", this.render);
         },
@@ -679,7 +685,7 @@ define(function(require, exports, module) {
             this.authcodemodel.set({
                 op: 'auth-code',
                 mail: mail,
-                mail_url: '',
+                mail_url: that.mail_urls[mail.replace(/([a-zA-Z0-9_-])+@(sian|sohu|qq|163)((\.[a-zA-Z0-9_-]{2,3}){1,2})$/, '$2')],
                 getAuthcodeAgin: function () {
                     that.sendAuthcode(mail, ctId);
                 },
