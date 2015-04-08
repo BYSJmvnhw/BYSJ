@@ -676,7 +676,7 @@
         <div class="auth-code">
             <label>填写邮箱验证码</label>
             <input type="text" name="mail"/>
-            <button class="auth-code-send-btn">重发(60)</button>
+            <button class="auth-code-send-btn">重发</button>
         </div>
     </div>
     <div class="auth-code-sure-btn">

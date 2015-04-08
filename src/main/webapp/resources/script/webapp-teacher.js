@@ -267,14 +267,45 @@ define(function(require, exports, module) {
     var AuthcodeView = DialogView.extend({
         events: {
             'click .dailog-clear': 'closeDialog', // 关闭提交窗口
+            'click .auth-code-send-btn': 'getAuthcodeAgin', // 重新发送验证码
             'click .auth-code-sure-btn1': 'closeDialog', // 关闭提交窗口
             'click .auth-code-sure-btn2': 'submitAuthcode' // 提交验证码
+        },
+        render: function () {
+            var ele = tmpl(this.tmpl_id, this.model.toJSON());
+            $(this.el).html(ele);
+            this.$wrap.html(this.el);
+            this.$el.show();
+            this.delegateEvents(this.events);
+            this.setWaitTime(); // 验证码倒计时开始
+        },
+        setWaitTime: function () {
+            var count = 60,
+                $btn = this.$el.find('.auth-code-send-btn'),
+                at = setInterval(function () {
+                if(count == 0){
+                    clearInterval(at);
+                    $btn.addClass('auth-code-sendagin-btn');
+                    $btn.text('重发');
+                }
+                else {
+                    $btn.text('重发(' + count -- + ')');
+                }
+            }, 1000);
         },
         submitAuthcode: function () {
             var code = this.$el.find('input');
             if(!checkInput('authcode', code.val())){this.$el.find('input').focus();return;}
             if(this.model.attributes.submitAuthcode(code.val())){
                 this.closeDialog();
+            }
+        },
+        getAuthcodeAgin: function (e) {
+            var $cur = $(e.currentTarget);
+            if($cur.hasClass('auth-code-sendagin-btn')){
+                this.model.attributes.getAuthcodeAgin();
+                $cur.removeClass('auth-code-sendagin-btn');
+                this.setWaitTime(); // 开始计时
             }
         }
     });
@@ -640,14 +671,18 @@ define(function(require, exports, module) {
             }
         },
         sendAuthcode: function (mail, ctId) {
-            this.authcodemodel =  new TypeModel;
-            this.authcodeview = new AuthcodeView({
+            var that = this;
+            this.authcodemodel =  this.authcodemodel ||new TypeModel;
+            this.authcodeview = this.authcodeview|| new AuthcodeView({
                 model: this.authcodemodel
             });
             this.authcodemodel.set({
                 op: 'auth-code',
                 mail: mail,
                 mail_url: '',
+                getAuthcodeAgin: function () {
+                    that.sendAuthcode(mail, ctId);
+                },
                 submitAuthcode: function (auth_code) {
                     $.ajax({
                         type: 'post',
@@ -658,8 +693,7 @@ define(function(require, exports, module) {
                             checkSession(data.status);
                             console.log('更改课程邮箱', data);
                             if(data.status == 'success'){
-                                $el.html(mail);
-                                return true;
+                                that.$el.html(mail);
                             }
                             else {
                                 alert("操作失败");
@@ -667,9 +701,9 @@ define(function(require, exports, module) {
                         }
                     });
                 },
-                $wrap: $('#dialog-wrap'),
-                rand: Math.random()
+                $wrap: $('#dialog-wrap')
             });
+            !this.authcodemodel.changedAttributes() && this.authcodeview.render();
         }
     });
 

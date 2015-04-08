@@ -1514,6 +1514,16 @@ span.dailog-clear:after {
     outline: none;
 }
 
+.auth-code-sendagin-btn {
+    background-color: #5CB85C;
+    border: 1px solid #4CAE4C;
+}
+
+.auth-code-sendagin-btn:hover {
+    background-color: #449d44;
+    border-color: #398439;
+}
+
 .delete-sure-btn, .auth-code-sure-btn {
     text-align: right;
 }
