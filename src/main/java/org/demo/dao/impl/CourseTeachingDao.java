@@ -73,4 +73,23 @@ public class CourseTeachingDao extends BaseDao<HwCourseTeaching> implements ICou
         }
         return findPage(hql.toString(), params.toArray(), str, 20);
     }
+
+    @Override
+    public List<HwCourseTeaching> courseTeachingList(Integer courseId,Integer startYear, Integer schoolTerm) {
+        String hql = "from HwCourseTeaching ct where " +
+                "ct.hwCourse.id = ? " +
+                "and ct.startYear = ? " +
+                "and ct.schoolTerm = ?";
+        return list(hql, new Object[]{courseId, startYear, schoolTerm});
+    }
+
+    @Override
+    public HwCourseTeaching findCourseTeaching(Integer courseId, Integer teacherId, Integer startYear, Integer schoolYear) {
+        String hql = "from HwCourseTeaching ct where " +
+                "ct.hwCourse.id = ? " +
+                "and ct.hwTeacher.id = ? " +
+                "and ct.startYear = ? " +
+                "and ct.schoolTerm = ? ";
+        return findObject(hql, new Object[]{courseId, teacherId, startYear, schoolYear});
+    }
 }

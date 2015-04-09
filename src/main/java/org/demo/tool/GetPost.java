@@ -16,7 +16,7 @@ public class GetPost {
     private static final String popPostSina = "pop.sina.com";
     private static final String popPostSohu = "pop.sohu.com";
     public static String getSmptPost(String email) {
-        if(Pattern.matches("\\w+@163.com",email)) {
+        if(Pattern.matches("\\w[.]\\w+@163.com",email)) {
             return smptPost163;
         }
         if(Pattern.matches("\\w+@qq.com",email)) {

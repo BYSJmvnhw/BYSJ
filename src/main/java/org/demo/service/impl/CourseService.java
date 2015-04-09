@@ -33,6 +33,8 @@ public class CourseService implements ICourseService {
     private String systemEmailPass;
     private ICampusDao campusDao;
     private IMajorDao majorDao;
+    private ICourseSelectingDao courseSelectingDao;
+    private IStudentDao studentDao;
 
     @Override
     public HwCourse load(Integer cid) {
@@ -81,6 +83,7 @@ public class CourseService implements ICourseService {
         courseDao.update(course);
     }
 
+    //查询某教师任教所有课程课程名和邮箱列表
     @Override
     public List<Map<String,Object>> emailList(Integer startYear, Integer schoolTerm, HwUser user) {
         HwTeacher teacher = teacherDao.load(user.getTypeId());
@@ -97,15 +100,17 @@ public class CourseService implements ICourseService {
         return emailList;
     }
 
+    //未验证的邮箱获取验证码
+    // 已经验证的邮箱更新邮箱和密码
     @Override
-    public JSONObject updateEmail(String email,Integer ctId) {
+    public JSONObject updateEmail(String email, String password, Integer ctId) {
         JSONObject jsonresult = new JSONObject();
         jsonresult.clear();
         String smptPost = GetPost.getSmptPost(email);
         System.out.println(email);
         if( smptPost == null || smptPost.equals("")) {
-            jsonresult.put("status","fail");
-            jsonresult.put("msg","邮箱格式不合法");
+            jsonresult.put("status","illegal_email");
+           // jsonresult.put("msg","邮箱格式不合法");
             return jsonresult;
         }
         HwCheckEmail checkEmail = checkEmailDao.findObject("from HwCheckEmail ce where ce.email=?",email);
@@ -121,7 +126,7 @@ public class CourseService implements ICourseService {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            jsonresult.put("status","no validated");
+            jsonresult.put("status","no_validated");
             //jsonresult.put("msg","");
             return jsonresult;
         }else { //邮箱存在
@@ -135,7 +140,7 @@ public class CourseService implements ICourseService {
                     e.printStackTrace();
                 }
                 //
-                jsonresult.put("status","no validated");
+                jsonresult.put("status","no_validated");
                 //jsonresult.put("msg","该邮箱未验证，验证码已发送到此邮箱");
                 return jsonresult;
             }else {
@@ -144,6 +149,7 @@ public class CourseService implements ICourseService {
                     HwCourseTeaching ct = courseTeachingDao.load(ctId);
                     System.out.println(ct.getEmail());
                     ct.setEmail(email);
+                    ct.setPassword(password);
                     courseTeachingDao.update(ct);
                     jsonresult.put("status", "success");
                     return jsonresult;
@@ -156,8 +162,9 @@ public class CourseService implements ICourseService {
         }
     }
 
+    //使用验证码更新邮箱和密码
     @Override
-    public JSONObject updateAndcheckEmail(Integer ctId, String email, String checkNumber) {
+    public JSONObject updateAndcheckEmail(Integer ctId, String email, String password,  String checkNumber) {
         JSONObject jsonresult = new JSONObject();
         jsonresult.clear();
         String[] params = {email,checkNumber};
@@ -167,15 +174,17 @@ public class CourseService implements ICourseService {
             checkEmailDao.update(checkEmail);
             HwCourseTeaching ct = courseTeachingDao.get(ctId);
             ct.setEmail(email);
+            ct.setPassword(password);
             courseTeachingDao.update(ct);
             jsonresult.put("status","success");
             return jsonresult;
         }else {
-            jsonresult.put("status","fail");
+            jsonresult.put("status","verification_code_error");
             return jsonresult;
         }
     }
 
+    //搜索课程
     @Override
     public Page searchCourse(Integer campusId, Integer collegeId, Integer majorId,  String courseNo, String courseName) {
         Page<HwCourse> coursePage = courseDao.coursePage(campusId, collegeId, majorId, courseNo, courseName);
@@ -195,6 +204,7 @@ public class CourseService implements ICourseService {
         return coursePage;
     }
 
+    //搜索授课关系
     @Override
     public Page searchCourseTeaching(Integer campusId, Integer collegeId, Integer majorId,
                                      Integer startYear, Integer schoolTerm, String courseName, String teacherName) {
@@ -218,6 +228,7 @@ public class CourseService implements ICourseService {
         return courseTeachingPage;
     }
 
+    //添加课程
     @Override
     public JSONObject addCourse(Integer campusId, Integer collegeId, Integer majorId, String courseNo, String courseName) {
         JSONObject result = new JSONObject();
@@ -247,6 +258,144 @@ public class CourseService implements ICourseService {
             result.clear();
             result.put("status","success");
             return result;
+        }
+    }
+
+    //标记删除课程
+    @Override
+    public void deleteCourse(Integer courseId) {
+        HwCourse course = courseDao.load(courseId);
+        course.setDeleteFlag(true);
+        courseDao.update(course);
+    }
+
+    //更新课程
+    @Override
+    public void updateCourse(Integer courseId,Integer campusId, Integer collegeId, Integer majorId, String courseName) {
+        HwCourse course = courseDao.load(courseId);
+        course.setHwCampus(campusDao.load(campusId));
+        course.setHwCollege(collegeDao.load(collegeId));
+        course.setHwMajor(majorDao.load(majorId));
+        course.setCourseName(courseName);
+        courseDao.update(course);
+    }
+
+    //查询授课关系列表
+    @Override
+    public List<Map<String, Object>> courseTeachingList(Integer courseId,Integer startYear, Integer schoolTerm) {
+        List<HwCourseTeaching> ctList = courseTeachingDao.courseTeachingList(courseId, startYear, schoolTerm);
+        List<Map<String, Object>> teacherViewList = new ArrayList<Map<String, Object>>();
+        for( HwCourseTeaching ct : ctList ){
+            HwTeacher teacher = ct.getHwTeacher();
+            Map<String,Object> teacherView = new HashMap<String, Object>();
+            teacherView.put("teacherId",teacher.getId());
+            teacherView.put("campusName",teacher.getHwCampus().getName());
+            teacherView.put("collegeName",teacher.getHwCollege().getCollegeName());
+            teacherView.put("majorName",teacher.getHwMajor().getName());
+            teacherView.put("teacherNo",teacher.getTeacherNo());
+            teacherView.put("name",teacher.getName());
+            teacherView.put("id",teacher.getSex());
+            teacherViewList.add(teacherView);
+        }
+        return teacherViewList;
+    }
+
+    //添加授课关系
+    @Override
+    public void addCourseTeaching(Integer courseId, Integer[] teacherId,Integer startYear, Integer schoolTerm) {
+        HwCourse course = courseDao.load(courseId);
+        for( Integer tid : teacherId ){
+            HwCourseTeaching ct = courseTeachingDao.findCourseTeaching(courseId, tid, startYear, schoolTerm);
+            if( ct == null ){
+                HwCourseTeaching courseTeaching = new HwCourseTeaching();
+                courseTeaching.setEmail("");
+                courseTeaching.setPassword("");
+                courseTeaching.setSchoolTerm(schoolTerm);
+                courseTeaching.setStartYear(startYear);
+                courseTeaching.setHwCourse(course);
+                courseTeaching.setHwTeacher(teacherDao.load(tid));
+                courseTeachingDao.add(courseTeaching);
+            }
+        }
+    }
+
+    //查询课程列表
+    @Override
+    public List<Map<String,Object>> courseList(Integer studentId, Integer startYear, Integer schoolTerm) {
+        List<HwCourseSelecting> csList = courseSelectingDao.courseSelectingList(studentId, startYear, schoolTerm);
+        List<Map<String,Object>> courseViewList = new ArrayList<Map<String, Object>>();
+        for( HwCourseSelecting cs : csList ){
+            Map<String, Object> courseView = new HashMap<String, Object>();
+            HwCourse course = cs.getHwCourseTeaching().getHwCourse();
+            courseView.put("courseId",course.getId());
+            courseView.put("courseNo",course.getCourseNo());
+            courseView.put("courseName",course.getCourseName());
+            courseView.put("campusName",course.getHwCampus().getName());
+            courseView.put("collegeName",course.getHwCollege().getCollegeName());
+            courseView.put("majorName",course.getHwMajor().getName());
+            courseViewList.add(courseView);
+        }
+        return courseViewList;
+    }
+
+    //查询学生列表
+    @Override
+    public Page<Map<String, Object>> studentList(Integer courseId, Integer startYear, Integer schoolTerm,String teacherNo, String teacherName) {
+        Page<HwCourseSelecting> csPage = courseSelectingDao.courseSelectingList(courseId, startYear, schoolTerm, teacherNo, teacherName);
+        List<HwCourseSelecting> csList = csPage.getData();
+        List<Map<String,Object>> studentViewList = new ArrayList<Map<String, Object>>();
+        for( HwCourseSelecting cs : csList  ){
+            HwStudent student = cs.getHwStudent();
+            Map<String,Object> studentView = new HashMap<String, Object>();
+            studentView.put("studentId",student.getId());
+            studentView.put("campusName",student.getHwCampus().getName());
+            studentView.put("collegeName",student.getHwCollege().getCollegeName());
+            studentView.put("majorName",student.getHwMajor().getName());
+            studentView.put("grade",student.getGrade());
+            studentView.put("cla",student.getClass_());
+            studentView.put("studentName",student.getName());
+            studentView.put("studentNo",student.getStudentNo());
+            studentView.put("sex",student.getSex());
+            studentViewList.add(studentView);
+        }
+        Page page = new Page();
+        page.setData(studentViewList);
+        page.setPageOffset(csPage.getPageOffset());
+        page.setPageSize(csPage.getPageSize());
+        page.setTotalRecord(csPage.getTotalRecord());
+        return page;
+    }
+
+    //搜索授课关系
+    @Override
+    public List<Map<String,Object>> searchCourseTeaching(Integer courseId, Integer startYear, Integer schoolTerm) {
+        List<HwCourseTeaching> ctList = courseTeachingDao.courseTeachingList(courseId, startYear, schoolTerm);
+        List<Map<String,Object>> ctViewList = new ArrayList<Map<String, Object>>();
+        for( HwCourseTeaching ct : ctList ){
+            Map<String,Object> ctView = new HashMap<String, Object>();
+            ctView.put("ctId",ct.getId());
+            ctView.put("courseName",ct.getHwCourse().getCourseName());
+            ctView.put("teacherName",ct.getHwTeacher().getName());
+            ctView.put("startYear",ct.getStartYear());
+            ctView.put("schoolTerm",ct.getSchoolTerm());
+            ctViewList.add(ctView);
+        }
+        return ctViewList;
+    }
+
+    //添加选课关系
+    @Override
+    public void addCourseSelecting(Integer studentId, Integer[] courseTeachingId) {
+        HwStudent student = studentDao.load(studentId);
+        for( Integer ctid : courseTeachingId ){
+            HwCourseTeaching courseTeaching = courseTeachingDao.load(ctid);
+            HwCourseSelecting cs = courseSelectingDao.findCSByCTAndStudent(courseTeaching, student);
+            if( cs == null  ){
+                HwCourseSelecting courseSelecting = new HwCourseSelecting();
+                courseSelecting.setHwCourseTeaching(courseTeaching);
+                courseSelecting.setHwStudent(student);
+                courseSelectingDao.add(courseSelecting);
+            }
         }
     }
 
@@ -305,5 +454,23 @@ public class CourseService implements ICourseService {
     @Resource
     public void setMajorDao(IMajorDao majorDao) {
         this.majorDao = majorDao;
+    }
+
+    public ICourseSelectingDao getCourseSelectingDao() {
+        return courseSelectingDao;
+    }
+
+    @Resource
+    public void setCourseSelectingDao(ICourseSelectingDao courseSelectingDao) {
+        this.courseSelectingDao = courseSelectingDao;
+    }
+
+    public IStudentDao getStudentDao() {
+        return studentDao;
+    }
+
+    @Resource
+    public void setStudentDao(IStudentDao studentDao) {
+        this.studentDao = studentDao;
     }
 }
