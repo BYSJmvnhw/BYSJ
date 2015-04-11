@@ -663,11 +663,17 @@
     <!--</div>-->
 </script>
 <script type="text/template" id="delete-sure">
-    <p class="delete-sure-text" role="tip">确定删除这个作业吗？<span>（删除后不可恢复）</span></p>
+    <p class="delete-sure-text" role="tip">
+        确定删除这个作业吗？删除后如果该有学生提交，那么所有学生的作业都将被删除！
+        <span>（删除后不可恢复）</span>
+    </p>
     <div class="delete-sure-btn">
         <button class="delete-sure-btn1">确定</button>
         <button class="delete-sure-btn2">取消</button>
     </div>
+</script>
+<script type="text/template" id="mail-incorrect">
+
 </script>
 <script type="text/template" id="auth-code">
     <div class="auth-code-sure-text" role="tip">

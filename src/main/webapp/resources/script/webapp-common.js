@@ -35,9 +35,9 @@ define(function(require, exports, module) {
     function checkInput (type, value) {
         var reg = {
 //            mail: /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/,
-            mail: /^([a-zA-Z0-9_-])+@(sian|sohu|qq|163)((\.[a-zA-Z0-9_-]{2,3}){1,2})$/,
+            mail: /^([a-zA-Z0-9_-])+@(sina|sohu|qq|163)((\.[a-zA-Z0-9_-]{2,3}){1,2})$/,
             chinese: /^[\u4e00-\u9fa5]+$/,
-            authcode: /^[0-9]{11,11}$/,
+            authcode: /^[0-9]{13,13}$/,
             pw: /^([0-9]|[A-z]|\W){3,}$/, // 密码输入框，至少8位
             empty: /^$/
         };

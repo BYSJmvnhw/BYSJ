@@ -294,11 +294,13 @@ define(function(require, exports, module) {
             }, 1000);
         },
         submitAuthcode: function () {
-            var code = this.$el.find('input');
+            var that = this,
+                code = this.$el.find('input');
+            console.log(code.val());
             if(!checkInput('authcode', code.val())){this.$el.find('input').focus();return;}
-            if(this.model.attributes.submitAuthcode(code.val())){
-                this.closeDialog();
-            }
+            this.model.attributes.submitAuthcode(code.val(), function () {
+                that.closeDialog();
+            });
         },
         getAuthcodeAgin: function (e) {
             var $cur = $(e.currentTarget);
@@ -432,12 +434,12 @@ define(function(require, exports, module) {
         },
         addWork: function (e) {
             var that = this,
-                csname = $(e.currentTarget).attr('data-csname'),
-                addworkmodel = new TypeModel,
-                addworkview = new AddWorkView({
-                    model: addworkmodel
+                csname = $(e.currentTarget).attr('data-csname');
+            this.addworkmodel = this.addworkmodel || new TypeModel;
+            this.addworkview = this.addworkview || new AddWorkView({
+                    model: this.addworkmodel
                 });
-            addworkmodel.set({
+            that.addworkmodel.set({
                 op: 'add-work',
                 cid: that.model.attributes.cid,
                 csname: csname,
@@ -458,19 +460,18 @@ define(function(require, exports, module) {
         // 教师删除作业
         deleteWork: function (e) {
             console.log('删除作业');
-            var that = this,
-                $p = $(e.currentTarget).parent(),
-                hwInfoId = $p.attr('data-hwinfoid'),
-                dialogmodel = new TypeModel(),
-                dialogview = new DeleteWorkView({
-                    model: dialogmodel
+            var $p = $(e.currentTarget).parent(),
+                hwInfoId = $p.attr('data-hwinfoid');
+            this.dialogmodel = this.dialogmodel || new TypeModel();
+            this.dialogview = this.dialogview || new DeleteWorkView({
+                    model: this.dialogmodel
                 });
-            dialogmodel.set({
+            this.dialogmodel.set({
                 op: 'delete-sure',
                 hwInfoId: hwInfoId,
-                $workli: $p.parent(),
-                $wrap: $('#dialog-wrap')
+                $workli: $p.parent()
             });
+            !this.dialogmodel.changedAttributes() && this.dialogview.render();
         },
         getStudentData: function (hwInfoId, submited) {
             var that = this,
@@ -689,7 +690,8 @@ define(function(require, exports, module) {
                 getAuthcodeAgin: function () {
                     that.sendAuthcode(mail, ctId);
                 },
-                submitAuthcode: function (auth_code) {
+                submitAuthcode: function (auth_code, fun) {
+                    console.log(auth_code);
                     $.ajax({
                         type: 'post',
                         url: servicepath + 'course/checkEmail',
@@ -700,6 +702,10 @@ define(function(require, exports, module) {
                             console.log('更改课程邮箱', data);
                             if(data.status == 'success'){
                                 that.$el.html(mail);
+                                fun();
+                            }
+                            else if (data.status == 'verification_code_error'){
+                                alert('验证码错误！请重试！');
                             }
                             else {
                                 alert("操作失败");
