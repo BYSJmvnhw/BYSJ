@@ -18,15 +18,9 @@ import java.util.Map;
  * Created by peifeng on 2015/3/15.
  */
 @Controller
+@RequestMapping("/manager")
 public class ManagerController {
 
-    private JSONObject jsonresult;
-
-    private ITeacherService teacherService;
-    @Resource
-    public void setTeacherService(ITeacherService teacherService) {
-        this.teacherService = teacherService;
-    }
     private ICampusService campusService;
     @Resource
     public void setCampusService(ICampusService campusService) {
@@ -48,76 +42,6 @@ public class ManagerController {
         this.courseService = courseService;
     }
 
-
-    /*
-     * 教师管理
-     * peifeng
-     * 2015-3-15～16
-     */
-    //增添教师用户
-    @RequestMapping(value="/addTeacher")
-    @ResponseBody
-    public JSONObject addTeacher(int collegeId,int majorId,String teacherNo,String trueName,String sex,String mobile,String email,HttpServletRequest request) {
-        jsonresult = new JSONObject();
-        jsonresult.clear();
-        if(collegeId == 0 || majorId == 0 || teacherNo == null || teacherNo.isEmpty() || trueName == null || trueName.isEmpty()){
-            jsonresult.put("isSuccess",false);jsonresult.put("message","信息不全");
-            return jsonresult;
-        }
-        HwUser loginUser = (HwUser)request.getSession().getAttribute("loginUser");
-        if(loginUser == null) {
-            jsonresult.put("isSuccess",false);jsonresult.put("message","没有登录");
-            return jsonresult;
-        }
-        int createId = loginUser.getId();
-        String createName = loginUser.getTrueName();
-        boolean result = teacherService.addTeacher(collegeId, majorId, teacherNo, trueName, sex, mobile, email, createId, createName);
-        if(result == true) {
-            jsonresult.put("isSuccess",result);jsonresult.put("message","添加成功");
-        }else {
-            jsonresult.put("isSuccess",result);jsonresult.put("message","添加失败");
-        }
-        return jsonresult;
-    }
-    //删除教师用户
-    //分页查询教师用户（不分学院与专业）
-    @RequestMapping(value="/getTeachers")
-    @ResponseBody
-    public Page<ViewTeacher> getTeachers() {
-        Page<ViewTeacher> teacherList = teacherService.findTeacherList();
-        return teacherList;
-    }
-    //修改教师用户
-    @RequestMapping(value="/updateTeacher")
-    @ResponseBody
-    public JSONObject updateTeacher(int collegeId,int majorId,int userId,int teacherId,String trueName,String sex,String email) {
-        jsonresult = new JSONObject();
-        if(collegeId == 0 || majorId == 0 || userId == 0 || teacherId == 0 || trueName == null || trueName.isEmpty()){
-            jsonresult.put("isSuccess",false);jsonresult.put("message","信息不全");
-            return jsonresult;
-        }
-        boolean result = teacherService.updateTeacher(collegeId, majorId, userId, teacherId, trueName, sex, email);
-        if(result == true) {
-            jsonresult.put("isSuccess",result);jsonresult.put("message","修改成功");
-        }else {
-            jsonresult.put("isSuccess",result);jsonresult.put("message","修改失败");
-        }
-        return jsonresult;
-    }
-    //分页查询教师用户（按学院）
-    @RequestMapping(value="/getTeachersByCollege")
-    @ResponseBody
-    public Page<ViewTeacher> getTeachersByCollege(Integer collegeId) {
-        Page<ViewTeacher> teachers = teacherService.findTeacherByCollege(collegeId);
-        return teachers;
-    }
-    //分页查询教师用户（按专业）
-    @RequestMapping(value="/getTeachersByMajor")
-    @ResponseBody
-    public Page<ViewTeacher> getTeachersByMajor(Integer majorId) {
-        Page<ViewTeacher> teachers = teacherService.findTeacherByMajor(majorId);
-        return teachers;
-    }
     /*
      *课程管理
      * peieng
