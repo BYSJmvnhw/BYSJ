@@ -1,0 +1,17 @@
+
+.t-hover {
+    transition: background-color 500ms;
+}
+
+.t-hover:before {
+    transition: border-bottom-color 500ms;
+}
+
+.login-div {
+    opacity: 1;
+    transition: opacity 1s;
+}
+
+.login-div-hide {
+    opacity: 0;
+}

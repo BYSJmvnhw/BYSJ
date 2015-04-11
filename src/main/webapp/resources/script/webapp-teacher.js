@@ -295,10 +295,10 @@ define(function(require, exports, module) {
         },
         submitAuthcode: function () {
             var that = this,
-                code = this.$el.find('input');
-            console.log(code.val());
-            if(!checkInput('authcode', code.val())){this.$el.find('input').focus();return;}
-            this.model.attributes.submitAuthcode(code.val(), function () {
+                $code = this.$el.find('input');
+            console.log($code.val());
+            if(!checkInput('authcode', $code.val())){this.$el.find('input').focus();return;}
+            this.model.attributes.submitAuthcode($code.val(), $code, function () {
                 that.closeDialog();
             });
         },
@@ -670,7 +670,7 @@ define(function(require, exports, module) {
                 alert('邮箱更改成功！');
                 $el.html(mail);
             }
-            else if(status == 'no validated'){
+            else if(status == 'no_validated'){
                 this.sendAuthcode(mail, ctId);
             }
             else {
@@ -690,7 +690,7 @@ define(function(require, exports, module) {
                 getAuthcodeAgin: function () {
                     that.sendAuthcode(mail, ctId);
                 },
-                submitAuthcode: function (auth_code, fun) {
+                submitAuthcode: function (auth_code, $code, fun) {
                     console.log(auth_code);
                     $.ajax({
                         type: 'post',
@@ -699,6 +699,10 @@ define(function(require, exports, module) {
                         dataType: 'json',
                         success: function (data) {
                             checkSession(data.status);
+                            if(data.status == 'verification_code_error'){
+                                alert('验证码错误！');
+                                $code.after('验证码错误！');
+                            }
                             console.log('更改课程邮箱', data);
                             if(data.status == 'success'){
                                 that.$el.html(mail);

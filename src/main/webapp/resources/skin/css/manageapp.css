@@ -1,0 +1,421 @@
+
+body, p, ul {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    color: #333;
+    /*min-width: 1000px;*/
+    font-family: "Helvetica Neue",Helvetica,Microsoft Yahei,Hiragino Sans GB,WenQuanYi Micro Hei,sans-serif;
+}
+
+ul {
+    list-style: none;
+}
+
+.box-style {
+    display: -webkit-box;
+    display: box;
+    display: -moz-box;
+    display: -ms-flexbox;
+}
+
+header {
+    width: 100vw;
+    min-width: 1000px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 40px;
+    height: 40px;
+    position: fixed;
+    top: 0;
+    background-color: #333;
+    z-index: 100;
+}
+
+header p {
+    color: #fff;
+}
+
+.h-logo {
+    display: block;
+    width: 73px;
+    height: 28px;
+    margin: 6px 10px;
+    background-image: url("../images/icon.png");
+    background-position: -21px -42px;
+    background-size: 94px 105px;
+    background-repeat: no-repeat;
+}
+
+.h-info {
+    position: absolute;
+    right: 0;
+}
+
+.h-info>a {
+    text-decoration: none;
+    color: #fff;
+    margin: 0 15px;
+}
+
+.h-info>a:hover {
+    text-decoration: underline;
+}
+
+.h-info>p {
+    margin: 0 15px;
+}
+
+.main-content {
+    position: absolute;
+    top: 60px;
+    width: calc(100vw - 40px);
+    min-width: 1000px;
+    margin: 0 20px;
+}
+
+.menu-bar ul {
+    list-style: none;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 40px;
+    margin-left: -10px;
+}
+
+.menu-bar ul li {
+    width: 100px;
+    text-align: center;
+    margin: 0 10px;
+    padding-bottom: 2px;
+    position: relative;
+    background-color: #eee;
+    cursor: pointer;
+}
+
+.menu-bar ul li:hover {
+    background-color: #adadad;
+    color: #fff;
+    z-index: 3;
+}
+
+.menu-bar ul li:hover:before {
+    border-bottom-color: #adadad;
+}
+
+.menu-bar ul li:before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -40px;
+    padding-bottom: 2px;
+    border-bottom: 42px #eee solid;
+    border-right: 40px transparent solid;
+    z-index: 1;
+}
+
+.menu-bar ul li.active-li {
+    background-color: #337ab7;
+    color: #fff;
+    z-index: 2;
+}
+
+.menu-bar ul li.active-li:before {
+    border-bottom-color: #337ab7;
+}
+
+.content {
+    /*height: 300px;*/
+    margin-top: -2px;
+    border: 2px #337ab7 solid;
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.content-wrap {
+    position: relative;
+    height: 100%;
+    margin-left: -2px;
+    width: calc(300vw - 120px);
+    transform: translateX(calc(40px - 100vw));
+}
+
+.content-wrap>section {
+    position: relative;
+    height: 100%;
+    width: calc(100vw - 40px);
+}
+
+.cs-manage {
+    padding: 10px 20px;
+}
+
+.cs-manage-search {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px #ccc solid;
+    line-height: 40px;
+    position: relative;
+}
+
+.cs-manage-search>div>label, .cs-manage-search>div>input,
+.cs-manage-search>div>select, .add-stu-search>div>label,
+.add-stu-search>div>select, .add-stu-search>div>input {
+    display: inline-block;
+    margin-right: 5px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.cs-manage-search>div>input:focus, .cs-manage-search>div>select:focus,
+.dialog-body>div>input:focus, .dialog-body>div>select:focus,
+.add-stu-search>div>input:focus, .add-stu-search>div>select:focus {
+    border-color: #009ee5;
+}
+
+.cs-manage-search>div>input, .cs-manage-search>div>select,
+.dialog-body>div>input, .dialog-body>div>select,
+.add-stu-search>div>input, .add-stu-search>div>select {
+    border: 1px #bababa solid;
+    font-size: 16px;
+    height: 26px;
+    padding-left: 4px;
+    margin-right: 25px;
+    vertical-align: middle;
+    outline: 0;
+    font-weight: normal;
+}
+
+.cs-manage-search>div>select, .dialog-body>div>select,
+.add-stu-search>div>select {
+    height: 30px;
+}
+
+.cs-manage-search>div>select {
+    text-align: center;
+}
+
+.cs-manage-search>div>input, .add-stu-search>div>input {
+    padding: 0 3px;
+    height: 28px;
+}
+
+.campus-id>select {
+    width: 120px;
+}
+
+.college-id>select {
+    width: 150px;
+}
+
+.cs-addnew>button, .cs-search-btn>button,
+.cs-manage-op>button, .add-cs-btn>button,
+.delete-btn>button, .add-stu-btn-add,
+.add-stu-search-btn>button {
+    color: white;
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 18px;
+    font-weight: bolder;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    position: relative;
+}
+
+.cs-addnew>button:hover, .cs-search-btn>button:hover,
+.add-cs-btn-sure:hover, .delete-btn-clear:hover,
+.add-stu-btn-add:hover, .add-stu-search-btn>button:hover {
+    background-color: #449d44;
+    border-color: #398439;
+}
+
+.cs-search-btn {
+
+}
+
+.cs-search-btn>button, .cs-addnew>button,
+.add-cs-btn-sure, .delete-btn-clear,
+.add-stu-btn-add, .add-stu-search-btn>button {
+    background-color: #5CB85C;
+    border: 1px solid #4CAE4C;
+}
+
+.cs-addnew {
+    position: absolute;
+    right: 0;
+}
+
+.cs-addnew>button, .add-stu-btn-add,
+.cs-search-btn>button, .add-stu-search-btn>button {
+    padding-left: 30px;
+    position: relative;
+}
+
+.cs-addnew>button:after, .cs-addnew>button:before,
+.add-stu-btn-add:after, .add-stu-btn-add:before{
+    content: '';
+    background-color: #fff;
+    position: absolute;
+    top: 50%;
+}
+
+.cs-addnew>button:after, .add-stu-btn-add:after {
+    width: 18px;
+    height: 4px;
+    margin-top: -4px;
+    left: 11px;
+}
+
+.cs-addnew>button:before, .add-stu-btn-add:before {
+    width: 4px;
+    height: 18px;
+    margin-top: -11px;
+    left: 18px;
+}
+
+.add-stu-search-btn>button:after, .add-stu-search-btn>button:before,
+.cs-search-btn>button:after, .cs-search-btn>button:before {
+    content: '';
+    background-color: #fff;
+    position: absolute;
+    top: 50%;
+}
+
+.add-stu-search-btn>button:after, .cs-search-btn>button:after {
+    left: 8px;
+    height: 10px;
+    width: 10px;
+    margin-top: -10px;
+    border: 3px #fff solid;
+    border-radius: 100%;
+    background-color: transparent;
+}
+
+.add-stu-search-btn>button:before, .cs-search-btn>button:before {
+    left: 18px;
+    top: 20px;
+    width: 12px;
+    height: 3px;
+    background-color: #fff;
+    transform: rotate(45deg);
+}
+
+.cs-manage-table {
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.cs-manage-table>thead>tr>th {
+    padding: 8px;
+    border-bottom: 2px solid #ddd;
+}
+
+.cs-manage-table>tbody>tr>td {
+    /* padding: 8px; */
+    padding: 0;
+    /* vertical-align: top; */
+    line-height: 40px;
+    border-top: 1px solid #ddd;
+}
+
+.cs-manage-table>tbody>tr:hover {
+    background-color: #f5f5f5;
+}
+
+.cs-manage-op {
+    width: 400px;
+}
+
+.cs-manage-op>button {
+    font-size: 16px;
+    padding: 4px;
+}
+
+.cs-manage-take, .cs-manage-give {
+    background-color: #5bc0de;
+    border: 1px #46b8da solid;
+}
+
+.cs-manage-take:hover, .cs-manage-give:hover {
+    background-color: #31b0d5;
+    border-color: #269abc;
+}
+
+.cs-manage-change {
+    background-color: #f0ad4e;
+    border: 1px #eea236 solid;
+}
+
+.cs-manage-change, .cs-manage-give, .cs-manage-take {
+    margin-right: 15px;
+}
+
+.cs-manage-change:hover {
+    background-color: #ec971f;
+    border-color: #d58512;
+}
+
+.cs-manage-delete, .add-cs-btn-clear,
+.delete-btn-sure {
+    background-color: #d9534f;
+    border: 1px #d43f3a solid;
+}
+
+.cs-manage-delete:hover, .add-cs-btn-clear:hover,
+.delete-btn-sure:hover {
+    background-color: #c9302c;
+    border-color: #ac2925;
+}
+
+.cs-manage-page, .take-stu-page {
+    text-align: right;
+}
+
+.cs-manage-page>button, .take-stu-page>button {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    color: #5A7AC3;
+    line-height: 25px;
+    border-radius: 4px;
+    bottom: 5px;
+    cursor: pointer;
+}
+
+.cs-manage-page>button:hover, .take-stu-page>button:hover {
+    background-color: #eee;
+}
+
+.pre-page {
+    margin-right: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+footer {
+    position: absolute;
+    bottom: 0;
+}

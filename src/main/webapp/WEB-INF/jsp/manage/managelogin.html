@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>登陆作业网后台管理系统</title>
+    <link rel="stylesheet" type="text/css" href="css/managelogin.css" >
+    <link rel="stylesheet" type="text/css" href="css/manage-t.css" >
+    <script src="lib/sea-2.3.0.js"></script>
+    <!--<script src="lib/JSXTransformer.js"></script>-->
+</head>
+<body>
+    <section id="login-part"></section>
+    <section id="manage-part"></section>
+    <!--<section class="l-up">-->
+        <!--<div class="l-up-txt">-->
+            <!--<div class="txt-img">-->
+                <!--<img src="images/logo.png">-->
+            <!--</div>-->
+            <!--<p>作业网后台管理平台</p>-->
+        <!--</div>-->
+    <!--</section>-->
+    <!--<section class="l-middle">-->
+        <!--<div class="l-input-wrap">-->
+            <!--<div class="l-m-tip">登陆</div>-->
+            <!--<div class="l-input">-->
+                <!--<div class="lg-name">-->
+                    <!--<input type="text" placeholder="请输入用户名"/>-->
+                <!--</div>-->
+                <!--<div class="lg-pw">-->
+                    <!--<input type="password" placeholder="请输入密码"/>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="l-login-btn">-->
+                <!--<button>登陆</button>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</section>-->
+    <!--<section class="l-down"></section>-->
+    <!--<script type="text/jsx" src="js/managelogin.js"></script>-->
+    <script type="text/javascript">
+        seajs.config({
+            paths: {
+                'script': './build',
+                'css': '/resources/skin/css'
+            },
+            alias: {
+                'backbone': 'backbone-min.js',
+                'React': 'react.min.js',
+                'JSXTransformer': 'JSXTransformer.js',
+                'login': 'script/managelogin.js',
+                'jquery': 'jquery-1.11.2.min.js'
+            }
+        });
+        seajs.use('login', function (login) {
+            login.loginManage();
+        });
+    </script>
+</body>
+</html>
