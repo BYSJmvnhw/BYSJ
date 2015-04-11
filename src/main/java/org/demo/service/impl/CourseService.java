@@ -292,6 +292,7 @@ public class CourseService implements ICourseService {
             teacherView.put("teacherNo",teacher.getTeacherNo());
             teacherView.put("name",teacher.getName());
             teacherView.put("id",teacher.getSex());
+            teacherView.put("ctId",ct.getId());
             teacherViewList.add(teacherView);
         }
         return teacherViewList;
@@ -399,6 +400,41 @@ public class CourseService implements ICourseService {
     @Override
     public void deleteCourseTeaching(Integer courseTeachingId) {
         courseTeachingDao.delete(courseTeachingDao.load(courseTeachingId));
+    }
+
+    @Override
+    public Page<Map<String,Object>> searchCourseTeaching(Integer campusId, Integer collegeId, Integer majorId, Integer startYear,
+                                     Integer schoolTerm, String teacherNo, String teacherName, String courseNo, String courseName) {
+        Page<HwCourseTeaching> ctPage = courseTeachingDao.courseTeachingPage(campusId, collegeId, majorId, startYear, schoolTerm,
+                teacherNo, teacherName, courseNo, courseName);
+        List<HwCourseTeaching> ctLsit = ctPage.getData();
+        List<Map<String,Object>> ctViewList = new ArrayList<Map<String, Object>>();
+        for( HwCourseTeaching ct : ctLsit ){
+            Map<String,Object> ctView = new HashMap<String, Object>();
+            ctView.put("ctId",ct.getId());
+            ctView.put("startYear",ct.getStartYear());
+            ctView.put("schoolTerm",ct.getSchoolTerm());
+            ctView.put("campusName",ct.getHwCourse().getHwCampus().getName());
+            ctView.put("collegeName",ct.getHwCourse().getHwCollege().getCollegeName());
+            ctView.put("majorName",ct.getHwCourse().getHwMajor().getName());
+            ctView.put("courseName",ct.getHwCourse().getCourseName());
+            ctView.put("courseNo",ct.getHwCourse().getCourseNo());
+            ctView.put("teacherNo",ct.getHwTeacher().getTeacherNo());
+            ctView.put("teacherName",ct.getHwTeacher().getName());
+            ctView.put("sex",ct.getHwTeacher().getSex());
+            ctViewList.add(ctView);
+        }
+        Page<Map<String,Object>> page  = new Page<Map<String,Object>>();
+        page.setData(ctViewList);
+        page.setPageOffset(ctPage.getPageOffset());
+        page.setPageSize(ctPage.getPageSize());
+        page.setTotalRecord(ctPage.getTotalRecord());
+        return page;
+    }
+
+    @Override
+    public void deleteCourseSelecting(Integer courseSelectingId) {
+        courseSelectingDao.delete(courseSelectingDao.load(courseSelectingId));
     }
 
 

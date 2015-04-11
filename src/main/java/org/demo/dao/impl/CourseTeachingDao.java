@@ -107,4 +107,52 @@ public class CourseTeachingDao extends BaseDao<HwCourseTeaching> implements ICou
         }
         return courses;
     }
+
+    @Override
+    public Page<HwCourseTeaching> courseTeachingPage(Integer campusId, Integer collegeId, Integer majorId, Integer startYear,
+                                                     Integer schoolTerm, String teacherNo, String teacherName, String courseNo, String courseName) {
+        StringBuilder hql = new StringBuilder("from HwCourseTeaching ct where 1=1 ");
+        List<Object> params  = new ArrayList<Object>();
+        List<String> stringList = new ArrayList<String>();
+        if( campusId != null ){
+            hql.append("and ct.hwCourse.hwCampus.id = ? ");
+            params.add(campusId);
+        }
+        if( collegeId != null ){
+            hql.append("and ct.hwCourse.hwCollege.id = ? ");
+            params.add(collegeId);
+        }
+        if( majorId != null ){
+            hql.append("and ct.hwCourse.hwMajor.id = ? ");
+            params.add(majorId);
+        }
+        if( startYear != null ){
+            hql.append("and ct.startYear = ? ");
+            params.add(startYear);
+        }
+        if( schoolTerm != null ){
+            hql.append("and ct.schoolTerm = ? ");
+            params.add(schoolTerm);
+        }
+        if( teacherNo != null && !teacherNo.equals("") ){
+            hql.append("and ct.hwTeacher.teacherNo like ? ");
+            stringList.add("%" + teacherNo + "%");
+        }if( teacherName != null && !teacherName.equals("") ){
+            hql.append("and ct.heTeacher.name like ? ");
+            stringList.add("%" + teacherName + "%");
+        }
+        if( courseNo !=  null && !courseNo.equals("") ){
+            hql.append("and ct.hwCourse.courseNo like ? ");
+            stringList.add("%" + courseNo + "%");
+        }
+        if( courseName != null && !courseName.equals("") ){
+            hql.append("and ct.hwCourse.Name like ? ");
+            stringList.add("%" + courseName + "%");
+        }
+        String[] str = new String[stringList.size()];
+        for(int i=0; i<str.length; i++) {
+            str[i] = stringList.get(i);
+        }
+        return findPage(hql.toString(), params.toArray(), str, 20);
+    }
 }

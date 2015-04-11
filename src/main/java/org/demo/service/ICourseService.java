@@ -51,4 +51,9 @@ public interface ICourseService {
     public void addCourseSelecting(Integer studentId, Integer[] courseTeachingId);
 
     public void deleteCourseTeaching(Integer courseTeachingId);
+
+    public Page<Map<String,Object>> searchCourseTeaching(Integer campusId, Integer collegeId, Integer majorId,
+                                     Integer startYear, Integer schoolTerm, String teacherNo, String teacherName, String courseNo, String courseName);
+
+    public void deleteCourseSelecting(Integer courseSelectingId);
 }

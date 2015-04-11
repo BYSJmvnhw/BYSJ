@@ -2,8 +2,10 @@ package org.demo.controller;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.demo.model.HwCourseTeaching;
 import org.demo.model.HwUser;
 import org.demo.service.ICourseService;
+import org.demo.tool.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +50,7 @@ public class CourseController {
      * @param password 邮箱密码
      * @return 成功{"status","success"} 失败{"status","fail"}
      */
-    @RequestMapping(value = "/updateEmail", method = RequestMethod.GET)
+    @RequestMapping(value = "/updateEmail", method = RequestMethod.POST)
     @ResponseBody
     public JSONObject updateEmail(Integer ctId, String email, String password) {
         try {
@@ -221,7 +223,32 @@ public class CourseController {
     //------------------------------------- 管理员学生部分 --------------------------------------------
 
 
-    //public Object courseTeachingList
+    /**
+     *
+     * @param campusId
+     * @param collegeId
+     * @param majorId
+     * @param startYear
+     * @param schoolTerm
+     * @param teacherNo
+     * @param teacherName
+     * @param courseNo
+     * @param courseName
+     * @return
+     */
+    @RequestMapping(value = "/courseTeachingList",method = RequestMethod.GET)
+    @ResponseBody
+    public Object courseTeachingList(Integer campusId, Integer collegeId, Integer majorId,
+            Integer startYear, Integer schoolTerm, String teacherNo, String teacherName, String courseNo, String courseName){
+        try {
+            return courseService.searchCourseTeaching(campusId, collegeId, majorId, startYear, schoolTerm,
+                    teacherNo, teacherName, courseNo, courseName);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
+
     /**
      * 根据课程id，学年，学期，可选的教师号和教师姓名查询选择该门课程、该教师的学生列表
      * @param courseId 课程id
@@ -236,6 +263,19 @@ public class CourseController {
     public Object studentList(Integer courseId, Integer startYear, Integer schoolTerm,String teacherNo, String teacherName){
         try{
             return courseService.studentList(courseId, startYear, schoolTerm,  teacherNo,  teacherName);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
+
+
+    @RequestMapping(value = "/deleteCourseSelecting",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject deleteCourseSelecting(Integer csId){
+        try {
+            courseService.deleteCourseSelecting(csId);
+            return getSuccessResultJsonObject();
         }catch (Exception e){
             e.printStackTrace();
             return getFailResultJsonObject();
@@ -266,7 +306,7 @@ public class CourseController {
      * @param ctId 任教关系数组
      * @return
      */
-    @RequestMapping(value = "/addCourseSelecting", method = RequestMethod.GET)
+    @RequestMapping(value = "/addCourseSelecting", method = RequestMethod.POST)
     @ResponseBody
     public JSONObject addCourseSelecting(Integer studentId, @RequestParam("ctId[]")Integer[] ctId) {
         try {

@@ -69,7 +69,8 @@ public class CollegeService implements ICollegeService{
     @Override
     public Map allCollege() {
         List<HwCampus> allCampus = campusDao.allCampus();
-        Map<Integer,List<Map<String ,Object>>> resultMap = new HashMap<Integer,List<Map<String, Object>>>();
+        Map<String,List<Map<String ,Object>>> resultMap = new HashMap<String,List<Map<String, Object>>>();
+        int i = 1;
         for( HwCampus campus : allCampus){
             List<HwCollege> collegeList = collegeDao.collegeList(campus);
             List<Map<String ,Object>> resultList = new ArrayList<Map<String ,Object>>();
@@ -79,7 +80,7 @@ public class CollegeService implements ICollegeService{
                 collegeView.put("collegeName", college.getCollegeName());
                 resultList.add(collegeView);
             }
-            resultMap.put(campus.getId(), resultList);
+            resultMap.put("campus" + String.valueOf( i++ ), resultList);
         }
         return resultMap;
     }
