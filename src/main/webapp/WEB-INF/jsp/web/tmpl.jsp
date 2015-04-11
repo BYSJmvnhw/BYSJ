@@ -95,7 +95,6 @@
     </nav>
     <header>
         <div class="bg">
-        <div id="info-b">
            <!--提示信息-->
         </div>
     </header>
@@ -152,16 +151,21 @@
     </footer>
 </script>
 
+<%--动态提示--%>
 <script type="text/template" id="info-tip-html">
     <!--<div class="info-b">-->
-        <span id="info-btn" class="info-btn"></span>
+        {{if (data.feedback + data.unsubmitted + data.recentHomework) > 0}}
+        <span id="info-btn" class="info-btn info-btn-tip"></span>
+        {{else}}
+        <span id="info-btn" class="info-btn info-btn-tip"></span>
+        {{/if}}
         <div id="info-tip" class="info-tip">
             <div></div>
             <ul>
                 {{if userType == 'STUDENT'}}
-                <li data-type="newestwork">最新作业<span>10</span></li>
-                <li data-type="unhand">未提交<span>5</span></li>
-                <li data-type="feedback">作业反馈<span>3</span></li>
+                <li data-type="newestwork">最新作业<span>{{data.feedback}}</span></li>
+                <li data-type="unhand">未提交<span>{{data.unsubmitted}}</span></li>
+                <li data-type="feedback">作业反馈<span>{{data.recentHomework}}</span></li>
                 {{else if userType == 'TEACHER'}}
                 <li data-type="new-hand">最新提交<span>10</span></li>
                 <li data-type="unalter">未批改<span>5</span></li>
@@ -172,6 +176,7 @@
     <!--</div>-->
 </script>
 
+<%--个人中心--%>
 <script type="text/template" id="man-info">
     <div class="personal-info">
         <div class="p-name">
@@ -226,15 +231,15 @@
             <div class="set-changepw-submit t-changepw-submit t-changepw-submit-close">
                 <div class="set-changepw-old">
                     <label for="old-pw">旧密码</label>
-                    <input id="old-pw" name="old-pw" type="password" />
+                    <input id="old-pw" name="old-pw" type="password" placeholder="请输入旧密码"/>
                 </div>
                 <div class="set-changepw-new">
                     <label for="new-pw">新密码</label>
-                    <input id="new-pw" name="new-pw" type="password" />
+                    <input id="new-pw" name="new-pw" type="password" placeholder="请输入8位以上字符的新密码"/>
                 </div>
                 <div class="set-changepw-sure">
                     <label for="sure-pw">确认密码</label>
-                    <input id="sure-pw" name="sure-pw" type="password" />
+                    <input id="sure-pw" name="sure-pw" type="password" placeholder="请确认密码"/>
                 </div>
                 <span class="fold-changepw" id="fold-changepw">收起</span>
                 <button id="changepw-sure" type="button">确认</button>
@@ -265,11 +270,11 @@
             <div class="set-mail-submit t-mail-submit t-mail-submit-close">
                 <div class="set-mail-new">
                     <label for="new-mail">新邮箱：</label>
-                    <input id="new-mail" name="new-mail" type="email" />
+                    <input id="new-mail" name="new-mail" type="email" placeholder="请输入新邮箱"/>
                 </div>
                 <div class="set-mail-sure">
                     <label for="sure-mail">验证码：</label>
-                    <input id="sure-mail" name="sure-mail" type="email" />
+                    <input id="sure-mail" name="sure-mail" type="email" placeholder="输入邮箱验证码"/>
                 </div>
                 <span class="fold-mail" id="fold-mail">收起</span>
                 <button id="mail-sure" type="button">确认</button>
@@ -278,6 +283,40 @@
     </div>
 </script>
 
+<%--课程管理--%>
+<script type="text/template" id="cs-mail-html">
+    <div class="cs-mail-title">
+        <div class="set-changepw cs-mail-setting"><strong>设置课程邮箱</strong></div>
+        <div class="course-choice">{{include 'select-course-html'}}</div>
+    </div>
+    <div class="cs-mail-list">
+
+    </div>
+</script>
+<script type="text/template" id="cs-mail-list-html">
+    <!--<ul>-->
+    {{each courselist as value}}
+    <li class="cs-mail-green">
+        <div class="cs-mail-name">
+            <p>{{value.courseName}}</p>
+        </div>
+        <div class="cs-mail-adr">
+            <p>{{value.email}}</p>
+        </div>
+        <div class="cs-mail-btn t-cs-mail">
+            <button class="cs-mail-change" type="submit">修改</button>
+            <button class="cs-mail-clear" type="button">取消</button>
+            <div class="cs-mail-input">
+                <input class="cs-mail-input1" type="email" placeholder="输入新的邮箱"/>
+                <button class="cs-mail-sure" type="submit" data-ctId="{{value.ctId}}">确认</button>
+            </div>
+        </div>
+    </li>
+    {{/each}}
+    <!--</ul>-->
+</script>
+
+<%--作业管理--%>
 <script type="text/template" id="select-course-html">
     <!--<section class="course-list">-->
         <!--<div class="course-choice">-->
@@ -308,7 +347,7 @@
     <!--<div class="load-data"></div>-->
     <section class="course-list">
         <div class="course-list-title">
-            <div class="set-changepw cs-mail-setting"><strong>课程列表</strong></div>
+            <div class="set-changepw cs-mail-setting"><strong>课程列表{{tip}}</strong></div>
             <div class="course-choice">{{include 'select-course-html'}}</div>
         </div>
         <div class="course-list-wrap"></div>
@@ -335,28 +374,6 @@
         </div>
         <div class="student-list-wrap"></div>
     </section>
-</script>
-<script type="text/template" id="course-list">
-    <ul>
-        {{each courselist as value}}
-        <li class="course-work-list course-has-work">
-            <div>
-                <p>{{value.hwCourse.courseName}}</p>
-                <p>课程人数：40人</p>
-            </div>
-            {{if view_type == 'hwmanage'}}
-            <div class="work-list-btn t-work-list-btn" data-id="{{value.id}}">
-                <span>单击查看该课程作业列表</span>
-            </div>
-            {{else if view_type == 'stumanage'}}
-            <div class="stumanage-list-btn t-stumanage-list-btn" data-id="{{value.id}}">
-                <span>单击查看该课程学生列表</span>
-            </div>
-            {{/if}}
-        </li>
-        {{/each}}
-    </ul>
-    <!--</div>-->
 </script>
 <script type="text/template" id="hwmanage-course-list-html">
     <ul>
@@ -394,42 +411,106 @@
     <!--unhand hand remark-->
     {{if userType == 'TEACHER'}}
     {{each worklist as value}}
-    <li class="work-student-list work-unhand-student">
+    <li class="work-student-list work-hand-student {{if value.overtime}}work-overtime-student{{/if}}">
         <div>
             <p>{{value.courseName}}</p>
             <p>{{value.title}}</p>
             <p>共{{value.sum}}人，{{value.submitted}}人已提交</p>
-            <p>{{value.deadline.split(':00')[0] + ':00'}}</p>
+            <p class="deadline-time">{{value.deadline.split(':00')[0] + ':00'}}</p>
+            <div class="work-submit-counts" style="height: {{value.submitted / value.sum * 116}}px"><!--数据可视化区域--></div>
         </div>
-        <div class="student-list-btn t-student-list-btn" data-hwInfoId="{{value.hwInfoId}}">
-            <button class="student-list-mark-btn">批改作业</button>
-            <button class="student-list-delete-btn">删除作业</button>
+        <div class="student-list-btn t-student-list-btn">
+            <!--<button class="student-list-mark-btn">批改作业</button>-->
+            <!--<button class="student-list-delete-btn">删除作业</button>-->
+            <div class="student-list-allbtn">
+                <span class="student-list-mark-btn" data-hwInfoId="{{value.hwInfoId}}">批改作业</span>
+                <span class="student-list-delete-btn" data-hwInfoId="{{value.hwInfoId}}">删除作业</span>
+            </div>
         </div>
     </li>
     {{/each}}
     <button class="add-work" data-csname="{{worklist[0].courseName}}">新增课程作业</button>
     {{else if userType == 'STUDENT'}}
     {{each worklist as value}}
-    <li class="work-student-list
-    {{if value.status == 'UNSUBMITTED'}}work-unhand-student
-    {{else if value.status == 'SUBMITTED'}}work-hand-student
-    {{else if value.status == 'MARKED'}}work-remark-student{{/if}}
-    {{if value.overtime == true}}work-overtime-student{{/if}}">
+    {{if value.status == 'UNSUBMITTED'}}
+    <li class="work-student-list work-unhand-student {{if value.overtime == true}}work-overtime-student{{/if}}">
         <div>
             <p>{{value.courseName}}</p>
             <p>{{value.title}}</p>
             <p>{{value.deadline.split(':00')[0] + ':00'}}</p>
         </div>
         <div class="hand-in-progress"><!--进度显示--></div>
-        <div class="hand-in-work t-hand-in" data-hwInfoId="{{value.hwInfoId}}"><span>单击交作业</span></div>
+        {{if value.overtime == true}}
+        <div class="hand-in-work t-hand-in">
+            <span class="hand-in-work-detail"  data-hwInfoId="{{value.hwInfoId}}">作业详细信息</span>
+        </div>
+        {{else}}
+        <div class="hand-in-work t-hand-in">
+            <span class="hand-in-work-btn" data-hwInfoId="{{value.hwInfoId}}">交作业</span>
+        </div>
+        {{/if}}
     </li>
+    {{else if value.status == 'SUBMITTED'}}
+    <li class="work-student-list work-hand-student {{if value.overtime == true}}work-overtime-student{{/if}}">
+        <div>
+            <p>{{value.courseName}}</p>
+            <p>{{value.title}}</p>
+            <p>{{value.deadline.split(':00')[0] + ':00'}}</p>
+        </div>
+        <div class="hand-in-progress"><!--进度显示--></div>
+        {{if value.overtime == true}}
+        <div class="hand-in-work t-hand-in">
+            <span class="hand-in-work-detail" data-hwInfoId="{{value.hwInfoId}}">作业详细信息</span>
+        </div>
+        {{else}}
+        <div class="hand-in-work t-hand-in">
+            <span class="hand-in-work-btn" data-hwInfoId="{{value.hwInfoId}}">重新交作业</span>
+        </div>
+        {{/if}}
+    </li>
+    {{else if value.status == 'MARKED'}}
+    <li class="work-student-list work-remark-student {{if value.overtime == true}}work-overtime-student{{/if}}">
+        <div>
+            <p>{{value.courseName}}</p>
+            <p>{{value.title}}</p>
+            <p>{{value.deadline.split(':00')[0] + ':00'}}</p>
+        </div>
+        <div class="hand-in-progress"><!--进度显示--></div>
+        <div class="hand-in-work t-hand-in">
+            <div class="work-marked-btn">
+                <span class="hand-in-work-detail" data-hwInfoId="{{value.hwInfoId}}">作业详细信息</span>
+                <span class="hand-in-work-feedback" data-hwInfoId="{{value.hwInfoId}}">作业反馈</span>
+            </div>
+        </div>
+    </li>
+    {{else}}
+    <li class="work-student-list work-unhand-student">
+        <div>
+            <p>{{value.courseName}}</p>
+            <p>{{value.title}}</p>
+            <p>{{value.deadline.split(':00')[0] + ':00'}}</p>
+        </div>
+        <div class="hand-in-progress"><!--进度显示--></div>
+        <div class="hand-in-work t-hand-in">
+            <span class="hand-in-work-btn" data-hwInfoId="{{value.hwInfoId}}">交作业</span>
+        </div>
+    </li>
+    {{/if}}
     {{/each}}
     {{/if}}
     <!--</div>-->
 </script>
 <script type="text/template" id="stumanage-work-list-html">
     {{each worklist as value}}
-    <li class="work-student-list {{if value.url == ''}}work-unhand-student{{else}}work-hand-student{{/if}}">
+    {{if value.status == 'UNSUBMITTED'}}
+    <li class="work-student-list work-unhand-student {{if value.overtime == true}}work-overtime-student{{/if}}">
+    {{else if value.status == 'SUBMITTED'}}
+    <li class="work-student-list work-hand-student {{if value.overtime == true}}work-overtime-student{{/if}}">
+    {{else if value.status == 'MARKED'}}
+    <li class="work-student-list work-remark-student {{if value.overtime == true}}work-overtime-student{{/if}}">
+    {{else}}
+    <li class="work-student-list work-unhand-student">
+    {{/if}}
         <div>
             <p>{{value.title}}</p>
             <p>{{value.studentName}}</p>
@@ -441,28 +522,61 @@
     </li>
     {{/each}}
 </script>
+<script type="text/template" id="hwmanage-student-list-html0">
+<!--<ul>-->
+    {{each studentlist as value}}
+    {{if value.status == 'SUBMITTED'}}
+    <li class="student-alter-list student-hand-alter">
+        <div>
+            <p>{{value.title}}</p>
+            <p>{{value.studentName}}</p>
+            <p>{{value.studentNo}}</p>
+            <p>{{value.submitDate.replace(/(:\d{2,2})$/, '')}}</p>
+        </div>
+        <div class="alter-btn t-alter-btn" data-id="{{value.id}}"><span>单击批改</span></div>
+    </li>
+    {{else if value.status == 'UNSUBMITTED'}}
+    <li class="student-alter-list student-unhand-alter">
+        <div>
+            <p>{{value.title}}</p>
+            <p>{{value.studentName}}</p>
+            <p>{{value.studentNo}}</p>
+            <p>{{value.submitDate.replace(/(:\d{2,2})$/, '')}}</p>
+        </div>
+        <!--<div class="alter-btn t-alter-btn" data-id="{{value.id}}"><span>单击批改</span></div>-->
+        <div class="nononno" data-id="{{value.id}}"><span>未提交作业</span></div>
+    </li>
+    {{else if value.status == 'MARKED'}}
+    <li class="student-alter-list student-marked-alter">
+        <div>
+            <p>{{value.title}}</p>
+            <p>{{value.studentName}}</p>
+            <p>{{value.studentNo}}</p>
+            <p>{{value.submitDate.replace(/(:\d{2,2})$/, '')}}</p>
+        </div>
+        <div class="alter-btn t-alter-btn" data-id="{{value.id}}"><span>重新批改</span></div>
+    </li>
+    {{/if}}
+    {{/each}}
+<!--</ul>-->
+</script>
 <script type="text/template" id="hwmanage-student-list-html">
     <!--<div class="student-list-t">-->
     <ul>
-        {{each studentlist as value}}
-        <li class="student-alter-list student-has-alter">
-            <div>
-                <p>{{value.title}}</p>
-                <p>{{value.studentName}}</p>
-                <p>{{value.studentNo}}</p>
-                <p>{{value.submitDate.split(' ')[0]}}</p>
-            </div>
-            <div class="alter-btn t-alter-btn" data-id="{{value.id}}"><span>单击批改</span></div>
-        </li>
-        {{/each}}
+    {{include 'hwmanage-student-list-html0'}}
     </ul>
+    <div class="student-list-classify">
+        <!--hand-part unhand-part-->
+        <button class="student-list-classify-hand choice-part" data-hwInfoId="{{hwInfoId}}">已提交</button>
+        <button class="student-list-classify-unhand" data-hwInfoId="{{hwInfoId}}">未提交</button>
+    </div>
     <!--</div>-->
 </script>
 <script type="text/template" id="stumanage-student-list-html">
     <!--<div class="student-list-t">-->
     <ul>
         {{each studentlist as value}}
-        <li class="student-alter-list student-has-alter">
+        <li class="student-alter-list student-hand-alter">
             <div>
                 <p>{{value.hwStudent.name}}</p>
                 <p>{{value.hwStudent.studentNo}}</p>
@@ -476,7 +590,35 @@
     <button class="add-student" data-ctId="{{studentlist[0].hwCourseTeaching.id}}">添加学生</button>
     <!--</div>-->
 </script>
+<%--作业动态--%>
+<script type="text/template" id="hw-dynamic-html">
+    <div class="d-newestwork">
+        <div class="d-newestwork-title">
+            <strong>最新作业</strong>
+            <button class="d-newestwork-unfold">展开</button>
+            <button class="d-newestwork-fold">收起</button>
+        </div>
+        <div class="d-newestwork-list t-newestwork-list"></div>
+    </div>
+    <div class="d-unhand">
+        <div class="d-unhand-title">
+            <strong>未提交</strong>
+            <button class="d-unhand-unfold">展开</button>
+            <button class="d-unhand-fold">收起</button>
+        </div>
+        <div class="d-unhand-list t-unhand-list"></div>
+    </div>
+    <div class="d-feedback">
+        <div class="d-feedback-title">
+            <strong>作业反馈</strong>
+            <button class="d-feedback-unfold">展开</button>
+            <button class="d-feedback-fold">收起</button>
+        </div>
+        <div class="d-feedback-list t-feedback-list"></div>
+    </div>
+</script>
 
+<%--弹框--%>
 <script type="text/template" id="dialog-html">
     <!--<div class="wrap">-->
     <div class="dailog-area {{if op == 'add-student'}}add-student-area{{/if}}">
@@ -491,7 +633,7 @@
         <div class="dailog-title">
             <p role='title'><strong>交作业</strong></p>
         </div>
-        <div class="dailog-body">
+        <div class="dailog-body hand-in-dailog-body">
             {{include 'hand-in'}}
         </div>
         {{else if op == 'add-student'}}
@@ -500,6 +642,13 @@
         </div>
         <div class="dailog-body">
             {{include 'add-stu-html'}}
+        </div>
+        {{else if op == 'work-feedback'}}
+        <div class="dailog-title">
+            <p role='title'><strong>作业反馈</strong></p>
+        </div>
+        <div class="dailog-body hand-in-dailog-body">
+            {{include 'work-feedback-html'}}
         </div>
         {{else}}
         <div class="dailog-title">
@@ -514,19 +663,26 @@
     <!--</div>-->
 </script>
 <script type="text/template" id="delete-sure">
-    <p class="delete-sure-text" role="tip">确定删除这个作业吗？<span>（删除后不可恢复）</span></p>
+    <p class="delete-sure-text" role="tip">
+        确定删除这个作业吗？删除后如果该有学生提交，那么所有学生的作业都将被删除！
+        <span>（删除后不可恢复）</span>
+    </p>
     <div class="delete-sure-btn">
         <button class="delete-sure-btn1">确定</button>
         <button class="delete-sure-btn2">取消</button>
     </div>
 </script>
+<script type="text/template" id="mail-incorrect">
+
+</script>
 <script type="text/template" id="auth-code">
     <div class="auth-code-sure-text" role="tip">
         <p>系统检测到您的邮箱账号尚未验证，【验证码】已经发送到您邮箱<p>
-        <p><a href="{{mail_url}}">点此登陆邮箱{{mail}}</a></p>
+        <p><a href="{{mail_url}}" target="_blank">点此登陆邮箱{{mail}}</a></p>
         <div class="auth-code">
             <label>填写邮箱验证码</label>
             <input type="text" name="mail"/>
+            <button class="auth-code-send-btn">重发</button>
         </div>
     </div>
     <div class="auth-code-sure-btn">
@@ -601,108 +757,87 @@
         <p><strong>{{value.name}}</strong></p>
         <p>{{value.studentNo}}</p>
         <span></span>
-        <div class="stu-list-li-details" title="点击添加该学生">
-            <p><strong>姓名：</strong>{{value.name}}</p>
-            <p><strong>学号：</strong>{{value.studentNo}}</p>
-            <p><strong>性别：</strong>{{value.sex}}</p>
-            <p><strong>校区学院：</strong>{{value.hwCampus.name}}校区{{value.hwCollege.collegeName}}</p>
-            <p><strong>年级专业：</strong>{{value.hwMajor.name}}</p>
-        </div>
     </li>
+    <div class="stu-list-li-details" title="点击添加该学生">
+        <p><strong>姓名：</strong>{{value.name}}</p>
+        <p><strong>学号：</strong>{{value.studentNo}}</p>
+        <p><strong>性别：</strong>{{value.sex}}</p>
+        <p><strong>校区学院：</strong>{{value.hwCampus.name}}校区{{value.hwCollege.collegeName}}</p>
+        <p><strong>年级专业：</strong>{{value.hwMajor.name}}</p>
+    </div>
     {{/each}}
     <%--</ul>--%>
 </script>
 <script type="text/template" id="hand-in">
     <div class="hand-in-course">
         <label>课程名</label>
-        <label>{{detaillist.courseName}}</label>
+        <label>{{workdata.courseName}}</label>
     </div>
     <div class="hand-in-name">
         <label>作业名</label>
-        <label>{{detaillist.title}}</label>
+        <label>{{workdata.title}}</label>
     </div>
     <div class="hand-in-desc">
         <label>作业说明</label>
-        <label>{{detaillist.hwDesc}}</label>
+        <label>{{workdata.hwDesc}}</label>
+    </div>
+    <div class="hand-in-markstand">
+        <label>评分标准</label>
+        {{if workdata.markType == 'HUNDRED'}}
+        <label>百分制</label>
+        {{else if workdata.markType == 'TEN'}}
+        <label>十分制</label>
+        {{else if workdata.markType == 'FIVE'}}
+        <label>五分制</label>
+        {{else if workdata.markType == 'CHAR_LEVEL'}}
+        <label>ABCDE等级制</label>
+        {{else if workdata.markType == 'CHINESE_LEVEL'}}
+        <label>优秀、良好、一般、差等级制</label>
+        {{else}}
+        <label>合格、不合格等级制</label>
+        {{/if}}
     </div>
     <div class="hand-in-create">
         <label>作业发布时间</label>
-        <label>{{detaillist.createDate}}</label>
+        <label>{{workdata.createDate}}</label>
     </div>
     <div class="hand-in-deadline">
         <label>截止上交时间</label>
-        <label>{{detaillist.deadline}}</label>
+        <label>{{workdata.deadline}}</label>
     </div>
+    {{if !detail}}
     <div class="work-upload">
         <label for="work-file">上传作业</label>
         <input id="work-file" name="hw" type="file"/>
         <label></label>
     </div>
+    {{/if}}
     <div class="work-submit">
         <button class="dailog-clear">取消</button>
-        <button class="work-submit-sure" data-hwinfoId="{{detaillist.id}}">提交作业</button>
+        <button class="work-submit-sure" data-hwinfoId="{{workdata.id}}">提交作业</button>
     </div>
     <!--</div>-->
 </script>
-
-
-<script type="text/template" id="cs-mail-html">
-    <div class="cs-mail-title">
-        <div class="set-changepw cs-mail-setting"><strong>设置课程邮箱</strong></div>
-        <div class="course-choice">{{include 'select-course-html'}}</div>
+<script type="text/template" id="work-feedback-html">
+    <div class="work-feedback-score">
+        <label>作业得分</label>
+        <label>{{workdata.mark}}</label>
     </div>
-    <div class="cs-mail-list">
-
+    <div class="work-feedback-comment">
+        <label>教师评语</label>
+        <label>{{workdata.comment}}</label>
+    </div>
+    <div class="work-submit">
+        <button class="dailog-clear">关闭</button>
     </div>
 </script>
 
-<script type="text/template" id="cs-mail-list-html">
-    <!--<ul>-->
-        {{each courselist as value}}
-        <li class="cs-mail-green">
-            <div class="cs-mail-name">
-                <p>{{value.courseName}}</p>
-            </div>
-            <div class="cs-mail-adr">
-                <p>{{value.email}}</p>
-            </div>
-            <div class="cs-mail-btn t-cs-mail">
-                <button class="cs-mail-change" type="submit">修改</button>
-                <button class="cs-mail-clear" type="button">取消</button>
-                <div class="cs-mail-input">
-                    <input class="cs-mail-input1" type="email" placeholder="输入新的邮箱"/>
-                    <!--<input class="cs-mail-input2" type="text" placeholder="邮箱验证码"/>-->
-                    <button class="cs-mail-sure" type="submit" data-ctId="{{value.ctId}}">确认</button>
-                </div>
-            </div>
-        </li>
-        {{/each}}
-    <!--</ul>-->
-</script>
-
-<script type="text/template" id="hw-dynamic-html">
-    <div class="d-newestwork">
-        <div class="d-newestwork-title">
-            <strong>最新作业</strong>
-            <button class="d-newestwork-unfold">展开</button>
-            <button class="d-newestwork-fold">收起</button>
+<%--进度加载条--%>
+<script type="text/template" id="loadtip-html">
+    <!--<div class="loadtip-wrap">-->
+        <div class="lg-shade-tip loadtip-progess">
+            <p><strong>正在加载中...</strong></p>
+            <span class="t-load t-load-start"></span>
         </div>
-        <div class="d-newestwork-list t-newestwork-list"></div>
-    </div>
-    <div class="d-unhand">
-        <div class="d-unhand-title">
-            <strong>未提交</strong>
-            <button class="d-unhand-unfold">展开</button>
-            <button class="d-unhand-fold">收起</button>
-        </div>
-        <div class="d-unhand-list t-unhand-list"></div>
-    </div>
-    <div class="d-feedback">
-        <div class="d-feedback-title">
-            <strong>作业反馈</strong>
-            <button class="d-feedback-unfold">展开</button>
-            <button class="d-feedback-fold">收起</button>
-        </div>
-        <div class="d-feedback-list t-feedback-list"></div>
-    </div>
+    <!--</div>-->
 </script>

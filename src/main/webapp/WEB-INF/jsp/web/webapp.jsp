@@ -28,6 +28,9 @@
                 'backbone': 'backbone-min.js',
                 'underscore': 'underscore-min.js',
                 'webapp': 'script/webapp.js',
+                'webapp-common': 'script/webapp-common.js',
+                'webapp-teacher': 'script/webapp-teacher.js',
+                'webapp-student': 'script/webapp-student.js',
                 'calendar': 'script/calendar.js',
                 'webapp.css': 'css/webapp.css',
                 'login.css': 'css/login.css'

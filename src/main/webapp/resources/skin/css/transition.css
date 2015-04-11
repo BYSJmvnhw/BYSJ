@@ -24,23 +24,58 @@
 /*登陆提示加载条动画*/
 
 .t-load {
-    transition: background-position-x 20s linear;
-    -o-transition: background-position-x 20s linear;
-    -webkit-transition: background-position-x 20s linear;
-    -moz-transition: background-position-x 20s linear;
-    -ms-transition: background-position-x 20s linear;
+    /*transition: background-position-x 20s linear;*/
+    /*-o-transition: background-position-x 20s linear;*/
+    /*-webkit-transition: background-position-x 20s linear;*/
+    /*-moz-transition: background-position-x 20s linear;*/
+    /*-ms-transition: background-position-x 20s linear;*/
 }
 
 span.t-load-start {
-    background-position-x: 1500px;
+    /*background-position-x: 1500px;*/
 }
 
-.t-shade-tip {
-    transition: top 200ms;
-    -webkit-transition: top 200ms;
-    -o-transition: top 200ms;
-    -moz-transition: top 200ms;
-    -ms-transition: top 200ms;
+span.t-load-start {
+    -webkit-animation: loginload 20s linear infinite;
+    -moz-animation:  loginload 20s linear infinite;
+    -o-animation:  loginload 20s linear infinite;
+    -ms-animation:  loginload 20s linear infinite;
+    animation:  loginload 20s linear infinite;
+}
+
+@-webkit-keyframes loginload
+{
+    0% {background-position-x: 0;}
+    50% {background-position-x: 1500px;}
+    0% {background-position-x: 0;}
+}
+
+@-moz-keyframes loginload
+{
+    0% {background-position-x: 0;}
+    50% {background-position-x: 1500px;}
+    0% {background-position-x: 0;}
+}
+
+@-o-keyframes loginload
+{
+    0% {background-position-x: 0;}
+    50% {background-position-x: 1500px;}
+    0% {background-position-x: 0;}
+}
+
+@-ms-keyframes loginload
+{
+    0% {background-position-x: 0;}
+    50% {background-position-x: 1500px;}
+    0% {background-position-x: 0;}
+}
+
+@keyframes loginload
+{
+    0% {background-position-x: 0;}
+    50% {background-position-x: 1500px;}
+    0% {background-position-x: 0;}
 }
 
 /*.t-success {*/

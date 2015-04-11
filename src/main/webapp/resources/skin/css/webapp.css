@@ -45,8 +45,9 @@ nav {
 .nav-main>li {
     display: inline-block;
     float: left;
-    padding: 17px 20px;
+    padding: 0 20px;
     font-size: 19px;
+    line-height: 59px;
     color: #4fc5c7;
     cursor: pointer;
     position: relative;
@@ -182,7 +183,7 @@ header {
 
 .info-btn:after {content: ''; clear: both;}
 
-.info-btn:before {
+.info-btn-tip:before {
     content: '';
     display: block;
     width: 10px;
@@ -643,7 +644,7 @@ footer {
 
 .hw-content-wrap {
     /*position: absolute;*/
-    width: 24300px;
+    width: 2430px;
     overflow: hidden;
 }
 
@@ -708,7 +709,7 @@ footer {
     border-color: #009ee5;
 }
 
-.choice-sure button, .add-work, .add-student {
+.choice-sure button, .add-work, .add-student, .student-list-classify>button {
     background-color: #5cb85c;
     border: 1px #4cae4c solid;
     min-width: 90px;
@@ -721,18 +722,21 @@ footer {
     cursor: pointer;
 }
 
-.choice-sure button:hover, .add-work:hover, .add-student:hover {
+.choice-sure button:hover, .add-work:hover, .add-student:hover,
+.student-list-classify>button:hover, .student-list-classify>button.choice-part {
     background-color: #449d44;
     border-color: #398439;
 }
 
-.course-list ul, .work-list ul, .student-list ul, .d-newestwork-list ul {
+.course-list ul, .work-list ul, .student-list ul,
+.d-newestwork-list ul,  .d-unhand-list ul, .d-feedback-list ul {
     padding-top: 3px;
     overflow: hidden;
     zoom: 1;
 }
 
-.course-list ul li, .work-list ul li, .student-list ul li, .d-newestwork-list ul li {
+.course-list ul li, .work-list ul li, .student-list ul li,
+.d-newestwork-list ul li, .d-unhand-list ul li, .d-feedback-list ul li {
     float: left;
     width: 232px;
     margin-bottom: 10px;
@@ -752,6 +756,8 @@ footer {
 .student-list ul li:hover>.alter-btn,
 .student-list ul li:hover>.check-btn,
 .d-newestwork-list ul li:hover>.hand-in-work,
+.d-unhand-list ul li:hover>.hand-in-work,
+.d-feedback-list ul li:hover>.hand-in-work,
 .d-newestwork-list ul li:hover>.student-list-btn,
 .student-list-wrap ul li:hover>.student-list-btn {
     top: 0;
@@ -763,22 +769,46 @@ footer {
 .hand-in-work>span,
 .alter-btn>span,
 .check-btn>span,
-.hand-in-work>span,
-.student-list-btn>span,
-.student-list-btn>span {
+.student-list-btn>.student-list-allbtn,
+.hand-in-work>.work-marked-btn {
     height: 24px;
-    cursor: pointer;
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
-    margin: auto auto;
+    margin: auto 0;
 }
+
+.work-list-btn>span,
+.stumanage-list-btn>span,
+.student-list-btn>span,
+.hand-in-work>span,
+.alter-btn>span,
+.check-btn>span,
+.student-list-btn>.student-list-allbtn>span,
+.hand-in-work>.work-marked-btn>span {
+    cursor: pointer;
+    margin: auto 8px;
+}
+
+.work-list-btn>span:hover,
+.stumanage-list-btn>span:hover,
+.hand-in-work>span:hover,
+.alter-btn>span:hover,
+.check-btn>span:hover,
+.student-list-btn>span:hover,
+.student-list-btn>.student-list-allbtn>span:hover,
+.hand-in-work>.work-marked-btn>span:hover {
+    font-weight: bolder;
+}
+
 
 .course-list ul li:nth-child(3n-1),
 .work-list ul li:nth-child(3n-1),
 .d-newestwork-list ul li:nth-child(3n-1),
+.d-unhand-list ul li:nth-child(3n-1),
+.d-feedback-list ul li:nth-child(3n-1),
 .student-list ul li:nth-child(3n-1) {
     margin-right: 15px;
     margin-left: 15px;
@@ -786,6 +816,7 @@ footer {
 
 .course-list ul li:nth-child(3n-2),
 .d-newestwork-list ul li:nth-child(3n-2),
+.d-feedback-list ul li:nth-child(3n-2),
 .student-list ul li:nth-child(3n-2),
 .work-list ul li:nth-child(3n-2) {
     margin-left: 5px;
@@ -793,6 +824,7 @@ footer {
 
 .course-list ul li:nth-child(3n),
 .d-newestwork-list ul li:nth-child(3n),
+.d-feedback-list ul li:nth-child(3n),
 .student-list ul li:nth-child(3n),
 .work-list ul li:nth-child(3n) {
     margin-right: 5px;
@@ -800,6 +832,7 @@ footer {
 
 .course-list ul li:last-child,
 .d-newestwork-list ul li:last-child,
+.d-feedback-list ul li:last-child,
 .student-list ul li:last-child,
 .work-list ul li:last-child {
     clear: right;
@@ -824,8 +857,29 @@ footer {
     top: 0;
 }
 
+.work-submit-counts {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: #5BC0DE;
+    width: 100%;
+    z-index: -10;
+    opacity: 0.6;
+}
+
+.work-overtime-student .work-submit-counts {
+    background-color: #bbb;
+}
+
+.deadline-time {
+    font-weight: bold;
+    /*color: #D9534F;*/
+}
+
 .course-no-work:after,
-.student-no-alter:after,
+.student-marked-alter:after,
 .work-remark-student:after {
     content: '';
     display: block;
@@ -840,7 +894,8 @@ footer {
 }
 
 .course-has-work:after,
-.student-has-alter:after,
+.student-unhand-alter:after,
+.student-hand-alter:after,
 .work-unhand-student:after,
 .work-hand-student:after {
     content: '';
@@ -854,12 +909,13 @@ footer {
     right: 2px;
 }
 
-.work-hand-student:after {
+.work-hand-student:after,
+.student-hand-alter:after {
     background-color: #fff;
 }
 
 .course-no-work,
-.student-no-alter,
+.student-marked-alter,
 .work-remark-student {
     border-color: #5CB85C;
 }
@@ -869,7 +925,7 @@ li.work-overtime-student {
 }
 
 .course-no-work:before,
-.student-no-alter:before,
+.student-marked-alter:before,
 .work-remark-student:before {
     border-top: 35px #5CB85C solid;
 }
@@ -879,22 +935,23 @@ li.work-overtime-student:before {
 }
 
 .course-has-work:before,
-.student-has-alter:before,
+.student-unhand-alter:before,
 .work-unhand-student:before {
     border-top: 35px #f0ad4e solid;
 }
 
-.work-hand-student:before {
+.work-hand-student:before,
+.student-hand-alter:before {
     border-top:  35px #5BC0DE solid;
 }
 
 .course-has-work,
-.student-has-alter,
+.student-unhand-alter,
 .work-unhand-student {
     border-color: #f0ad4e;
 }
 
-.work-hand-student {
+.work-hand-student, .student-hand-alter {
     border-color: #5BC0DE;
 }
 
@@ -919,18 +976,18 @@ li.work-overtime-student:before {
 }
 
 .course-no-work>div:last-child,
-.student-no-alter>div:last-child,
+.student-marked-alter>div:last-child,
 .work-remark-student>div:last-child {
     background-color: #5CB85C;
 }
 
 .course-has-work>div:last-child,
-.student-has-alter>div:last-child,
+.student-unhand-alter>div:last-child,
 .work-unhand-student>div:last-child {
     background-color: #f0ad4e;
 }
 
-.work-hand-student>div:last-child {
+.work-hand-student>div:last-child, .student-hand-alter>div:last-child {
     background-color: #5BC0DE;
 }
 
@@ -952,6 +1009,29 @@ li.work-overtime-student>div:last-child {
 .student-list-btn>.student-list-delete-btn {
     right: 50%;
     margin-right: -100px !important;
+}
+
+.course-list-wrap {
+    position: relative;
+    min-height: 200px;
+}
+
+.student-list-classify {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.student-list-classify>button {
+    line-height: 25px;
+}
+
+.student-list-classify-unhand {
+
+}
+
+.student-list-classify-hand {
+    margin-right: 15px;
 }
 
 /*end作业信息*/
@@ -1045,7 +1125,7 @@ span.dailog-clear:after {
     line-height: 25px;
 }
 
-.dailog-body>div>label{
+.dailog-body>div>label:first-child{
     display: inline-block;
     /*width: 120px;*/
     margin-right: 10px;
@@ -1056,6 +1136,14 @@ span.dailog-clear:after {
 /*end弹出框共有样式*/
 
 /*弹出上传框*/
+
+.hand-in-dailog-body {
+    margin-top: 10px;
+}
+
+.hand-in-dailog-body>div>label:first-child {
+    width: 120px;
+}
 
 .hand-in-desc {
     overflow: hidden;
@@ -1103,12 +1191,13 @@ span.dailog-clear:after {
 
 .work-submit, .add-submit {
     border-top: 1px solid #333;
-    padding-top: 15px;
+    padding-top: 10px;
+    margin-top: 10px;
     text-align: right;
 }
 
 .work-submit>button, .add-submit>button, .student-list-btn>button,
-.delete-sure-btn>button, .auth-code-sure-btn>button {
+.delete-sure-btn>button, .auth-code-sure-btn>button, .auth-code>button {
     color: white;
     font-weight: bold;
     font-size: 16px;
@@ -1132,7 +1221,8 @@ span.dailog-clear:after {
 .work-submit-sure, .add-work-sure,
 .student-list-btn>.student-list-mark-btn,
 .delete-sure-btn>.delete-sure-btn2,
-.auth-code-sure-btn>.auth-code-sure-btn2 {
+.auth-code-sure-btn>.auth-code-sure-btn2,
+.auth-code>.auth-code-resend-btn {
     background-color: #5CB85C;
     border: 1px solid #4CAE4C;
 }
@@ -1140,7 +1230,8 @@ span.dailog-clear:after {
 .work-submit-sure:hover, .add-work-sure:hover,
 .student-list-btn>.student-list-mark-btn:hover,
 .delete-sure-btn>.delete-sure-btn2:hover,
-.auth-code-sure-btn>.auth-code-sure-btn2:hover {
+.auth-code-sure-btn>.auth-code-sure-btn2:hover,
+.auth-code>.auth-code-resend-btn:hover {
     background-color: #449d44;
 }
 
@@ -1274,6 +1365,8 @@ span.dailog-clear:after {
 }
 
 .add-stu-list, .add-stu-list>ul {
+    position: relative;
+    display: table;
     /*overflow: hidden;*/
     /*zoom: 1;*/
 }
@@ -1295,13 +1388,24 @@ span.dailog-clear:after {
     border-color: #41B8F4;
 }
 
+
+.add-stu-list>ul>li:hover:before {
+    content: '';
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    border-top: 35px #41B8F4 solid;
+    border-left: 35px transparent solid;
+}
+
 .add-stu-list>ul>li:hover>span {
     display: block;
     width: 16px;
     height: 4px;
     position: absolute;
     top: 7px;
-    right: -172px;
+    right: 2px;
     background-color: #FFFFFF;
     z-index: 100;
 }
@@ -1315,10 +1419,6 @@ span.dailog-clear:after {
     top: -6px;
     right: 6px;
     background-color: #fff;
-}
-
-.add-stu-list>ul>li:hover>.stu-list-li-details {
-    display: block;
 }
 
 .add-stu-list>ul>li.stu-choiced {
@@ -1342,27 +1442,38 @@ span.dailog-clear:after {
     transform: rotate(45deg);
 }
 
+.add-stu-list>ul>li.stu-choiced:hover:after {
+    display: none;
+}
+
+.add-stu-list>ul>li.stu-choiced:hover>span:before {
+    display: none;
+}
+
+.add-stu-list>ul>li.stu-choiced:hover>span {
+    background-color: #fff;
+}
+
+.add-stu-list>ul>li.stu-choiced:hover {
+    border-color: #f0ad4e;
+}
+
+.add-stu-list>ul>li.stu-choiced:hover:before {
+    border-top-color: #f0ad4e;
+}
+
 .stu-list-li-details {
     display: none;
     position: absolute;
+    top: 0;
+    left: -274px;
     background-color: #fff;
-    top: -5px;
-    left: -5px;
-    width: 300px;
-    padding-left: 5px;
+    padding: 5px;
     border: 5px #41B8F4 solid;
-    z-index: 5;
 }
 
-
-.stu-list-li-details:before {
-    content: '';
+.add-stu-list>ul>li:nth-child:hover + .stu-list-li-details {
     display: block;
-    position: absolute;
-    right: 0;
-    top: 0;
-    border-top: 35px #41B8F4 solid;
-    border-left: 35px transparent solid;
 }
 
 .add-student-area {
@@ -1393,6 +1504,26 @@ span.dailog-clear:after {
     color: #D9534F;
 }
 
+.auth-code-send-btn {
+    background-color: #95D195;
+    border: 1px #8BCA8B solid;
+    cursor: default;
+}
+
+.auth-code-send-btn:focus {
+    outline: none;
+}
+
+.auth-code-sendagin-btn {
+    background-color: #5CB85C;
+    border: 1px solid #4CAE4C;
+}
+
+.auth-code-sendagin-btn:hover {
+    background-color: #449d44;
+    border-color: #398439;
+}
+
 .delete-sure-btn, .auth-code-sure-btn {
     text-align: right;
 }
@@ -1402,6 +1533,23 @@ span.dailog-clear:after {
 
 /*end弹出删除提示框*/
 
+/*弹出反馈框*/
+
+.work-feedback-comment {
+    overflow: hidden;
+}
+
+.work-feedback-comment>label:nth-child(2) {
+    float: right;
+    width: 370px;
+}
+
+.work-feedback-comment + .work-submit>button {
+    margin-right: 0;
+}
+
+/*end弹出反馈框*/
+
 /*弹出验证码框*/
 
 .auth-code {
@@ -1410,15 +1558,19 @@ span.dailog-clear:after {
 
 .auth-code>label{
     font-weight: bold;
+    margin-right: 10px;
 }
 
 .auth-code>input {
     width: 100px;
+    margin-right: 10px;
 }
 
 /*end弹出验证码框*/
 
 /*作业信息切换栏目*/
+
+
 
 .return-course-list, .return-work-list {
     height: 34px;
@@ -1635,6 +1787,7 @@ span.dailog-clear:after {
 }
 
 .d-newestwork-list, .d-unhand-list, .d-feedback-list {
+    position: relative;
 }
 
 /*end作业动态*/
@@ -1747,3 +1900,12 @@ span.dailog-clear:after {
 }
 
 /*end 日期选择器css*/
+
+
+/*.cs-mail-sure:after {*/
+    /*content: '邮箱格式有误！';*/
+    /*display: block;*/
+    /*position: absolute;*/
+    /*top: 0;*/
+    /*z-index: 10;*/
+/*}*/
