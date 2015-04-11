@@ -15,12 +15,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class MainController {
 
     @RequestMapping(value = "/web/**", method = RequestMethod.GET)
-    public String index() {
+    public String webApp() {
         return "web/webapp";
+    }
+
+    @RequestMapping(value = "/manage/**", method = RequestMethod.GET)
+    public String manegeApp() {
+        return "manage/manageapp";
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index2() {
         return "redirect:/web/login";
     }
+
+
 }

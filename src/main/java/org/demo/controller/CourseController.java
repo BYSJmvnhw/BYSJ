@@ -195,8 +195,8 @@ public class CourseController {
      */
     @RequestMapping(value = "/addCourseTeaching", method = RequestMethod.POST)
     @ResponseBody
-    public JSONObject addCourseTeaching(Integer courseId, @RequestParam("teacherId[]")Integer[]
-            teacherId,Integer startYear, Integer schoolTerm){
+    public JSONObject addCourseTeaching(Integer courseId, @RequestParam("teacherId[]")Integer[] teacherId,
+                                        Integer startYear, Integer schoolTerm){
         try {
             courseService.addCourseTeaching(courseId,teacherId, startYear, schoolTerm);
             return getSuccessResultJsonObject();
@@ -206,8 +206,22 @@ public class CourseController {
         }
     }
 
+    @RequestMapping(value = "/deleteCourseTeaching",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject deleteCourseTeaching(Integer ctId){
+        try {
+            courseService.deleteCourseTeaching(ctId);
+            return getSuccessResultJsonObject();
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
+
     //------------------------------------- 管理员学生部分 --------------------------------------------
 
+
+    //public Object courseTeachingList
     /**
      * 根据课程id，学年，学期，可选的教师号和教师姓名查询选择该门课程、该教师的学生列表
      * @param courseId 课程id
