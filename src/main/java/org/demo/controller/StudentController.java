@@ -183,6 +183,23 @@ public class StudentController {
         }
     }
 
+    /**
+     * 根据学生id，学年，学期查看该生所选课程
+     * @param studentId 学生id
+     * @param startYear 学年
+     * @param schoolTerm 学期
+     * @return
+     */
+    @RequestMapping(value = "/courseList", method = RequestMethod.GET)
+    @ResponseBody
+    public Object courseSelectingList(Integer studentId, Integer startYear, Integer schoolTerm){
+        try{
+            return courseService.courseList(studentId, startYear, schoolTerm);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
 
     /**
      * 根据各种条件筛选授课关系

@@ -265,6 +265,9 @@ public class HomewrokService implements IHomeworkService {
             hw.setMarkType(hwinfo.getMarkType());
             hw.setUrl("");
             hw.setStatus(HomeworkStatus.UNSUBMITTED);
+            hw.setHwNo("");
+            hw.setMark("");
+            hw.setComment("");
             homeworkDao.add(hw);
         }
     }

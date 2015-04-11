@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Random;
 
 /**
  * Created by peifeng on 2015/3/19.
@@ -46,7 +47,13 @@ public class CheckEmailService implements ICheckEmailService {
     }
     //生成13位时间戳
     private String getTimestamp() {
-        return System.currentTimeMillis()+"";
+        //return System.currentTimeMillis()+"";
+        Random random = new Random();
+        String result="";
+        for(int i=0;i<6;i++){
+            result+=random.nextInt(10);
+        }
+        return result;
     }
     //判断该邮箱是否存在，存在但未验证，发送验证码，不存在，插入并发送验证码
     public JSONObject findEmailExist(String email) {

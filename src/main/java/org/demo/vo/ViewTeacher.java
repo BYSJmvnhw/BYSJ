@@ -5,30 +5,20 @@ package org.demo.vo;
  */
 public class ViewTeacher {
 
-    //用户Id
-    private Integer userId;
-    //用户帐号
-    private String userName;
-    //用户信息
     private String name;
     private String sex;
     private String email;
-    //教师Id
+
     private Integer teacherId;
-    //教师号
     private String teacherNo;
+
     private Integer collegeId;
     private String collegeName;
-    private Integer majorId;
-    private String majorName;
     private Integer campusId;
     private String campusName;
 
-    public ViewTeacher(Integer userId,String userName,String name,String sex,String email,
-                       Integer teacherId,String teacherNo,Integer collegeId,String collegeName,Integer majorId,String majorName,
-                       Integer campusId,String campusName) {
-        this.userId = userId;
-        this.userName = userName;
+    public ViewTeacher(String name,String sex,String email,Integer teacherId,String teacherNo,
+                       Integer collegeId,String collegeName,Integer campusId,String campusName) {
         this.name = name;
         this.sex = sex;
         this.email = email;
@@ -36,22 +26,8 @@ public class ViewTeacher {
         this.teacherNo = teacherNo;
         this.collegeId = collegeId;
         this.collegeName = collegeName;
-        this.majorId = majorId;
-        this.majorName = majorName;
         this.campusId = campusId;
         this.campusName = campusName;
-    }
-    public Integer getUserId() {
-        return userId;
-    }
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-    public String getUserName() {
-        return userName;
-    }
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
     public Integer getTeacherId() {
         return teacherId;
@@ -64,12 +40,6 @@ public class ViewTeacher {
     }
     public void setCollegeName(String collegeName) {
         this.collegeName = collegeName;
-    }
-    public String getMajorName() {
-        return majorName;
-    }
-    public void setMajorName(String majorName) {
-        this.majorName = majorName;
     }
     public Integer getCampusId() {
         return campusId;
@@ -113,11 +83,4 @@ public class ViewTeacher {
     public void setCollegeId(Integer collegeId) {
         this.collegeId = collegeId;
     }
-    public Integer getMajorId() {
-        return majorId;
-    }
-    public void setMajorId(Integer majorId) {
-        this.majorId = majorId;
-    }
-
 }

@@ -1,6 +1,7 @@
 package org.demo.dao.impl;
 
 import org.demo.dao.ICourseTeachingDao;
+import org.demo.model.HwCourse;
 import org.demo.model.HwCourseTeaching;
 import org.demo.model.HwTeacher;
 import org.demo.tool.Page;
@@ -72,5 +73,38 @@ public class CourseTeachingDao extends BaseDao<HwCourseTeaching> implements ICou
             str[i] = stringList.get(i);
         }
         return findPage(hql.toString(), params.toArray(), str, 20);
+    }
+
+    @Override
+    public List<HwCourseTeaching> courseTeachingList(Integer courseId,Integer startYear, Integer schoolTerm) {
+        String hql = "from HwCourseTeaching ct where " +
+                "ct.hwCourse.id = ? " +
+                "and ct.startYear = ? " +
+                "and ct.schoolTerm = ?";
+        return list(hql, new Object[]{courseId, startYear, schoolTerm});
+    }
+
+    @Override
+    public HwCourseTeaching findCourseTeaching(Integer courseId, Integer teacherId, Integer startYear, Integer schoolYear) {
+        String hql = "from HwCourseTeaching ct where " +
+                "ct.hwCourse.id = ? " +
+                "and ct.hwTeacher.id = ? " +
+                "and ct.startYear = ? " +
+                "and ct.schoolTerm = ? ";
+        return findObject(hql, new Object[]{courseId, teacherId, startYear, schoolYear});
+    }
+    @Override
+    public List<HwCourse> getCourses(int tid,int year,int term) {
+        String hql = "from HwCourseTeaching ct " +
+                "where ct.hwTeacher.id = ? " +
+                "and ct.startYear = ? " +
+                "and ct.schoolTerm = ?";
+        List<HwCourseTeaching> cts = list(hql,new Object[]{tid,year,term});
+        if(cts==null)return null;
+        List<HwCourse> courses = new ArrayList<HwCourse>();
+        for(HwCourseTeaching ct : cts) {
+            courses.add(ct.getHwCourse());
+        }
+        return courses;
     }
 }

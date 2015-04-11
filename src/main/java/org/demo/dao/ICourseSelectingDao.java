@@ -20,4 +20,9 @@ public interface ICourseSelectingDao extends IBaseDao<HwCourseSelecting> {
     public Long countByCtId(Integer ctId);
 
     public HwCourseSelecting findCSByCTAndStudent(HwCourseTeaching courseTeaching, HwStudent student);
+
+    public List<HwCourseSelecting> courseSelectingList(Integer studentId, Integer startYear, Integer schoolTerm);
+
+    public Page<HwCourseSelecting> courseSelectingList(Integer courseId, Integer startYear, Integer schoolTerm,
+                                                       String teacherNo, String teacherName );
 }
