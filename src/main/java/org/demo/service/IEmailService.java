@@ -20,4 +20,5 @@ public interface IEmailService {
                                          List<String> recipientAddress, String emailSubject ,List<String> text)throws Exception;
     public JSONObject callToDo();
     public JSONObject saveHomeworkNow(int infoId, String preFilePath);
+    public void sendSimpleEmailToOne(String recipientAddress, String emailSubject ,String text) throws Exception;
 }

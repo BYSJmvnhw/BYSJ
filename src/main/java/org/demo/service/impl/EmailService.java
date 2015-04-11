@@ -378,7 +378,7 @@ public class EmailService implements IEmailService {
             }
             //发送催缴邮件
             try {
-                sendSimpleEmailsToMany("",systemEmail, systemEmailPass, studentEmails, "作业催缴" ,emailTexts);
+                sendSimpleEmailsToMany(smptPost,systemEmail, systemEmailPass, studentEmails, "作业催缴" ,emailTexts);
             } catch (Exception e) {
                 jsonResult.put("errorMessage","部分邮件发送出错");
                 e.printStackTrace();
@@ -428,5 +428,10 @@ public class EmailService implements IEmailService {
             ex.printStackTrace();
         }
         jsonResult.put("message","完成任务");return jsonResult;
+    }
+    //封装发送邮件
+    public void sendSimpleEmailToOne(String recipientAddress, String emailSubject ,String text) throws Exception {
+        String smptPost = GetPost.getSmptPost(systemEmail);
+        sendSimpleEmailToOne(smptPost,systemEmail,systemEmailPass,recipientAddress,emailSubject,text);
     }
 }

@@ -1,6 +1,9 @@
 package org.demo.service.impl;
 
+import net.sf.json.JSONObject;
 import org.demo.dao.*;
+import org.demo.model.HwCourse;
+import org.demo.model.HwCourseTeaching;
 import org.demo.model.HwTeacher;
 import org.demo.model.HwUser;
 import org.demo.tool.Page;
@@ -11,8 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by jzchen on 2015/1/25.
@@ -35,130 +37,157 @@ public class TeacherService implements ITeacherService {
     public void setCollegeDao(ICollegeDao collegeDao) {
         this.collegeDao = collegeDao;
     }
-    private IMajorDao majorDao;
+    private ICampusDao campusDao;
     @Resource
-    public void setMajorDao(IMajorDao majorDao) {
-        this.majorDao = majorDao;
+    public void setCampusDao(ICampusDao campusDao) {
+        this.campusDao = campusDao;
     }
-    private IBaseDao baseDao;
+    private ICourseTeachingDao courseTeachingDao;
     @Resource
-    public void setBaseDao(IBaseDao baseDao) {
-        this.baseDao = baseDao;
+    public void setCourseTeachingDao(ICourseTeachingDao courseTeachingDao) {
+        this.courseTeachingDao = courseTeachingDao;
+    }
+    private ICourseDao courseDao;
+    @Resource
+    public void setCourseDao(ICourseDao courseDao) {
+        this.courseDao = courseDao;
     }
 
-    public HwTeacher findTeacher(String teahcerNo) {
-        String hql = " from HwTeacher t where t.teacherNo = ? ";
-        return teacherDao.findObject(hql,teahcerNo);
-    }
-    //peifeng
-    //2015-3-16晚上
-    //通过教师号或者教师名字查询，因为名字可能相同，所以返回列表
-    public List<ViewTeacher> findTeacherByNameNo(String queryParameter) {
-        String hql = "select new org.demo.vo.ViewTeacher(" +
-                "u.id,u.username,u.trueName,t.sex,t.email,t.id,t.teacherNo," +
-                "t.hwCollege.id,t.hwCollege.collegeName,t.hwMajor.id,t.hwMajor.name,t.hwCollege.hwCampus.id,t.hwCollege.hwCampus.name) " +
-                " from HwUser u,HwTeacher t" +
-                " where u.typeId=t.id and u.userType=1 and t.teacherNo=?";
-        String param1 = queryParameter,param2 = queryParameter;
-        Object[] args = {param1,param2};
-        return baseDao.list(hql,args);
-    }
-    //peifeng
-    //2015-03-15晚上
-    public Page<ViewTeacher> findTeacherList() {
-        String hql = "select new org.demo.vo.ViewTeacher(" +
-                "u.id,u.username,u.trueName,t.sex,t.email,t.id,t.teacherNo," +
-                "t.hwCollege.id,t.hwCollege.collegeName,t.hwMajor.id,t.hwMajor.name,t.hwCollege.hwCampus.id,t.hwCollege.hwCampus.name) " +
-                " from HwUser u,HwTeacher t" +
-                " where u.typeId = t.id and u.userType = 1";
-        return baseDao.findPage(hql);
-    }
-    //peifeng
-    //2015-03-16上午
-    public boolean addTeacher(int collegeId,int majorId,String teacherNo,String trueName,String sex,String mobile,String email,int createId,String createName) {
+    @Override
+    public boolean addTeacher(JSONObject jo,HwUser createUser) {
+        if(createUser == null) {
+            return false;
+        }
+        String teacherNo = jo.getString("teacherNo");
+        String trueName = jo.getString("trueName");
+        String sex = jo.getString("sex");
+        String email = jo.getString("email");
+        String mobile = jo.getString("mobile");
+        int collegeId = jo.getInt("collegeId");
+        int campusId = jo.getInt("campusId");
+        if(collegeId == 0 || campusId == 0 || teacherNo == null || teacherNo.isEmpty() || trueName == null || trueName.isEmpty()){
+            return false;
+        }
         //先添加教师
-        HwTeacher teacher = new HwTeacher();
+        HwTeacher teacher;
+        HwTeacher t = teacherDao.findDeletedTeacher(teacherNo);
+        if(t != null) {
+            teacher = t;
+        }else {
+            teacher = new HwTeacher();
+        }
         teacher.setTeacherNo(teacherNo);
         teacher.setName(trueName);
         teacher.setSex(sex);
-        //teacher.setEmail(email);
+        teacher.setEmail(email);
         teacher.setHwCollege(collegeDao.get(collegeId));
-        teacher.setHwMajor(majorDao.get(majorId));
-        teacherDao.add(teacher);
-        //查找已经添加的教师
-        HwTeacher oldTeacher = teacherDao.findObject("from HwTeacher t where t.teacherNo=?",teacherNo);
-        if(oldTeacher == null) {
-            return false;
+        teacher.setHwCampus(campusDao.get(campusId));
+        teacher.setDeleteFlag(false);
+        if(t != null) {
+            teacherDao.update(teacher);
         }else {
-            //再添加用户
-            HwUser user = new HwUser();
-            user.setUsername(teacherNo);  //用户名与教师号相同
-            user.setPassword(teacherNo);  //默认密码与用户名相同
-            user.setTrueName(trueName);
-            user.setCreateId(createId);
-            user.setCreateUsername(createName);
-            user.setCreateDate(new Timestamp(new Date().getTime()));
-            user.setTypeId(oldTeacher.getId());
-            user.setUserType(UserType.TEACHER);
+            teacherDao.add(teacher);
+        }
+        //再添加用户
+        HwUser user;
+        if( t != null ) {
+            user = userDao.findUserByTypeId(t.getId());
+        }else {
+            user = new HwUser();
+        }
+        user.setUsername(teacherNo);  //用户名与教师号相同
+        user.setPassword(teacherNo);  //默认密码与用户名相同
+        user.setTrueName(trueName);
+        user.setMobile(mobile);
+        user.setCreateId(createUser.getId());
+        user.setCreateUsername(createUser.getUsername());
+        user.setCreateDate(new Timestamp(new Date().getTime()));
+        user.setTypeId(teacher.getId());
+        user.setUserType(UserType.TEACHER);
+        user.setDeleteFlag(false);
+        if( t != null ) {
+            userDao.update(user);
+        }else {
             userDao.add(user);
-            HwUser oldUser = userDao.findObject("from HwUser u where u.username=?",teacherNo);
-            if(oldUser == null) {
-                return false;
-            }
         }
         return true;
     }
-    //peifeng
-    //2015-03-16上午
-    public boolean updateTeacher(int collegeId,int majorId,int userId,int teacherId,String trueName,String sex,String email){
+    @Override
+    public boolean updateTeacher(JSONObject jo){
+        int teacherId = jo.getInt("teacherId");
+        int userId = jo.getInt("userId");
+        String teacherNo = jo.getString("teacherNo");
+        if(teacherId==0 || userId==0 ||  teacherNo==null || teacherNo.isEmpty()) {
+            return false;
+        }
         HwTeacher oldTeacher = teacherDao.get(teacherId);
-        oldTeacher.setName(trueName);
-        oldTeacher.setSex(sex);
-        //oldTeacher.setEmail(email);
-        oldTeacher.setHwCollege(collegeDao.get(collegeId));
-        oldTeacher.setHwMajor(majorDao.get(majorId));
+        oldTeacher.setTeacherNo(teacherNo);
+        oldTeacher.setName(jo.getString("trueName"));
+        oldTeacher.setSex(jo.getString("sex"));
+        oldTeacher.setEmail(jo.getString("email"));
+        oldTeacher.setHwCollege(collegeDao.get(jo.getInt("collegeId")));
+        oldTeacher.setHwCampus(campusDao.get(jo.getInt("campusId")));
+
         HwUser oldUser = userDao.get(userId);
-        oldUser.setTrueName(trueName);
+        oldUser.setTrueName(jo.getString("trueName"));
+        oldUser.setUsername(teacherNo);
+        oldUser.setMobile(jo.getString("mobile"));
+
         teacherDao.update(oldTeacher);
         userDao.update(oldUser);
+
         return true;
     }
-    //peifeng
-    //2015-3-16晚上
-    //分页获得指定学院的所有教师
-    public Page<ViewTeacher> findTeacherByCollege(int collegeId) {
-        String hql = "select new org.demo.vo.ViewTeacher(" +
-                "u.id,u.username,u.trueName,t.sex,t.email,t.id,t.teacherNo," +
-                "t.hwCollege.id,t.hwCollege.collegeName,t.hwMajor.id,t.hwMajor.name,t.hwCollege.hwCampus.id,t.hwCollege.hwCampus.name) " +
-                " from HwUser u,HwTeacher t" +
-                " where u.typeId=t.id and u.userType=1 and t.hwCollege.id=?";
-        return baseDao.findPage(hql,collegeId);
+    @Override
+    public boolean deleteTeacher(int tid) {
+        HwTeacher teacher = load(tid);
+        if(teacher == null) {
+            return false;
+        }
+        teacher.setDeleteFlag(true);
+        HwUser user = userDao.findUserByTypeId(tid);
+        if(user == null) {
+            return false;
+        }
+        user.setDeleteFlag(true);
+        teacherDao.update(teacher);
+        userDao.update(user);
+        return true;
     }
-    //peifeng
-    //2015-3-16晚上
-    //分页获得指定专业的所有教师
-    public Page<ViewTeacher> findTeacherByMajor(int majorId) {
-        String hql = "select new org.demo.vo.ViewTeacher(" +
-                "u.id,u.username,u.trueName,t.sex,t.email,t.id,t.teacherNo," +
-                "t.hwCollege.id,t.hwCollege.collegeName,t.hwMajor.id,t.hwMajor.name,t.hwCollege.hwCampus.id,t.hwCollege.hwCampus.name) " +
-                " from HwUser u,HwTeacher t" +
-                " where u.typeId=t.id and u.userType=1 and t.hwMajor.id=?";
-        return baseDao.findPage(hql,majorId);
-    }
-    //peifeng
-    //2015-3-16晚上
-    public ViewTeacher findTeacherByNo(String teacherNo) {
-        String hql = "select new org.demo.vo.ViewTeacher(" +
-                "u.id,u.username,u.trueName,t.sex,t.email,t.id,t.teacherNo," +
-                "t.hwCollege.id,t.hwCollege.collegeName,t.hwMajor.id,t.hwMajor.name,t.hwCollege.hwCampus.id,t.hwCollege.hwCampus.name) " +
-                " from HwUser u,HwTeacher t" +
-                " where u.typeId=t.id and u.userType=1 and t.teacherNo=?";
-        return (ViewTeacher)baseDao.findObject(hql,teacherNo);
-    }
-
     @Override
     public HwTeacher load(Integer id) {
         return teacherDao.load(id);
     }
-
+    @Override
+    public Page<ViewTeacher> searchTeacher(Integer campusId, Integer collegeId, Integer majorId, String teacherNo, String name) {
+        return teacherDao.searchTeacher(campusId,collegeId,majorId,teacherNo,name);
+    }
+    @Override
+    public List<Map<String,Object>> courseByTeacher(int tid,int starYear,int schoolTerm) {
+        List<HwCourse> courses = courseTeachingDao.getCourses(tid,starYear,schoolTerm);
+        if(courses == null)return null;
+        Map<String,Object> map;
+        List<Map<String,Object>> middleResult = new ArrayList<Map<String, Object>>();
+        for(HwCourse course : courses) {
+            map = new HashMap<String, Object>();
+            map.put("collegeName",course.getHwCollege().getCollegeName());
+            map.put("courseNo",course.getCourseNo());
+            map.put("courseName",course.getCourseName());
+            middleResult.add(map);
+        }
+        return middleResult;
+    }
+    @Override
+    public void addTeacherSelectCourse(int tid,int[] cids,int startYear,int schoolTerm){
+        HwTeacher teacher = teacherDao.load(tid);
+        for(int i = 0;i < cids.length;i++) {
+            HwCourseTeaching ct = new HwCourseTeaching();
+            HwCourse course = courseDao.load(cids[i]);
+            ct.setHwCourse(course);
+            ct.setHwTeacher(teacher);
+            ct.setStartYear(startYear);
+            ct.setSchoolTerm(schoolTerm);
+            courseTeachingDao.add(ct);
+        }
+    }
 }
