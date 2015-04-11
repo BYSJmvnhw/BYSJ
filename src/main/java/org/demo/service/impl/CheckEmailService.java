@@ -72,6 +72,7 @@ public class CheckEmailService implements ICheckEmailService {
             //
             //发送验证码到邮箱
             try {
+                System.out.println(email);
                 emailService.sendSimpleEmailToOne(smptPost,systemEmail,systemEmailPass,email,"邮箱验证","验证码："+timestamp);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -86,6 +87,7 @@ public class CheckEmailService implements ICheckEmailService {
                 //
                 //发送验证码到邮箱
                 try {
+                    System.out.println(email);
                     emailService.sendSimpleEmailToOne(smptPost,systemEmail,systemEmailPass,email,"邮箱验证","验证码："+timestamp);
                 } catch (Exception e) {
                     e.printStackTrace();

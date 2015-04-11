@@ -1,7 +1,5 @@
 package org.demo.tool;
 
-import java.util.regex.Pattern;
-
 /**
  * Created by peifeng on 2015/3/21.
  */
@@ -16,32 +14,34 @@ public class GetPost {
     private static final String popPostSina = "pop.sina.com";
     private static final String popPostSohu = "pop.sohu.com";
     public static String getSmptPost(String email) {
-        if(Pattern.matches("\\w[.]\\w+@163.com",email)) {
+        String smptpost = email.substring(email.lastIndexOf("@"));
+        if("@163.com".equals(smptpost)) {
             return smptPost163;
         }
-        if(Pattern.matches("\\w+@qq.com",email)) {
+        if("@qq.com".equals(smptpost)) {
             return smptPostQQ;
         }
-        if(Pattern.matches("\\w+@sina.com",email)) {
+        if("@sina.com".equals(smptpost)) {
             return smptPostSina;
         }
-        if(Pattern.matches("\\w+@sohu.com",email)) {
+        if("@sohu.com".equals(smptpost)) {
             return smptPostSohu;
         }else {
             return "";
         }
     }
     public static String getPopPost(String email) {
-        if(Pattern.matches("\\w+@163.com",email)) {
+        String poppost = email.substring(email.lastIndexOf("@"));
+        if("@163.com".equals(poppost)) {
             return popPost163;
         }
-        if(Pattern.matches("\\w+@qq.com",email)) {
+        if("@qq.com".equals(poppost)) {
             return popPostQQ;
         }
-        if(Pattern.matches("\\w+@sina.com",email)) {
+        if("@sina.com".equals(poppost)) {
             return popPostSina;
         }
-        if(Pattern.matches("\\w+@sohu.com",email)) {
+        if("@sohu.com".equals(poppost)) {
             return popPostSohu;
         }else {
             return "";
