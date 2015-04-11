@@ -7,6 +7,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;

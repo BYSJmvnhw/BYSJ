@@ -7,6 +7,8 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8" %>
+<%@ page import="org.demo.model.HwHomeworkInfo" %>
+<%@ page import="org.demo.tool.MarkType" %>
 <%@ taglib uri="http://java.pageoffice.cn" prefix="po" %>
 <!DOCTYPE html>
 <html lang="zn">
@@ -94,7 +96,7 @@
             }
             .mark-comment>textarea {
                 width: 355px;
-                height: 200px;
+                height: 100px;
                 border: 1px solid #BABABA;
                 font-size: 18px;
                 padding: 5px;
@@ -163,9 +165,75 @@
                 background-color: #449d44;
                 border-color: #398439;
             }
+            .dialog-shade {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(100,100,100,0.5);
+                z-index: 100;
+            }
+            .dialog-shade2 {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgb(100,100,100);
+                opacity: 0.5;
+            }
+            .dialog-wrap {
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                margin: auto auto;
+                height: 150px;
+                width: 200px;
+                background-color: #fff;
+                padding: 8px 15px;
+            }
+            .dialog-title {
+                padding-bottom: 10px;
+                border-bottom: 1px #eee solid;
+            }
+            .dialog-body p>span{
+                color: #D43F3A;
+            }
+            .dialog-footer {
+                text-align: right;
+            }
+            .dialog-footer>button {
+                line-height: 30px;
+                color: #fff;
+                /*width: 100px;*/
+                font-weight: bold;
+                font-size: 16px;
+                display: inline-block;
+                text-align: center;
+                cursor: pointer;
+            }
+            .close-after {
+                margin-right: 15px;
+                background-color: #f0ad4e;
+                border-color: #eea236;
+            }
+            .close-after:hover {
+                background-color: #ec971f;
+                border-color: #d58512;
+            }
+            .close-now {
+                background-color: #d9534f;
+                border-color: #d43f3a;
+            }
+            .close-now:hover {
+                background-color: #c9302c;
+                border-color: #ac2925;
+            }
         </style>
     </head>
-
     <body>
         <div class="editwork-wrap">
             <section id="editwork" class="editwork">
@@ -214,17 +282,66 @@
                             <option>做得非常好0</option>
                         </select>
                         <div id="select0-shade" class="select0-shade"></div>
-                        <textarea id="work-remark" placeholder="请填写作业评语"></textarea>
+                        <textarea id="work-comment" placeholder="请填写作业评语">做得非常好，继续加油！</textarea>
                         <div id="textarea-shade" class="textarea-shade"></div>
                     </div>
                     <div class="mark">
                         <label>作业评分</label>
+                        <%--<% if(${requestScope.hwInfo.markType} == 'LEVEL'){%>--%>
+                        <% HwHomeworkInfo hwInfo = (HwHomeworkInfo)request.getAttribute("hwInfo");
+                            if(hwInfo.getMarkType() == MarkType.CHINESE_LEVEL){%>
                         <select id="select-mark">
                             <option selected>优秀</option>
                             <option>良好</option>
-                            <option>合格</option>
+                            <option>一般</option>
+                            <option>差</option>
+                        </select>
+                        <%}
+                        else if (hwInfo.getMarkType() == MarkType.CHAR_LEVEL) {%>
+                        <select id="select-mark">
+                            <option selected>A+</option>
+                            <option>A</option>
+                            <option>A-</option>
+                            <option>B+</option>
+                            <option>B</option>
+                            <option>B-</option>
+                            <option>C+</option>
+                            <option>C</option>
+                            <option>C-</option>
+                        </select>
+                        <%}
+                        else if (hwInfo.getMarkType() == MarkType.HUNDRED) {%>
+                        <select id="select-mark">
+                            <option selected>100分</option>
+                            <%for(int i = 99; i >= 0; i--){%>
+                            <option><%=i%>分</option>
+                            <%}%>
+                        </select>
+                        <%}
+                        else if (hwInfo.getMarkType() == MarkType.FIVE) {%>
+                        <select id="select-mark">
+                            <option selected>5分</option>
+                            <option>4分</option>
+                            <option>3分</option>
+                            <option>2分</option>
+                            <option>1分</option>
+                            <option>0分</option>
+                        </select>
+                        <%}
+                        else if (hwInfo.getMarkType() == MarkType.TEN) {%>
+                        <select id="select-mark">
+                            <option selected>10分</option>
+                            <%for(int i = 9; i >= 0; i--){%>
+                            <option><%=i%>分</option>
+                            <%}%>
+                        </select>
+                        <%}
+                        else {%>
+                        <select id="select-mark">
+                            <option selected>合格</option>
                             <option>不合格</option>
                         </select>
+                        <%}%>
                         <div id="select-shade" class="select-shade"></div>
                     </div>
                     <div class="mark-btn">
@@ -233,15 +350,29 @@
                 </div>
             </section>
         </div>
+        <%--<section class="dialog-shade">--%>
+            <%--<div class="dialog-shade2"></div>--%>
+            <%--<div class="dialog-wrap">--%>
+                <%--<div class="dialog-title">提示信息</div>--%>
+                <%--<div class="dialog-body">--%>
+                    <%--<p>批改完成，<span>10秒</span>后自动关闭窗口。</p>--%>
+                <%--</div>--%>
+                <%--<div class="dialog-footer">--%>
+                    <%--<button id="close-now" class="close-now">现在就关闭</button>--%>
+                    <%--<button id="close-after" class="close-after">不，稍后我自己关闭</button>--%>
+                <%--</div>--%>
+            <%--</div>--%>
+        <%--</section>--%>
         <script language="javascript" type="text/javascript">
             var editWork = {
                 $editwork: $('#editwork'),
                 edit: $("#PageOfficeCtrl1")[0],
+                hwId: '${requestScope.hw.id}',
                 init: function () {
                     this.$editwork.css('height', (window.innerHeight - 15) + 'px');
                     this.edit.Caption = "${requestScope.hwInfo.title}";
                     this.edit.OfficeVendor = "MSOffice";
-                    this.edit.JsFunction_AfterDocumentSaved = "editWork.saveWord()";
+                    this.edit.JsFunction_AfterDocumentSaved = "saveWord()";
                     this.bindEvent();
                 },
                 bindEvent: function () {
@@ -252,8 +383,26 @@
                     $('#select-comment').change(function () {
                         $(this).siblings('textarea').val(this.value);
                     });
-                    $('mark-sure').click(function () {
+                    $('#mark-sure').click(function () {
                         that.edit.WebSave();
+                    });
+                },
+                sendMark: function () {
+                    var mark = $('#select-mark').val(),
+                            comment = $('#work-comment').val();
+                    $.ajax({
+                        type: 'post',
+                        url: 'http://localhost:8080/mvnhk/homework/markHomework',
+                        data: {hwId: this.hwId, mark: mark, comment: comment},
+                        dataType: 'json',
+                        success: function (data) {
+                            console.log(data);
+                            if(confirm('批改成功！点击确认关闭窗口。'))
+                                window.close();
+                        },
+                        error: function () {
+
+                        }
                     });
                 },
                 myFocus: function ($el) {
@@ -261,7 +410,11 @@
                     $el.remove();
                 },
                 saveWord: function () {
-                    console.log('保存');
+                    // 保存文档成功后再发送教师评分
+                    if(this.edit.CustomSaveResult == 'success')
+                        this.sendMark();
+                    else
+                        alert('保存文档失败，请检查您的网络问题！');
                 }
             };
             function saveWord () {

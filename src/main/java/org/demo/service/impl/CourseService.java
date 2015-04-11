@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by jzchen on 2015/2/13 0013.
@@ -397,6 +394,11 @@ public class CourseService implements ICourseService {
                 courseSelectingDao.add(courseSelecting);
             }
         }
+    }
+
+    @Override
+    public void deleteCourseTeaching(Integer courseTeachingId) {
+        courseTeachingDao.delete(courseTeachingDao.load(courseTeachingId));
     }
 
 

@@ -40,7 +40,7 @@ public class LoginFilter implements Filter {
         /*不拦截首页，由index.jsp执行跳转*/
         if( !requestURI.equals("/") &&
                 /*不拦截登录页和登录验证url*/
-                !requestURI.equals("/login/logincheck") && !requestURI.equals("/web/login") &&
+                !requestURI.equals("/login/logincheck") && !requestURI.equals("/web/login") && !requestURI.equals("/manage/login") &&
                 /*不拦截资源请求*/
                 !headOfRequestURI.equals("resources"))
         {
@@ -53,7 +53,11 @@ public class LoginFilter implements Filter {
                 if( headOfRequestURI.equals("web") ) {
                     response.sendRedirect(request.getContextPath() + "/web/login");
                     return;
-                }else {
+                }else if( headOfRequestURI.equals("manage") ){ //管理员后台
+                    response.sendRedirect(request.getContextPath() + "/manage/login");
+                    return;
+                }
+                else {
                     //若为Ajax请求，则返回 timeout，由凯客户端执行重定向
                     //response.setContentType("application/json");
                     JSONObject result = new JSONObject();

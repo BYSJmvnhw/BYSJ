@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>作业网后台管理系统</title>
+    <link rel="stylesheet" type="text/css" href="css/manageapp.css">
+    <link rel="stylesheet" type="text/css" href="css/dialog.css">
+    <link rel="stylesheet" type="text/css" href="css/manage-t.css">
+    <script src="lib/react.js"></script>
+    <script src="lib/JSXTransformer.js"></script>
+    <script src="lib/jquery.min.js"></script>
+</head>
+<body>
+    <header class="box-style">
+        <span class="h-logo"></span>
+        <p>作业网后台管理系统</p>
+        <div class="h-info box-style">
+            <p>您好，超级管理员</p>
+            <a href="javascript:void(0)">退出</a>
+        </div>
+    </header>
+    <section class="main-content">
+        <div class="menu-bar" role="menu">
+            <ul class="box-style">
+                <li class="t-hover">用户管理</li>
+                <li class="active-li t-hover">课程管理</li>
+                <li class="t-hover">教师管理</li>
+                <li class="t-hover">学生管理</li>
+            </ul>
+        </div>
+        <div class="content">
+            <div class="content-wrap box-style">
+                <section class="content-wrap1"></section>
+                <section class="content-wrap2">
+                    <div class="cs-manage">
+                        <div class="cs-manage-search box-style">
+                            <div class="campus-id">
+                                <label>校区</label>
+                                <select>
+                                    <option value="0">石牌校区</option>
+                                    <option value="1">大学城校区</option>
+                                    <option value="2">南海校区</option>
+                                </select>
+                            </div>
+                            <div class="college-id">
+                                <label>学院</label>
+                                <select>
+                                    <option value="">计算机学院0</option>
+                                    <option value="">计算机学院1</option>
+                                    <option value="">计算机学院2</option>
+                                    <option value="">计算机学院3</option>
+                                </select>
+                            </div>
+                            <div class="course-no">
+                                <label>课程号</label>
+                                <input type="text" placeholder="输入课程号"/>
+                            </div>
+                            <div class="course-name">
+                                <label>课程名</label>
+                                <input type="text" placeholder="输入课程名称"/>
+                            </div>
+                            <div class="cs-search-btn">
+                                <button>搜索课程</button>
+                            </div>
+                            <div class="cs-addnew">
+                                <button>新增课程</button>
+                            </div>
+                        </div>
+                        <table class="cs-manage-table">
+                            <thead>
+                                <tr>
+                                    <th>课程编号</th>
+                                    <th>课程名</th>
+                                    <th>所属校区院系</th>
+                                    <th>所属专业</th>
+                                    <th data-courseId="">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="t-hover">
+                                    <td>005</td>
+                                    <td>计算机组成原理</td>
+                                    <td>石牌校区计算机学院</td>
+                                    <td>网络工程</td>
+                                    <td class="cs-manage-op">
+                                        <button class="cs-manage-take">选课管理</button>
+                                        <button class="cs-manage-give">授课管理</button>
+                                        <button class="cs-manage-change">修改</button>
+                                        <button class="cs-manage-delete">删除</button>
+                                    </td>
+                                </tr>
+                                <tr class="t-hover">
+                                    <td>005</td>
+                                    <td>计算机组成原理</td>
+                                    <td>石牌校区计算机学院</td>
+                                    <td>网络工程</td>
+                                    <td class="cs-manage-op">
+                                        <button class="cs-manage-take">选课管理</button>
+                                        <button class="cs-manage-give">授课管理</button>
+                                        <button class="cs-manage-change">修改</button>
+                                        <button class="cs-manage-delete">删除</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="cs-manage-page">
+                            <button class="pre-page">上一页</button>
+                            <button class="next-page">下一页</button>
+                        </div>
+                    </div>
+                </section>
+                <section class="content-wrap3"></section>
+                <section class="content-wrap4"></section>
+            </div>
+        </div>
+    </section>
+    <div id="dialog-wrap">
+    <!--<div id="dialog-wrap" style="display: none">-->
+        <!--<div class="dialog-shade">-->
+            <!--<div class="dialog-content">-->
+                <!--<div class="dialog-title">-->
+                    <!--<strong>增加教师</strong>-->
+                    <!--<span class="dialog-clear"></span>-->
+                <!--</div>-->
+                <!--<div class="dialog-body">-->
+                    <!--<div class="add-cs-campus">-->
+                        <!--<label>校区</label>-->
+                        <!--<select>-->
+                            <!--<option value="0">石牌校区</option>-->
+                            <!--<option value="1">大学城校区</option>-->
+                            <!--<option value="2">南海校区</option>-->
+                        <!--</select>-->
+                    <!--</div>-->
+                    <!--<div class="add-cs-college">-->
+                        <!--<label>学院</label>-->
+                        <!--<select>-->
+                            <!--<option value="">计算机学院0</option>-->
+                            <!--<option value="">计算机学院1</option>-->
+                            <!--<option value="">计算机学院2</option>-->
+                            <!--<option value="">计算机学院3</option>-->
+                        <!--</select>-->
+                    <!--</div>-->
+                    <!--<div class="add-cs-courseno">-->
+                        <!--<label>课程号</label>-->
+                        <!--<input type="text" placeholder="输入课程号"/>-->
+                    <!--</div>-->
+                    <!--<div class="add-cs-coursename">-->
+                        <!--<label>课程名</label>-->
+                        <!--<input type="text" placeholder="输入课程名称"/>-->
+                    <!--</div>-->
+                    <!--<div class="dialog-btn add-cs-btn">-->
+                        <!--<button class="add-cs-btn-clear">取消</button>-->
+                        <!--<button class="add-cs-btn-sure">添加</button>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="dialog-shade">-->
+            <!--<div class="dialog-content">-->
+                <!--<div class="dialog-title">-->
+                    <!--<strong>提示信息</strong>-->
+                    <!--<span class="dialog-clear"></span>-->
+                <!--</div>-->
+                <!--<div class="dialog-body">-->
+                    <!--<div class="delete-tip">-->
+                        <!--<p>确定删除吗？删除后不可修复！</p>-->
+                    <!--</div>-->
+                    <!--<div class="dialog-btn delete-btn">-->
+                        <!--<button class="delete-btn-clear">取消</button>-->
+                        <!--<button class="delete-btn-sure">删除</button>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="dialog-shade">-->
+            <!--<div class="dialog-content dialog-content-take">-->
+                <!--<div class="dialog-title">-->
+                    <!--<strong>选课管理</strong>-->
+                    <!--<span class="dialog-clear"></span>-->
+                <!--</div>-->
+                <!--<div class="dialog-body">-->
+                    <!--<div class="dialog-take-ul">-->
+                        <!--<ul class="flex-style">-->
+                            <!--<li class="dialog-take-stu">-->
+                                <!--<div>-->
+                                    <!--<p>陈键钊</p>-->
+                                    <!--<p>20112100182</p>-->
+                                <!--</div>-->
+                            <!--</li>-->
+                            <!--<div class="dialog-take-stu-detail">-->
+                                <!--<p>石牌校区</p>-->
+                                <!--<p>计算机学院2011级</p>-->
+                                <!--<p>网络工程6班</p>-->
+                                <!--<p>20112100182</p>-->
+                                <!--<p>陈键钊</p>-->
+                                <!--<p>男</p>-->
+                            <!--</div>-->
+                        <!--</ul>-->
+                    <!--</div>-->
+                    <!--<div class="take-stu-page">-->
+                        <!--<button class="pre-page">上一页</button>-->
+                        <!--<button class="next-page">下一页</button>-->
+                    <!--</div>-->
+                    <!--<div class="dialog-btn add-stu-btn">-->
+                        <!--<span>收起</span>-->
+                        <!--<button class="add-stu-btn-add">添加学生</button>-->
+                    <!--</div>-->
+                    <!--<div class="add-stu-op">-->
+                        <!--<div class="add-stu-search box-style">-->
+                            <!--<div class="add-stu-campus">-->
+                                <!--<label>校区</label>-->
+                                <!--<select>-->
+                                    <!--<option value="0">石牌校区</option>-->
+                                    <!--<option value="1">大学城校区</option>-->
+                                    <!--<option value="2">南海校区</option>-->
+                                <!--</select>-->
+                            <!--</div>-->
+                            <!--<div class="add-stu-college">-->
+                                <!--<label>学院</label>-->
+                                <!--<select>-->
+                                    <!--<option value="">计算机学院0</option>-->
+                                    <!--<option value="">计算机学院1</option>-->
+                                    <!--<option value="">计算机学院2</option>-->
+                                    <!--<option value="">计算机学院3</option>-->
+                                <!--</select>-->
+                            <!--</div>-->
+                            <!--<div class="add-stu-sutno">-->
+                                <!--<label>学号</label>-->
+                                <!--<input type="text" placeholder="输入学生学号"/>-->
+                            <!--</div>-->
+                            <!--<div class="add-stu-sutname">-->
+                                <!--<label>姓名</label>-->
+                                <!--<input type="text" placeholder="输入学生姓名"/>-->
+                            <!--</div>-->
+                            <!--<div class="add-stu-search-btn">-->
+                                <!--<button>搜索学生</button>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="add-stu-search-ul">-->
+                            <!--<ul class="flex-style">-->
+                                <!--<li class="dialog-take-stu search-result-btn">-->
+                                    <!--<div>-->
+                                        <!--<p>陈键钊</p>-->
+                                        <!--<p>20112100182</p>-->
+                                    <!--</div>-->
+                                <!--</li>-->
+                                <!--<div class="dialog-take-stu-detail">-->
+                                    <!--<p>石牌校区</p>-->
+                                    <!--<p>计算机学院2011级</p>-->
+                                    <!--<p>网络工程6班</p>-->
+                                    <!--<p>20112100182</p>-->
+                                    <!--<p>陈键钊</p>-->
+                                    <!--<p>男</p>-->
+                                <!--</div>-->
+                            <!--</ul>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    </div>
+    <script type="text/jsx" src="js/manageapp.js"></script>
+</body>
+</html>

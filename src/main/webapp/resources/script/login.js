@@ -57,8 +57,8 @@ define(function(require, exports, module) {
                 success: function (data) {
                     if(data.msg == 'success'){
                         console.log('登陆成功', data);
-                        sessionStorage.userType = data.userType; // 记录全局用户类型
-                        sessionStorage.trueName = data.trueName; // 记录全局用户类型
+                        localStorage.userType = data.userType; // 记录全局用户类型
+                        localStorage.trueName = data.trueName; // 记录全局用户类型
                         that.loginSuccess('man', 'info');
                     }
                     else{
@@ -79,9 +79,7 @@ define(function(require, exports, module) {
         showLoad: function () {
             var $shade = this.$el.find('#lg-shade');
             $shade.show();
-            setTimeout(function () {
-                $shade.find('.t-load').addClass('t-load-start');
-            }, 100);
+            $shade.find('.t-load').addClass('t-load-start');
         },
         hideLoad: function () {
             var $shade = this.$el.find('#lg-shade');
@@ -131,22 +129,22 @@ define(function(require, exports, module) {
             }
             else if(part == 'main'){ // 应用程序主界面
                 if(that.view == null){ // 登陆后，用户主动刷新页面
-                    require.async(['webapp', 'webapp.css'], function (webapp) {
+                    require.async(['webapp-' + localStorage.userType.toLowerCase(), 'webapp.css'], function (webapp) {
                         // 执行主页面渲染
-                        that.$main_el.html(tmpl(that.$mainhtml.attr('id'), {
-                            userType: sessionStorage.userType,
-                            trueName: sessionStorage.trueName
+                        that.$main_el.html(tmpl('main-html', {
+                            userType: localStorage.userType,
+                            trueName: localStorage.trueName
                         }));
                         // 执行主页面各种事件绑定，数据加载
                         webapp.appView(type, bar);
                     });
                 }
                 else { // 从登陆界面进入主界面
-                    require.async(['webapp', 'webapp.css'], function (webapp) {
+                    require.async(['webapp-' + localStorage.userType.toLowerCase(), 'webapp.css'], function (webapp) {
                         // 执行主页面渲染
-                        that.$main_el.html(tmpl(that.$mainhtml.attr('id'), {
-                            userType: sessionStorage.userType,
-                            username: sessionStorage.userName
+                        that.$main_el.html(tmpl('main-html', {
+                            userType: localStorage.userType,
+                            trueName: localStorage.trueName
                         }));
                         // 执行主页面各种事件绑定，数据加载
                         webapp.appView(type, bar);
