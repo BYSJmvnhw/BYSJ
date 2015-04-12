@@ -18,7 +18,7 @@ import java.util.List;
  * Created by peifeng on 2015/3/25.
  */
 @Controller
-@RequestMapping(value="ExcelOperate")
+@RequestMapping(value="/ExcelOperate")
 public class ExcelController {
     private IExportExcelService exportExcelService;
     @Resource

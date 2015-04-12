@@ -92,8 +92,8 @@ public class ManagerController {
     //增加专业
     @RequestMapping(value="/addMajor")
     @ResponseBody
-    public void addMajor(int collegeId,String collegeName) {
-        majorService.addMajor(collegeId,collegeName);
+    public void addMajor(int collegeId,String majorName) {
+        majorService.addMajor(collegeId,majorName);
     }
     //修改专业名和所属学院
     @RequestMapping(value="/updateMajor")

@@ -41,7 +41,7 @@ public class ManageTeacherController {
         JSONObject jo = JSONObject.fromObject(jsonObject);
         HwUser loginUser = (HwUser)request.getSession().getAttribute("loginUser");
         boolean result= teacherService.addTeacher(jo,loginUser);
-        jsonresult.put("isSuccess",result);
+        jsonresult.put("status",result);
         return jsonresult;
     }
     //删除教师用户
@@ -51,7 +51,7 @@ public class ManageTeacherController {
         jsonresult = new JSONObject();
         jsonresult.clear();
         boolean status = teacherService.deleteTeacher(tid);
-        jsonresult.put("isSuccess",status);
+        jsonresult.put("status",status);
         return jsonresult;
     }
     //修改教师用户
@@ -62,7 +62,7 @@ public class ManageTeacherController {
         jsonresult = new JSONObject();jsonresult.clear();
         JSONObject jo = JSONObject.fromObject(jsonObject);
         boolean result = teacherService.updateTeacher(jo);
-        jsonresult.put("isSuccess",result);
+        jsonresult.put("status",result);
         return jsonresult;
     }
     //搜索老师
@@ -77,7 +77,7 @@ public class ManageTeacherController {
     public JSONObject addCourseForTeacher(int tid,int[] cids,int startYear,int schoolTerm) {
         teacherService.addTeacherSelectCourse(tid,cids,startYear,schoolTerm);
         jsonresult = new JSONObject();jsonresult.clear();
-        jsonresult.put("isSuccess",true);
+        jsonresult.put("status",true);
         return jsonresult;
     }
 }
