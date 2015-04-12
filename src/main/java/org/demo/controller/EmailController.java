@@ -22,6 +22,7 @@ import java.util.List;
  * Created by peifeng on 2015/3/12.
  */
 @Controller
+@RequestMapping(value = "/Email")
 public class EmailController {
 
     private IEmailService emailService;
