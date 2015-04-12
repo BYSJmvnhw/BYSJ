@@ -93,11 +93,24 @@ public class UserController {
         }
     }
 
-    @RequestMapping("/updateUserInfo")
+    /****************************管理员功能**************************/
+
+    @RequestMapping("/userList")
     @ResponseBody
-    public JSONObject updateUserInfo(HttpServletRequest request){
-        return null;
+    public Object userList(String username, String trueName, String userType){
+        try{
+            return userService.serachUser(username, trueName, userType);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
     }
+
+    //@RequestMapping("/")
+
+
+
+
 
     public IStudentService getStudentService() {
         return studentService;

@@ -29,7 +29,7 @@ public class StudentDao extends BaseDao<HwStudent> implements IStudentDao {
 
     @Override
     public Page<HwStudent> searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name) {
-        StringBuilder hql = new StringBuilder("from HwStudent st where 1=1 ");
+        StringBuilder hql = new StringBuilder("from HwStudent st where st.deleteFlag = false ");
         List<Object> param = new ArrayList<Object>();
         List<String> stringList = new ArrayList<String>();
         if( campusId != null ) {

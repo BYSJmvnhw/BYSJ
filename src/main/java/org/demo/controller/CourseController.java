@@ -225,15 +225,15 @@ public class CourseController {
 
     /**
      *
-     * @param campusId
-     * @param collegeId
-     * @param majorId
-     * @param startYear
-     * @param schoolTerm
-     * @param teacherNo
-     * @param teacherName
-     * @param courseNo
-     * @param courseName
+     * @param campusId 校区id
+     * @param collegeId 学院id
+     * @param majorId 专业id
+     * @param startYear 学年
+     * @param schoolTerm 学期
+     * @param teacherNo 教师号
+     * @param teacherName 教师名
+     * @param courseNo 课程号
+     * @param courseName 课程名
      * @return
      */
     @RequestMapping(value = "/courseTeachingList",method = RequestMethod.GET)

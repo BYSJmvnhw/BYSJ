@@ -36,7 +36,7 @@ public class StudentController {
     private IStudentService studentService;
     private ICollegeService collegeService;
     private ICourseService courseService;
-    //private IUserService userService;
+    private IMajorService majorService;
     /**
      *  根据教师授课关系id返回选课学生列表的接口
      * @param ctId 教师授课关系 courseTeaching id
@@ -264,6 +264,22 @@ public class StudentController {
         }
     }
 
+    /**
+     * 根据学院id 获取 专业列表
+     * @param collegeId 学院id
+     * @return
+     */
+    @RequestMapping("/majorList")
+    @ResponseBody
+    public Object majorList(Integer collegeId){
+        try{
+            return majorService.getMajorByCollege(collegeId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
+
     public IHomeworkService getHomeworkService() {
         return homeworkService;
     }
@@ -298,6 +314,15 @@ public class StudentController {
     @Resource
     public void setCourseService(ICourseService courseService) {
         this.courseService = courseService;
+    }
+
+    public IMajorService getMajorService() {
+        return majorService;
+    }
+
+    @Resource
+    public void setMajorService(IMajorService majorService) {
+        this.majorService = majorService;
     }
 
     private JSONObject getFailResultJsonObject(){
