@@ -214,8 +214,8 @@ public class StudentService implements IStudentService {
 
     //搜索学生分页
     @Override
-    public JSONObject searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name) {
-        Page page =  studentDao.searchStudent(campusId, collegeId, majorId, studentNo, name);
+    public JSONObject searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name, String grade) {
+        Page page =  studentDao.searchStudent(campusId, collegeId, majorId, studentNo, name, grade);
         JsonConfig jsonConfig = new JsonConfig();
         jsonConfig.setExcludes(new String[]{"hibernateLazyInitializer", "handler","hwCourseSelectings","hwHomeworks","deleteFlag"});
         jsonConfig.registerJsonValueProcessor(HwCampus.class,

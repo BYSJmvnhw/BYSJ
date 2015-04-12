@@ -28,8 +28,8 @@ public class StudentDao extends BaseDao<HwStudent> implements IStudentDao {
     }
 
     @Override
-    public Page<HwStudent> searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name) {
-        StringBuilder hql = new StringBuilder("from HwStudent st where 1=1 ");
+    public Page<HwStudent> searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name, String grade) {
+        StringBuilder hql = new StringBuilder("from HwStudent st where st.deleteFlag = false ");
         List<Object> param = new ArrayList<Object>();
         List<String> stringList = new ArrayList<String>();
         if( campusId != null ) {
@@ -43,6 +43,10 @@ public class StudentDao extends BaseDao<HwStudent> implements IStudentDao {
         if( majorId != null ) {
             hql.append( "and st.hwMajor.id = ? " );
             param.add(majorId);
+        }
+        if( grade != null && !grade.equals("")){
+            hql.append("and st.grade = ? ");
+            param.add(grade);
         }
         if ( studentNo != null && !studentNo.equals("") ) {
             hql.append( "and st.studentNo like ? " );

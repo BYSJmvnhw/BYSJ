@@ -8,11 +8,13 @@ import org.demo.dao.IUserDao;
 import org.demo.model.*;
 import org.demo.service.IUserService;
 import org.demo.tool.ObjectJsonValueProcessor;
+import org.demo.tool.Page;
 import org.demo.tool.UserType;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -26,6 +28,7 @@ public class UserService implements IUserService {
     private IUserDao userDao;
     private IStudentDao studentDao;
     private ITeacherDao teacherDao;
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:dd");
 
     @Override
     public JSONObject load(Serializable id) {
@@ -124,6 +127,61 @@ public class UserService implements IUserService {
     @Override
     public JSONObject updateEmail(String email, HwUser user) {
         return null;
+    }
+
+    @Override
+    public Page<Map<String,Object>> serachUser(String username, String trueName, String userType) {
+        Page<HwUser> userPage = userDao.userList(username, trueName, userType);
+        List<HwUser> userList = userPage.getData();
+        List<Map<String,Object>> userViewList = new ArrayList<Map<String, Object>>();
+        for( HwUser user : userList ){
+            Map<String,Object> userView = new HashMap<String, Object>();
+            userView.put("userId",user.getId());
+            userView.put("username",user.getUsername());
+            userView.put("trueName",user.getTrueName());
+            userView.put("email",user.getEmail());
+            userView.put("mobile",user.getMobile());
+            userView.put("userType",user.getUserType());
+            userView.put("createUsername",user.getCreateUsername());
+            userView.put("createDate",simpleDateFormat.format(user.getCreateDate()));
+            userViewList.add(userView);
+        }
+        Page<Map<String,Object>> page = new Page<Map<String,Object>>();
+        page.setData(userViewList);
+        page.setPageOffset(userPage.getPageOffset());
+        page.setPageSize(userPage.getPageSize());
+        page.setTotalRecord(userPage.getTotalRecord());
+        return page;
+    }
+
+    @Override
+    public Map<String, Object> userDetail(Integer userId) {
+        HwUser user = userDao.load(userId);
+        Map<String, Object> userView = new HashMap<String, Object>();
+        userView.put("userId",user.getId());
+        userView.put("username",user.getUsername());
+        userView.put("trueName",user.getTrueName());
+        userView.put("email",user.getEmail());
+        userView.put("mobile",user.getMobile());
+        userView.put("userType",user.getUserType());
+        userView.put("createUsername",user.getCreateUsername());
+        userView.put("createDate",simpleDateFormat.format(user.getCreateDate()));
+        return userView;
+    }
+
+    @Override
+    public JSONObject updatePassword(Integer userId, String oldPassword, String newPassword) {
+        HwUser user = userDao.load(userId);
+        JSONObject jsonObject = new JSONObject();
+        if( oldPassword.equals(user.getPassword()) ){
+            user.setPassword(newPassword);
+            userDao.update(user);
+            jsonObject.put("status", "success");
+            return jsonObject;
+        }else {
+            jsonObject.put("status","password_error");
+            return jsonObject;
+        }
     }
 
 

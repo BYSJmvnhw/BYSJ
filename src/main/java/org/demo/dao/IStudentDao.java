@@ -12,5 +12,5 @@ public interface IStudentDao extends IBaseDao<HwStudent>{
 
     public HwStudent findDeleteStudnet(String studentNo);
 
-    public Page<HwStudent> searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name);
+    public Page<HwStudent> searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name, String grade);
 }

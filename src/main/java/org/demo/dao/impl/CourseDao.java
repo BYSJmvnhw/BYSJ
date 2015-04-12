@@ -15,7 +15,7 @@ import java.util.List;
 public class CourseDao extends BaseDao<HwCourse> implements ICourseDao {
     @Override
     public Page<HwCourse> coursePage(Integer campusId, Integer collegeId, Integer majorId, String courseNo, String courseName) {
-        StringBuilder hql = new StringBuilder("from HwCourse c where 1=1 ");
+        StringBuilder hql = new StringBuilder("from HwCourse c where c.deleteFlag = false ");
         List<Object> param = new ArrayList<Object>();
         List<String> stringList = new ArrayList<String>();
         if( campusId != null ) {

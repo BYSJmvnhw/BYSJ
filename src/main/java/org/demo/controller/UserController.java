@@ -33,7 +33,7 @@ public class UserController {
     /**
      * 获取登录用户的个人详细信息
      */
-    @RequestMapping("/info")
+    @RequestMapping(value = "/info",method = RequestMethod.GET)
     @ResponseBody
     public JSONObject userInfo(HttpServletRequest request) {
         /**获取登录用户信息*/
@@ -51,7 +51,7 @@ public class UserController {
     /**
      * 修改邮箱之前获取登录用户的邮箱和用户名username
      */
-    @RequestMapping("/email")
+    @RequestMapping(value = "/email",method = RequestMethod.GET)
     @ResponseBody
     public Object userEmail(HttpServletRequest request) {
         HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
@@ -93,11 +93,42 @@ public class UserController {
         }
     }
 
-    @RequestMapping("/updateUserInfo")
+    /****************************管理员功能**************************/
+
+    @RequestMapping(value = "/userList",method = RequestMethod.GET)
     @ResponseBody
-    public JSONObject updateUserInfo(HttpServletRequest request){
-        return null;
+    public Object userList(String username, String trueName, String userType){
+        try{
+            return userService.serachUser(username, trueName, userType);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
     }
+
+    @RequestMapping(value = "/userDetail",method = RequestMethod.GET)
+    @ResponseBody
+    public Object userDetail(Integer userId){
+        try {
+            return userService.userDetail(userId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
+
+
+    @RequestMapping(value = "/updateUser", method = RequestMethod.POST)
+    public Object updateUser(Integer userId, String oldPassword, String newPassword){
+        try{
+            return userService.updatePassword(userId,oldPassword,newPassword);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
+
+
 
     public IStudentService getStudentService() {
         return studentService;
