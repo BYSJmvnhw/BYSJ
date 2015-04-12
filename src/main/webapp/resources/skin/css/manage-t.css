@@ -7,11 +7,35 @@
     transition: border-bottom-color 500ms;
 }
 
-.login-div {
+.t-login-div {
     opacity: 1;
     transition: opacity 1s;
 }
 
 .login-div-hide {
     opacity: 0;
+}
+
+.t-content-wrap {
+    transition: transform 618ms linear;
+}
+
+div.t-content-wrap1 {
+    transform: translateX(0);
+}
+
+div.t-content-wrap2 {
+    transform: translateX(calc(40px - 100vw));
+}
+
+div.t-content-wrap3 {
+    transform: translateX(calc(80px - 200vw));
+}
+
+div.t-content-wrap4 {
+    transform: translateX(calc(120px - 300vw));
+}
+
+div.t-content-wrap5 {
+    transform: translateX(calc(160px - 400vw));
 }
