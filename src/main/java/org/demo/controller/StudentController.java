@@ -114,9 +114,9 @@ public class StudentController {
      */
     @RequestMapping(value = "/searchStudent", method = RequestMethod.GET)
     @ResponseBody
-    public JSONObject searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name) {
+    public JSONObject searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name, String grade) {
         try{
-            return studentService.searchStudent(campusId, collegeId, majorId, studentNo, name);
+            return studentService.searchStudent(campusId, collegeId, majorId, studentNo, name, grade);
         }catch (Exception e){
             e.printStackTrace();
             return getFailResultJsonObject();

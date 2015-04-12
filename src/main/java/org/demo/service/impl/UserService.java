@@ -154,6 +154,36 @@ public class UserService implements IUserService {
         return page;
     }
 
+    @Override
+    public Map<String, Object> userDetail(Integer userId) {
+        HwUser user = userDao.load(userId);
+        Map<String, Object> userView = new HashMap<String, Object>();
+        userView.put("userId",user.getId());
+        userView.put("username",user.getUsername());
+        userView.put("trueName",user.getTrueName());
+        userView.put("email",user.getEmail());
+        userView.put("mobile",user.getMobile());
+        userView.put("userType",user.getUserType());
+        userView.put("createUsername",user.getCreateUsername());
+        userView.put("createDate",simpleDateFormat.format(user.getCreateDate()));
+        return userView;
+    }
+
+    @Override
+    public JSONObject updatePassword(Integer userId, String oldPassword, String newPassword) {
+        HwUser user = userDao.load(userId);
+        JSONObject jsonObject = new JSONObject();
+        if( oldPassword.equals(user.getPassword()) ){
+            user.setPassword(newPassword);
+            userDao.update(user);
+            jsonObject.put("status", "success");
+            return jsonObject;
+        }else {
+            jsonObject.put("status","password_error");
+            return jsonObject;
+        }
+    }
+
 
     public IUserDao getUserDao() {
         return userDao;

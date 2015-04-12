@@ -34,4 +34,8 @@ public interface IUserService {
 
     public Page<Map<String,Object>> serachUser(String username, String trueName, String userType);
 
+    public Map<String,Object> userDetail(Integer userId);
+
+    public JSONObject updatePassword(Integer userId, String oldPassword, String newPassword);
+
 }
