@@ -5,3 +5,4 @@
 target/
 src/main/resources/log4j.properties
 src/main/resources/jdbc.properties
+src/main/webapp/resources/script/.module-cache

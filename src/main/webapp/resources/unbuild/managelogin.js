@@ -13,7 +13,7 @@ define(function(require, exports, module) {
     var serverpath = 'http://localhost:8080/mvnhk/',
         imgpath = serverpath + 'resources/skin/images/';
 
-    var Login = React.createClass({displayName: "Login",
+    var Login = React.createClass({
         login: function (e) {
             var that = this,
                 input = $(e.target).parent().prev().find('input');
@@ -51,33 +51,33 @@ define(function(require, exports, module) {
         },
         render: function () {
             return (
-                React.createElement("div", {id: "login-div", className: "login-div t-login-div", ref: "loginDiv"}, 
-                    React.createElement("section", {className: "l-up"}, 
-                        React.createElement("div", {className: "l-up-txt"}, 
-                            React.createElement("div", {className: "txt-img"}, 
-                                React.createElement("img", {src: imgpath + "logo.png"})
-                            ), 
-                            React.createElement("p", null, "作业网后台管理平台")
-                        )
-                    ), 
-                    React.createElement("section", {className: "l-middle"}, 
-                        React.createElement("div", {className: "l-input-wrap"}, 
-                            React.createElement("div", {className: "l-m-tip"}, "登陆"), 
-                            React.createElement("div", {className: "l-input"}, 
-                                React.createElement("div", {className: "lg-name"}, 
-                                    React.createElement("input", {type: "text", ref: "username", placeholder: "请输入用户名"})
-                                ), 
-                                React.createElement("div", {className: "lg-pw"}, 
-                                    React.createElement("input", {type: "password", ref: "password", placeholder: "请输入密码"})
-                                )
-                            ), 
-                            React.createElement("div", {className: "l-login-btn"}, 
-                                React.createElement("button", {onClick: this.login}, "登陆")
-                            )
-                        )
-                    ), 
-                    React.createElement("section", {className: "l-down"})
-                )
+                <div id="login-div" className="login-div t-login-div" ref="loginDiv">
+                    <section className="l-up">
+                        <div className="l-up-txt">
+                            <div className="txt-img">
+                                <img src={imgpath + "logo.png"}></img>
+                            </div>
+                            <p>作业网后台管理平台</p>
+                        </div>
+                    </section>
+                    <section className="l-middle">
+                        <div className="l-input-wrap">
+                            <div className="l-m-tip">登陆</div>
+                            <div className="l-input">
+                                <div className="lg-name">
+                                    <input type="text" ref="username" placeholder="请输入用户名"/>
+                                </div>
+                                <div className="lg-pw">
+                                    <input type="password" ref="password" placeholder="请输入密码"/>
+                                </div>
+                            </div>
+                            <div className="l-login-btn">
+                                <button onClick={this.login}>登陆</button>
+                            </div>
+                        </div>
+                    </section>
+                    <section className="l-down"></section>
+                </div>
             );
         }
     });
@@ -97,7 +97,7 @@ define(function(require, exports, module) {
         jmpPart: function (part, type, bar) {
             var that = this;
             if(part == 'login'){
-                React.render(React.createElement(Login, null), document.getElementById('login-part'));
+                React.render(<Login />, document.getElementById('login-part'));
             }
             else if(part == 'main') {
                 require.async(['manageapp', 'manageapp.css', 'm-dialog.css'], function (manageapp) {
