@@ -56,4 +56,6 @@ public interface ICourseService {
                                      Integer startYear, Integer schoolTerm, String teacherNo, String teacherName, String courseNo, String courseName);
 
     public void deleteCourseSelecting(Integer courseSelectingId);
+
+    public Map<String,Object> courseDetail(Integer courseId);
 }

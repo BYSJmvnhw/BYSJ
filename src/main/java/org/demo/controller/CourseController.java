@@ -140,6 +140,22 @@ public class CourseController {
     }
 
     /**
+     * 根据课程id查看课程详细信息
+     * @param courseId 课程id
+     * @return
+     */
+    @RequestMapping(value = "/courseDetail",method = RequestMethod.GET)
+    @ResponseBody
+    public Object courseDetail(Integer courseId){
+        try {
+            return courseService.courseDetail(courseId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
+
+    /**
      * 更新课程信息（不可更改课程课程号，若需要修改课程号，需要删除后再添加）
      * @param courseId 课程id
      * @param campusId 校区id

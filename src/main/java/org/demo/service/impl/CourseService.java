@@ -438,6 +438,22 @@ public class CourseService implements ICourseService {
         courseSelectingDao.delete(courseSelectingDao.load(courseSelectingId));
     }
 
+    @Override
+    public Map<String, Object> courseDetail(Integer courseId) {
+        HwCourse course = courseDao.load(courseId);
+        Map<String,Object> courseView = new HashMap<String, Object>();
+        courseView.put("courseId",course.getId());
+        courseView.put("courseNo",course.getCourseNo());
+        courseView.put("courseName",course.getCourseName());
+        courseView.put("campusId",course.getHwCampus().getId());
+        courseView.put("campusName",course.getHwCampus().getName());
+        courseView.put("collegeId",course.getHwCollege().getId());
+        courseView.put("collegeName",course.getHwCollege().getCollegeName());
+        courseView.put("majorId",course.getHwMajor().getId());
+        courseView.put("majorId",course.getHwMajor().getName());
+        return courseView;
+    }
+
 
     @Resource
     public void setCourseDao(ICourseDao courseDao) {
