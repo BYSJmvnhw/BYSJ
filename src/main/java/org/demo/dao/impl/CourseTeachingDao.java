@@ -146,7 +146,7 @@ public class CourseTeachingDao extends BaseDao<HwCourseTeaching> implements ICou
             stringList.add("%" + courseNo + "%");
         }
         if( courseName != null && !courseName.equals("") ){
-            hql.append("and ct.hwCourse.Name like ? ");
+            hql.append("and ct.hwCourse.courseName like ? ");
             stringList.add("%" + courseName + "%");
         }
         String[] str = new String[stringList.size()];
