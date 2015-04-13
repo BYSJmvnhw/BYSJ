@@ -224,6 +224,11 @@ public class CourseController {
         }
     }
 
+    /**
+     * 根据授课关系id删除对应的授课关系
+     * @param ctId 授课关系id
+     * @return
+     */
     @RequestMapping(value = "/deleteCourseTeaching",method = RequestMethod.POST)
     @ResponseBody
     public JSONObject deleteCourseTeaching(Integer ctId){
