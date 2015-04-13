@@ -292,7 +292,7 @@ public class CourseService implements ICourseService {
             teacherView.put("majorName",teacher.getHwMajor().getName());
             teacherView.put("teacherNo",teacher.getTeacherNo());
             teacherView.put("name",teacher.getName());
-            teacherView.put("id",teacher.getSex());
+            teacherView.put("sex",teacher.getSex());
             teacherView.put("ctId",ct.getId());
             teacherViewList.add(teacherView);
         }
