@@ -33,6 +33,20 @@ define(function (require, exports, module) {
                 campusId: "1"
             };
         },
+        giveCourseManage: function (e) {
+            console.log('授课管理');
+            var courseId = $(e.target).parent().attr('data-courseId');
+            // contentClassName 弹框特征样式类
+            React.render(
+                <Dialog title='授课管理'
+                    body='GiveCourseManageBody'
+                    courseId={courseId}
+                    contentClassName='dialog-content-take'
+                    url={serverpath + 'course/teacherList'}
+                />,
+                dialog_el
+            );
+        },
         addCourse: function () {
             console.log('新增课程');
             React.render(
@@ -48,12 +62,8 @@ define(function (require, exports, module) {
             console.log('修改课程');
             var $courseBTn = $(e.target).parent(),
                 courseId = $courseBTn.attr('data-courseId'),
-                updateCourseTr = function (courseNo, courseName, campusName, collegeName, majorName) {
-                    var td = $courseBTn.parent().find('td');
-                    td[0].innerHTML = courseNo;
-                    td[1].innerHTML = courseName;
-                    td[2].innerHTML = campusName + '校区' + collegeName;
-                    td[3].innerHTML = majorName;
+                updateCourseTr = function () {
+                    this.searchCourse();
                 };
             React.render(
                 <Dialog title='修改课程'
@@ -122,7 +132,7 @@ define(function (require, exports, module) {
                         <td>{course.campusName}校区{course.collegeName}</td>
                         <td>{course.majorName}</td>
                         <td className="cs-manage-op"  data-courseid={course.courseId}>
-                            <button className="cs-manage-give">授课管理</button>
+                            <button className="cs-manage-give" onClick={that.giveCourseManage}>授课管理</button>
                             <button className="cs-manage-change" onClick={that.updateCourse}>修改</button>
                             <button className="cs-manage-delete" onClick={that.deleteCourse}>删除</button>
                         </td>

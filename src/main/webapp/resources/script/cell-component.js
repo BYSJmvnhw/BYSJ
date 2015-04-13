@@ -32,7 +32,7 @@ define(function (require, exports, module) {
         },
         render: function () {
             var defaultValue = '', campusNode = '';
-            if(this.state['campus' + this.props.campusId].length > 0){
+            if(this.state['campus' + this.props.campusId] && this.state['campus' + this.props.campusId].length > 0){
                 campusNode = this.state['campus' + this.props.campusId].map(function (campus, index) {
                     return (React.createElement("option", {value: campus.collegeId}, campus.collegeName));
                 });
@@ -70,7 +70,7 @@ define(function (require, exports, module) {
         },
         render: function () {
             var defaultValue = '', majorNode = '';
-            if(this.state.major.length > 0){
+            if(this.state.major.length && this.state.major.length > 0){
                 majorNode = this.state.major.map(function (major) {
                     return (React.createElement("option", {value: major.majorId}, major.majorName));
                 });
@@ -127,11 +127,37 @@ define(function (require, exports, module) {
         }
     });
 
-//    // 学年select组件
-//    var SelectTermYear = React.createClass({});
-//
-//    // 学期select组件
-//    var SelectTerm = React.createClass({});
+    // 学年select组件
+    var SelectTermYear = React.createClass({displayName: "SelectTermYear",
+        render: function () {
+            return (
+                React.createElement("div", {className: this.props.className}, 
+                    React.createElement("label", null, "学年"), 
+                    React.createElement("select", null, 
+                        React.createElement("option", {value: "2011"}, "2011~2012"), 
+                        React.createElement("option", {value: "2012"}, "2012~2013"), 
+                        React.createElement("option", {value: "2013"}, "2013~2014"), 
+                        React.createElement("option", {value: "2014"}, "2014~2015")
+                    )
+                )
+            );
+        }
+    });
+
+    // 学期select组件
+    var SelectTerm = React.createClass({displayName: "SelectTerm",
+        render: function () {
+            return (
+                React.createElement("div", {className: this.props.className}, 
+                    React.createElement("label", null, "学期"), 
+                    React.createElement("select", null, 
+                        React.createElement("option", {value: "1"}, "第一学期"), 
+                        React.createElement("option", {value: "2"}, "第二学期")
+                    )
+                )
+            );
+        }
+    });
 
     // 课程号input组件
     var CourseNo = React.createClass({displayName: "CourseNo",
@@ -139,7 +165,11 @@ define(function (require, exports, module) {
             return (
                 React.createElement("div", {className: this.props.className}, 
                     React.createElement("label", null, "课程号"), 
-                    React.createElement("input", {type: "text", placeholder: "输入课程号", onKeyDown: this.props.onKeyDown, readonly: this.props.readonly})
+                    React.createElement("input", {type: "text", placeholder: "输入课程号", 
+                        onKeyDown: this.props.onKeyDown, 
+                        readOnly: this.props.readonly, 
+                        value: this.props.value}
+                    )
                 )
                 );
         }
@@ -147,11 +177,24 @@ define(function (require, exports, module) {
 
     // 课程名input组件
     var CourseName = React.createClass({displayName: "CourseName",
+        getInitialState: function() {
+            return {value: this.props.value};
+        },
+        handleChange: function(event) {
+            this.setState({value: event.target.value});
+        },
+        componentWillReceiveProps: function (nextProps) {
+            this.setState({value: nextProps.value});
+        },
         render: function () {
             return (
                 React.createElement("div", {className: this.props.className}, 
                     React.createElement("label", null, "课程名"), 
-                    React.createElement("input", {type: "text", placeholder: "输入课程名称", onKeyDown: this.props.onKeyDown})
+                    React.createElement("input", {type: "text", placeholder: "输入课程名称", 
+                        onKeyDown: this.props.onKeyDown, 
+                        value: this.state.value, 
+                        onChange: this.handleChange}
+                    )
                 )
                 );
         }
@@ -225,6 +268,8 @@ define(function (require, exports, module) {
         SelectCampus: SelectCampus,
         SelectCollege: SelectCollege,
         SelectMajor: SelectMajor,
+        SelectTermYear: SelectTermYear,
+        SelectTerm: SelectTerm,
         CourseNo: CourseNo,
         CourseName: CourseName,
         CourseNoName: CourseNoName,

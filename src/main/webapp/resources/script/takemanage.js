@@ -2,10 +2,6 @@
  * Created by 郑权才 on 15-4-13.
  */
 
-/**
- * Created by zqc on 2015/4/10.
- */
-
 define(function (require, exports, module) {
 
     var React = require('React');
@@ -21,6 +17,8 @@ define(function (require, exports, module) {
         SelectCampus = cellComponent.SelectCampus,
         SelectCollege = cellComponent.SelectCollege,
         SelectMajor = cellComponent.SelectMajor,
+        SelectTermYear = cellComponent.SelectTermYear,
+        SelectTerm = cellComponent.SelectTerm,
         CourseNo = cellComponent.CourseNo,
         CourseName = cellComponent.CourseName,
         CourseNoName = cellComponent.CourseNoName,
@@ -41,7 +39,8 @@ define(function (require, exports, module) {
             console.log('获得了校区id', e.target.value);
             this.setState({campusId: e.target.value});
         },
-        loadTakeData: function (campusId, collegeId, startYear, schoolTerm, teacherNo, teacherName, courseNo, courseName) {
+        loadTakeData: function (campusId, collegeId, startYear, schoolTerm, teacherNo,
+            teacherName, courseNo, courseName) {
             $.ajax({
                 url: this.props.url,
                 data: {
@@ -71,10 +70,9 @@ define(function (require, exports, module) {
                 searchData[1].value,
                 searchData[2].value,
                 searchData[3].value,
+                '','', // 教师号名为空
                 parseInt(searchData[4].value) || '',
-                searchData[4].value.replace(/\d+/g, ''),
-                parseInt(searchData[5].value) || '',
-                searchData[5].value.replace(/\d+/g, '')
+                searchData[4].value.replace(/\d+/g, '')
             );
         },
         keyDownSearchTake: function (e) {
@@ -99,12 +97,24 @@ define(function (require, exports, module) {
         deleteStudent: function () {
             console.log('删除学生');
         },
+        opStudent: function () {
+            console.log('增删学生');
+            React.render(
+                React.createElement(Dialog, {title: "增减学生", 
+                    contentClassName: "dialog-content-take", 
+                    body: "TakeOpStudentDialogBody", 
+                    url: serverpath + ''}
+                ),
+                dialog_el
+            );
+        },
         componentDidMount: function () {
             this.loadTakeData();
         },
         render: function () {
-            var that = this;
-            var courseNode = this.state.data.map(function (course, index) {
+            var that = this, courseNode ='';
+            if(Array.isArray(this.state.data))
+                courseNode = this.state.data.map(function (course, index) {
                 return (
                     React.createElement("tr", {className: "t-hover"}, 
                         React.createElement("td", null, course.courseNo), 
@@ -114,8 +124,7 @@ define(function (require, exports, module) {
                         React.createElement("td", null, course.teacherNo), 
                         React.createElement("td", null, course.teacherName), 
                         React.createElement("td", {className: "cs-manage-op", "data-courseid": course.courseId}, 
-                            React.createElement("button", {className: "cs-manage-give", onClick: that.addStudent}, "添加学生"), 
-                            React.createElement("button", {className: "cs-manage-delete", onclick: that.deleteStudent}, "删除学生")
+                            React.createElement("button", {className: "cs-manage-give", onClick: that.opStudent}, "增删学生")
                         )
                     )
                     );
@@ -125,8 +134,9 @@ define(function (require, exports, module) {
                     React.createElement("div", {className: "cs-manage-search box-style", ref: "searchData"}, 
                         React.createElement(SelectCampus, {className: "campus-id", setSelectCampus: this.setSelectCampus}), 
                         React.createElement(SelectCollege, {className: "college-id", campusId: this.state.campusId}), 
+                        React.createElement(SelectTermYear, null), 
+                        React.createElement(SelectTerm, null), 
                         React.createElement(CourseNoName, {className: "course-no", onKeyDown: this.keyDownSearchTake}), 
-                        React.createElement(TeacherNoName, {className: "course-name", onKeyDown: this.keyDownSearchTake}), 
                         React.createElement("div", {className: "cs-search-btn"}, 
                             React.createElement("button", {onClick: this.searchTake}, "搜索课程")
                         )

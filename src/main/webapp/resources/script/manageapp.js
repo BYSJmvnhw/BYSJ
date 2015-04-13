@@ -31,12 +31,37 @@ define(function (require, exports, module) {
     var StudentManage = require('studentmanage').StudentManage;
 
     var AppView = React.createClass({displayName: "AppView",
-        getInitialState: function () { return {curWrap: 't-content-wrap2'}; },
-        userManage: function () { this.setState({curWrap: 't-content-wrap1'}); },
-        csManage:function () { this.setState({curWrap: 't-content-wrap2'}); },
-        takeManage: function () { this.setState({curWrap: 't-content-wrap3'}); },
-        teacherManage: function () {this.setState({curWrap: 't-content-wrap4'}); },
-        studentrManage: function () { this.setState({curWrap: 't-content-wrap5'}); },
+        getInitialState: function () { return {curWrap: '', activeLi: ''}; },
+        userManage: function () {
+            this.setState({curWrap: 't-content-wrap1', activeLi: 'active-li1'});
+            appNavigate('main/usermanage', '作业网后台管理系统-用户管理', {trigger: false});
+        },
+        csManage:function () {
+            this.setState({curWrap: 't-content-wrap2', activeLi: 'active-li2'});
+            appNavigate('main/csmanage', '作业网后台管理系统-课程管理', {trigger: false});
+        },
+        takeManage: function () {
+            this.setState({curWrap: 't-content-wrap3', activeLi: 'active-li3'});
+            appNavigate('main/takemanage', '作业网后台管理系统-选课管理', {trigger: false});
+        },
+        teacherManage: function () {
+            this.setState({curWrap: 't-content-wrap4', activeLi: 'active-li4'});
+            appNavigate('main/teachermanage', '作业网后台管理系统-教师管理', {trigger: false});
+        },
+        studentrManage: function () {
+            this.setState({curWrap: 't-content-wrap5', activeLi: 'active-li5'});
+            appNavigate('main/studentmanage', '作业网后台管理系统-学生管理', {trigger: false});
+        },
+        componentDidMount: function () {
+            switch (this.props.type) {
+                case 'usermanage': this.userManage();return;
+                case 'csmanage': this.csManage();return;
+                case 'takemanage': this.takeManage();return;
+                case 'teachermanage': this.teacherManage();return;
+                case 'studentmanage': this.studentrManage();return;
+                default : this.userManage();
+            }
+        },
         render: function () {
             return (
                 React.createElement("div", null, 
@@ -50,9 +75,9 @@ define(function (require, exports, module) {
                     ), 
                     React.createElement("section", {className: "main-content"}, 
                         React.createElement("div", {className: "menu-bar", role: "menu"}, 
-                            React.createElement("ul", {className: "box-style"}, 
+                            React.createElement("ul", {className: "box-style " + this.state.activeLi}, 
                                 React.createElement("li", {className: "t-hover", onClick: this.userManage}, "用户管理"), 
-                                React.createElement("li", {className: "active-li t-hover", onClick: this.csManage}, "课程管理"), 
+                                React.createElement("li", {className: "t-hover", onClick: this.csManage}, "课程管理"), 
                                 React.createElement("li", {className: "t-hover", onClick: this.takeManage}, "选课管理"), 
                                 React.createElement("li", {className: "t-hover", onClick: this.teacherManage}, "教师管理"), 
                                 React.createElement("li", {className: "t-hover", onClick: this.studentrManage}, "学生管理")
@@ -97,8 +122,8 @@ define(function (require, exports, module) {
     });
 
     module.exports = {
-        enterApp: function (type, bar) {
-            React.render(React.createElement(AppView, {type: type, bar: bar}), document.getElementById('manage-part'));
+        enterApp: function (type) {
+            React.render(React.createElement(AppView, {type: type}), document.getElementById('manage-part'));
         }
     }
 
