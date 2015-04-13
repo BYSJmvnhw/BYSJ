@@ -30,7 +30,7 @@ define(function(require, exports, module) {
                 success: function (data) {
                     if(data.msg == 'success'){
                         console.log('登陆成功', data);
-                        that.loginSuccess('main', 'csmanage');
+                        that.loginSuccess('usermanage');
                     }
                     else{
                         alert('用户名或密码错误！');
@@ -42,9 +42,9 @@ define(function(require, exports, module) {
                 }
             });
         },
-        loginSuccess: function (type, bar) {
+        loginSuccess: function (type) {
             // 登陆成功后，改变url，触发相应路由地址的操作
-            appNavigate('main/' + type + '/' + bar, '个人中心', {trigger: true});
+            appNavigate('main/' + type, '作业网后台管理系统-用户管理', {trigger: true});
         },
         hideLoginDiv: function () {
             $(React.findDOMNode(this.refs.loginDiv)).addClass('login-div-hide');
@@ -84,7 +84,7 @@ define(function(require, exports, module) {
 
     var AppRouter = Backbone.Router.extend({
         routes: {
-            ':part(/:type/:bar)': 'jmpPart'
+            ':part(/:type)': 'jmpPart'
         },
         initialize: function () {
             var that = this;
@@ -94,7 +94,7 @@ define(function(require, exports, module) {
             };
             appNavigate('login', '登陆作业网', {trigger:true}); // 设置登录路由地址
         },
-        jmpPart: function (part, type, bar) {
+        jmpPart: function (part, type) {
             var that = this;
             if(part == 'login'){
                 React.render(<Login />, document.getElementById('login-part'));
@@ -103,7 +103,7 @@ define(function(require, exports, module) {
                 require.async(['manageapp', 'manageapp.css', 'm-dialog.css'], function (manageapp) {
                     var $logindiv = $('#login-div');
                     // 执行主页面渲染
-                    manageapp.enterApp('csmanage', 'test');
+                    manageapp.enterApp(type);
                     // 执行主页面各种事件绑定，数据加载
                     $logindiv.addClass('login-div-hide');
                     // 设置定时器，从DOM中删除登陆页面的html代码，并将其保存在script中

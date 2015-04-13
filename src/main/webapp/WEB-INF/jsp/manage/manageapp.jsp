@@ -32,6 +32,13 @@
                     'React': 'react.min.js',
                     'login': 'script/managelogin.js',
                     'manageapp': 'script/manageapp.js',
+                    'cellcomponent': 'script/cell-component.js',
+                    'managedialog': 'script/managedialog.js',
+                    'usermanage': 'script/usermanage.js',
+                    'csmanage': 'script/csmanage.js',
+                    'takemanage': 'script/takemanage.js',
+                    'teachermanage': 'script/teachermanage.js',
+                    'studentmanage': 'script/studentmanage.js',
                     'jquery': 'jquery-1.11.2.min.js',
                     'manageapp.css': 'css/manageapp.css',
                     'm-dialog.css': 'css/m-dialog.css'
