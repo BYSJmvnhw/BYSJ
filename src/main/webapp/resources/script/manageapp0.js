@@ -124,9 +124,10 @@ define(function (require, exports, module) {
             }
         },
         render: function () {
-            var body = this.getDialogBody(this.props.body);
+            var body = this.getDialogBody(this.props.body),
+                display = {display: this.state.display};
             return (
-                React.createElement("div", {className: "dialog-shade", ref: "dialogDiv", style: {display: this.state.display}}, 
+                React.createElement("div", {className: "dialog-shade", ref: "dialogDiv", style: display}, 
                     React.createElement("div", {className: "dialog-content"}, 
                         React.createElement("div", {className: "dialog-title"}, 
                             React.createElement("strong", null, this.props.title), 
@@ -398,15 +399,18 @@ define(function (require, exports, module) {
                 dialog_el);
         },
         deleteCourse: function (e) {
+            console.log('删除课程');
             var $courseBTn = $(e.target).parent(),
-                courseId = $courseBTn.attr('data-courseId');
+                courseId = $courseBTn.attr('data-courseId'),
+                removeCourseTr = function () {$courseBTn.parent().remove()};
             React.render(
                 React.createElement(Dialog, {title: "删除课程", 
-                    body: "DeleteCourseDialogBody", 
-                    url: serverpath + "course/deleteCourse", 
-                    removeCourseTr: function () {$courseBTn.parent().remove()}, 
-                    courseId: courseId, display: "block"}),
-                dialog_el);
+                body: "DeleteCourseDialogBody", 
+                url: serverpath + "course/deleteCourse", 
+                removeCourseTr: removeCourseTr, 
+                courseId: courseId, display: "block"}),
+                dialog_el
+            );
         },
         loadCourseData: function (campusId, collegeId, courseNo, courseName) {
             $.ajax({

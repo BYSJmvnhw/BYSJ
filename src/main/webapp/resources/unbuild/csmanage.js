@@ -37,23 +37,47 @@ define(function (require, exports, module) {
             console.log('新增课程');
             React.render(
                 <Dialog title='新增课程'
-                body="AddCourseDialogBody"
-                url={serverpath + "course/addCourse"}
-                refreshCourseData = {this.loadCourseData}
-                display="block" />,
+                    body="AddCourseDialogBody"
+                    url={serverpath + "course/addCourse"}
+                    refreshCourseData = {this.loadCourseData}
+                    display="block"
+                />,
                 dialog_el);
         },
+        updateCourse: function (e) {
+            console.log('修改课程');
+            var $courseBTn = $(e.target).parent(),
+                courseId = $courseBTn.attr('data-courseId'),
+                updateCourseTr = function (courseNo, courseName, campusName, collegeName, majorName) {
+                    var td = $courseBTn.parent().find('td');
+                    td[0].innerHTML = courseNo;
+                    td[1].innerHTML = courseName;
+                    td[2].innerHTML = campusName + '校区' + collegeName;
+                    td[3].innerHTML = majorName;
+                };
+            React.render(
+                <Dialog title='修改课程'
+                    body='UpdateCourseDialogBody'
+                    url={serverpath + 'course/updateCourse'}
+                    url_detial={serverpath + 'course/courseDetail'}
+                    updateCourseTr={updateCourseTr}
+                    courseId = {courseId}
+                />,
+            dialog_el);
+        },
         deleteCourse: function (e) {
+            console.log('删除课程');
             var $courseBTn = $(e.target).parent(),
                 courseId = $courseBTn.attr('data-courseId'),
                 removeCourseTr = function () {$courseBTn.parent().remove()};
             React.render(
                 <Dialog title='删除课程'
-                body="DeleteCourseDialogBody"
-                url={serverpath + "course/deleteCourse"}
-                removeCourseTr={removeCourseTr}
-                courseId={courseId} display="block" />,
-                dialog_el);
+                    body="DeleteCourseDialogBody"
+                    url={serverpath + "course/deleteCourse"}
+                    removeCourseTr={removeCourseTr}
+                    courseId={courseId} display="block" />,
+                dialog_el
+            );
         },
         loadCourseData: function (campusId, collegeId, courseNo, courseName) {
             $.ajax({
@@ -99,7 +123,7 @@ define(function (require, exports, module) {
                         <td>{course.majorName}</td>
                         <td className="cs-manage-op"  data-courseid={course.courseId}>
                             <button className="cs-manage-give">授课管理</button>
-                            <button className="cs-manage-change">修改</button>
+                            <button className="cs-manage-change" onClick={that.updateCourse}>修改</button>
                             <button className="cs-manage-delete" onClick={that.deleteCourse}>删除</button>
                         </td>
                     </tr>

@@ -5,6 +5,7 @@
 define(function (require, exports, module) {
 
     var React = require('React');
+    var cellComponent = require('cellcomponent');
     var _ = require('underscore'); // 框架依赖模块
     var $ = require('jquery');
 
@@ -12,12 +13,7 @@ define(function (require, exports, module) {
 
    // 检测服务端session是否过期，若过期则跳转到登陆页面
     // @param status 后台session状态
-    function checkSession (status) {
-        if(status == 'timeout'){
-            alert('会话已过期，请重新登录！');
-            window.location.href = servicepath + 'web/login';
-        }
-    }
+    var checkSession = cellComponent.checkSession;
 
     // 用户管理组件
     var UserManage = require('usermanage').UserManage;

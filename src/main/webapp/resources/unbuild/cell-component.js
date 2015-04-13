@@ -139,7 +139,7 @@ define(function (require, exports, module) {
             return (
                 <div className={this.props.className}>
                     <label>课程号</label>
-                    <input type="text" placeholder="输入课程号" onKeyDown={this.props.onKeyDown}/>
+                    <input type="text" placeholder="输入课程号" onKeyDown={this.props.onKeyDown} readonly={this.props.readonly}/>
                 </div>
                 );
         }

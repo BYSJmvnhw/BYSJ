@@ -139,7 +139,7 @@ define(function (require, exports, module) {
             return (
                 React.createElement("div", {className: this.props.className}, 
                     React.createElement("label", null, "课程号"), 
-                    React.createElement("input", {type: "text", placeholder: "输入课程号", onKeyDown: this.props.onKeyDown})
+                    React.createElement("input", {type: "text", placeholder: "输入课程号", onKeyDown: this.props.onKeyDown, readonly: this.props.readonly})
                 )
                 );
         }
