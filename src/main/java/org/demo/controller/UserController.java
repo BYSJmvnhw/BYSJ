@@ -133,14 +133,14 @@ public class UserController {
     /**
      * 更改用户密码
      * @param userId 用户id
-     * @param oldPassword 旧密码
      * @param newPassword 新密码
      * @return
      */
     @RequestMapping(value = "/updateUser", method = RequestMethod.POST)
-    public Object updateUser(Integer userId, String oldPassword, String newPassword){
+    public Object updateUser(Integer userId,String newPassword){
         try{
-            return userService.updatePassword(userId,oldPassword,newPassword);
+            userService.updatePassword(userId, newPassword);
+            return getSuccessResultJsonObject();
         }catch (Exception e){
             e.printStackTrace();
             return getFailResultJsonObject();

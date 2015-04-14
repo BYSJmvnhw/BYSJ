@@ -184,6 +184,22 @@ public class StudentController {
     }
 
     /**
+     * 管理员根据学生id获取学生信息，供更新学生详细使用
+     * @param sId 学生id
+     * @return
+     */
+    @RequestMapping(value = "studentMsg",method = RequestMethod.GET)
+    @ResponseBody
+    public Object studentMsg(Integer sId){
+        try {
+            return studentService.studentMsg(sId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return getFailResultJsonObject();
+        }
+    }
+
+    /**
      * 根据学生id，学年，学期查看该生所选课程
      * @param studentId 学生id
      * @param startYear 学年

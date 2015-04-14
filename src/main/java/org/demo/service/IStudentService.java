@@ -6,6 +6,7 @@ import org.demo.model.HwStudent;
 import org.demo.model.HwUser;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jzchen on 2015/1/14.
@@ -31,5 +32,7 @@ public interface IStudentService {
     public JSONObject searchStudent(Integer campusId, Integer collegeId, Integer majorId, String studentNo, String name, String grade);
 
     public void addStudent(Integer ctId, Integer[] sIdArray);
+
+    public Map<String,Object> studentMsg(Integer studentId);
 
 }
