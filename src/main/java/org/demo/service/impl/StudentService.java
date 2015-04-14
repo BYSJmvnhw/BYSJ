@@ -63,7 +63,7 @@ public class StudentService implements IStudentService {
         studentDao.update(student);
         HwUser user = userDao.findUserByTypeId(jsonObject.getInt("id"));
        // user.setUsername(jsonObject.getString("studentNo"));
-        user.setPassword(jsonObject.getString("password"));
+        //user.setPassword(jsonObject.getString("password"));
         user.setTrueName(jsonObject.getString("name"));
         user.setEmail(jsonObject.getString("email"));
         userDao.update(user);
