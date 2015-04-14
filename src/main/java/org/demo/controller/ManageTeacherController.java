@@ -89,4 +89,8 @@ public class ManageTeacherController {
         }
         return jsonresult;
     }
+    //获得教师
+    public JSONObject getTeacher(int tid){
+        return teacherService.getTeacher(tid);
+    }
 }
