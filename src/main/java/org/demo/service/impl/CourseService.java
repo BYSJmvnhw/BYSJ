@@ -339,8 +339,8 @@ public class CourseService implements ICourseService {
 
     //查询学生列表
     @Override
-    public Page<Map<String, Object>> studentList(Integer courseId, Integer startYear, Integer schoolTerm,String teacherNo, String teacherName) {
-        Page<HwCourseSelecting> csPage = courseSelectingDao.courseSelectingList(courseId, startYear, schoolTerm, teacherNo, teacherName);
+    public Page<Map<String, Object>> studentList(Integer courseTeachingId) {
+        Page<HwCourseSelecting> csPage = courseSelectingDao.courseSelectingPage(courseTeachingId);
         List<HwCourseSelecting> csList = csPage.getData();
         List<Map<String,Object>> studentViewList = new ArrayList<Map<String, Object>>();
         for( HwCourseSelecting cs : csList  ){
@@ -355,9 +355,10 @@ public class CourseService implements ICourseService {
             studentView.put("studentName",student.getName());
             studentView.put("studentNo",student.getStudentNo());
             studentView.put("sex",student.getSex());
+            studentView.put("csId",cs.getId());
             studentViewList.add(studentView);
         }
-        Page page = new Page();
+        Page<Map<String,Object>> page = new Page<Map<String,Object>>();
         page.setData(studentViewList);
         page.setPageOffset(csPage.getPageOffset());
         page.setPageSize(csPage.getPageSize());

@@ -18,7 +18,7 @@ public class CourseSelectingDao extends BaseDao<HwCourseSelecting> implements IC
     @Override
     public Page<HwCourseSelecting> courseSelectingPage(Integer courseTeachingId) {
         String hql = "from HwCourseSelecting cs where cs.hwCourseTeaching.id = ?";
-        return findPage(hql, courseTeachingId);
+        return findPage(hql, new Object[]{courseTeachingId},null,20);
     }
 
     @Override

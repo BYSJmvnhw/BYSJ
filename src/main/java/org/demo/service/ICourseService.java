@@ -44,7 +44,7 @@ public interface ICourseService {
 
     public List<Map<String,Object>> courseList(Integer studentId, Integer startYear, Integer schoolTerm);
 
-    public Page<Map<String, Object>> studentList(Integer courseId,Integer startYear, Integer schoolTerm,String teacherNo, String teacherName );
+    public Page<Map<String, Object>> studentList(Integer courseTeachingId );
 
     public List<Map<String,Object>> searchCourseTeaching(Integer courseId, Integer startYear, Integer schoolTerm );
 

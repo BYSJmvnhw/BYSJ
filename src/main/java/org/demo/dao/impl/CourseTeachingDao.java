@@ -57,7 +57,7 @@ public class CourseTeachingDao extends BaseDao<HwCourseTeaching> implements ICou
             params.add(startYear);
         }
         if ( schoolTerm != null ) {
-            hql.append("and ct.startYear = ? ");
+            hql.append("and ct.schoolTerm = ? ");
             params.add(schoolTerm);
         }
         if( courseName != null && !courseName.equals("") ) {

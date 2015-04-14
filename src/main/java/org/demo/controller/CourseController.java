@@ -271,26 +271,26 @@ public class CourseController {
     }
 
     /**
-     * 根据课程id，学年，学期，可选的教师号和教师姓名查询选择该门课程、该教师的学生列表
-     * @param courseId 课程id
-     * @param startYear 学年
-     * @param schoolTerm 学期
-     * @param teacherNo 教师号 (可选的)
-     * @param teacherName 可选的教师名 (可选的)
+     * 根据授课id查询选修该课程的学生列表
+     * @param ctId 授课关系id
      * @return
      */
     @RequestMapping(value = "/studentList", method = RequestMethod.GET)
     @ResponseBody
-    public Object studentList(Integer courseId, Integer startYear, Integer schoolTerm,String teacherNo, String teacherName){
+    public Object studentList(Integer ctId){
         try{
-            return courseService.studentList(courseId, startYear, schoolTerm,  teacherNo,  teacherName);
+            return courseService.studentList(ctId);
         }catch (Exception e){
             e.printStackTrace();
             return getFailResultJsonObject();
         }
     }
 
-
+    /**
+     * 根据选课关系id，删除对应的选课关系
+     * @param csId 选课关系id
+     * @return
+     */
     @RequestMapping(value = "/deleteCourseSelecting",method = RequestMethod.POST)
     @ResponseBody
     public JSONObject deleteCourseSelecting(Integer csId){
