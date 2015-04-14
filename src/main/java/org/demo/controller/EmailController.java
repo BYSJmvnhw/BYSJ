@@ -38,19 +38,19 @@ public class EmailController {
     }
 
     //验证邮箱获取验证码接口
-    @RequestMapping(value = "/getCheckNmuber")
+    @RequestMapping(value = "/getCheckNmuber",method = RequestMethod.GET)
     @ResponseBody
     public JSONObject getCheckNumber(String email) {
         return checkEmailService.findEmailExist(email);
     }
     //验证邮箱输入验证码接口
-    @RequestMapping(value = "/inputCheckNumber")
+    @RequestMapping(value = "/inputCheckNumber",method = RequestMethod.POST)
     @ResponseBody
     public JSONObject inputCheckNumber(String email,String checkNumber) {
         return checkEmailService.findCheck(email,checkNumber);
     }
     //指定作业信息立即收取作业
-    @RequestMapping(value = "/saveHomeworkNow")
+    @RequestMapping(value = "/saveHomeworkNow",method = RequestMethod.POST)
     @ResponseBody
     public JSONObject saveHomeworkNow(int infoId) {
         return emailService.saveHomeworkNow(infoId,GetRealPath.getRealPath());

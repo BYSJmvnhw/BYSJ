@@ -190,4 +190,22 @@ public class TeacherService implements ITeacherService {
             courseTeachingDao.add(ct);
         }
     }
+    @Override
+    public JSONObject getTeacher(int tid)
+    {
+        HwTeacher teacher = teacherDao.get(tid);
+        JSONObject jsonresult = new JSONObject();
+        jsonresult.clear();
+        if(teacher == null){
+            jsonresult.put("status","fail");
+            return jsonresult;
+        }else {
+            jsonresult.put("id",teacher.getId());
+            jsonresult.put("teacherNo",teacher.getTeacherNo());
+            jsonresult.put("name",teacher.getName());
+            jsonresult.put("sex",teacher.getSex());
+            jsonresult.put("email",teacher.getEmail());
+            return jsonresult;
+        }
+    }
 }
