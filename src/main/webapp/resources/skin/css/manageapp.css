@@ -84,10 +84,9 @@ header p {
 }
 
 .menu-bar ul li {
-    width: 100px;
     text-align: center;
     margin: 0 10px;
-    padding-bottom: 2px;
+    padding: 0 12px 2px 12px;
     position: relative;
     background-color: #eee;
     cursor: pointer;
@@ -114,13 +113,21 @@ header p {
     z-index: 1;
 }
 
-.menu-bar ul li.active-li {
+.menu-bar ul.active-li1 li:nth-child(1),
+.menu-bar ul.active-li2 li:nth-child(2),
+.menu-bar ul.active-li3 li:nth-child(3),
+.menu-bar ul.active-li4 li:nth-child(4),
+.menu-bar ul.active-li5 li:nth-child(5) {
     background-color: #337ab7;
     color: #fff;
     z-index: 2;
 }
 
-.menu-bar ul li.active-li:before {
+.menu-bar ul.active-li1 li:nth-child(1):before,
+.menu-bar ul.active-li2 li:nth-child(2):before,
+.menu-bar ul.active-li3 li:nth-child(3):before,
+.menu-bar ul.active-li4 li:nth-child(4):before,
+.menu-bar ul.active-li5 li:nth-child(5):before {
     border-bottom-color: #337ab7;
 }
 
