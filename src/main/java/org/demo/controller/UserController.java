@@ -95,6 +95,13 @@ public class UserController {
 
     /****************************管理员功能**************************/
 
+    /**
+     * 根据条件筛选用户列表
+     * @param username 用户名
+     * @param trueName 真名
+     * @param userType 用户类型
+     * @return
+     */
     @RequestMapping(value = "/userList",method = RequestMethod.GET)
     @ResponseBody
     public Object userList(String username, String trueName, String userType){
@@ -106,6 +113,11 @@ public class UserController {
         }
     }
 
+    /**
+     * 根据用户id查看用户详细，用于更新用户
+     * @param userId 用户id
+     * @return
+     */
     @RequestMapping(value = "/userDetail",method = RequestMethod.GET)
     @ResponseBody
     public Object userDetail(Integer userId){
@@ -118,6 +130,13 @@ public class UserController {
     }
 
 
+    /**
+     * 更改用户密码
+     * @param userId 用户id
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     * @return
+     */
     @RequestMapping(value = "/updateUser", method = RequestMethod.POST)
     public Object updateUser(Integer userId, String oldPassword, String newPassword){
         try{

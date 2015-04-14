@@ -215,9 +215,9 @@ public class StudentController {
     @RequestMapping("/searchCourseTeaching")
     @ResponseBody
     public Object searchCourseTeaching(Integer campusId, Integer collegeId, Integer majorId,
-                                       Integer startYear, Integer schoolTerm, String courseName, String teacherName) {
+                                       Integer startYear, Integer schoolTerm, String teacherNo, String teacherName, String courseNo, String courseName ) {
         try {
-            return courseService.searchCourseTeaching(campusId, collegeId, majorId, startYear, schoolTerm, courseName, teacherName);
+            return courseService.searchCourseTeaching(campusId, collegeId, majorId, startYear, schoolTerm, teacherNo, teacherName,courseNo, courseName);
         }catch (Exception e){
             e.printStackTrace();
             return getFailResultJsonObject();

@@ -7,6 +7,7 @@ import org.demo.tool.Page;
 import org.demo.vo.ViewTeacher;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
@@ -33,7 +34,7 @@ public class ManageTeacherController {
      */
     //增添教师用户
     //int collegeId,int campusId,String teacherNo,String trueName,String sex,String mobile,String email
-    @RequestMapping(value="/addTeacher")
+    @RequestMapping(value="/addTeacher",method = RequestMethod.POST)
     @ResponseBody
     public JSONObject addTeacher(String jsonObject,HttpServletRequest request) {
         jsonresult = new JSONObject();
@@ -45,7 +46,7 @@ public class ManageTeacherController {
         return jsonresult;
     }
     //删除教师用户
-    @RequestMapping(value="/deleteTeacher")
+    @RequestMapping(value="/deleteTeacher",method = RequestMethod.POST)
     @ResponseBody
     public JSONObject deleteTeacher(int tid){
         jsonresult = new JSONObject();
@@ -56,7 +57,7 @@ public class ManageTeacherController {
     }
     //修改教师用户
     //int collegeId,int campusId,int userId,int teacherId,String trueName,String sex,String email
-    @RequestMapping(value="/updateTeacher")
+    @RequestMapping(value="/updateTeacher",method = RequestMethod.POST)
     @ResponseBody
     public JSONObject updateTeacher(String jsonObject) {
         jsonresult = new JSONObject();jsonresult.clear();
@@ -66,13 +67,13 @@ public class ManageTeacherController {
         return jsonresult;
     }
     //搜索老师
-    @RequestMapping(value="/searchTeacher")
+    @RequestMapping(value="/searchTeacher",method = RequestMethod.GET)
     @ResponseBody
     public Page<ViewTeacher> searchTeacher(Integer campusId, Integer collegeId, Integer majorId, String teacherNo, String name) {
         return teacherService.searchTeacher(campusId,collegeId,majorId,teacherNo,name);
     }
     //为老师添加课程
-    @RequestMapping(value="/addCourseForTeacher")
+    @RequestMapping(value="/addCourseForTeacher",method = RequestMethod.POST)
     @ResponseBody
     public JSONObject addCourseForTeacher(int tid,int[] cids,int startYear,int schoolTerm) {
         teacherService.addTeacherSelectCourse(tid,cids,startYear,schoolTerm);

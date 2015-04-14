@@ -40,15 +40,23 @@ public class UserDao extends BaseDao<HwUser> implements IUserDao {
         }
         if( username != null && !username.equals("") ){
             hql.append("and u.username like ? ");
-            stringList.add(username);
+            stringList.add("%"+username+"%");
         }if( trueName != null && !trueName.equals("") ){
             hql.append("and u.trueName like ? ");
-            stringList.add(trueName);
+            stringList.add("%"+ trueName + "%");
         }
         String[] str = new String[stringList.size()];
         for(int i=0; i<str.length; i++) {
             str[i] = stringList.get(i);
         }
         return findPage(hql.toString(), params.toArray(), str, 20);
+    }
+
+    @Override
+    public HwUser findUser(UserType userType, Integer typeId) {
+        String hql = "from HwUser u where " +
+                "u.userType = ?  " +
+                "and u.typeId = ? ";
+        return findObject(hql, new Object[]{userType, typeId});
     }
 }

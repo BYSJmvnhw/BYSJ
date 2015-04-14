@@ -63,7 +63,7 @@ public class StudentService implements IStudentService {
         studentDao.update(student);
         HwUser user = userDao.findUserByTypeId(jsonObject.getInt("id"));
        // user.setUsername(jsonObject.getString("studentNo"));
-        user.setPassword(jsonObject.getString("password"));
+        //user.setPassword(jsonObject.getString("password"));
         user.setTrueName(jsonObject.getString("name"));
         user.setEmail(jsonObject.getString("email"));
         userDao.update(user);
@@ -76,7 +76,7 @@ public class StudentService implements IStudentService {
         HwStudent student = studentDao.load(id);
         student.setDeleteFlag(true);
         studentDao.update(student);
-        HwUser user =userDao.findUserByTypeId(id);
+        HwUser user =userDao.findUser(UserType.STUDENT,id);
         user.setDeleteFlag(true);
         userDao.update(user);
     }
