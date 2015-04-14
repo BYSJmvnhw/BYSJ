@@ -40,10 +40,10 @@ public class UserDao extends BaseDao<HwUser> implements IUserDao {
         }
         if( username != null && !username.equals("") ){
             hql.append("and u.username like ? ");
-            stringList.add(username);
+            stringList.add("%"+username+"%");
         }if( trueName != null && !trueName.equals("") ){
             hql.append("and u.trueName like ? ");
-            stringList.add(trueName);
+            stringList.add("%"+ trueName + "%");
         }
         String[] str = new String[stringList.size()];
         for(int i=0; i<str.length; i++) {
