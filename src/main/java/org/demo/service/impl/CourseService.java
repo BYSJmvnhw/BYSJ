@@ -332,6 +332,7 @@ public class CourseService implements ICourseService {
             courseView.put("campusName",course.getHwCampus().getName());
             courseView.put("collegeName",course.getHwCollege().getCollegeName());
             courseView.put("majorName",course.getHwMajor().getName());
+            courseView.put("csId",cs.getId());
             courseViewList.add(courseView);
         }
         return courseViewList;
