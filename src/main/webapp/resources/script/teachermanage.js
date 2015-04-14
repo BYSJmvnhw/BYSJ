@@ -27,14 +27,123 @@ define(function (require, exports, module) {
 
     // 教师管理组件
     var TeacherManage = React.createClass({displayName: "TeacherManage",
-//        getInitialState: function () {},
-//        loadUserData: function () {},
-//        updateUser: function () {},
-//        deleteUser: function () {},
-//        componentDidMount: function () {},
+        getInitialState: function () {
+            return {
+                data: [],
+                campusId: "1"
+            };
+        },
+        setSelectCampus: function (e) {
+            console.log('获得了校区id', e.target.value);
+            this.setState({campusId: e.target.value});
+        },
+        loadTeacherData: function (campusId, collegeId, teacherNo, Teachername) {
+            $.ajax({
+                url: this.props.url,
+                data: {
+                    campusId: campusId,
+                    collegeId: collegeId,
+                    teacherNo: teacherNo,
+                    name: Teachername
+                },
+                dataType: 'json',
+                success: function(data) {
+                    console.log('教师管理', data);
+                    this.setState({data: data.data});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        searchTeacher: function () {
+            console.log('搜索教师');
+            var searchdata = $(this.refs.searchData.getDOMNode()).find('input, select');
+            this.loadTeacherData(
+                searchdata[0].value,
+                searchdata[1].value,
+                parseInt(searchdata[2].value) || '',
+                searchdata[2].value.replace(/\d+/g, '')
+            );
+        },
+        keyDownSearchTeacher: function (e) {
+            (e.keyCode || e.which) == 13 && this.searchTeacher();
+        },
+        deleteTeacher: function (e) {
+            console.log('删除教师');
+            var $TeacherBTn = $(e.target).parent(),
+                teacherId = $TeacherBTn.attr('data-teacherid'),
+                removeTeacherTr = function () {$teacherBTn.parent().remove()};
+            React.render(React.createElement(Dialog, {
+                title: "删除教师", 
+                url: serverpath + 'manageTeacher/deleteTeacher', 
+                body: "DeleteTeacherDialogBody", 
+                teacherId: teacherId, 
+                removeTeacherTr: removeTeacherTr}
+            ), dialog_el);
+        },
+        addTeacher: function () {
+            console.log('添加教师');
+            React.render(React.createElement(Dialog, {
+                title: "添加教师", 
+                url: serverpath + 'manageTeacher/addTeacher', 
+                body: "AddTeacherDialogBody", 
+                refreshTeacherData: this.loadTeacherData}
+            ), dialog_el );
+        },
+        componentWillMount: function () {
+            this.loadTeacherData();
+        },
         render: function () {
+            var that = this;
+            var teacherNode = this.state.data.map(function (teacher, index) {
+                return (
+                    React.createElement("tr", {className: "t-hover"}, 
+                        React.createElement("td", null, teacher.teacherNo), 
+                        React.createElement("td", null, teacher.name), 
+                        React.createElement("td", null, teacher.sex), 
+                        React.createElement("td", null, teacher.email), 
+                        React.createElement("td", null, teacher.campusName + '校区' + teacher.collegeName), 
+                        React.createElement("td", {className: "cs-manage-op", "data-teacherid": teacher.teacherId}, 
+                            React.createElement("button", {className: "cs-manage-give", onClick: that.teacherTake}, "教师选课"), 
+                            React.createElement("button", {className: "cs-manage-delete", onClick: that.deleteTeacher}, "删除教师")
+                        )
+                    )
+                    );
+            });
             return (
-                React.createElement("div", null, "教师管理")
+                React.createElement("div", {className: "cs-manage"}, 
+                    React.createElement("div", {className: "cs-manage-search box-style", ref: "searchData"}, 
+                        React.createElement(SelectCampus, {className: "campus-id", setSelectCampus: this.setSelectCampus}), 
+                        React.createElement(SelectCollege, {className: "college-id", campusId: this.state.campusId}), 
+                        React.createElement(TeacherNoName, {className: "course-no", onKeyDown: this.keyDownSearchTeacher}), 
+                        React.createElement("div", {className: "cs-search-btn"}, 
+                            React.createElement("button", {onClick: this.searchTeacher}, "搜索教师")
+                        ), 
+                        React.createElement("div", {className: "cs-addnew"}, 
+                            React.createElement("button", {onClick: this.addTeacher}, "新增教师")
+                        )
+                    ), 
+                    React.createElement("table", {className: "cs-manage-table"}, 
+                        React.createElement("thead", null, 
+                            React.createElement("tr", null, 
+                                React.createElement("th", null, "学号"), 
+                                React.createElement("th", null, "姓名"), 
+                                React.createElement("th", null, "性别"), 
+                                React.createElement("th", null, "邮箱"), 
+                                React.createElement("th", null, "所属校区院系"), 
+                                React.createElement("th", null, "操作")
+                            )
+                        ), 
+                        React.createElement("tbody", null, 
+                            teacherNode
+                        )
+                    ), 
+                    React.createElement("div", {className: "cs-manage-page"}, 
+                        React.createElement("button", {className: "pre-page"}, "上一页"), 
+                        React.createElement("button", {className: "next-page"}, "下一页")
+                    )
+                )
                 );
         }
     });

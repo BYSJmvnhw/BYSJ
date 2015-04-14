@@ -17,6 +17,8 @@ define(function (require, exports, module) {
         SelectTermYear = cellComponent.SelectTermYear,
         SelectTerm = cellComponent.SelectTerm,
         CourseNo = cellComponent.CourseNo,
+        InputText = cellComponent.InputText,
+        SelectSex = cellComponent.SelectSex,
         CourseName = cellComponent.CourseName,
         CourseNoName = cellComponent.CourseNoName,
         TeacherNoName = cellComponent.TeacherNoName,
@@ -32,16 +34,28 @@ define(function (require, exports, module) {
 //            $(this.refs.dialogDiv.getDOMNode()).hide();
             this.setState({display: 'none'});
         },
-        componentWillReceiveProps: function (nextProps) {
-            this.setState({display: nextProps.display});
+        componentWillReceiveProps: function () {
+            this.setState({display: 'block'});
         },
         getDialogBody: function (body_type) {
             switch (body_type) {
                 case 'AddCourseDialogBody':
                     return React.createElement(AddCourseDialogBody, {
-                    url: this.props.url, 
-                    refreshCourseData: this.props.refreshCourseData, 
-                    onClose: this.closeDialog}
+                        url: this.props.url, 
+                        refreshCourseData: this.props.refreshCourseData, 
+                        onClose: this.closeDialog}
+                    );
+                case 'AddTeacherDialogBody':
+                    return React.createElement(AddTeacherDialogBody, {
+                        url: this.props.url, 
+                        refreshTeacherData: this.props.refreshTeacherData, 
+                        onClose: this.closeDialog}
+                    );
+                case 'AddStudentDialogBody':
+                    return React.createElement(AddStudentDialogBody, {
+                        url: this.props.url, 
+                        refreshStudentData: this.props.refreshStudentData, 
+                        onClose: this.closeDialog}
                     );
                 case 'DeleteCourseDialogBody':
                     return React.createElement(DeleteCourseDialogBody, {
@@ -49,6 +63,20 @@ define(function (require, exports, module) {
                         courseId: this.props.courseId, 
                         removeCourseTr: this.props.removeCourseTr, 
                         onClose: this.closeDialog}
+                    );
+                case 'DeleteTeacherDialogBody':
+                    return React.createElement(DeleteTeacherDialogBody, {
+                        url: this.props.url, 
+                        teacherId: this.props.teacherId, 
+                        removeTeacherTr: this.props.removeTeacherTr, 
+                        onClose: this.closeDialog}
+                    );
+                case 'DeleteStudentDialogBody':
+                    return React.createElement(DeleteStudentDialogBody, {
+                    url: this.props.url, 
+                    studentId: this.props.studentId, 
+                    removeStudentTr: this.props.removeStudentTr, 
+                    onClose: this.closeDialog}
                     );
                 case 'UpdateCourseDialogBody':
                     return React.createElement(UpdateCourseDialogBody, {
@@ -69,6 +97,15 @@ define(function (require, exports, module) {
                         url: this.props.url, 
                         onClose: this.closeDialog}
                     );
+                case 'StudentManageTakeCourseDialog':
+                    return React.createElement(StudentManageTakeCourseDialog, {
+                        url: this.props.url, 
+                        url_add: this.props.url_add, 
+                        url_delete: this.props.url_delete, 
+                        url_search: this.props.url_search, 
+                        studentId: this.props.studentId, 
+                        onClose: this.closeDialog}
+                    );
                 default : return 'none-dialog';
             }
         },
@@ -83,6 +120,22 @@ define(function (require, exports, module) {
                             React.createElement("span", {className: "dialog-clear", onClick: this.closeDialog})
                         ), 
                         body
+                    )
+                )
+            );
+        }
+    });
+
+    var DeleteDialogBody = React.createClass({displayName: "DeleteDialogBody",
+        render: function () {
+            return (
+                React.createElement("div", {className: "dialog-body"}, 
+                    React.createElement("div", {className: "delete-tip"}, 
+                        React.createElement("p", null, "确定删除吗？删除后不可修复！")
+                    ), 
+                    React.createElement("div", {className: "dialog-btn delete-btn"}, 
+                        React.createElement("button", {className: "delete-btn-clear", onClick: this.props.onClose}, "取消"), 
+                        React.createElement("button", {className: "delete-btn-sure", onClick: this.props.delete}, "删除")
                     )
                 )
             );
@@ -108,17 +161,53 @@ define(function (require, exports, module) {
             });
         },
         render: function () {
-            return (
-                React.createElement("div", {className: "dialog-body"}, 
-                    React.createElement("div", {className: "delete-tip"}, 
-                        React.createElement("p", null, "确定删除吗？删除后不可修复！")
-                    ), 
-                    React.createElement("div", {className: "dialog-btn delete-btn"}, 
-                        React.createElement("button", {className: "delete-btn-clear", onClick: this.props.onClose}, "取消"), 
-                        React.createElement("button", {className: "delete-btn-sure", onClick: this.deleteCourse}, "删除")
-                    )
-                )
-            );
+            return (React.createElement(DeleteDialogBody, {delete: this.deleteCourse, onClose: this.props.onClose}));
+        }
+    });
+
+    // 教师管理 删除教师提示组件
+    var DeleteTeacherDialogBody = React.createClass({displayName: "DeleteTeacherDialogBody",
+        deleteTeacher: function () {
+            $.ajax({
+                type: 'post',
+                url: this.props.url,
+                data: {tid: this.props.teacherId},
+                dataType: 'json',
+                success: function(data) {
+                    console.log('删除教师', data);
+                    this.props.onClose();
+                    this.props.removeTeacherTr(); // 删除课程trDOM
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        render: function () {
+            return (React.createElement(DeleteDialogBody, {delete: this.deleteTeacher, onClose: this.props.onClose}));
+        }
+    });
+
+    // 学生管理 删除学生提示组件
+    var DeleteStudentDialogBody = React.createClass({displayName: "DeleteStudentDialogBody",
+        deleteStudent: function () {
+            $.ajax({
+                type: 'post',
+                url: this.props.url,
+                data: {sId: this.props.studentId},
+                dataType: 'json',
+                success: function(data) {
+                    console.log('删除学生成功', data);
+                    this.props.onClose();
+                    this.props.removeStudentTr(); // 删除课程trDOM
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        render: function () {
+            return (React.createElement(DeleteDialogBody, {delete: this.deleteStudent, onClose: this.props.onClose}));
         }
     });
 
@@ -179,6 +268,140 @@ define(function (require, exports, module) {
                     )
                 )
                 );
+        }
+    });
+
+    // 增加教师组件
+    var AddTeacherDialogBody = React.createClass({displayName: "AddTeacherDialogBody",
+        getInitialState: function () {
+            return {
+                campusId: "1",
+                collegeId: "1"
+            };
+        },
+        setSelectCampus: function (e) {
+            console.log('setSelectCampus', e.target.value);
+            this.setState({campusId: e.target.value});
+        },
+        setSelectCollege: function (e) {
+            console.log('setSelectCollege', e.target.value);
+            this.setState({collegeId: e.target.value});
+        },
+        addTeacher: function () {
+            var TeacherDatas = $(this.refs.dialogBody.getDOMNode()).find('input, select');
+            $.ajax({
+                type: 'post',
+                url: this.props.url,
+                data: {
+                    jsonObject: JSON.stringify({
+                        campusId: TeacherDatas[0].value,
+                        collegeId: TeacherDatas[1].value,
+                        teacherNo: TeacherDatas[2].value,
+                        trueName: TeacherDatas[3].value,
+                        sex: TeacherDatas[4].value,
+                        mobile: TeacherDatas[5].value,
+                        email: TeacherDatas[6].value
+                    })
+                },
+                dataType: 'json',
+                success: function(data) {
+                    console.log('添加教师成功', data);
+                    // 添加成功后搜索该课程，呈现给用户
+                    this.props.refreshTeacherData(TeacherDatas[0].value, TeacherDatas[1].value, TeacherDatas[2].value, ''); // 添加成功后刷新课程列表
+                    // 关闭弹框
+                    this.props.onClose();
+                    TeacherDatas.val('');
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        render: function () {
+            return (
+                React.createElement("div", {className: "dialog-body", ref: "dialogBody"}, 
+                    React.createElement(SelectCampus, {className: "add-cs-campus", setSelectCampus: this.setSelectCampus}), 
+                    React.createElement(SelectCollege, {className: "add-cs-college", campusId: this.state.campusId, setSelectCollege: this.setSelectCollege}), 
+                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "教师号", placeholderText: "输入教师号"}), 
+                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "教师名", placeholderText: "输入教师名"}), 
+                    React.createElement(SelectSex, {className: "add-cs-college"}), 
+                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "手机号", placeholderText: "输入手机号"}), 
+                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "邮箱", placeholderText: "输入教师邮箱"}), 
+                    React.createElement("div", {className: "dialog-btn add-cs-btn"}, 
+                        React.createElement("button", {className: "add-cs-btn-clear", onClick: this.props.onClose}, "取消"), 
+                        React.createElement("button", {className: "add-cs-btn-sure", onClick: this.addTeacher}, "添加")
+                    )
+                )
+            );
+        }
+    });
+
+    // 增加学生组件
+    var AddStudentDialogBody = React.createClass({displayName: "AddStudentDialogBody",
+        getInitialState: function () {
+            return {
+                campusId: "1",
+                collegeId: "1"
+            };
+        },
+        setSelectCampus: function (e) {
+            console.log('setSelectCampus', e.target.value);
+            this.setState({campusId: e.target.value});
+        },
+        setSelectCollege: function (e) {
+            console.log('setSelectCollege', e.target.value);
+            this.setState({collegeId: e.target.value});
+        },
+        addStudent: function () {
+            var studentDatas = $(this.refs.dialogBody.getDOMNode()).find('input, select');
+            $.ajax({
+                type: 'post',
+                url: this.props.url,
+                data: {
+                    jsonObject: JSON.stringify({
+                        campusId: studentDatas[0].value,
+                        collegeId: studentDatas[1].value,
+                        majorId: studentDatas[2].value,
+                        studentNo: studentDatas[3].value,
+                        name: studentDatas[4].value,
+                        sex: studentDatas[5].value,
+                        grade: studentDatas[6].value,
+                        cla: studentDatas[7].value,
+                        email: studentDatas[8].value
+                    })
+                },
+                dataType: 'json',
+                success: function(data) {
+                    console.log('添加教师成功', data);
+                    // 添加成功后搜索该课程，呈现给用户
+                    this.props.refreshStudentData(studentDatas[0].value, studentDatas[1].value, '', studentDatas[3].value, ''); // 添加成功后刷新课程列表
+                    // 关闭弹框
+                    this.props.onClose();
+                    studentDatas.val('');
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        render: function () {
+            return (
+                React.createElement("div", {className: "dialog-body", ref: "dialogBody"}, 
+                    React.createElement(SelectCampus, {className: "add-cs-campus", setSelectCampus: this.setSelectCampus}), 
+                    React.createElement(SelectCollege, {className: "add-cs-college", campusId: this.state.campusId, setSelectCollege: this.setSelectCollege}), 
+                    React.createElement(SelectMajor, {className: "add-cs-college", collegeId: this.state.collegeId}), 
+                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "学号", placeholderText: "输入学号"}), 
+                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "学生名", placeholderText: "输入学生名"}), 
+                    React.createElement(SelectSex, {className: "add-cs-college"}), 
+                    React.createElement(StudentGrade, {className: "add-cs-coursename"}), 
+                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "班级", placeholderText: "输入班级"}), 
+                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "邮箱", placeholderText: "输入学生邮箱"}), 
+                    React.createElement("div", {className: "dialog-btn add-cs-btn"}, 
+                        React.createElement("button", {className: "add-cs-btn-clear", onClick: this.props.onClose}, "取消"), 
+                        React.createElement("button", {className: "add-cs-btn-sure", onClick: this.addStudent}, "添加")
+                    )
+                )
+            );
         }
     });
 
@@ -468,6 +691,249 @@ define(function (require, exports, module) {
                         React.createElement("button", {className: "add-stu-btn-add", onClick: this.unfold}, "添加学生")
                     ), 
                     React.createElement(SearcheStudent, null)
+                )
+                );
+        }
+    });
+
+    // 学生管理->学生选课
+    var StudentManageTakeCourseDialog = React.createClass({displayName: "StudentManageTakeCourseDialog",
+        getInitialState: function () {
+            return {
+                courseList: [],
+                studentId: '',
+                startYear: 2011,
+                schoolTerm: 1
+            }
+        },
+        loadTermCourseData: function (studentId, startYear, schoolTerm) {
+            $.ajax({
+                url: this.props.url,
+                data: {studentId: studentId, startYear: startYear, schoolTerm: schoolTerm},
+                dataType: 'json',
+                success: function(data) {
+                    console.log('学期课程列表', data);
+                    this.setState({courseList: data});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        termCourseList: function () {
+            var select = $(this.refs.termCourseList.getDOMNode()).find('select');
+            this.loadTermCourseData(this.state.studentId, select[0].value, select[1].value);
+        },
+        deleteCourse: function (e) {
+            $(e.currentTarget).find('.dialog-sure-delete').addClass('t-dialog-sure-delete-show');
+        },
+        sureDeleteCourse: function (e) {
+            console.log('删除课程');
+            var $cur = $(e.target), csId = $cur.attr('data-csid');
+            $.ajax({
+                type: 'post',
+                url: this.props.url_delete,
+                data: {csId: csId},
+                dataType: 'json',
+                success: function(data) {
+                    console.log('删除成功', data);
+//                    $cur.parent().parent().parent().remove();  // 删除节点
+                    this.termCourseList();
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        onClear: function (e) {
+            console.log('取消删除');
+            e.stopPropagation();
+            $(e.currentTarget).parent().parent().removeClass('t-dialog-sure-delete-show');
+        },
+        fold: function (e) {
+            $(e.target).hide();
+            $(e.target).parent().next().hide(500);
+        },
+        unfold: function (e) {
+            $(e.target).prev().show();
+            $(e.target).parent().next().show(500);
+        },
+        setSelectTerm: function (e) {this.setState({schoolTerm: e.target.value})},
+        setSelectTermYear: function (e) {this.setState({startYear: e.target.value})},
+        componentWillReceiveProps: function (nextProps) {
+            this.setState({studentId: nextProps.studentId});
+            this.loadTermCourseData(nextProps.studentId, this.state.startYear, this.state.schoolTerm);
+        },
+        componentWillMount: function () {
+            this.setState({studentId: this.props.studentId});
+            this.loadTermCourseData(this.props.studentId, this.state.startYear, this.state.schoolTerm);
+        },
+        render: function () {
+            var that=this, display = {display: 'none'}, courseNode = [];
+            this.state.courseList.forEach(function (course, index) {
+                courseNode.push(
+                    React.createElement("li", {className: "dialog-take-stu", onClick: that.deleteCourse}, 
+                        React.createElement("div", null, 
+                            React.createElement("p", null, course.majorName), 
+                            React.createElement("p", null, course.courseName)
+                        ), 
+                        React.createElement("div", {className: "dialog-sure-delete t-dialog-sure-delete"}, 
+                            React.createElement("div", {className: "dialog-sure-btn"}, 
+                                React.createElement("span", {onClick: that.sureDeleteCourse, "data-csid": course.csId}, "确认删除"), 
+                                React.createElement("span", {onClick: that.onClear}, "取消")
+                            )
+                        )
+                    )
+                );
+                courseNode.push(
+                    React.createElement("div", {className: "dialog-take-stu-detail"}, 
+                        React.createElement("p", null, course.campusName, "校区", course.collegeName), 
+                        React.createElement("p", null, course.majorName), 
+                        React.createElement("p", null, course.courseName)
+                    )
+                );
+            });
+            return (
+                React.createElement("div", {className: "dialog-body"}, 
+                    React.createElement("div", {className: "add-stu-search box-style", ref: "termCourseList"}, 
+                        React.createElement(SelectTermYear, {classNAme: "add-stu-college", setSelectTermYear: this.setSelectTermYear}), 
+                        React.createElement(SelectTerm, {classNAme: "add-stu-college", setSelectTerm: this.setSelectTerm}), 
+                        React.createElement("div", {className: "add-stu-search-btn"}, 
+                            React.createElement("button", {onClick: this.termCourseList}, "查看学生该学期课程列表")
+                        )
+                    ), 
+                    React.createElement("div", {className: "dialog-take-ul"}, 
+                        React.createElement("ul", {className: "flex-style"}, 
+                        courseNode
+                        )
+                    ), 
+                    React.createElement("div", {className: "dialog-btn add-stu-btn"}, 
+                        React.createElement("span", {onClick: this.fold, style: display}, "收起"), 
+                        React.createElement("button", {className: "add-stu-btn-add", onClick: this.unfold}, "添加课程")
+                    ), 
+                    React.createElement(SearcheCourse, {
+                        startYear: this.state.startYear, 
+                        schoolTerm: this.state.schoolTerm, 
+                        url_search: this.props.url_search, 
+                        url_add: this.props.url_add, 
+                        studentId: this.state.studentId, 
+                        refreshCourseData: this.loadTermCourseData}
+                    )
+                )
+            );
+        }
+    });
+
+    // 搜索课程组件
+    var SearcheCourse = React.createClass({displayName: "SearcheCourse",
+        getInitialState: function () {
+            return {courseData: [], campusId: 1};
+        },
+        setSelectCampus: function (e) {
+            this.setState({campusId: e.target.value});
+        },
+        loadCourseData: function (campusId, collegeId, startYear, schoolTerm, courseName) {
+            $.ajax({
+                url: this.props.url_search,
+                data: {
+                    campusId: campusId,
+                    collegeId: collegeId,
+                    startYear: startYear,
+                    schoolTerm: schoolTerm,
+                    courseName: courseName
+                },
+                dataType: 'json',
+                success: function(data) {
+                    console.log('课程搜索结果', data);
+                    this.setState({courseData: data.data});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        searchCourse: function () {
+            var searcheData = $(this.refs.searcheData.getDOMNode()).find('input, select');
+            this.loadCourseData(
+                searcheData[0].value,
+                searcheData[1].value,
+                this.props.startYear,
+                this.props.schoolTerm,
+                searcheData[2].value
+            );
+        },
+        toggleSelectCourse: function (e) {
+            var $cur = $(e.currentTarget);
+            if($cur.hasClass('has-select')){
+                $cur.removeClass('has-select');
+            }
+            else{
+                $cur.addClass('has-select');
+            }
+        },
+        addcourses: function () {
+            var i, selectLi = $(this.refs.selectLi.getDOMNode()).find('li.has-select'), l = selectLi.length, ctId = [];
+            for(i = 0; i < l; i ++){
+                ctId.push(selectLi[i].getAttribute('data-ctid'));
+            }
+            $.ajax({
+                type: 'post',
+                url: this.props.url_add,
+                data: {sId: this.props.studentId, ctId: ctId},
+                dataType: 'json',
+                success: function(data) {
+                    console.log('添加课程', data);
+                    // 刷新学生课程列表
+                    this.props.refreshCourseData(this.props.studentId, this.props.startYear, this.props.schoolTerm);
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        componentWillReceiveProps: function (nextProps) {
+            this.setState({courseData: []}); // 切换学期时清空上一次的搜索结果
+        },
+        render: function () {
+            var that=this, display = {display: 'none'}, courseNode = [];
+            this.state.courseData.forEach(function (course, index) {
+                courseNode.push(
+                    React.createElement("li", {className: "dialog-take-stu search-result-btn", "data-ctid": course.ctId, onClick: that.toggleSelectCourse}, 
+                        React.createElement("div", null, 
+                            React.createElement("p", null, course.majorName), 
+                            React.createElement("p", null, course.courseName), 
+                            React.createElement("p", null, course.teacherName)
+                        )
+                    )
+                );
+                courseNode.push(
+                    React.createElement("div", {className: "dialog-take-stu-detail"}, 
+                        React.createElement("p", null, course.campusName, "校区", course.collegeName), 
+                        React.createElement("p", null, course.majorName), 
+                        React.createElement("p", null, course.courseName), 
+                        React.createElement("p", null, course.startYear + '~' + (parseInt(course.startYear)+1) + '学年第' + course.schoolTerm + '学期'), 
+                        React.createElement("p", null, course.teacherName)
+                    )
+                );
+            });
+            return (
+                React.createElement("div", {className: "add-stu-op", style: display}, 
+                    React.createElement("div", {className: "add-stu-search flex-style", ref: "searcheData"}, 
+                        React.createElement(SelectCampus, {className: "campus-id", setSelectCampus: this.setSelectCampus}), 
+                        React.createElement(SelectCollege, {className: "college-id", campusId: this.state.campusId}), 
+                        React.createElement(InputText, {className: "course-no", labelName: "课程名", placeholderText: "请输入课程名"}), 
+                        React.createElement("div", {className: "add-stu-search-btn"}, 
+                            React.createElement("button", {onClick: this.searchCourse}, "搜索课程")
+                        )
+                    ), 
+                    React.createElement("div", {className: "add-stu-search-ul"}, 
+                        React.createElement("ul", {className: "flex-style", ref: "selectLi"}, 
+                        courseNode
+                        )
+                    ), 
+                    React.createElement("div", {className: "dialog-btn delete-btn"}, 
+                        React.createElement("button", {className: "delete-btn-clear", onClick: this.addcourses}, "添加课程")
+                    )
                 )
                 );
         }

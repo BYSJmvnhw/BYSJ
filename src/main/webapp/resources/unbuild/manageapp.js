@@ -95,7 +95,7 @@ define(function (require, exports, module) {
                                     <TakeManage url={serverpath + "course/courseTeachingList"} />
                                 </section>
                                 <section id="content-wrap4">
-                                    <TeacherManage url={serverpath}/>
+                                    <TeacherManage url={serverpath + 'manageTeacher/searchTeacher'}/>
                                 </section>
                                 <section id="content-wrap5">
                                     <StudentManage url={serverpath + "student/searchStudent"}/>

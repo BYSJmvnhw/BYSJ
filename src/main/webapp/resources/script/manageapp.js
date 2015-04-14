@@ -95,7 +95,7 @@ define(function (require, exports, module) {
                                     React.createElement(TakeManage, {url: serverpath + "course/courseTeachingList"})
                                 ), 
                                 React.createElement("section", {id: "content-wrap4"}, 
-                                    React.createElement(TeacherManage, {url: serverpath})
+                                    React.createElement(TeacherManage, {url: serverpath + 'manageTeacher/searchTeacher'})
                                 ), 
                                 React.createElement("section", {id: "content-wrap5"}, 
                                     React.createElement(StudentManage, {url: serverpath + "student/searchStudent"})

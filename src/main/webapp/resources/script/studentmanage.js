@@ -71,14 +71,44 @@ define(function (require, exports, module) {
     keyDownSearchStudent: function (e) {
         (e.keyCode || e.which) == 13 && this.searchStudent();
     },
-    studentTake: function () {
+    studentTake: function (e) {
         console.log('学生选课');
+        var studentId = $(e.target).parent().attr('data-studentid');
+        React.render(
+            React.createElement(Dialog, {
+                title: "学生选课", 
+                contentClassName: "dialog-content-take", 
+                body: "StudentManageTakeCourseDialog", 
+                url: serverpath + 'student/courseList', 
+                url_add: serverpath + 'student/addCourseSelecting', 
+                url_delete: serverpath + 'course/deleteCourseSelecting', 
+                url_search: serverpath + 'student/searchCourseTeaching', 
+                studentId: studentId}
+        ), dialog_el);
     },
-    deleteStudent: function () {
+    deleteStudent: function (e) {
         console.log('删除学生');
+        var $studentBTn = $(e.target).parent(),
+            studentId = $studentBTn.attr('data-studentid'),
+            removeStudentTr = function () {$studentBTn.parent().remove()};
+        React.render(
+            React.createElement(Dialog, {
+                title: "删除学生", 
+                url: serverpath + 'student/deleteStudent', 
+                body: "DeleteStudentDialogBody", 
+                studentId: studentId, 
+                removeStudentTr: removeStudentTr}
+        ), dialog_el);
     },
     addStudent: function () {
         console.log('添加学生');
+        React.render(
+            React.createElement(Dialog, {
+                title: "添加学生", 
+                url: serverpath + 'student/addStudent', 
+                body: "AddStudentDialogBody", 
+                refreshStudentData: this.loadStudentData}
+        ), dialog_el);
     },
     componentDidMount: function () {
         this.loadStudentData();
