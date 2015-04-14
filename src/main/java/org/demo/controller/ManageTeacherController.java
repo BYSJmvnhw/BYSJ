@@ -8,6 +8,7 @@ import org.demo.vo.ViewTeacher;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
@@ -42,7 +43,8 @@ public class ManageTeacherController {
         JSONObject jo = JSONObject.fromObject(jsonObject);
         HwUser loginUser = (HwUser)request.getSession().getAttribute("loginUser");
         boolean result= teacherService.addTeacher(jo,loginUser);
-        jsonresult.put("status",result);
+        String status = result?"success":"fail";
+        jsonresult.put("status",status);
         return jsonresult;
     }
     //删除教师用户
@@ -51,7 +53,8 @@ public class ManageTeacherController {
     public JSONObject deleteTeacher(int tid){
         jsonresult = new JSONObject();
         jsonresult.clear();
-        boolean status = teacherService.deleteTeacher(tid);
+        boolean result = teacherService.deleteTeacher(tid);
+        String status = result?"success":"fail";
         jsonresult.put("status",status);
         return jsonresult;
     }
@@ -63,7 +66,8 @@ public class ManageTeacherController {
         jsonresult = new JSONObject();jsonresult.clear();
         JSONObject jo = JSONObject.fromObject(jsonObject);
         boolean result = teacherService.updateTeacher(jo);
-        jsonresult.put("status",result);
+        String status = result?"success":"fail";
+        jsonresult.put("status",status);
         return jsonresult;
     }
     //搜索老师
@@ -75,10 +79,14 @@ public class ManageTeacherController {
     //为老师添加课程
     @RequestMapping(value="/addCourseForTeacher",method = RequestMethod.POST)
     @ResponseBody
-    public JSONObject addCourseForTeacher(int tid,int[] cids,int startYear,int schoolTerm) {
-        teacherService.addTeacherSelectCourse(tid,cids,startYear,schoolTerm);
+    public JSONObject addCourseForTeacher(int tid,@RequestParam("cids[]")int[] cids,int startYear,int schoolTerm) {
         jsonresult = new JSONObject();jsonresult.clear();
-        jsonresult.put("status",true);
+        try {
+            teacherService.addTeacherSelectCourse(tid, cids, startYear, schoolTerm);
+            jsonresult.put("status","success");
+        }catch(Exception e) {
+            jsonresult.put("status","fail");
+        }
         return jsonresult;
     }
 }
