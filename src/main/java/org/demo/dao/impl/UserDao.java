@@ -51,4 +51,12 @@ public class UserDao extends BaseDao<HwUser> implements IUserDao {
         }
         return findPage(hql.toString(), params.toArray(), str, 20);
     }
+
+    @Override
+    public HwUser findUser(UserType userType, Integer typeId) {
+        String hql = "from HwUser u where " +
+                "u.userType = ?  " +
+                "and u.typeId = ? ";
+        return findObject(hql, new Object[]{userType, typeId});
+    }
 }

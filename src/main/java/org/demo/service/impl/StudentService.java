@@ -76,7 +76,7 @@ public class StudentService implements IStudentService {
         HwStudent student = studentDao.load(id);
         student.setDeleteFlag(true);
         studentDao.update(student);
-        HwUser user =userDao.findUserByTypeId(id);
+        HwUser user =userDao.findUser(UserType.STUDENT,id);
         user.setDeleteFlag(true);
         userDao.update(user);
     }

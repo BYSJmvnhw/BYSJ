@@ -145,7 +145,7 @@ public class TeacherService implements ITeacherService {
             return false;
         }
         teacher.setDeleteFlag(true);
-        HwUser user = userDao.findUserByTypeId(tid);
+        HwUser user = userDao.findUser(UserType.TEACHER, tid);
         if(user == null) {
             return false;
         }
