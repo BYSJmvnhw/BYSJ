@@ -37,6 +37,11 @@ public class TeacherService implements ITeacherService {
     public void setCollegeDao(ICollegeDao collegeDao) {
         this.collegeDao = collegeDao;
     }
+    private IMajorDao majorDao;
+    @Resource
+    public void setMajorDao(IMajorDao majorDao) {
+        this.majorDao = majorDao;
+    }
     private ICampusDao campusDao;
     @Resource
     public void setCampusDao(ICampusDao campusDao) {
@@ -65,7 +70,8 @@ public class TeacherService implements ITeacherService {
         String mobile = jo.getString("mobile");
         int collegeId = jo.getInt("collegeId");
         int campusId = jo.getInt("campusId");
-        if(collegeId == 0 || campusId == 0 || teacherNo == null || teacherNo.isEmpty() || trueName == null || trueName.isEmpty()){
+        int majorId = jo.getInt("majorId");
+        if(collegeId == 0 || campusId == 0 || majorId==0 || teacherNo == null || teacherNo.isEmpty() || trueName == null || trueName.isEmpty()){
             return false;
         }
         //先添加教师
@@ -82,6 +88,7 @@ public class TeacherService implements ITeacherService {
         teacher.setEmail(email);
         teacher.setHwCollege(collegeDao.get(collegeId));
         teacher.setHwCampus(campusDao.get(campusId));
+        teacher.setHwMajor(majorDao.get(majorId));
         teacher.setDeleteFlag(false);
         if(t != null) {
             teacherDao.update(teacher);
@@ -127,6 +134,7 @@ public class TeacherService implements ITeacherService {
         oldTeacher.setEmail(jo.getString("email"));
         oldTeacher.setHwCollege(collegeDao.get(jo.getInt("collegeId")));
         oldTeacher.setHwCampus(campusDao.get(jo.getInt("campusId")));
+        oldTeacher.setHwMajor(majorDao.get(jo.getInt("majorId")));
 
         HwUser oldUser = userDao.get(userId);
         oldUser.setTrueName(jo.getString("trueName"));
@@ -208,6 +216,8 @@ public class TeacherService implements ITeacherService {
         jsonresult.put("campusName",teacher.getHwCampus().getName());
         jsonresult.put("collegeId",teacher.getHwCollege().getId());
         jsonresult.put("collegeName",teacher.getHwCollege().getCollegeName());
+        jsonresult.put("majorId",teacher.getHwMajor().getId());
+        jsonresult.put("majorName",teacher.getHwMajor().getName());
         return jsonresult;
     }
 }
