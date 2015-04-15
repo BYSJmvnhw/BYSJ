@@ -71,9 +71,14 @@ define(function (require, exports, module) {
         },
         deleteTeacher: function (e) {
             console.log('删除教师');
-            var $TeacherBTn = $(e.target).parent(),
-                teacherId = $TeacherBTn.attr('data-teacherid'),
-                removeTeacherTr = function () {$teacherBTn.parent().remove()};
+            var that = this, $teacherBTn = $(e.target).parent(),
+                teacherId = $teacherBTn.attr('data-teacherid'),
+                index=$teacherBTn.attr('data-index'),
+                removeTeacherTr = function () {
+                    var t = that.state.data;
+                    t.splice(index, 1);
+                    that.setState({data: t});
+                };
             React.render(React.createElement(Dialog, {
                 title: "删除教师", 
                 url: serverpath + 'manageTeacher/deleteTeacher', 
@@ -93,15 +98,17 @@ define(function (require, exports, module) {
         },
         updateTeacher: function (e) {
             console.log('修改教师');
-            var $cur=$(e.target),teacherId=$cur.attr('data-teacherid'), index=$cur.attr('data-index'),
+            var that=this, $cur=$(e.target).parent(), teacherId=$cur.attr('data-teacherid'), index=$cur.attr('data-index'),
                 updateTeacherTr = function (obj) {
-                    var teacherList = this.state.data;
+                    var teacherList = that.state.data;
                     teacherList.splice(index, 1, obj); // 更新修改后的数据
-                    this.setState({data: teacherList});
+                    that.setState({data: teacherList});
                 };
             React.render(
                 React.createElement(Dialog, {
                     title: "修改教师信息", 
+                    url: serverpath + 'manageTeacher/updateTeacher', 
+                    url_detail: serverpath + 'manageTeacher/getTeacher', 
                     body: "UpdateTeacherDialogBody", 
                     teacherId: teacherId, 
                     updateTeacherTr: updateTeacherTr}

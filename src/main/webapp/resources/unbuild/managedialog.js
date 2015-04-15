@@ -518,21 +518,22 @@ define(function (require, exports, module) {
     // 更新学生信息组件
     var UpdateStudentDialogBody = React.createClass({
         getInitialState: function () {
-            return {
-                campusId: "1",
-                collegeId: "1"
-            };
+            return {studentData: {}};
         },
         setSelectCampus: function (e) {
-            this.setState({campusId: e.target.value});
+            var student = this.state.studentData;
+            student.campusId=e.target.value;
+            this.setState({studentData: student});
         },
         setSelectCollege: function (e) {
-            this.setState({collegeId: e.target.value});
+            var student = this.state.studentData;
+            student.collegeId=e.target.value;
+            this.setState({studentData: student});
         },
-        updateStudent: function () {
+        updateStudentData: function (studentId) {
             var studentDatas = $(this.refs.dialogBody.getDOMNode()).find('input, select'),
                 jsonObject = {
-                    id: this.props.studentId,
+                    id: studentId,
                     campusId: studentDatas[0].value,
                     collegeId: studentDatas[1].value,
                     majorId: studentDatas[2].value,
@@ -549,9 +550,9 @@ define(function (require, exports, module) {
                 data: {jsonObject: JSON.stringify(jsonObject)},
                 dataType: 'json',
                 success: function(data) {
-                    console.log('添加教师成功', data);
+                    console.log('修改学生信息', data);
                     // 添加成功后搜索该课程，呈现给用户
-                    this.props.updateStudentTr(jsonObject);
+                    this.props.updateStudentTr();
                     // 关闭弹框
                     this.props.onClose();
                     studentDatas.val('');
@@ -561,18 +562,41 @@ define(function (require, exports, module) {
                 }.bind(this)
             });
         },
+        updateStudent: function () {
+            this.updateStudentData(this.props.studentId);
+        },
+        getStudentData: function (studentId) {
+            $.ajax({
+                url: this.props.url_detail,
+                data: {sId: studentId},
+                dataType: 'json',
+                success: function(data) {
+                    console.log('获取学生信息', data);
+                    this.setState({studentData: data});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        componentWillMount: function () {
+            this.getStudentData(this.props.studentId);
+        },
+        componentWillReceiveProps: function (nextProps) {
+            this.getStudentData(nextProps.studentId);
+        },
         render: function () {
             return (
                 <div className="dialog-body" ref="dialogBody">
                     <SelectCampus className="add-cs-campus" setSelectCampus={this.setSelectCampus}/>
-                    <SelectCollege className="add-cs-college" campusId={this.state.campusId} setSelectCollege={this.setSelectCollege} />
-                    <SelectMajor className="add-cs-college" collegeId={this.state.collegeId} />
-                    <InputText className="add-cs-coursename" labelName='学号' placeholderText='输入学号' />
-                    <InputText className="add-cs-coursename" labelName='学生名' placeholderText='输入学生名' />
+                    <SelectCollege className="add-cs-college" campusId={this.state.studentData.campusId} setSelectCollege={this.setSelectCollege} />
+                    <SelectMajor className="add-cs-college" collegeId={this.state.studentData.collegeId} />
+                    <InputText className="add-cs-coursename" labelName='学号' placeholderText='输入学号' value={this.state.studentData.studentNo}/>
+                    <InputText className="add-cs-coursename" labelName='学生名' placeholderText='输入学生名' value={this.state.studentData.studentName}/>
                     <SelectSex className="add-cs-college" />
                     <StudentGrade className="add-cs-coursename" />
-                    <InputText className="add-cs-coursename" labelName='班级' placeholderText='输入班级' />
-                    <InputText className="add-cs-coursename" labelName='邮箱' placeholderText='输入学生邮箱' />
+                    <InputText className="add-cs-coursename" labelName='班级' placeholderText='输入班级' value={this.state.studentData.cla} />
+                    <InputText className="add-cs-coursename" labelName='邮箱' placeholderText='输入学生邮箱' value={this.state.studentData.email} />
                     <div className="dialog-btn add-cs-btn">
                         <button className="add-cs-btn-clear" onClick={this.props.onClose}>取消</button>
                         <button className="add-cs-btn-sure" onClick={this.updateStudent}>修改</button>
@@ -585,23 +609,23 @@ define(function (require, exports, module) {
     // 更新教师信息组件
     var UpdateTeacherDialogBody = React.createClass({
         getInitialState: function () {
-            return {
-                campusId: "1",
-                collegeId: "1",
-                teacherId: ''
-            };
+            return {teacherData: {}};
         },
         setSelectCampus: function (e) {
-            console.log('setSelectCampus', e.target.value);
-            this.setState({campusId: e.target.value});
+            var teacher = this.state.teacherData;
+            teacher.campusId=e.target.value;
+            this.setState({teacherData: teacher});
         },
         setSelectCollege: function (e) {
-            console.log('setSelectCollege', e.target.value);
-            this.setState({collegeId: e.target.value});
+            var teacher = this.state.teacherData;
+            teacher.collegeId=e.target.value;
+            this.setState({teacherData: teacher});
         },
         updateTeacher: function () {
             var TeacherDatas = $(this.refs.dialogBody.getDOMNode()).find('input, select'),
                 jsonObject={
+                    teacherId: this.state.teacherData.teacherId,
+                    userId: this.state.teacherData.userId,
                     campusId: TeacherDatas[0].value,
                     collegeId: TeacherDatas[1].value,
                     teacherNo: TeacherDatas[2].value,
@@ -610,39 +634,59 @@ define(function (require, exports, module) {
                     mobile: TeacherDatas[5].value,
                     email: TeacherDatas[6].value
                 };
+            this.updateTeacherData(jsonObject);
+        },
+        updateTeacherData: function (jsonObject) {
             $.ajax({
                 type: 'post',
                 url: this.props.url,
-                data: {jsonObject: jsonObject},
+                data: {jsonObject: JSON.stringify(jsonObject)},
                 dataType: 'json',
                 success: function(data) {
                     console.log('修改教师成功', data);
                     this.props.updateTeacherTr(jsonObject);
                     // 关闭弹框
                     this.props.onClose();
-                    TeacherDatas.val('');
                 }.bind(this),
                 error: function(xhr, status, err) {
                     console.error(this.props.url, status, err.toString());
                 }.bind(this)
             });
         },
+        getTeacherData: function (teacherId) {
+            $.ajax({
+                url: this.props.url_detail,
+                data: {tid: teacherId},
+                dataType: 'json',
+                success: function(data) {
+                    console.log('获取教师信息', data);
+                    this.setState({teacherData: data});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        componentWillMount: function () {
+            this.getTeacherData(this.props.teacherId);
+        },
         componentWillReceiveProps: function (nextProps) {
             this.setState({teacherId: nextProps.teacherId});
+            this.getTeacherData(nextProps.teacherId);
         },
         render: function () {
             return (
                 <div className="dialog-body" ref="dialogBody">
                     <SelectCampus className="add-cs-campus" setSelectCampus={this.setSelectCampus}/>
-                    <SelectCollege className="add-cs-college" campusId={this.state.campusId} setSelectCollege={this.setSelectCollege} />
-                    <InputText className="add-cs-coursename" labelName='教师号' placeholderText='输入教师号' />
-                    <InputText className="add-cs-coursename" labelName='教师名' placeholderText='输入教师名' />
+                    <SelectCollege className="add-cs-college" campusId={this.state.teacherData.campusId} setSelectCollege={this.setSelectCollege} />
+                    <InputText className="add-cs-coursename" labelName='教师号' placeholderText='输入教师号' value={this.state.teacherData.teacherNo}/>
+                    <InputText className="add-cs-coursename" labelName='教师名' placeholderText='输入教师名' value={this.state.teacherData.trueName}/>
                     <SelectSex className="add-cs-college" />
-                    <InputText className="add-cs-coursename" labelName='手机号' placeholderText='输入手机号' />
-                    <InputText className="add-cs-coursename" labelName='邮箱' placeholderText='输入教师邮箱' />
+                    <InputText className="add-cs-coursename" labelName='手机号' placeholderText='输入手机号' value={this.state.teacherData.mobile}/>
+                    <InputText className="add-cs-coursename" labelName='邮箱' placeholderText='输入教师邮箱' value={this.state.teacherData.email}/>
                     <div className="dialog-btn add-cs-btn">
                         <button className="add-cs-btn-clear" onClick={this.props.onClose}>取消</button>
-                        <button className="add-cs-btn-sure" onClick={this.addTeacher}>添加</button>
+                        <button className="add-cs-btn-sure" onClick={this.updateTeacher}>修改</button>
                     </div>
                 </div>
                 );
@@ -651,14 +695,14 @@ define(function (require, exports, module) {
 
     // 更新用户密码
     var UpdateUserDialogBody = React.createClass({
-        updateUser: function (userId) {
+        updateUserData: function (userId, oldPassword, newPassword) {
             $.ajax({
                 type: 'post',
                 url: this.props.url,
-                data: {userId: userId},
+                data: {userId: userId, oldPassword: oldPassword, newPassword: newPassword},
                 dataType: 'json',
                 success: function(data) {
-                    console.log('账户信息', data);
+                    console.log('更新账户密码', data);
                     // 关闭弹框
                     this.props.onClose();
                 }.bind(this),
@@ -666,6 +710,10 @@ define(function (require, exports, module) {
                     console.error(this.props.url, status, err.toString());
                 }.bind(this)
             });
+        },
+        updateUser: function (e) {
+            var data = $(this.refs.dialogBody.getDOMNode()).find('input');
+            this.updateUserData(this.props.userId, data[0].value, data[1].value);
         },
         render: function () {
             return (
@@ -1120,6 +1168,132 @@ define(function (require, exports, module) {
                     <div className='dialog-btn delete-btn'>
                         <button className="delete-btn-clear" onClick={this.addcourses}>添加课程</button>
                     </div>
+                </div>
+                );
+        }
+    });
+
+    // 教师管理->教师选课
+    var teacherManageGiveCourseDialog = React.createClass({
+        getInitialState: function () {
+            return {
+                courseList: [],
+                startYear: 2011,
+                schoolTerm: 1
+            }
+        },
+        loadTermCourseData: function (studentId, startYear, schoolTerm) {
+            $.ajax({
+                url: this.props.url,
+                data: {studentId: studentId, startYear: startYear, schoolTerm: schoolTerm},
+                dataType: 'json',
+                success: function(data) {
+                    console.log('学期课程列表', data);
+                    this.setState({courseList: data});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        termCourseList: function () {
+            var select = $(this.refs.termCourseList.getDOMNode()).find('select');
+            this.loadTermCourseData(this.props.studentId, select[0].value, select[1].value);
+        },
+        deleteCourse: function (e) {
+            $(e.currentTarget).find('.dialog-sure-delete').addClass('t-dialog-sure-delete-show');
+        },
+        sureDeleteCourse: function (e) {
+            console.log('删除课程');
+            var $cur = $(e.target), csId = $cur.attr('data-csid'), index = parseInt($cur.attr('data-index'));
+            $.ajax({
+                type: 'post',
+                url: this.props.url_delete,
+                data: {csId: csId},
+                dataType: 'json',
+                success: function(data) {
+                    console.log('删除成功', data);
+                    var courseList = this.state.courseList;
+                    courseList.splice(index, 1);
+                    this.setState({courseList: courseList});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        onClear: function (e) {
+            console.log('取消删除');
+            e.stopPropagation();
+            $(e.currentTarget).parent().parent().removeClass('t-dialog-sure-delete-show');
+        },
+        fold: function (e) {
+            $(e.target).hide();
+            $(e.target).parent().next().hide(500);
+        },
+        unfold: function (e) {
+            $(e.target).prev().show();
+            $(e.target).parent().next().show(500);
+        },
+        setSelectTerm: function (e) {this.setState({schoolTerm: e.target.value})},
+        setSelectTermYear: function (e) {this.setState({startYear: e.target.value})},
+        componentWillReceiveProps: function (nextProps) {
+            this.loadTermCourseData(nextProps.studentId, this.state.startYear, this.state.schoolTerm);
+        },
+        componentWillMount: function () {
+            this.loadTermCourseData(this.props.studentId, this.state.startYear, this.state.schoolTerm);
+        },
+        render: function () {
+            var that=this, display = {display: 'none'}, courseNode = [];
+            this.state.courseList.forEach(function (course, index) {
+                courseNode.push(
+                    <li className="dialog-take-stu" onClick={that.deleteCourse}>
+                        <div>
+                            <p>{course.majorName}</p>
+                            <p>{course.courseName}</p>
+                        </div>
+                        <div className="dialog-sure-delete t-dialog-sure-delete">
+                            <div className="dialog-sure-btn">
+                                <span onClick={that.sureDeleteCourse} data-index={index} data-csid={course.csId} >确认删除</span>
+                                <span onClick={that.onClear}>取消</span>
+                            </div>
+                        </div>
+                    </li>
+                );
+                courseNode.push(
+                    <div className="dialog-take-stu-detail">
+                        <p>{course.campusName}校区{course.collegeName}</p>
+                        <p>{course.majorName}</p>
+                        <p>{course.courseName}</p>
+                    </div>
+                );
+            });
+            return (
+                <div className="dialog-body">
+                    <div className="add-stu-search box-style" ref="termCourseList">
+                        <SelectTermYear classNAme="add-stu-college" setSelectTermYear={this.setSelectTermYear}/>
+                        <SelectTerm classNAme="add-stu-college" setSelectTerm={this.setSelectTerm}/>
+                        <div className="add-stu-search-btn">
+                            <button onClick={this.termCourseList}>查看学生该学期课程列表</button>
+                        </div>
+                    </div>
+                    <div className="dialog-take-ul">
+                        <ul className="flex-style">
+                        {courseNode}
+                        </ul>
+                    </div>
+                    <div className="dialog-btn add-stu-btn">
+                        <span onClick={this.fold} style={display}>收起</span>
+                        <button className="add-stu-btn-add" onClick={this.unfold}>添加课程</button>
+                    </div>
+                    <SearcheCourse
+                    startYear={this.state.startYear}
+                    schoolTerm={this.state.schoolTerm}
+                    url_search={this.props.url_search}
+                    url_add={this.props.url_add}
+                    studentId={this.props.studentId}
+                    refreshCourseData={this.loadTermCourseData}
+                    />
                 </div>
                 );
         }

@@ -87,17 +87,16 @@ define(function (require, exports, module) {
         />, dialog_el);
     },
     updateStudent: function (e) {
-        var index = parseInt($(e.target).attr('data-index')),
-            updateStudentTr = function (newStudentData) {
-                var studentList = this.state.data;
-                studentList.splice(index, 1, newStudentData); // 更新学生信息
-                this.setState({data: studentList});
+        var that=this, $cur=$(e.target).parent(), studentId=$cur.attr('data-studentid'), index = parseInt($cur.attr('data-index')),
+            updateStudentTr = function () {
+                that.searchStudent();
             };
         React.render(<Dialog
             title='修改学生信息'
             body='UpdateStudentDialogBody'
+            studentId={studentId}
             url={serverpath + 'student/updateStudent'}
-            url_detail={serverpath + 'student/updateStudent'}
+            url_detail={serverpath + 'student/studentMsg'}
             updateStudentTr={updateStudentTr}
         />, dialog_el);
     },

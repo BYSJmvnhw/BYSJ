@@ -63,8 +63,9 @@ define(function (require, exports, module) {
                 <Dialog
                 title='修改用户密码'
                 body='UpdateUserDialogBody'
+                url={serverpath + 'user/updateUser'}
                 userId={userId}
-                />, dialog_el);
+            />, dialog_el);
         },
         componentWillMount: function () {
             this.loadUserData();

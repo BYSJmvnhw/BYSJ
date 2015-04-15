@@ -518,21 +518,22 @@ define(function (require, exports, module) {
     // 更新学生信息组件
     var UpdateStudentDialogBody = React.createClass({displayName: "UpdateStudentDialogBody",
         getInitialState: function () {
-            return {
-                campusId: "1",
-                collegeId: "1"
-            };
+            return {studentData: {}};
         },
         setSelectCampus: function (e) {
-            this.setState({campusId: e.target.value});
+            var student = this.state.studentData;
+            student.campusId=e.target.value;
+            this.setState({studentData: student});
         },
         setSelectCollege: function (e) {
-            this.setState({collegeId: e.target.value});
+            var student = this.state.studentData;
+            student.collegeId=e.target.value;
+            this.setState({studentData: student});
         },
-        updateStudent: function () {
+        updateStudentData: function (studentId) {
             var studentDatas = $(this.refs.dialogBody.getDOMNode()).find('input, select'),
                 jsonObject = {
-                    id: this.props.studentId,
+                    id: studentId,
                     campusId: studentDatas[0].value,
                     collegeId: studentDatas[1].value,
                     majorId: studentDatas[2].value,
@@ -549,9 +550,9 @@ define(function (require, exports, module) {
                 data: {jsonObject: JSON.stringify(jsonObject)},
                 dataType: 'json',
                 success: function(data) {
-                    console.log('添加教师成功', data);
+                    console.log('修改学生信息', data);
                     // 添加成功后搜索该课程，呈现给用户
-                    this.props.updateStudentTr(jsonObject);
+                    this.props.updateStudentTr();
                     // 关闭弹框
                     this.props.onClose();
                     studentDatas.val('');
@@ -561,18 +562,41 @@ define(function (require, exports, module) {
                 }.bind(this)
             });
         },
+        updateStudent: function () {
+            this.updateStudentData(this.props.studentId);
+        },
+        getStudentData: function (studentId) {
+            $.ajax({
+                url: this.props.url_detail,
+                data: {sId: studentId},
+                dataType: 'json',
+                success: function(data) {
+                    console.log('获取学生信息', data);
+                    this.setState({studentData: data});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        componentWillMount: function () {
+            this.getStudentData(this.props.studentId);
+        },
+        componentWillReceiveProps: function (nextProps) {
+            this.getStudentData(nextProps.studentId);
+        },
         render: function () {
             return (
                 React.createElement("div", {className: "dialog-body", ref: "dialogBody"}, 
                     React.createElement(SelectCampus, {className: "add-cs-campus", setSelectCampus: this.setSelectCampus}), 
-                    React.createElement(SelectCollege, {className: "add-cs-college", campusId: this.state.campusId, setSelectCollege: this.setSelectCollege}), 
-                    React.createElement(SelectMajor, {className: "add-cs-college", collegeId: this.state.collegeId}), 
-                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "学号", placeholderText: "输入学号"}), 
-                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "学生名", placeholderText: "输入学生名"}), 
+                    React.createElement(SelectCollege, {className: "add-cs-college", campusId: this.state.studentData.campusId, setSelectCollege: this.setSelectCollege}), 
+                    React.createElement(SelectMajor, {className: "add-cs-college", collegeId: this.state.studentData.collegeId}), 
+                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "学号", placeholderText: "输入学号", value: this.state.studentData.studentNo}), 
+                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "学生名", placeholderText: "输入学生名", value: this.state.studentData.studentName}), 
                     React.createElement(SelectSex, {className: "add-cs-college"}), 
                     React.createElement(StudentGrade, {className: "add-cs-coursename"}), 
-                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "班级", placeholderText: "输入班级"}), 
-                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "邮箱", placeholderText: "输入学生邮箱"}), 
+                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "班级", placeholderText: "输入班级", value: this.state.studentData.cla}), 
+                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "邮箱", placeholderText: "输入学生邮箱", value: this.state.studentData.email}), 
                     React.createElement("div", {className: "dialog-btn add-cs-btn"}, 
                         React.createElement("button", {className: "add-cs-btn-clear", onClick: this.props.onClose}, "取消"), 
                         React.createElement("button", {className: "add-cs-btn-sure", onClick: this.updateStudent}, "修改")
@@ -585,23 +609,23 @@ define(function (require, exports, module) {
     // 更新教师信息组件
     var UpdateTeacherDialogBody = React.createClass({displayName: "UpdateTeacherDialogBody",
         getInitialState: function () {
-            return {
-                campusId: "1",
-                collegeId: "1",
-                teacherId: ''
-            };
+            return {teacherData: {}};
         },
         setSelectCampus: function (e) {
-            console.log('setSelectCampus', e.target.value);
-            this.setState({campusId: e.target.value});
+            var teacher = this.state.teacherData;
+            teacher.campusId=e.target.value;
+            this.setState({teacherData: teacher});
         },
         setSelectCollege: function (e) {
-            console.log('setSelectCollege', e.target.value);
-            this.setState({collegeId: e.target.value});
+            var teacher = this.state.teacherData;
+            teacher.collegeId=e.target.value;
+            this.setState({teacherData: teacher});
         },
         updateTeacher: function () {
             var TeacherDatas = $(this.refs.dialogBody.getDOMNode()).find('input, select'),
                 jsonObject={
+                    teacherId: this.state.teacherData.teacherId,
+                    userId: this.state.teacherData.userId,
                     campusId: TeacherDatas[0].value,
                     collegeId: TeacherDatas[1].value,
                     teacherNo: TeacherDatas[2].value,
@@ -610,39 +634,59 @@ define(function (require, exports, module) {
                     mobile: TeacherDatas[5].value,
                     email: TeacherDatas[6].value
                 };
+            this.updateTeacherData(jsonObject);
+        },
+        updateTeacherData: function (jsonObject) {
             $.ajax({
                 type: 'post',
                 url: this.props.url,
-                data: {jsonObject: jsonObject},
+                data: {jsonObject: JSON.stringify(jsonObject)},
                 dataType: 'json',
                 success: function(data) {
                     console.log('修改教师成功', data);
                     this.props.updateTeacherTr(jsonObject);
                     // 关闭弹框
                     this.props.onClose();
-                    TeacherDatas.val('');
                 }.bind(this),
                 error: function(xhr, status, err) {
                     console.error(this.props.url, status, err.toString());
                 }.bind(this)
             });
         },
+        getTeacherData: function (teacherId) {
+            $.ajax({
+                url: this.props.url_detail,
+                data: {tid: teacherId},
+                dataType: 'json',
+                success: function(data) {
+                    console.log('获取教师信息', data);
+                    this.setState({teacherData: data});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        componentWillMount: function () {
+            this.getTeacherData(this.props.teacherId);
+        },
         componentWillReceiveProps: function (nextProps) {
             this.setState({teacherId: nextProps.teacherId});
+            this.getTeacherData(nextProps.teacherId);
         },
         render: function () {
             return (
                 React.createElement("div", {className: "dialog-body", ref: "dialogBody"}, 
                     React.createElement(SelectCampus, {className: "add-cs-campus", setSelectCampus: this.setSelectCampus}), 
-                    React.createElement(SelectCollege, {className: "add-cs-college", campusId: this.state.campusId, setSelectCollege: this.setSelectCollege}), 
-                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "教师号", placeholderText: "输入教师号"}), 
-                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "教师名", placeholderText: "输入教师名"}), 
+                    React.createElement(SelectCollege, {className: "add-cs-college", campusId: this.state.teacherData.campusId, setSelectCollege: this.setSelectCollege}), 
+                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "教师号", placeholderText: "输入教师号", value: this.state.teacherData.teacherNo}), 
+                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "教师名", placeholderText: "输入教师名", value: this.state.teacherData.trueName}), 
                     React.createElement(SelectSex, {className: "add-cs-college"}), 
-                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "手机号", placeholderText: "输入手机号"}), 
-                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "邮箱", placeholderText: "输入教师邮箱"}), 
+                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "手机号", placeholderText: "输入手机号", value: this.state.teacherData.mobile}), 
+                    React.createElement(InputText, {className: "add-cs-coursename", labelName: "邮箱", placeholderText: "输入教师邮箱", value: this.state.teacherData.email}), 
                     React.createElement("div", {className: "dialog-btn add-cs-btn"}, 
                         React.createElement("button", {className: "add-cs-btn-clear", onClick: this.props.onClose}, "取消"), 
-                        React.createElement("button", {className: "add-cs-btn-sure", onClick: this.addTeacher}, "添加")
+                        React.createElement("button", {className: "add-cs-btn-sure", onClick: this.updateTeacher}, "修改")
                     )
                 )
                 );
@@ -651,14 +695,14 @@ define(function (require, exports, module) {
 
     // 更新用户密码
     var UpdateUserDialogBody = React.createClass({displayName: "UpdateUserDialogBody",
-        updateUser: function (userId) {
+        updateUserData: function (userId, oldPassword, newPassword) {
             $.ajax({
                 type: 'post',
                 url: this.props.url,
-                data: {userId: userId},
+                data: {userId: userId, oldPassword: oldPassword, newPassword: newPassword},
                 dataType: 'json',
                 success: function(data) {
-                    console.log('账户信息', data);
+                    console.log('更新账户密码', data);
                     // 关闭弹框
                     this.props.onClose();
                 }.bind(this),
@@ -666,6 +710,10 @@ define(function (require, exports, module) {
                     console.error(this.props.url, status, err.toString());
                 }.bind(this)
             });
+        },
+        updateUser: function (e) {
+            var data = $(this.refs.dialogBody.getDOMNode()).find('input');
+            this.updateUserData(this.props.userId, data[0].value, data[1].value);
         },
         render: function () {
             return (
