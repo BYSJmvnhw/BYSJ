@@ -43,6 +43,7 @@ define(function (require, exports, module) {
         }
     });
 
+    // 专业select内容组件
     var MajorList = React.createClass({displayName: "MajorList",
         getInitialState: function () {
             return {major: []};
@@ -133,7 +134,7 @@ define(function (require, exports, module) {
             return (
                 React.createElement("div", {className: this.props.className}, 
                     React.createElement("label", null, "学年"), 
-                    React.createElement("select", null, 
+                    React.createElement("select", {onChange: this.props.setSelectTermYear}, 
                         React.createElement("option", {value: "2011"}, "2011~2012"), 
                         React.createElement("option", {value: "2012"}, "2012~2013"), 
                         React.createElement("option", {value: "2013"}, "2013~2014"), 
@@ -150,7 +151,7 @@ define(function (require, exports, module) {
             return (
                 React.createElement("div", {className: this.props.className}, 
                     React.createElement("label", null, "学期"), 
-                    React.createElement("select", null, 
+                    React.createElement("select", {onChange: this.props.setSelectTerm}, 
                         React.createElement("option", {value: "1"}, "第一学期"), 
                         React.createElement("option", {value: "2"}, "第二学期")
                     )
@@ -194,6 +195,61 @@ define(function (require, exports, module) {
                         onKeyDown: this.props.onKeyDown, 
                         value: this.state.value, 
                         onChange: this.handleChange}
+                    )
+                )
+            );
+        }
+    });
+
+    // input组件公用
+    var InputText = React.createClass({displayName: "InputText",
+        getInitialState: function() {
+            return {value: this.props.value};
+        },
+        handleChange: function(event) {
+            this.setState({value: event.target.value});
+        },
+        componentWillReceiveProps: function (nextProps) {
+            this.setState({value: nextProps.value});
+        },
+        render: function () {
+            return (
+                React.createElement("div", {className: this.props.className}, 
+                    React.createElement("label", null, this.props.labelName), 
+                    React.createElement("input", {type: this.props.type || "text", placeholder: this.props.placeholderText, 
+                        value: this.state.value || null, 
+                        onChange: this.state.value ? this.handleChange : null, 
+                        onKeyDown: this.props.onKeyDown}
+                    )
+                )
+            );
+        }
+    });
+
+    // 性别select组件
+    var SelectSex = React.createClass({displayName: "SelectSex",
+        render: function () {
+            return (
+                React.createElement("div", {className: this.props.className}, 
+                    React.createElement("label", null, "性别"), 
+                    React.createElement("select", null, 
+                        React.createElement("option", {value: "男"}, "男"), 
+                        React.createElement("option", {value: "女"}, "女")
+                    )
+                )
+            );
+        }
+    });
+
+    // 选择用户类型
+    var SelectUsertype = React.createClass({displayName: "SelectUsertype",
+        render: function () {
+            return (
+                React.createElement("div", {className: this.props.className}, 
+                    React.createElement("label", null, "用户类型"), 
+                    React.createElement("select", null, 
+                        React.createElement("option", {value: "STUDENT"}, "学生"), 
+                        React.createElement("option", {value: "TEACHER"}, "教师")
                     )
                 )
                 );
@@ -272,6 +328,9 @@ define(function (require, exports, module) {
         SelectTerm: SelectTerm,
         CourseNo: CourseNo,
         CourseName: CourseName,
+        InputText: InputText,
+        SelectSex: SelectSex,
+        SelectUsertype: SelectUsertype,
         CourseNoName: CourseNoName,
         TeacherNoName: TeacherNoName,
         StudentNoName: StudentNoName,

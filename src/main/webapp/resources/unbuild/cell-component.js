@@ -43,6 +43,7 @@ define(function (require, exports, module) {
         }
     });
 
+    // 专业select内容组件
     var MajorList = React.createClass({
         getInitialState: function () {
             return {major: []};
@@ -133,7 +134,7 @@ define(function (require, exports, module) {
             return (
                 <div className={this.props.className}>
                     <label>学年</label>
-                    <select>
+                    <select onChange={this.props.setSelectTermYear}>
                         <option value="2011">2011~2012</option>
                         <option value="2012">2012~2013</option>
                         <option value="2013">2013~2014</option>
@@ -150,7 +151,7 @@ define(function (require, exports, module) {
             return (
                 <div className={this.props.className}>
                     <label>学期</label>
-                    <select>
+                    <select onChange={this.props.setSelectTerm}>
                         <option value="1">第一学期</option>
                         <option value="2">第二学期</option>
                     </select>
@@ -195,6 +196,61 @@ define(function (require, exports, module) {
                         value={this.state.value}
                         onChange={this.handleChange}
                     />
+                </div>
+            );
+        }
+    });
+
+    // input组件公用
+    var InputText = React.createClass({
+        getInitialState: function() {
+            return {value: this.props.value};
+        },
+        handleChange: function(event) {
+            this.setState({value: event.target.value});
+        },
+        componentWillReceiveProps: function (nextProps) {
+            this.setState({value: nextProps.value});
+        },
+        render: function () {
+            return (
+                <div className={this.props.className}>
+                    <label>{this.props.labelName}</label>
+                    <input type={this.props.type || "text"} placeholder={this.props.placeholderText}
+                        value={this.state.value || null}
+                        onChange={this.state.value ? this.handleChange : null}
+                        onKeyDown={this.props.onKeyDown}
+                    />
+                </div>
+            );
+        }
+    });
+
+    // 性别select组件
+    var SelectSex = React.createClass({
+        render: function () {
+            return (
+                <div className={this.props.className}>
+                    <label>性别</label>
+                    <select>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </div>
+            );
+        }
+    });
+
+    // 选择用户类型
+    var SelectUsertype = React.createClass({
+        render: function () {
+            return (
+                <div className={this.props.className}>
+                    <label>用户类型</label>
+                    <select>
+                        <option value="STUDENT">学生</option>
+                        <option value="TEACHER">教师</option>
+                    </select>
                 </div>
                 );
         }
@@ -272,6 +328,9 @@ define(function (require, exports, module) {
         SelectTerm: SelectTerm,
         CourseNo: CourseNo,
         CourseName: CourseName,
+        InputText: InputText,
+        SelectSex: SelectSex,
+        SelectUsertype: SelectUsertype,
         CourseNoName: CourseNoName,
         TeacherNoName: TeacherNoName,
         StudentNoName: StudentNoName,

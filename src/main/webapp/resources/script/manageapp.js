@@ -86,7 +86,7 @@ define(function (require, exports, module) {
                         React.createElement("div", {className: "content"}, 
                             React.createElement("div", {className: "content-wrap t-content-wrap box-style " + this.state.curWrap, ref: "contentWrap"}, 
                                 React.createElement("section", {id: "content-wrap1"}, 
-                                    React.createElement(UserManage, null)
+                                    React.createElement(UserManage, {url: serverpath + 'user/userList'})
                                 ), 
                                 React.createElement("section", {id: "content-wrap2"}, 
                                     React.createElement(CsManage, {url: serverpath + "course/searchCourse"})
@@ -95,7 +95,7 @@ define(function (require, exports, module) {
                                     React.createElement(TakeManage, {url: serverpath + "course/courseTeachingList"})
                                 ), 
                                 React.createElement("section", {id: "content-wrap4"}, 
-                                    React.createElement(TeacherManage, {url: serverpath})
+                                    React.createElement(TeacherManage, {url: serverpath + 'manageTeacher/searchTeacher'})
                                 ), 
                                 React.createElement("section", {id: "content-wrap5"}, 
                                     React.createElement(StudentManage, {url: serverpath + "student/searchStudent"})

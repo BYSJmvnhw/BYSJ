@@ -78,35 +78,19 @@ define(function (require, exports, module) {
         keyDownSearchTake: function (e) {
             (e.keyCode || e.which) == 13 && this.searchTake();
         },
-        addStudent: function () {
-            console.log('增加学生');
-//            $.ajax({
-//                type: 'post',
-//                url: this.props.url,
-//                data: {ctId: '', sId: ''},
-//                dataType: 'json',
-//                success: function(data) {
-//                    console.log('选课管理', data);
-//                    this.setState({data: data.data});
-//                }.bind(this),
-//                error: function(xhr, status, err) {
-//                    console.error(this.props.url, status, err.toString());
-//                }.bind(this)
-//            });
-        },
-        deleteStudent: function () {
-            console.log('删除学生');
-        },
-        opStudent: function () {
+        opStudent: function (e) {
             console.log('增删学生');
+            var ctId = $(e.target).parent().attr('data-ctid');
             React.render(
-                React.createElement(Dialog, {title: "增减学生", 
+                React.createElement(Dialog, {title: "增删学生", 
                     contentClassName: "dialog-content-take", 
                     body: "TakeOpStudentDialogBody", 
-                    url: serverpath + ''}
-                ),
-                dialog_el
-            );
+                    ctId: ctId, 
+                    url: serverpath + 'course/studentList', 
+                    url_search: serverpath + 'student/searchStudent', 
+                    url_add: serverpath + 'course/addCourseSelecting', 
+                    url_delete: serverpath + 'course/deleteCourseSelecting'}
+            ),dialog_el);
         },
         componentDidMount: function () {
             this.loadTakeData();
@@ -123,7 +107,7 @@ define(function (require, exports, module) {
                         React.createElement("td", null, course.majorName), 
                         React.createElement("td", null, course.teacherNo), 
                         React.createElement("td", null, course.teacherName), 
-                        React.createElement("td", {className: "cs-manage-op", "data-courseid": course.courseId}, 
+                        React.createElement("td", {className: "cs-manage-op", "data-ctid": course.ctId}, 
                             React.createElement("button", {className: "cs-manage-give", onClick: that.opStudent}, "增删学生")
                         )
                     )
