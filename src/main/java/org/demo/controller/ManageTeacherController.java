@@ -2,6 +2,7 @@ package org.demo.controller;
 
 import net.sf.json.JSONObject;
 import org.demo.model.HwUser;
+import org.demo.service.ICourseService;
 import org.demo.service.ITeacherService;
 import org.demo.tool.Page;
 import org.demo.vo.ViewTeacher;
@@ -25,7 +26,11 @@ public class ManageTeacherController {
     public void setTeacherService(ITeacherService teacherService) {
         this.teacherService = teacherService;
     }
-
+    private ICourseService courseService;
+    @Resource
+    public void setCourseService(ICourseService courseService) {
+        this.courseService = courseService;
+    }
     private JSONObject jsonresult;
 
     /*
@@ -94,5 +99,21 @@ public class ManageTeacherController {
     @ResponseBody
     public JSONObject getTeacher(int tid){
         return teacherService.getTeacher(tid);
+    }
+
+    //获得教师所授课程
+    @RequestMapping(value="/getCourseByTeacher",method = RequestMethod.GET)
+    @ResponseBody
+    public Object courseTeachingList(int tid,int startYear,int schoolTerm)
+    {
+        try{
+            return courseService.courseTeachingListByTId(tid, startYear, schoolTerm);
+        }catch (Exception e){
+            e.printStackTrace();
+            jsonresult = new JSONObject();
+            jsonresult.clear();
+            jsonresult.put("status","fail");
+            return jsonresult;
+        }
     }
 }

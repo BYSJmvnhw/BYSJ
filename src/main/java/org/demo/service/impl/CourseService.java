@@ -477,6 +477,24 @@ public class CourseService implements ICourseService {
         return courseView;
     }
 
+    @Override
+    public List<Map<String,Object>> courseTeachingListByTId(int tid,int startYear,int schoolTerm){
+        List<HwCourseTeaching> ctList = courseTeachingDao.courseTeachingListByTId(tid, startYear, schoolTerm);
+        List<Map<String,Object>> courseViewList = new ArrayList<Map<String, Object>>();
+        for( HwCourseTeaching ct : ctList ){
+            Map<String, Object> courseView = new HashMap<String, Object>();
+            HwCourse course = ct.getHwCourse();
+            courseView.put("courseId",course.getId());
+            courseView.put("courseNo",course.getCourseNo());
+            courseView.put("courseName",course.getCourseName());
+            courseView.put("campusName",course.getHwCampus().getName());
+            courseView.put("collegeName",course.getHwCollege().getCollegeName());
+            courseView.put("majorName",course.getHwMajor().getName());
+            courseView.put("ctId",ct.getId());
+            courseViewList.add(courseView);
+        }
+        return courseViewList;
+    }
 
     @Resource
     public void setCourseDao(ICourseDao courseDao) {

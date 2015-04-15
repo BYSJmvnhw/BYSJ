@@ -58,4 +58,5 @@ public interface ICourseService {
     public void deleteCourseSelecting(Integer courseSelectingId);
 
     public Map<String,Object> courseDetail(Integer courseId);
+    public List<Map<String,Object>> courseTeachingListByTId(int tid,int startYear,int schoolTerm);
 }
