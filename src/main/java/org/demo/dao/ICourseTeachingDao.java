@@ -27,4 +27,5 @@ public interface ICourseTeachingDao extends IBaseDao<HwCourseTeaching>{
     public Page<HwCourseTeaching> courseTeachingPage(Integer campusId, Integer collegeId, Integer majorId, Integer startYear,
                                                      Integer schoolTerm, String teacherNo, String teacherName, String courseNo, String courseName);
 
+    public List<HwCourseTeaching> courseTeachingListByTId(Integer teacherId, Integer startYear, Integer schoolTerm);
 }

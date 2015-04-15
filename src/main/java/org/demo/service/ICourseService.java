@@ -48,7 +48,7 @@ public interface ICourseService {
 
     public List<Map<String,Object>> searchCourseTeaching(Integer courseId, Integer startYear, Integer schoolTerm );
 
-    public void addCourseSelecting(Integer studentId, Integer[] courseTeachingId);
+    public void addCourseSelecting(Integer courseTeachingId, Integer[] studentId);
 
     public void deleteCourseTeaching(Integer courseTeachingId);
 
@@ -58,4 +58,5 @@ public interface ICourseService {
     public void deleteCourseSelecting(Integer courseSelectingId);
 
     public Map<String,Object> courseDetail(Integer courseId);
+    public List<Map<String,Object>> courseTeachingListByTId(int tid,int startYear,int schoolTerm);
 }

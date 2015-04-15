@@ -323,15 +323,14 @@ public class CourseController {
 
     /**
      * 根据学生id，教师授课关系id数组，为学生增加选课关系
-     * @param studentId 学生id
-     * @param ctId 任教关系数组
-     * @return
+     * @param sId 学生id
+     * @param ctId 任教关系
      */
     @RequestMapping(value = "/addCourseSelecting", method = RequestMethod.POST)
     @ResponseBody
-    public JSONObject addCourseSelecting(Integer studentId, @RequestParam("ctId[]")Integer[] ctId) {
+    public JSONObject addCourseSelecting(Integer ctId, @RequestParam("sId[]")Integer[] sId) {
         try {
-            courseService.addCourseSelecting(studentId, ctId);
+            courseService.addCourseSelecting(ctId, sId);
             return getSuccessResultJsonObject();
         }catch (Exception e){
             e.printStackTrace();

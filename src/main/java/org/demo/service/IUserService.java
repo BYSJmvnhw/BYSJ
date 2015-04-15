@@ -36,6 +36,6 @@ public interface IUserService {
 
     public Map<String,Object> userDetail(Integer userId);
 
-    public void updatePassword(Integer userId,  String newPassword);
+    public JSONObject updatePassword(Integer userId, HwUser use, String managerPassword, String newPassword);
 
 }
