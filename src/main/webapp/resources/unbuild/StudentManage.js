@@ -86,6 +86,21 @@ define(function (require, exports, module) {
                 studentId={studentId}
         />, dialog_el);
     },
+    updateStudent: function (e) {
+        var index = parseInt($(e.target).attr('data-index')),
+            updateStudentTr = function (newStudentData) {
+                var studentList = this.state.data;
+                studentList.splice(index, 1, newStudentData); // 更新学生信息
+                this.setState({data: studentList});
+            };
+        React.render(<Dialog
+            title='修改学生信息'
+            body='UpdateStudentDialogBody'
+            url={serverpath + 'student/updateStudent'}
+            url_detail={serverpath + 'student/updateStudent'}
+            updateStudentTr={updateStudentTr}
+        />, dialog_el);
+    },
     deleteStudent: function (e) {
         console.log('删除学生');
         var $studentBTn = $(e.target).parent(),
@@ -123,12 +138,13 @@ define(function (require, exports, module) {
                     <td>{student.sex}</td>
                     <td>{student.hwCampus.name + '校区' + student.hwCollege.collegeName + student.grade + '级'}</td>
                     <td>{student.hwMajor.name + student.class_ + '班'}</td>
-                    <td className="cs-manage-op"  data-studentid={student.id}>
-                        <button className="cs-manage-give" onClick={that.studentTake}>学生选课</button>
-                        <button className="cs-manage-delete" onClick={that.deleteStudent}>删除学生</button>
+                    <td className="cs-manage-op"  data-studentid={student.id} data-index={index}>
+                        <button className="cs-manage-give" onClick={that.studentTake}>选课</button>
+                        <button className="cs-manage-change" onClick={that.updateStudent}>修改</button>
+                        <button className="cs-manage-delete" onClick={that.deleteStudent}>删除</button>
                     </td>
                 </tr>
-                );
+            );
         });
         return (
             <div className="cs-manage">

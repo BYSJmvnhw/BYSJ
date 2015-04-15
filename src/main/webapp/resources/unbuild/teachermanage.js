@@ -91,6 +91,22 @@ define(function (require, exports, module) {
                 refreshTeacherData={this.loadTeacherData}
             />, dialog_el );
         },
+        updateTeacher: function (e) {
+            console.log('修改教师');
+            var $cur=$(e.target),teacherId=$cur.attr('data-teacherid'), index=$cur.attr('data-index'),
+                updateTeacherTr = function (obj) {
+                    var teacherList = this.state.data;
+                    teacherList.splice(index, 1, obj); // 更新修改后的数据
+                    this.setState({data: teacherList});
+                };
+            React.render(
+                <Dialog
+                    title='修改教师信息'
+                    body='UpdateTeacherDialogBody'
+                    teacherId={teacherId}
+                    updateTeacherTr={updateTeacherTr}
+            />, dialog_el);
+        },
         componentWillMount: function () {
             this.loadTeacherData();
         },
@@ -104,9 +120,10 @@ define(function (require, exports, module) {
                         <td>{teacher.sex}</td>
                         <td>{teacher.email}</td>
                         <td>{teacher.campusName + '校区' + teacher.collegeName}</td>
-                        <td className="cs-manage-op"  data-teacherid={teacher.teacherId}>
+                        <td className="cs-manage-op"  data-teacherid={teacher.teacherId} data-index={index}>
                             <button className="cs-manage-give" onClick={that.teacherTake}>教师选课</button>
-                            <button className="cs-manage-delete" onClick={that.deleteTeacher}>删除教师</button>
+                            <button className="cs-manage-change" onClick={that.updateTeacher}>修改</button>
+                            <button className="cs-manage-delete" onClick={that.deleteTeacher}>删除</button>
                         </td>
                     </tr>
                     );

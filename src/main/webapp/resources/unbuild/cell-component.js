@@ -216,9 +216,10 @@ define(function (require, exports, module) {
             return (
                 <div className={this.props.className}>
                     <label>{this.props.labelName}</label>
-                    <input type="text" placeholder={this.props.placeholderText}
+                    <input type={this.props.type || "text"} placeholder={this.props.placeholderText}
                         value={this.state.value}
                         onChange={this.handleChange}
+                        onKeyDown={this.props.onKeyDown}
                     />
                 </div>
             );
@@ -237,6 +238,21 @@ define(function (require, exports, module) {
                     </select>
                 </div>
             );
+        }
+    });
+
+    // 选择用户类型
+    var SelectUsertype = React.createClass({
+        render: function () {
+            return (
+                <div className={this.props.className}>
+                    <label>用户类型</label>
+                    <select>
+                        <option value="STUDENT">学生</option>
+                        <option value="TEACHER">教师</option>
+                    </select>
+                </div>
+                );
         }
     });
 
@@ -314,6 +330,7 @@ define(function (require, exports, module) {
         CourseName: CourseName,
         InputText: InputText,
         SelectSex: SelectSex,
+        SelectUsertype: SelectUsertype,
         CourseNoName: CourseNoName,
         TeacherNoName: TeacherNoName,
         StudentNoName: StudentNoName,

@@ -86,7 +86,7 @@ define(function (require, exports, module) {
                         <div className="content">
                             <div className={"content-wrap t-content-wrap box-style " + this.state.curWrap} ref="contentWrap">
                                 <section id="content-wrap1">
-                                    <UserManage />
+                                    <UserManage url={serverpath + 'user/userList'}/>
                                 </section>
                                 <section id="content-wrap2">
                                     <CsManage url={serverpath + "course/searchCourse"} />

@@ -86,7 +86,7 @@ define(function (require, exports, module) {
                         React.createElement("div", {className: "content"}, 
                             React.createElement("div", {className: "content-wrap t-content-wrap box-style " + this.state.curWrap, ref: "contentWrap"}, 
                                 React.createElement("section", {id: "content-wrap1"}, 
-                                    React.createElement(UserManage, null)
+                                    React.createElement(UserManage, {url: serverpath + 'user/userList'})
                                 ), 
                                 React.createElement("section", {id: "content-wrap2"}, 
                                     React.createElement(CsManage, {url: serverpath + "course/searchCourse"})

@@ -91,6 +91,22 @@ define(function (require, exports, module) {
                 refreshTeacherData: this.loadTeacherData}
             ), dialog_el );
         },
+        updateTeacher: function (e) {
+            console.log('修改教师');
+            var $cur=$(e.target),teacherId=$cur.attr('data-teacherid'), index=$cur.attr('data-index'),
+                updateTeacherTr = function (obj) {
+                    var teacherList = this.state.data;
+                    teacherList.splice(index, 1, obj); // 更新修改后的数据
+                    this.setState({data: teacherList});
+                };
+            React.render(
+                React.createElement(Dialog, {
+                    title: "修改教师信息", 
+                    body: "UpdateTeacherDialogBody", 
+                    teacherId: teacherId, 
+                    updateTeacherTr: updateTeacherTr}
+            ), dialog_el);
+        },
         componentWillMount: function () {
             this.loadTeacherData();
         },
@@ -104,9 +120,10 @@ define(function (require, exports, module) {
                         React.createElement("td", null, teacher.sex), 
                         React.createElement("td", null, teacher.email), 
                         React.createElement("td", null, teacher.campusName + '校区' + teacher.collegeName), 
-                        React.createElement("td", {className: "cs-manage-op", "data-teacherid": teacher.teacherId}, 
+                        React.createElement("td", {className: "cs-manage-op", "data-teacherid": teacher.teacherId, "data-index": index}, 
                             React.createElement("button", {className: "cs-manage-give", onClick: that.teacherTake}, "教师选课"), 
-                            React.createElement("button", {className: "cs-manage-delete", onClick: that.deleteTeacher}, "删除教师")
+                            React.createElement("button", {className: "cs-manage-change", onClick: that.updateTeacher}, "修改"), 
+                            React.createElement("button", {className: "cs-manage-delete", onClick: that.deleteTeacher}, "删除")
                         )
                     )
                     );

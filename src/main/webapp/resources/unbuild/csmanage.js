@@ -69,7 +69,7 @@ define(function (require, exports, module) {
                 <Dialog title='修改课程'
                     body='UpdateCourseDialogBody'
                     url={serverpath + 'course/updateCourse'}
-                    url_detial={serverpath + 'course/courseDetail'}
+                    url_detail={serverpath + 'course/courseDetail'}
                     updateCourseTr={updateCourseTr}
                     courseId = {courseId}
                 />,
