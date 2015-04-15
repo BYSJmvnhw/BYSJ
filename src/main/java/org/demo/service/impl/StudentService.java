@@ -13,7 +13,9 @@ import org.demo.tool.UserType;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -76,7 +78,7 @@ public class StudentService implements IStudentService {
         HwStudent student = studentDao.load(id);
         student.setDeleteFlag(true);
         studentDao.update(student);
-        HwUser user =userDao.findUser(UserType.STUDENT,id);
+        HwUser user =userDao.findUser(UserType.STUDENT, id);
         user.setDeleteFlag(true);
         userDao.update(user);
     }
@@ -267,6 +269,26 @@ public class StudentService implements IStudentService {
             }
         }
 
+    }
+
+    @Override
+    public Map<String,Object> studentMsg(Integer studentId) {
+        HwStudent student = studentDao.load(studentId);
+        Map<String,Object> studentView = new HashMap<String, Object>();
+        studentView.put("studentId",student.getId());
+        studentView.put("studentName",student.getName());
+        studentView.put("studentNo",student.getStudentNo());
+        studentView.put("sex",student.getSex());
+        studentView.put("grade",student.getGrade());
+        studentView.put("cla",student.getClass_());
+        studentView.put("campusId",student.getHwCampus().getId());
+        studentView.put("campusName",student.getHwCampus().getName());
+        studentView.put("collegeId",student.getHwCollege().getId());
+        studentView.put("collegeName",student.getHwCollege().getCollegeName());
+        studentView.put("majorId",student.getHwMajor().getId());
+        studentView.put("majorName",student.getHwMajor().getName());
+        studentView.put("email",student.getEmail());
+        return studentView;
     }
 
     public IStudentDao getStudentDao() {

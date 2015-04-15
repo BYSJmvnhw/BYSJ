@@ -190,4 +190,24 @@ public class TeacherService implements ITeacherService {
             courseTeachingDao.add(ct);
         }
     }
+    @Override
+    public JSONObject getTeacher(int tid)
+    {
+        HwTeacher teacher = teacherDao.get(tid);
+        JSONObject jsonresult = new JSONObject();
+        jsonresult.clear();
+        jsonresult.put("teacherId",teacher.getId());
+        HwUser user = userDao.findUser(UserType.TEACHER,teacher.getId());
+        jsonresult.put("userId",user.getId());
+        jsonresult.put("teacherNo",teacher.getTeacherNo());
+        jsonresult.put("trueName",teacher.getName());
+        jsonresult.put("sex",teacher.getSex());
+        jsonresult.put("email",teacher.getEmail());
+        jsonresult.put("mobile",user.getMobile());
+        jsonresult.put("campusId",teacher.getHwCampus().getId());
+        jsonresult.put("campusName",teacher.getHwCampus().getName());
+        jsonresult.put("collegeId",teacher.getHwCollege().getId());
+        jsonresult.put("collegeName",teacher.getHwCollege().getCollegeName());
+        return jsonresult;
+    }
 }

@@ -25,7 +25,8 @@ public class TeacherDao extends BaseDao<HwTeacher> implements ITeacherDao {
 
     public Page<ViewTeacher> searchTeacher(Integer campusId, Integer collegeId, Integer majorId, String teacherNo, String name) {
         StringBuilder hql = new StringBuilder("select new org.demo.vo.ViewTeacher(t.name,t.sex,t.email,t.id,t.teacherNo,"+
-                "t.hwCollege.id,t.hwCollege.collegeName,t.hwCollege.hwCampus.id,t.hwCollege.hwCampus.name) from HwTeacher t where 1=1 ");
+                "t.hwCollege.id,t.hwCollege.collegeName,t.hwCollege.hwCampus.id,t.hwCollege.hwCampus.name) from HwTeacher t " +
+                "where t.deleteFlag=false ");
         List<Object> param = new ArrayList<Object>();
         List<String> stringList = new ArrayList<String>();
         if( campusId != null ) {

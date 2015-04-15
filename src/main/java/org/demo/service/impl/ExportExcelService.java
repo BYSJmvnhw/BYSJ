@@ -171,7 +171,7 @@ public class ExportExcelService implements IExportExcelService{
         JSONObject jsonresult = new JSONObject();jsonresult.clear();
         List<HwStudent> students = getStudents(teacherId,courseId,startYear,schoolTerm);
         if(students == null || students.size() == 0) {
-            jsonresult.put("status",false);jsonresult.put("message","学生数为空");jsonresult.put("url",null);
+            jsonresult.put("status","fail");jsonresult.put("message","学生数为空");jsonresult.put("url",null);
             return jsonresult;
         }
         String flodername = GetRealPath.getRealPath() + "/excel/";
@@ -184,10 +184,10 @@ public class ExportExcelService implements IExportExcelService{
         String url = "/excel/" + filename;
         boolean result = saveStudentExcel(students,directory);
         if(result == true) {
-            jsonresult.put("status",true);jsonresult.put("message","操作成功");jsonresult.put("url",url);
+            jsonresult.put("status","success");jsonresult.put("message","操作成功");jsonresult.put("url",url);
             return jsonresult;
         }else {
-            jsonresult.put("status",false);jsonresult.put("message","操作失败");jsonresult.put("url",null);
+            jsonresult.put("status","fail");jsonresult.put("message","操作失败");jsonresult.put("url",null);
             return jsonresult;
         }
     }
@@ -281,10 +281,10 @@ public class ExportExcelService implements IExportExcelService{
     //由excel转为学生
     public JSONObject saveFromExcelToStudent(HttpServletRequest request,HwUser createUser) {
         JSONObject jsonresult = new JSONObject();jsonresult.clear();
-        if(createUser==null){jsonresult.put("status",false);return jsonresult;}
+        if(createUser==null){jsonresult.put("status","fail");return jsonresult;}
         String fileURL = saveExcelFile(request);
         if(fileURL == null || fileURL.isEmpty()) {
-            jsonresult.put("status",false);return jsonresult;
+            jsonresult.put("status","fail");return jsonresult;
         }
         try {
             InputStream is = new FileInputStream(fileURL);
@@ -321,10 +321,10 @@ public class ExportExcelService implements IExportExcelService{
                     saveStudent(sno,name,sex,campus,college,grade,cla,email,createUser);
                 }
             }
-            jsonresult.put("status",true);return jsonresult;
+            jsonresult.put("status","success");return jsonresult;
         }catch(Exception e) {
             e.printStackTrace();
-            jsonresult.put("status",false);return jsonresult;
+            jsonresult.put("status","fail");return jsonresult;
         }
     }
 }

@@ -60,7 +60,7 @@ public class CheckEmailService implements ICheckEmailService {
         JSONObject jsonresult = new JSONObject();jsonresult.clear();
         String smptPost = GetPost.getSmptPost(systemEmail);
         if(smptPost == null || smptPost.equals("")) {
-            jsonresult.put("status",false);
+            jsonresult.put("status","fail");
             jsonresult.put("message","邮箱不合法");
             return jsonresult;
         }
@@ -78,7 +78,7 @@ public class CheckEmailService implements ICheckEmailService {
                 e.printStackTrace();
             }
             //
-            jsonresult.put("status",false);
+            jsonresult.put("status","fail");
             jsonresult.put("message","该邮箱未验证，验证码已发送到此邮箱");
             return jsonresult;
         }else {
@@ -93,11 +93,11 @@ public class CheckEmailService implements ICheckEmailService {
                     e.printStackTrace();
                 }
                 //
-                jsonresult.put("status",false);
+                jsonresult.put("status","fail");
                 jsonresult.put("message","该邮箱未验证，验证码已发送到此邮箱");
                 return jsonresult;
             }else {
-                jsonresult.put("status",true);
+                jsonresult.put("status","success");
                 jsonresult.put("message","该邮箱已经验证");
                 return jsonresult;
             }
@@ -114,7 +114,7 @@ public class CheckEmailService implements ICheckEmailService {
             jsonresult.put("status","success");
             return jsonresult;
         }else {
-            jsonresult.put("status","error");
+            jsonresult.put("status","fail");
             return jsonresult;
         }
     }

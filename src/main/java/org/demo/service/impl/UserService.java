@@ -170,18 +170,10 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public JSONObject updatePassword(Integer userId, String oldPassword, String newPassword) {
+    public void updatePassword(Integer userId, String newPassword) {
         HwUser user = userDao.load(userId);
-        JSONObject jsonObject = new JSONObject();
-        if( oldPassword.equals(user.getPassword()) ){
-            user.setPassword(newPassword);
-            userDao.update(user);
-            jsonObject.put("status", "success");
-            return jsonObject;
-        }else {
-            jsonObject.put("status","password_error");
-            return jsonObject;
-        }
+        user.setPassword(newPassword);
+        userDao.update(user);
     }
 
 

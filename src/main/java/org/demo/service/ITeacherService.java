@@ -23,4 +23,5 @@ public interface ITeacherService {
     public List<Map<String,Object>> courseByTeacher(int tid,int starYear,int schoolTerm);
     //为老师选课程
     public void addTeacherSelectCourse(int tid,int[] cids,int startYear,int schoolTerm);
+    public JSONObject getTeacher(int tid);
 }
