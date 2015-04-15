@@ -137,6 +137,7 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/updateUser", method = RequestMethod.POST)
+    @ResponseBody
     public Object updateUser(Integer userId,String newPassword){
         try{
             userService.updatePassword(userId, newPassword);
