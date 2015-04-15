@@ -114,6 +114,9 @@ define(function (require, exports, module) {
                     updateTeacherTr: updateTeacherTr}
             ), dialog_el);
         },
+        teacherTake: function (e) {
+            var teacherId=$(e.target).attr('data-teacherid');
+        },
         componentWillMount: function () {
             this.loadTeacherData();
         },

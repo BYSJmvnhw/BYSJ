@@ -217,8 +217,8 @@ define(function (require, exports, module) {
                 React.createElement("div", {className: this.props.className}, 
                     React.createElement("label", null, this.props.labelName), 
                     React.createElement("input", {type: this.props.type || "text", placeholder: this.props.placeholderText, 
-                        value: this.state.value, 
-                        onChange: this.handleChange, 
+                        value: this.state.value || null, 
+                        onChange: this.state.value ? this.handleChange : null, 
                         onKeyDown: this.props.onKeyDown}
                     )
                 )

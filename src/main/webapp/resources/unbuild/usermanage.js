@@ -51,14 +51,14 @@ define(function (require, exports, module) {
         searchUser: function () {
             console.log('搜索用户');
             var searchdata = $(this.refs.searchData.getDOMNode()).find('input, select');
-            this.loadUserData(searchdata[0].value, parseInt(searchdata[1].value), searchdata[1].value.replace(/\d+/g, ''));
+            this.loadUserData(searchdata[0].value, parseInt(searchdata[1].value) || '', searchdata[1].value.replace(/\d+/g, ''));
         },
         keyDownSearchUser: function (e) {
             (e.keyCode || e.which) == 13 && this.searchUser();
         },
         updateUser: function (e) {
             console.log('修改用户');
-            var $cur=$(e.target), userId=$cur.attr('data-userid'), index=$cur.attr('data-index');
+            var $cur=$(e.target).parent(), userId=$cur.attr('data-userid'), index=$cur.attr('data-index');
             React.render(
                 <Dialog
                 title='修改用户密码'

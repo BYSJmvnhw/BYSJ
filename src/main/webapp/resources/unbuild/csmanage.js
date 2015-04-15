@@ -43,6 +43,8 @@ define(function (require, exports, module) {
                     courseId={courseId}
                     contentClassName='dialog-content-take'
                     url={serverpath + 'course/teacherList'}
+                    url_add={serverpath + 'course/addCourseTeaching'}
+                    url_search={serverpath + 'manageTeacher/searchTeacher'}
                 />,
                 dialog_el
             );
@@ -117,7 +119,12 @@ define(function (require, exports, module) {
         },
         searchCourse: function () {
             var searchdata = $(this.refs.searchData.getDOMNode()).find('input, select');
-            this.loadCourseData(searchdata[0].value, searchdata[1].value, searchdata[2].value, searchdata[3].value);
+            this.loadCourseData(
+                searchdata[0].value,
+                searchdata[1].value,
+                parseInt(searchdata[2].value) || '',
+                searchdata[2].value.replace(/\d+/g, '')
+            );
         },
         keyDownSearchCourse: function (e) {
             (e.keyCode || e.which) == 13 && this.searchCourse();
@@ -144,8 +151,7 @@ define(function (require, exports, module) {
                     <div className="cs-manage-search box-style" ref="searchData">
                         <SelectCampus className="campus-id" setSelectCampus={this.setSelectCampus}/>
                         <SelectCollege className="college-id" campusId={this.state.campusId}/>
-                        <CourseNo className="course-no" onKeyDown={this.keyDownSearchCourse}/>
-                        <CourseName className="course-name" onKeyDown={this.keyDownSearchCourse}/>
+                        <CourseNoName className="course-no" onKeyDown={this.keyDownSearchCourse}/>
                         <div className="cs-search-btn">
                             <button onClick={this.searchCourse}>搜索课程</button>
                         </div>
