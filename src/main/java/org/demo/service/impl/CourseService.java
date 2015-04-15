@@ -7,6 +7,7 @@ import org.demo.model.*;
 import org.demo.service.ICourseService;
 import org.demo.service.IEmailService;
 import org.demo.tool.GetPost;
+import org.demo.tool.HomeworkStatus;
 import org.demo.tool.Page;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ public class CourseService implements ICourseService {
     private IMajorDao majorDao;
     private ICourseSelectingDao courseSelectingDao;
     private IStudentDao studentDao;
+    private IHomeworkDao homeworkDao;
 
     @Override
     public HwCourse load(Integer cid) {
@@ -386,16 +388,35 @@ public class CourseService implements ICourseService {
 
     //添加选课关系
     @Override
-    public void addCourseSelecting(Integer studentId, Integer[] courseTeachingId) {
-        HwStudent student = studentDao.load(studentId);
-        for( Integer ctid : courseTeachingId ){
-            HwCourseTeaching courseTeaching = courseTeachingDao.load(ctid);
-            HwCourseSelecting cs = courseSelectingDao.findCSByCTAndStudent(courseTeaching, student);
-            if( cs == null  ){
+    public void addCourseSelecting(Integer courseTeachingId, Integer[] studentId) {
+        HwCourseTeaching ct = courseTeachingDao.load(courseTeachingId);
+        Set<HwHomeworkInfo> homeworkInfos = ct.getHwHomeworkInfos();
+        for (Integer sid : studentId) {
+            HwStudent student = studentDao.load(sid);
+            HwCourseSelecting cs = courseSelectingDao.findCSByCTAndStudent(ct, student);
+            if (cs == null) {
                 HwCourseSelecting courseSelecting = new HwCourseSelecting();
-                courseSelecting.setHwCourseTeaching(courseTeaching);
+                courseSelecting.setHwCourseTeaching(ct);
                 courseSelecting.setHwStudent(student);
                 courseSelectingDao.add(courseSelecting);
+
+                // 为每个新加入课程的学生，初始化该课程所有已布置作业的对象。
+                for( HwHomeworkInfo hwInfo : homeworkInfos ){
+                    HwHomework hw = new HwHomework();
+                    hw.setHwStudent(student);
+                    hw.setHwCourse(ct.getHwCourse());
+                    hw.setCheckedFlag(false);
+                    hw.setHwHomeworkInfo(hwInfo);
+                    hw.setHwTeacher(ct.getHwTeacher());
+                    hw.setStudentName(student.getName());
+                    hw.setStudentNo(student.getStudentNo());
+                    hw.setTitle(hwInfo.getTitle());
+                    hw.setLastModifyDate(new java.sql.Timestamp(System.currentTimeMillis()));
+                    hw.setMarkType(hwInfo.getMarkType());
+                    hw.setUrl("");
+                    hw.setStatus(HomeworkStatus.UNSUBMITTED);
+                    homeworkDao.add(hw);
+                }
             }
         }
     }
@@ -529,5 +550,10 @@ public class CourseService implements ICourseService {
     @Resource
     public void setStudentDao(IStudentDao studentDao) {
         this.studentDao = studentDao;
+    }
+
+    @Resource
+    public void setHomeworkDao(IHomeworkDao homeworkDao) {
+        this.homeworkDao = homeworkDao;
     }
 }

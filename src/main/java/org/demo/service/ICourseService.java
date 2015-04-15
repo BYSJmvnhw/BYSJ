@@ -48,7 +48,7 @@ public interface ICourseService {
 
     public List<Map<String,Object>> searchCourseTeaching(Integer courseId, Integer startYear, Integer schoolTerm );
 
-    public void addCourseSelecting(Integer studentId, Integer[] courseTeachingId);
+    public void addCourseSelecting(Integer courseTeachingId, Integer[] studentId);
 
     public void deleteCourseTeaching(Integer courseTeachingId);
 

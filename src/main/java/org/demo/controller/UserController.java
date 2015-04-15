@@ -133,15 +133,15 @@ public class UserController {
     /**
      * 更改用户密码
      * @param userId 用户id
+     * @param managerPassword 管理员密码
      * @param newPassword 新密码
-     * @return
      */
     @RequestMapping(value = "/updateUser", method = RequestMethod.POST)
     @ResponseBody
-    public Object updateUser(Integer userId,String newPassword){
+    public Object updateUser(Integer userId,String managerPassword, String newPassword, HttpServletRequest request){
         try{
-            userService.updatePassword(userId, newPassword);
-            return getSuccessResultJsonObject();
+            HwUser user = (HwUser)request.getSession().getAttribute("loginUser");
+            return userService.updatePassword(userId ,user, managerPassword, newPassword);
         }catch (Exception e){
             e.printStackTrace();
             return getFailResultJsonObject();
