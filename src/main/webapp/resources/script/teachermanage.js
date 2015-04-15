@@ -115,7 +115,18 @@ define(function (require, exports, module) {
             ), dialog_el);
         },
         teacherTake: function (e) {
-            var teacherId=$(e.target).attr('data-teacherid');
+            var teacherId=$(e.target).parent().attr('data-teacherid');
+            React.render(
+                React.createElement(Dialog, {
+                    title: "教师选课", 
+                    body: "TeacherManageGiveCourseDialog", 
+                    contentClassName: "dialog-content-take", 
+                    teacherId: teacherId, 
+                    url: serverpath + 'manageTeacher/getCourseByTeacher', 
+                    url_search: serverpath + 'course/searchCourse', 
+                    url_add: serverpath + 'manageTeacher/addCourseForTeacher', 
+                    url_delete: serverpath + 'course/deleteCourseTeaching'}
+            ), dialog_el);
         },
         componentWillMount: function () {
             this.loadTeacherData();

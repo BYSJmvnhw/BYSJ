@@ -45,6 +45,7 @@ define(function (require, exports, module) {
                     url={serverpath + 'course/teacherList'}
                     url_add={serverpath + 'course/addCourseTeaching'}
                     url_search={serverpath + 'manageTeacher/searchTeacher'}
+                    url_delete={serverpath + 'course/deleteCourseTeaching'}
                 />,
                 dialog_el
             );

@@ -9,8 +9,6 @@ define(function (require, exports, module) {
     var cellComponent = require('cellcomponent');
 
     var serverpath = 'http://localhost:8080/mvnhk/',
-        CollegeList = cellComponent.CollegeList,
-        MajorList = cellComponent.MajorList,
         SelectCampus = cellComponent.SelectCampus,
         SelectCollege = cellComponent.SelectCollege,
         SelectMajor = cellComponent.SelectMajor,
@@ -113,6 +111,7 @@ define(function (require, exports, module) {
                         url={this.props.url}
                         url_add={this.props.url_add}
                         url_search={this.props.url_search}
+                        url_delete={this.props.url_delete}
                         courseId={this.props.courseId}
                         onClose={this.closeDialog}
                     />;
@@ -132,6 +131,15 @@ define(function (require, exports, module) {
                         url_delete={this.props.url_delete}
                         url_search={this.props.url_search}
                         studentId={this.props.studentId}
+                        onClose={this.closeDialog}
+                    />;
+                case 'TeacherManageGiveCourseDialog':
+                    return <TeacherManageGiveCourseDialog
+                        url={this.props.url}
+                        url_add={this.props.url_add}
+                        url_delete={this.props.url_delete}
+                        url_search={this.props.url_search}
+                        teacherId={this.props.teacherId}
                         onClose={this.closeDialog}
                     />;
                 default : return 'none-dialog';
@@ -324,11 +332,12 @@ define(function (require, exports, module) {
                     jsonObject: JSON.stringify({
                         campusId: TeacherDatas[0].value,
                         collegeId: TeacherDatas[1].value,
-                        teacherNo: TeacherDatas[2].value,
-                        trueName: TeacherDatas[3].value,
-                        sex: TeacherDatas[4].value,
-                        mobile: TeacherDatas[5].value,
-                        email: TeacherDatas[6].value
+                        majorId: TeacherDatas[2].value,
+                        teacherNo: TeacherDatas[3].value,
+                        trueName: TeacherDatas[4].value,
+                        sex: TeacherDatas[5].value,
+                        mobile: TeacherDatas[6].value,
+                        email: TeacherDatas[7].value
                     })
                 },
                 dataType: 'json',
@@ -350,6 +359,7 @@ define(function (require, exports, module) {
                 <div className="dialog-body" ref="dialogBody">
                     <SelectCampus className="add-cs-campus" setSelectCampus={this.setSelectCampus}/>
                     <SelectCollege className="add-cs-college" campusId={this.state.campusId} setSelectCollege={this.setSelectCollege} />
+                    <SelectMajor className="add-cs-college" collegeId={this.state.collegeId} />
                     <InputText className="add-cs-coursename" labelName='教师号' placeholderText='输入教师号' />
                     <InputText className="add-cs-coursename" labelName='教师名' placeholderText='输入教师名' />
                     <SelectSex className="add-cs-college" />
@@ -634,11 +644,12 @@ define(function (require, exports, module) {
                     userId: this.state.teacherData.userId,
                     campusId: TeacherDatas[0].value,
                     collegeId: TeacherDatas[1].value,
-                    teacherNo: TeacherDatas[2].value,
-                    trueName: TeacherDatas[3].value,
-                    sex: TeacherDatas[4].value,
-                    mobile: TeacherDatas[5].value,
-                    email: TeacherDatas[6].value
+                    majorId: TeacherDatas[2].value,
+                    teacherNo: TeacherDatas[3].value,
+                    trueName: TeacherDatas[4].value,
+                    sex: TeacherDatas[5].value,
+                    mobile: TeacherDatas[6].value,
+                    email: TeacherDatas[7].value
                 };
             this.updateTeacherData(jsonObject);
         },
@@ -685,6 +696,7 @@ define(function (require, exports, module) {
                 <div className="dialog-body" ref="dialogBody">
                     <SelectCampus className="add-cs-campus" setSelectCampus={this.setSelectCampus}/>
                     <SelectCollege className="add-cs-college" campusId={this.state.teacherData.campusId} setSelectCollege={this.setSelectCollege} />
+                    <SelectMajor className="add-cs-college" collegeId={this.state.teacherData.collegeId} />
                     <InputText className="add-cs-coursename" labelName='教师号' placeholderText='输入教师号' value={this.state.teacherData.teacherNo}/>
                     <InputText className="add-cs-coursename" labelName='教师名' placeholderText='输入教师名' value={this.state.teacherData.trueName}/>
                     <SelectSex className="add-cs-college" />
@@ -764,6 +776,33 @@ define(function (require, exports, module) {
             var select = $(this.refs.termTeacherList.getDOMNode()).find('select');
             this.loadTermTeacherData(this.state.courseId, select[0].value, select[1].value);
         },
+        deleteTeacher: function (e) {
+            $(e.currentTarget).find('.dialog-sure-delete').addClass('t-dialog-sure-delete-show');
+        },
+        sureDeleteTeacher: function (e) {
+            console.log('删除教师');
+            var $cur = $(e.target), ctId = $cur.attr('data-ctid'), index = parseInt($cur.attr('data-index'));
+            $.ajax({
+                type: 'post',
+                url: this.props.url_delete,
+                data: {ctId: ctId},
+                dataType: 'json',
+                success: function(data) {
+                    console.log('删除成功', data);
+                    var teacherList = this.state.teacherList;
+                    teacherList.splice(index, 1);
+                    this.setState({studentList: teacherList});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        onClear: function (e) {
+            console.log('取消删除');
+            e.stopPropagation();
+            $(e.currentTarget).parent().parent().removeClass('t-dialog-sure-delete-show');
+        },
         fold: function (e) {
             $(e.target).hide();
             $(e.target).parent().next().hide(500);
@@ -781,13 +820,19 @@ define(function (require, exports, module) {
             this.loadTermTeacherData(this.props.courseId, this.state.startYear, this.state.schoolTerm);
         },
         render: function () {
-            var display = {display: 'none'}, teacherNode = [];
-            this.state.teacherList.map(function (teacher, index) {
+            var that = this, display = {display: 'none'}, teacherNode = [];
+            this.state.teacherList.forEach(function (teacher, index) {
                 teacherNode.push(
-                    <li className="dialog-take-stu">
+                    <li className="dialog-take-stu" onClick={that.deleteTeacher}>
                         <div>
                             <p>{teacher.name}</p>
                             <p>{teacher.teacherNo}</p>
+                        </div>
+                        <div className="dialog-sure-delete t-dialog-sure-delete">
+                            <div className="dialog-sure-btn">
+                                <span onClick={that.sureDeleteTeacher} data-index={index} data-ctid={teacher.ctId} >确认删除</span>
+                                <span onClick={that.onClear}>取消</span>
+                            </div>
                         </div>
                     </li>
                 );
@@ -1350,7 +1395,7 @@ define(function (require, exports, module) {
                 $cur.addClass('has-select');
             }
         },
-        addcourses: function () {
+        studentManageAddCourses: function () {
             var i, selectLi = $(this.refs.selectLi.getDOMNode()).find('li.has-select'), l = selectLi.length, ctId = [];
             for(i = 0; i < l; i ++){
                 ctId.push(selectLi[i].getAttribute('data-ctid'));
@@ -1370,14 +1415,35 @@ define(function (require, exports, module) {
                 }.bind(this)
             });
         },
+        teacherManageAddCourses: function () {
+            var i, selectLi = $(this.refs.selectLi.getDOMNode()).find('li.has-select'), l = selectLi.length, cids = [];
+            for(i = 0; i < l; i ++){
+                cids.push(selectLi[i].getAttribute('data-courseid'));
+            }
+            $.ajax({
+                type: 'post',
+                url: this.props.url_add,
+                data: {tid: this.props.teacherId, cids: cids, startYear: this.props.startYear, schoolTerm: this.props.schoolTerm},
+                dataType: 'json',
+                success: function(data) {
+                    console.log('添加课程', data);
+                    // 刷新教师课程列表
+                    this.props.refreshCourseData(this.props.teacherId, this.props.startYear, this.props.schoolTerm);
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
         componentWillReceiveProps: function (nextProps) {
             this.setState({courseData: []}); // 切换学期时清空上一次的搜索结果
         },
         render: function () {
-            var that=this, display = {display: 'none'}, courseNode = [];
+            var that=this, display = {display: 'none'}, courseNode = [],
+                onClick = this.props.type == 'teacher' ? this.teacherManageAddCourses : this.studentManageAddCourses;
             this.state.courseData.forEach(function (course, index) {
                 courseNode.push(
-                    <li className="dialog-take-stu search-result-btn" data-ctid={course.ctId} onClick={that.toggleSelectCourse}>
+                    <li className="dialog-take-stu search-result-btn" data-ctid={course.ctId} data-courseid={course.courseId} onClick={that.toggleSelectCourse}>
                         <div>
                             <p>{course.majorName}</p>
                             <p>{course.courseName}</p>
@@ -1411,7 +1477,7 @@ define(function (require, exports, module) {
                         </ul>
                     </div>
                     <div className='dialog-btn delete-btn'>
-                        <button className="delete-btn-clear" onClick={this.addcourses}>添加课程</button>
+                        <button className="delete-btn-clear" onClick={onClick}>添加课程</button>
                     </div>
                 </div>
                 );
@@ -1419,7 +1485,7 @@ define(function (require, exports, module) {
     });
 
     // 教师管理->教师选课
-    var teacherManageGiveCourseDialog = React.createClass({
+    var TeacherManageGiveCourseDialog = React.createClass({
         getInitialState: function () {
             return {
                 courseList: [],
@@ -1427,10 +1493,10 @@ define(function (require, exports, module) {
                 schoolTerm: 1
             }
         },
-        loadTermCourseData: function (studentId, startYear, schoolTerm) {
+        loadTermCourseData: function (teacherId, startYear, schoolTerm) {
             $.ajax({
                 url: this.props.url,
-                data: {studentId: studentId, startYear: startYear, schoolTerm: schoolTerm},
+                data: {tid: teacherId, startYear: startYear, schoolTerm: schoolTerm},
                 dataType: 'json',
                 success: function(data) {
                     console.log('学期课程列表', data);
@@ -1443,18 +1509,18 @@ define(function (require, exports, module) {
         },
         termCourseList: function () {
             var select = $(this.refs.termCourseList.getDOMNode()).find('select');
-            this.loadTermCourseData(this.props.studentId, select[0].value, select[1].value);
+            this.loadTermCourseData(this.props.teacherId, select[0].value, select[1].value);
         },
         deleteCourse: function (e) {
             $(e.currentTarget).find('.dialog-sure-delete').addClass('t-dialog-sure-delete-show');
         },
         sureDeleteCourse: function (e) {
             console.log('删除课程');
-            var $cur = $(e.target), csId = $cur.attr('data-csid'), index = parseInt($cur.attr('data-index'));
+            var $cur = $(e.target), ctId = $cur.attr('data-ctid'), index = parseInt($cur.attr('data-index'));
             $.ajax({
                 type: 'post',
                 url: this.props.url_delete,
-                data: {csId: csId},
+                data: {ctId: ctId},
                 dataType: 'json',
                 success: function(data) {
                     console.log('删除成功', data);
@@ -1483,10 +1549,10 @@ define(function (require, exports, module) {
         setSelectTerm: function (e) {this.setState({schoolTerm: e.target.value})},
         setSelectTermYear: function (e) {this.setState({startYear: e.target.value})},
         componentWillReceiveProps: function (nextProps) {
-            this.loadTermCourseData(nextProps.studentId, this.state.startYear, this.state.schoolTerm);
+            this.loadTermCourseData(nextProps.teacherId, this.state.startYear, this.state.schoolTerm);
         },
         componentWillMount: function () {
-            this.loadTermCourseData(this.props.studentId, this.state.startYear, this.state.schoolTerm);
+            this.loadTermCourseData(this.props.teacherId, this.state.startYear, this.state.schoolTerm);
         },
         render: function () {
             var that=this, display = {display: 'none'}, courseNode = [];
@@ -1499,7 +1565,7 @@ define(function (require, exports, module) {
                         </div>
                         <div className="dialog-sure-delete t-dialog-sure-delete">
                             <div className="dialog-sure-btn">
-                                <span onClick={that.sureDeleteCourse} data-index={index} data-csid={course.csId} >确认删除</span>
+                                <span onClick={that.sureDeleteCourse} data-index={index} data-ctid={course.ctId} >确认删除</span>
                                 <span onClick={that.onClear}>取消</span>
                             </div>
                         </div>
@@ -1532,24 +1598,19 @@ define(function (require, exports, module) {
                         <button className="add-stu-btn-add" onClick={this.unfold}>添加课程</button>
                     </div>
                     <SearcheCourse
-                    startYear={this.state.startYear}
-                    schoolTerm={this.state.schoolTerm}
-                    url_search={this.props.url_search}
-                    url_add={this.props.url_add}
-                    studentId={this.props.studentId}
-                    refreshCourseData={this.loadTermCourseData}
+                        startYear={this.state.startYear}
+                        schoolTerm={this.state.schoolTerm}
+                        url_search={this.props.url_search}
+                        url_add={this.props.url_add}
+                        teacherId={this.props.teacherId}
+                        refreshCourseData={this.loadTermCourseData}
+                        type='teacher'
                     />
                 </div>
                 );
         }
     });
 
-    // 教师管理->教师选课
-    var TeacherManageGiveCourseDialog = React.createClass({
-        render: function () {
-            return (<div>擦</div>);
-        }
-    });
 
 
 
