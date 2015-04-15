@@ -90,6 +90,8 @@ public class ManageTeacherController {
         return jsonresult;
     }
     //获得教师
+    @RequestMapping(value="/getTeacher",method = RequestMethod.GET)
+    @ResponseBody
     public JSONObject getTeacher(int tid){
         return teacherService.getTeacher(tid);
     }
