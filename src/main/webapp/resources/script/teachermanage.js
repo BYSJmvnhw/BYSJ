@@ -129,7 +129,11 @@ define(function (require, exports, module) {
             ), dialog_el);
         },
         componentWillMount: function () {
-            this.loadTeacherData();
+            this.props.url != '' && this.loadTeacherData();
+        },
+        componentWillReceiveProps: function (nextProps) {
+            this.props.url = nextProps.url;
+            nextProps.url == '' ? this.setState({data: []}) :  this.loadTeacherData();
         },
         render: function () {
             var that = this;

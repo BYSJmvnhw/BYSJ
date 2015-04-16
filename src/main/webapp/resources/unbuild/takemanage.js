@@ -92,8 +92,12 @@ define(function (require, exports, module) {
                     url_delete={serverpath + 'course/deleteCourseSelecting'}
             />,dialog_el);
         },
-        componentDidMount: function () {
-            this.loadTakeData();
+        componentWillMount: function () {
+            this.props.url != '' && this.loadTakeData();
+        },
+        componentWillReceiveProps: function (nextProps) {
+            this.props.url = nextProps.url;
+            nextProps.url == '' ? this.setState({data: []}) :  this.loadTakeData();
         },
         render: function () {
             var that = this, courseNode ='';

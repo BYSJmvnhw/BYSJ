@@ -68,7 +68,11 @@ define(function (require, exports, module) {
             ), dialog_el);
         },
         componentWillMount: function () {
-            this.loadUserData();
+            this.props.url != '' && this.loadUserData();
+        },
+        componentWillReceiveProps: function (nextProps) {
+            this.props.url = nextProps.url;
+            nextProps.url == '' ? this.setState({data: []}) : this.loadUserData();
         },
         render: function () {
             var that = this;

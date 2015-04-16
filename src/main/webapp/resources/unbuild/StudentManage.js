@@ -124,8 +124,12 @@ define(function (require, exports, module) {
                 refreshStudentData={this.loadStudentData}
         />, dialog_el);
     },
-    componentDidMount: function () {
-        this.loadStudentData();
+    componentWillMount: function () {
+        this.props.url != '' && this.loadStudentData();
+    },
+    componentWillReceiveProps: function (nextProps) {
+        this.props.url = nextProps.url;
+        nextProps.url == '' ? this.setState({data: []}) :  this.loadStudentData();
     },
     render: function () {
         var that = this;

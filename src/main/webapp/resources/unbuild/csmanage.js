@@ -111,9 +111,6 @@ define(function (require, exports, module) {
                 }.bind(this)
             });
         },
-        componentDidMount: function () {
-            this.loadCourseData();
-        },
         setSelectCampus: function (e) {
             console.log('获得了校区id', e.target.value);
             this.setState({campusId: e.target.value});
@@ -129,6 +126,13 @@ define(function (require, exports, module) {
         },
         keyDownSearchCourse: function (e) {
             (e.keyCode || e.which) == 13 && this.searchCourse();
+        },
+        componentWillMount: function () {
+            this.props.url != '' && this.loadCourseData();
+        },
+        componentWillReceiveProps: function (nextProps) {
+            this.props.url = nextProps.url;
+            nextProps.url == '' ? this.setState({data: []}) :  this.loadCourseData();
         },
         render: function () {
             var that = this;
