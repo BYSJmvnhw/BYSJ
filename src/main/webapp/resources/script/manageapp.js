@@ -34,26 +34,26 @@ define(function (require, exports, module) {
         getInitialState: function () { return {curWrap: '', activeLi: ''}; },
         userManage: function () {
             this.setState({curWrap: 't-content-wrap1', activeLi: 'active-li1'});
-            appNavigate('main/usermanage', '作业网后台管理系统-用户管理', {trigger: false});
+            appNavigate('main/usermanage', '作业网后台管理系统-用户管理', {trigger: true});
         },
         csManage:function () {
             this.setState({curWrap: 't-content-wrap2', activeLi: 'active-li2'});
-            appNavigate('main/csmanage', '作业网后台管理系统-课程管理', {trigger: false});
+            appNavigate('main/csmanage', '作业网后台管理系统-课程管理', {trigger: true});
         },
         takeManage: function () {
             this.setState({curWrap: 't-content-wrap3', activeLi: 'active-li3'});
-            appNavigate('main/takemanage', '作业网后台管理系统-选课管理', {trigger: false});
+            appNavigate('main/takemanage', '作业网后台管理系统-选课管理', {trigger: true});
         },
         teacherManage: function () {
             this.setState({curWrap: 't-content-wrap4', activeLi: 'active-li4'});
-            appNavigate('main/teachermanage', '作业网后台管理系统-教师管理', {trigger: false});
+            appNavigate('main/teachermanage', '作业网后台管理系统-教师管理', {trigger: true});
         },
         studentrManage: function () {
             this.setState({curWrap: 't-content-wrap5', activeLi: 'active-li5'});
-            appNavigate('main/studentmanage', '作业网后台管理系统-学生管理', {trigger: false});
+            appNavigate('main/studentmanage', '作业网后台管理系统-学生管理', {trigger: true});
         },
-        componentDidMount: function () {
-            switch (this.props.type) {
+        appInitialize: function (type) {
+            switch (type) {
                 case 'usermanage': this.userManage();return;
                 case 'csmanage': this.csManage();return;
                 case 'takemanage': this.takeManage();return;
@@ -61,6 +61,25 @@ define(function (require, exports, module) {
                 case 'studentmanage': this.studentrManage();return;
                 default : this.userManage();
             }
+        },
+        componentWillMount: function () {
+            this.appInitialize(this.props.type);
+        },
+        componentWillReceiveProps: function (nextProps) {
+            this.appInitialize(nextProps.type);
+        },
+        getCurUrl: function (curWrap, thisWrap) {
+            if(curWrap == thisWrap){
+                switch (curWrap) {
+                    case 't-content-wrap1': return serverpath + 'user/userList';
+                    case 't-content-wrap2': return serverpath + "course/searchCourse";
+                    case 't-content-wrap3': return serverpath + "course/courseTeachingList";
+                    case 't-content-wrap4': return serverpath + 'manageTeacher/searchTeacher';
+                    case 't-content-wrap5': return serverpath + "student/searchStudent";
+                    default : return '';
+                }
+            }
+            return '';
         },
         render: function () {
             return (
@@ -86,19 +105,19 @@ define(function (require, exports, module) {
                         React.createElement("div", {className: "content"}, 
                             React.createElement("div", {className: "content-wrap t-content-wrap box-style " + this.state.curWrap, ref: "contentWrap"}, 
                                 React.createElement("section", {id: "content-wrap1"}, 
-                                    React.createElement(UserManage, null)
+                                    React.createElement(UserManage, {url: this.getCurUrl(this.state.curWrap, 't-content-wrap1')})
                                 ), 
                                 React.createElement("section", {id: "content-wrap2"}, 
-                                    React.createElement(CsManage, {url: serverpath + "course/searchCourse"})
+                                    React.createElement(CsManage, {url: this.getCurUrl(this.state.curWrap, 't-content-wrap2')})
                                 ), 
                                 React.createElement("section", {id: "content-wrap3"}, 
-                                    React.createElement(TakeManage, {url: serverpath + "course/courseTeachingList"})
+                                    React.createElement(TakeManage, {url: this.getCurUrl(this.state.curWrap, 't-content-wrap3')})
                                 ), 
                                 React.createElement("section", {id: "content-wrap4"}, 
-                                    React.createElement(TeacherManage, {url: serverpath})
+                                    React.createElement(TeacherManage, {url: this.getCurUrl(this.state.curWrap, 't-content-wrap4')})
                                 ), 
                                 React.createElement("section", {id: "content-wrap5"}, 
-                                    React.createElement(StudentManage, {url: serverpath + "student/searchStudent"})
+                                    React.createElement(StudentManage, {url: this.getCurUrl(this.state.curWrap, 't-content-wrap5')})
                                 )
                             )
                         )

@@ -43,6 +43,9 @@ define(function (require, exports, module) {
                     courseId={courseId}
                     contentClassName='dialog-content-take'
                     url={serverpath + 'course/teacherList'}
+                    url_add={serverpath + 'course/addCourseTeaching'}
+                    url_search={serverpath + 'manageTeacher/searchTeacher'}
+                    url_delete={serverpath + 'course/deleteCourseTeaching'}
                 />,
                 dialog_el
             );
@@ -69,7 +72,7 @@ define(function (require, exports, module) {
                 <Dialog title='修改课程'
                     body='UpdateCourseDialogBody'
                     url={serverpath + 'course/updateCourse'}
-                    url_detial={serverpath + 'course/courseDetail'}
+                    url_detail={serverpath + 'course/courseDetail'}
                     updateCourseTr={updateCourseTr}
                     courseId = {courseId}
                 />,
@@ -108,19 +111,28 @@ define(function (require, exports, module) {
                 }.bind(this)
             });
         },
-        componentDidMount: function () {
-            this.loadCourseData();
-        },
         setSelectCampus: function (e) {
             console.log('获得了校区id', e.target.value);
             this.setState({campusId: e.target.value});
         },
         searchCourse: function () {
             var searchdata = $(this.refs.searchData.getDOMNode()).find('input, select');
-            this.loadCourseData(searchdata[0].value, searchdata[1].value, searchdata[2].value, searchdata[3].value);
+            this.loadCourseData(
+                searchdata[0].value,
+                searchdata[1].value,
+                parseInt(searchdata[2].value) || '',
+                searchdata[2].value.replace(/\d+/g, '')
+            );
         },
         keyDownSearchCourse: function (e) {
             (e.keyCode || e.which) == 13 && this.searchCourse();
+        },
+        componentWillMount: function () {
+            this.props.url != '' && this.loadCourseData();
+        },
+        componentWillReceiveProps: function (nextProps) {
+            this.props.url = nextProps.url;
+            nextProps.url == '' ? this.setState({data: []}) :  this.loadCourseData();
         },
         render: function () {
             var that = this;
@@ -144,8 +156,7 @@ define(function (require, exports, module) {
                     <div className="cs-manage-search box-style" ref="searchData">
                         <SelectCampus className="campus-id" setSelectCampus={this.setSelectCampus}/>
                         <SelectCollege className="college-id" campusId={this.state.campusId}/>
-                        <CourseNo className="course-no" onKeyDown={this.keyDownSearchCourse}/>
-                        <CourseName className="course-name" onKeyDown={this.keyDownSearchCourse}/>
+                        <CourseNoName className="course-no" onKeyDown={this.keyDownSearchCourse}/>
                         <div className="cs-search-btn">
                             <button onClick={this.searchCourse}>搜索课程</button>
                         </div>

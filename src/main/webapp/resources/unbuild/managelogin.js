@@ -92,10 +92,9 @@ define(function(require, exports, module) {
                 that.navigate(url, setting); // 设置登录路由地址
                 document.title = title;
             };
-            appNavigate('login', '登陆作业网', {trigger:true}); // 设置登录路由地址
+            appNavigate('login', '登陆作业网后台管理系统', {trigger:true}); // 设置登录路由地址
         },
         jmpPart: function (part, type) {
-            var that = this;
             if(part == 'login'){
                 React.render(<Login />, document.getElementById('login-part'));
             }

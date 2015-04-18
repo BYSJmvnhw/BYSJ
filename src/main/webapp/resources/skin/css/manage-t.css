@@ -39,3 +39,16 @@ div.t-content-wrap4 {
 div.t-content-wrap5 {
     transform: translateX(calc(160px - 400vw));
 }
+
+.t-dialog-sure-delete {
+    -webkit-transition: transform 500ms;
+    -moz-transition: transform 500ms;
+    -ms-transition: transform 500ms;
+    -o-transition: transform 500ms;
+    transition: transform 500ms;
+    transform: translateY(-100%);
+}
+
+.t-dialog-sure-delete-show {
+    transform: translateY(0);
+}

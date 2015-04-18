@@ -160,8 +160,8 @@ public class CourseTeachingDao extends BaseDao<HwCourseTeaching> implements ICou
     public List<HwCourseTeaching> courseTeachingListByTId(Integer teacherId, Integer startYear, Integer schoolTerm){
         String hql = "from HwCourseTeaching ct where " +
                 "ct.hwTeacher.id = ? " +
-                "and hwCourseTeaching.startYear = ? " +
-                "and hwCourseTeaching.schoolTerm = ? ";
+                "and ct.startYear = ? " +
+                "and ct.schoolTerm = ? ";
         return list(hql, new Object[] {teacherId, startYear, schoolTerm});
     }
 }

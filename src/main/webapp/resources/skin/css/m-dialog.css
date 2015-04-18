@@ -111,7 +111,12 @@
     border: 4px #41B8F4 solid;
     cursor: pointer;
     position: relative;
+    overflow: hidden;
     user-select: none;
+}
+
+.dialog-take-stu:after {
+    position: absolute;
 }
 
 .dialog-take-stu:hover {
@@ -141,12 +146,44 @@
     font-size: 18px;
 }
 
+.dialog-sure-delete {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #fff;
+    background: #d9534f;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+}
+
+.dialog-sure-btn {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto auto;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+}
+
+.dialog-sure-btn>span {
+    margin: 0 5px;
+}
+
+.dialog-sure-btn>span:hover {
+    text-decoration: underline;
+}
+
 .dialog-take-stu-detail {
     display: none;
+    width: 169px;
     padding: 6px 10px;
     border: 4px #41B8F4 solid;
     position: absolute;
-    left: -175px;
+    left: -213px;
     top: -4px;
     background-color: #fff;
 }
@@ -195,7 +232,51 @@
     content: '+';
     font-size: 30px;
     right: -2px;
-    top: -12px;;
+    top: -12px;
+}
+
+li.has-select {
+    border-color: #4cae4c;
+}
+
+li.has-select:before {
+    content: '';
+    border-right: 30px #4cae4c solid;
+    border-bottom: 30px transparent solid;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+li.has-select:after {
+    content: '';
+    width: 5px;
+    height: 11px;
+    border-bottom: 4px #fff solid;
+    border-right: 4px #fff solid;
+    transform: rotate(45deg);
+    position: absolute;
+    top: -1px;
+    right: 4px;
+}
+
+li.has-select:hover {
+    border-color: #eea236;
+}
+
+li.has-select:hover:before {
+    border-right-color: #eea236;
+}
+
+li.has-select:hover:after {
+    content: '';
+    width: 14px;
+    height: 4px;
+    top: 4px;
+    right: 1px;
+    transform: rotate(0);
+    background-color: #fff;
+    border: none;
 }
 
 /*end选课管理弹框*/

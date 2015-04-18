@@ -71,17 +71,65 @@ define(function (require, exports, module) {
     keyDownSearchStudent: function (e) {
         (e.keyCode || e.which) == 13 && this.searchStudent();
     },
-    studentTake: function () {
+    studentTake: function (e) {
         console.log('学生选课');
+        var studentId = $(e.target).parent().attr('data-studentid');
+        React.render(
+            React.createElement(Dialog, {
+                title: "学生选课", 
+                contentClassName: "dialog-content-take", 
+                body: "StudentManageTakeCourseDialog", 
+                url: serverpath + 'student/courseList', 
+                url_add: serverpath + 'student/addCourseSelecting', 
+                url_delete: serverpath + 'course/deleteCourseSelecting', 
+                url_search: serverpath + 'student/searchCourseTeaching', 
+                studentId: studentId}
+        ), dialog_el);
     },
-    deleteStudent: function () {
+    updateStudent: function (e) {
+        var that=this, $cur=$(e.target).parent(), studentId=$cur.attr('data-studentid'), index = parseInt($cur.attr('data-index')),
+            updateStudentTr = function () {
+                that.searchStudent();
+            };
+        React.render(React.createElement(Dialog, {
+            title: "修改学生信息", 
+            body: "UpdateStudentDialogBody", 
+            studentId: studentId, 
+            url: serverpath + 'student/updateStudent', 
+            url_detail: serverpath + 'student/studentMsg', 
+            updateStudentTr: updateStudentTr}
+        ), dialog_el);
+    },
+    deleteStudent: function (e) {
         console.log('删除学生');
+        var $studentBTn = $(e.target).parent(),
+            studentId = $studentBTn.attr('data-studentid'),
+            removeStudentTr = function () {$studentBTn.parent().remove()};
+        React.render(
+            React.createElement(Dialog, {
+                title: "删除学生", 
+                url: serverpath + 'student/deleteStudent', 
+                body: "DeleteStudentDialogBody", 
+                studentId: studentId, 
+                removeStudentTr: removeStudentTr}
+        ), dialog_el);
     },
     addStudent: function () {
         console.log('添加学生');
+        React.render(
+            React.createElement(Dialog, {
+                title: "添加学生", 
+                url: serverpath + 'student/addStudent', 
+                body: "AddStudentDialogBody", 
+                refreshStudentData: this.loadStudentData}
+        ), dialog_el);
     },
-    componentDidMount: function () {
-        this.loadStudentData();
+    componentWillMount: function () {
+        this.props.url != '' && this.loadStudentData();
+    },
+    componentWillReceiveProps: function (nextProps) {
+        this.props.url = nextProps.url;
+        nextProps.url == '' ? this.setState({data: []}) :  this.loadStudentData();
     },
     render: function () {
         var that = this;
@@ -93,12 +141,13 @@ define(function (require, exports, module) {
                     React.createElement("td", null, student.sex), 
                     React.createElement("td", null, student.hwCampus.name + '校区' + student.hwCollege.collegeName + student.grade + '级'), 
                     React.createElement("td", null, student.hwMajor.name + student.class_ + '班'), 
-                    React.createElement("td", {className: "cs-manage-op", "data-studentid": student.id}, 
-                        React.createElement("button", {className: "cs-manage-give", onClick: that.studentTake}, "学生选课"), 
-                        React.createElement("button", {className: "cs-manage-delete", onClick: that.deleteStudent}, "删除学生")
+                    React.createElement("td", {className: "cs-manage-op", "data-studentid": student.id, "data-index": index}, 
+                        React.createElement("button", {className: "cs-manage-give", onClick: that.studentTake}, "选课"), 
+                        React.createElement("button", {className: "cs-manage-change", onClick: that.updateStudent}, "修改"), 
+                        React.createElement("button", {className: "cs-manage-delete", onClick: that.deleteStudent}, "删除")
                     )
                 )
-                );
+            );
         });
         return (
             React.createElement("div", {className: "cs-manage"}, 
