@@ -1,6 +1,8 @@
 package org.demo.backgroundThread;
 
+import org.demo.model.HwThreadTime;
 import org.demo.service.IEmailService;
+import org.demo.service.IThreadTimeService;
 import org.demo.tool.GetRealPath;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +19,11 @@ public class EmailSaveThread extends Thread {
     public void setEmailService(IEmailService emailService) {
         this.emailService = emailService;
     }
-
+    private IThreadTimeService threadTimeService;
+    @Resource
+    public void setThreadTimeService(IThreadTimeService threadTimeService) {
+        this.threadTimeService = threadTimeService;
+    }
     public static boolean run = true;
     public EmailSaveThread() {
         if(run) {
@@ -30,10 +36,15 @@ public class EmailSaveThread extends Thread {
         //每天01::00:00启动
         while(true){
             try {
+                Thread.sleep(1000);
+                HwThreadTime threadTime = threadTimeService.get(1);
+                int hour = threadTime.getHour();
+                int minute = threadTime.getMinute();
+                int second = threadTime.getSecond();
                 Calendar c = Calendar.getInstance();
-                c.set(Calendar.HOUR_OF_DAY,2);
-                c.set(Calendar.MINUTE,0);
-                c.set(Calendar.SECOND, 0);
+                c.set(Calendar.HOUR_OF_DAY,hour);
+                c.set(Calendar.MINUTE,minute);
+                c.set(Calendar.SECOND, second);
                 c.set(Calendar.MILLISECOND,0);
                 Long initial = c.getTime().getTime();
                 Long now = System.currentTimeMillis();
