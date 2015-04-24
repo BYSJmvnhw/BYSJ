@@ -46,9 +46,7 @@ define(function (require, exports, module) {
                     url_add={serverpath + 'course/addCourseTeaching'}
                     url_search={serverpath + 'manageTeacher/searchTeacher'}
                     url_delete={serverpath + 'course/deleteCourseTeaching'}
-                />,
-                dialog_el
-            );
+            />,dialog_el);
         },
         addCourse: function () {
             console.log('新增课程');

@@ -424,7 +424,7 @@ define(function(require, exports, module) {
         }
     });
 
-    // 作业管理->作业信息->课程列表->作业列表 [视图][教师][学生]
+    // 作业管理->作业信息->课程列表->作业列表 [视图][教师]
     var hwManageWorkListView = WorkListView.extend({
         tmpl_id: 'hwmanage-work-list-html',
         events: {

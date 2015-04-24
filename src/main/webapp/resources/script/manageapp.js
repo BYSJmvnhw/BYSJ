@@ -6,7 +6,6 @@ define(function (require, exports, module) {
 
     var React = require('React');
     var cellComponent = require('cellcomponent');
-    var _ = require('underscore'); // 框架依赖模块
     var $ = require('jquery');
 
     var serverpath = 'http://localhost:8080/mvnhk/';
