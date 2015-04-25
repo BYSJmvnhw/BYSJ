@@ -117,7 +117,8 @@ header p {
 .menu-bar ul.active-li2 li:nth-child(2),
 .menu-bar ul.active-li3 li:nth-child(3),
 .menu-bar ul.active-li4 li:nth-child(4),
-.menu-bar ul.active-li5 li:nth-child(5) {
+.menu-bar ul.active-li5 li:nth-child(5),
+.menu-bar ul.active-li6 li:nth-child(6) {
     background-color: #337ab7;
     color: #fff;
     z-index: 2;
@@ -127,7 +128,8 @@ header p {
 .menu-bar ul.active-li2 li:nth-child(2):before,
 .menu-bar ul.active-li3 li:nth-child(3):before,
 .menu-bar ul.active-li4 li:nth-child(4):before,
-.menu-bar ul.active-li5 li:nth-child(5):before {
+.menu-bar ul.active-li5 li:nth-child(5):before,
+.menu-bar ul.active-li6 li:nth-child(6):before {
     border-bottom-color: #337ab7;
 }
 
