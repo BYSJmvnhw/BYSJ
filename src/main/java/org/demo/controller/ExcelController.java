@@ -28,8 +28,8 @@ public class ExcelController {
 
     @RequestMapping(value = "/studentToExcel", method = RequestMethod.GET)
     @ResponseBody
-    public JSONObject studentToExcel(int teacherId,int courseId,int startYear,int schoolTerm) {
-        return exportExcelService.getStudentExcel(teacherId,courseId,startYear,schoolTerm);
+    public JSONObject studentToExcel(int ctid) {
+        return exportExcelService.getStudentExcel(ctid);
     }
     @RequestMapping(value = "/excelToStudent", method = RequestMethod.POST)
     @ResponseBody

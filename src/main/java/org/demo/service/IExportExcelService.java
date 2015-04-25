@@ -12,6 +12,6 @@ import java.util.List;
  * Created by peifeng on 2015/3/25.
  */
 public interface IExportExcelService {
-    public JSONObject getStudentExcel(int teacherId,int courseId,int startYear,int schoolTerm);
+    public JSONObject getStudentExcel(int ctid);
     public JSONObject saveFromExcelToStudent(HttpServletRequest request,HwUser createUser);
 }

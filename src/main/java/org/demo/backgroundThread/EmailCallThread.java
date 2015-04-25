@@ -36,7 +36,7 @@ public class EmailCallThread extends Thread {
         //每天01::00:00启动
         while(true){
             try {
-                Thread.sleep(2000);
+                Thread.sleep(10000);
                 HwThreadTime threadTime = threadTimeService.get(2);
                 int hour = threadTime.getHour();
                 int minute = threadTime.getMinute();
