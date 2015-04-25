@@ -55,9 +55,9 @@ public class ExportExcelService implements IExportExcelService{
     }
 
     //获得某教师的某门课的所有学生
-    private List<HwStudent> getStudents(int teacherId,int courseId,int startYear,int schoolTerm) {
-        String hql = "from HwCourseTeaching ct where ct.hwTeacher.id=? and ct.hwCourse.id=? and ct.startYear=? and ct.schoolTerm=?";
-        Integer[] param = {teacherId,courseId,startYear,schoolTerm};
+    private List<HwStudent> getStudents(int ctid) {
+        String hql = "from HwCourseTeaching ct where ct.id=?";
+        Integer[] param = {ctid};
         HwCourseTeaching hct = courseTeachingDao.findObject(hql,param);
         if(hct == null) {
             return null;
@@ -167,9 +167,9 @@ public class ExportExcelService implements IExportExcelService{
             ex.printStackTrace();
         }
     }
-    public JSONObject getStudentExcel(int teacherId,int courseId,int startYear,int schoolTerm) {
+    public JSONObject getStudentExcel(int ctid) {
         JSONObject jsonresult = new JSONObject();jsonresult.clear();
-        List<HwStudent> students = getStudents(teacherId,courseId,startYear,schoolTerm);
+        List<HwStudent> students = getStudents(ctid);
         if(students == null || students.size() == 0) {
             jsonresult.put("status","fail");jsonresult.put("message","学生数为空");jsonresult.put("url",null);
             return jsonresult;

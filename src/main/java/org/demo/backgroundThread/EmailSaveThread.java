@@ -36,7 +36,7 @@ public class EmailSaveThread extends Thread {
         //每天01::00:00启动
         while(true){
             try {
-                Thread.sleep(1000);
+                Thread.sleep(10000);
                 HwThreadTime threadTime = threadTimeService.get(1);
                 int hour = threadTime.getHour();
                 int minute = threadTime.getMinute();
