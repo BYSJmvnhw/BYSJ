@@ -283,7 +283,7 @@ define(function(require, exports, module) {
         }
     });
 
-    // 应用总视图
+    // 应用总视图 [父类]
     var FAppView = Backbone.View.extend({ // 滑动视图，应用程序主视图类
         el: $('#main'),
         events: {
