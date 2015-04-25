@@ -39,6 +39,7 @@
                     'takemanage': 'script/takemanage.js',
                     'teachermanage': 'script/teachermanage.js',
                     'studentmanage': 'script/studentmanage.js',
+                    'threadmanage': 'script/threadmanage.js',
                     'jquery': 'jquery-1.11.2.min.js',
                     'manageapp.css': 'css/manageapp.css',
                     'm-dialog.css': 'css/m-dialog.css'

@@ -142,6 +142,12 @@ define(function (require, exports, module) {
                         teacherId={this.props.teacherId}
                         onClose={this.closeDialog}
                     />;
+                case 'UpdateThreadDialogBody':
+                    return <UpdateThreadDialogBody
+                        url={this.props.url}
+                        threadId={this.props.threadId}
+                        onClose={this.closeDialog}
+                     />;
                 default : return 'none-dialog';
             }
         },
@@ -745,6 +751,50 @@ define(function (require, exports, module) {
                     </div>
                 </div>
             );
+        }
+    });
+
+    // 线程信息管理
+    var UpdateThreadDialogBody = React.createClass({
+        updateThreadData: function (threadId, hour) {
+            $.ajax({
+                type: 'post',
+                url: this.props.url,
+                data: {id: threadId, hour: hour},
+                dataType: 'json',
+                success: function(data) {
+                    console.log('更新线程信息', data);
+                    // 关闭弹框
+                    this.props.onClose();
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+        updateThread: function (e) {
+            var data = $(this.refs.dialogBody.getDOMNode()).find('select');
+            this.updateThreadData(this.props.threadId, data.value);
+            data.val('');
+        },
+        render: function () {
+            var option = [], i;
+            for(i = 0; i < 24; i ++)
+                option[i] = <option value={i + 1}>每天{i + 1}时</option>;
+            return (
+                <div className="dialog-body" ref="dialogBody">
+                    <div className='campus-id'>
+                        <label>启动时间/h</label>
+                        <select>
+                        {option}
+                        </select>
+                    </div>
+                    <div className="dialog-btn add-cs-btn">
+                        <button className="add-cs-btn-clear" onClick={this.props.onClose}>取消</button>
+                        <button className="add-cs-btn-sure" onClick={this.updateThread}>修改</button>
+                    </div>
+                </div>
+                );
         }
     });
 
@@ -1610,10 +1660,6 @@ define(function (require, exports, module) {
                 );
         }
     });
-
-
-
-
 
     module.exports = {
         Dialog: Dialog

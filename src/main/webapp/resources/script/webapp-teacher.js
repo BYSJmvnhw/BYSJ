@@ -430,7 +430,9 @@ define(function(require, exports, module) {
         events: {
             'click .add-work': 'addWork', // 教师添加作业
             'click .student-list-delete-btn': 'deleteWork', // 教师删除作业
-            'click .student-list-mark-btn': 'showStudentList' // 教师查看该作业每个学生的提交
+            'click .student-list-mark-btn': 'showStudentList', // 教师查看该作业每个学生的提交
+            'click .student-list-collect-btn': 'collectWork', // 教师收取作业
+            'click .student-list-remind-btn': 'remindWork' // 教师催缴作业
         },
         addWork: function (e) {
             var that = this,
@@ -504,6 +506,12 @@ define(function(require, exports, module) {
             console.log('查看学生的作业列表');
             var hwInfoId = $(e.currentTarget).attr('data-hwinfoid');
             this.getStudentData(hwInfoId, true);
+        },
+        collectWork: function () {
+
+        },
+        remindWork: function () {
+
         }
     });
 
