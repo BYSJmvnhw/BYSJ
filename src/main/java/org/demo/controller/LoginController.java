@@ -65,6 +65,12 @@ public class LoginController {
         return "login/welcome";
     }*/
 
+    /**
+     * 用户登录验证接口
+    * @param username 用户名
+    * @param password 密码
+    * @param request   http请求
+    */
     @RequestMapping( value = "/logincheck", method = RequestMethod.POST)
     @ResponseBody
     public JSONObject login(String username, String password,HttpServletRequest request) {

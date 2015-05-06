@@ -323,7 +323,7 @@ public class CourseController {
 
     /**
      * 根据学生id，教师授课关系id数组，为学生增加选课关系
-     * @param sId 学生id
+     * @param sId 学生id数组
      * @param ctId 任教关系
      */
     @RequestMapping(value = "/addCourseSelecting", method = RequestMethod.POST)
