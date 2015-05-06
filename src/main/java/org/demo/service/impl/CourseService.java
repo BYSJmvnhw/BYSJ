@@ -99,7 +99,15 @@ public class CourseService implements ICourseService {
         }
         return emailList;
     }
-
+    private String getTimestamp() {
+        //return System.currentTimeMillis()+"";
+        Random random = new Random();
+        String result="";
+        for(int i=0;i<6;i++){
+            result+=random.nextInt(10);
+        }
+        return result;
+    }
     //未验证的邮箱获取验证码
     // 已经验证的邮箱更新邮箱和密码
     @Override
@@ -107,7 +115,6 @@ public class CourseService implements ICourseService {
         JSONObject jsonresult = new JSONObject();
         jsonresult.clear();
         String smptPost = GetPost.getSmptPost(email);
-        System.out.println(email);
         if( smptPost == null || smptPost.equals("")) {
             jsonresult.put("status","illegal_email");
            // jsonresult.put("msg","邮箱格式不合法");
@@ -116,7 +123,7 @@ public class CourseService implements ICourseService {
         HwCheckEmail checkEmail = checkEmailDao.findObject("from HwCheckEmail ce where ce.email=?",email);
         //邮箱不存在
         if(checkEmail == null) {
-            String timestamp = String.valueOf(System.currentTimeMillis()) ;
+            String timestamp = getTimestamp();//String.valueOf(System.currentTimeMillis()) ;
             //添加邮箱记录，标记为未验证，同时发送验证码
             HwCheckEmail newCheckEmail = new HwCheckEmail(email,timestamp,0);
             checkEmailDao.add(newCheckEmail);

@@ -423,8 +423,10 @@
             <!--<button class="student-list-mark-btn">批改作业</button>-->
             <!--<button class="student-list-delete-btn">删除作业</button>-->
             <div class="student-list-allbtn">
-                <span class="student-list-mark-btn" data-hwInfoId="{{value.hwInfoId}}">批改作业</span>
-                <span class="student-list-delete-btn" data-hwInfoId="{{value.hwInfoId}}">删除作业</span>
+                <span class="student-list-mark-btn" data-hwInfoId="{{value.hwInfoId}}">批改</span>
+                <span class="student-list-collect-btn" data-hwInfoId="{{value.hwInfoId}}">收取</span>
+                <span class="student-list-remind-btn" data-hwInfoId="{{value.hwInfoId}}">催缴</span>
+                <span class="student-list-delete-btn" data-hwInfoId="{{value.hwInfoId}}">删除</span>
             </div>
         </div>
     </li>
@@ -588,6 +590,7 @@
         {{/each}}
     </ul>
     <button class="add-student" data-ctId="{{studentlist[0].hwCourseTeaching.id}}">添加学生</button>
+    <button class="export-student" data-ctId="{{studentlist[0].hwCourseTeaching.id}}">导出课程学生列表</button>
     <!--</div>-->
 </script>
 <%--作业动态--%>

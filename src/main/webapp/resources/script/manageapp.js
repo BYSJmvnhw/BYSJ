@@ -30,6 +30,9 @@ define(function (require, exports, module) {
     // 学生管理组件
     var StudentManage = require('studentmanage').StudentManage;
 
+    // 线程管理组件
+    var ThreadManage = require('threadmanage').ThreadManage;
+
     var AppView = React.createClass({displayName: "AppView",
         getInitialState: function () { return {curWrap: '', activeLi: ''}; },
         userManage: function () {
@@ -52,6 +55,10 @@ define(function (require, exports, module) {
             this.setState({curWrap: 't-content-wrap5', activeLi: 'active-li5'});
             appNavigate('main/studentmanage', '作业网后台管理系统-学生管理', {trigger: true});
         },
+        threadManage: function () {
+            this.setState({curWrap: 't-content-wrap6', activeLi: 'active-li6'});
+            appNavigate('main/threadmanage', '作业网后台管理系统-线程信息管理', {trigger: true});
+        },
         appInitialize: function (type) {
             switch (type) {
                 case 'usermanage': this.userManage();return;
@@ -59,6 +66,7 @@ define(function (require, exports, module) {
                 case 'takemanage': this.takeManage();return;
                 case 'teachermanage': this.teacherManage();return;
                 case 'studentmanage': this.studentrManage();return;
+                case 'threadmanage': this.threadManage();return;
                 default : this.userManage();
             }
         },
@@ -76,6 +84,7 @@ define(function (require, exports, module) {
                     case 't-content-wrap3': return serverpath + "course/courseTeachingList";
                     case 't-content-wrap4': return serverpath + 'manageTeacher/searchTeacher';
                     case 't-content-wrap5': return serverpath + "student/searchStudent";
+                    case 't-content-wrap6': return serverpath + "Email/getThreadTime";
                     default : return '';
                 }
             }
@@ -99,7 +108,8 @@ define(function (require, exports, module) {
                                 React.createElement("li", {className: "t-hover", onClick: this.csManage}, "课程管理"), 
                                 React.createElement("li", {className: "t-hover", onClick: this.takeManage}, "选课管理"), 
                                 React.createElement("li", {className: "t-hover", onClick: this.teacherManage}, "教师管理"), 
-                                React.createElement("li", {className: "t-hover", onClick: this.studentrManage}, "学生管理")
+                                React.createElement("li", {className: "t-hover", onClick: this.studentrManage}, "学生管理"), 
+                                React.createElement("li", {className: "t-hover", onClick: this.threadManage}, "线程信息管理")
                             )
                         ), 
                         React.createElement("div", {className: "content"}, 
@@ -118,6 +128,9 @@ define(function (require, exports, module) {
                                 ), 
                                 React.createElement("section", {id: "content-wrap5"}, 
                                     React.createElement(StudentManage, {url: this.getCurUrl(this.state.curWrap, 't-content-wrap5')})
+                                ), 
+                                React.createElement("section", {id: "content-wrap6"}, 
+                                    React.createElement(ThreadManage, {url: this.getCurUrl(this.state.curWrap, 't-content-wrap6')})
                                 )
                             )
                         )

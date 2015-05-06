@@ -415,6 +415,7 @@ public class EmailService implements IEmailService {
         //获取信息完毕，修改并更新
         hwInfo.setLastReceiveDate(new Timestamp(new Date().getTime()));
         homeworkInfoDao.update(hwInfo);
+        String strmessage = "完成任务";
         try {
             Message messages[] = getMessages(popPost,startTime, endTime, course, title, emailAddress, emailPassword);
             if(messages == null) {
@@ -424,14 +425,61 @@ public class EmailService implements IEmailService {
                 saveMessage(message, preFilePath, midFilePath,infoId);
             }
         }catch(Exception ex) {
-            jsonResult.put("errorMessage","some error");
+            //jsonResult.put("message","some error");
+            strmessage = strmessage + "，但发生一些错误";
             ex.printStackTrace();
         }
-        jsonResult.put("message","完成任务");return jsonResult;
+        jsonResult.put("message",strmessage);return jsonResult;
     }
     //封装发送邮件
     public void sendSimpleEmailToOne(String recipientAddress, String emailSubject ,String text) throws Exception {
         String smptPost = GetPost.getSmptPost(systemEmail);
         sendSimpleEmailToOne(smptPost,systemEmail,systemEmailPass,recipientAddress,emailSubject,text);
+    }
+    //立即催缴作业
+    public JSONObject callToDoNow(int infoId){
+        jsonResult = new JSONObject();jsonResult.clear();
+        String smptPost = GetPost.getSmptPost(systemEmail);
+        if(smptPost == null || smptPost.equals("")){
+            jsonResult.put("message","系统邮箱不合法");
+            return jsonResult;
+        }
+        HwHomeworkInfo homeworkInfo = homeworkInfoDao.get(infoId);
+        if(homeworkInfo == null) {
+            jsonResult.put("message","没有此作业信息");
+            return jsonResult;
+        }
+        int infoid = homeworkInfo.getId();
+        List<HwStudent> students = getStudentEmailByHwInfo(infoid);
+        if(students == null) {
+            jsonResult.put("message","没有学生未交作业");
+            return jsonResult;
+        }
+        List<String> studentEmails = new ArrayList<String>();
+        List<String> emailTexts = new ArrayList<String>();
+        for(HwStudent student : students){
+            if(student.getEmail() != null && !student.getEmail().equals("")) {
+                studentEmails.add(student.getEmail());
+                String name = student.getName();
+                String number = student.getStudentNo();
+                String course = homeworkInfo.getCourseName();
+                String title = homeworkInfo.getTitle();
+                String hwEmail = homeworkInfo.getEmail();
+                String text = name + "（学号：" + number + "),您的课程： '" + course + "';作业： '" + title + "'还未提交。"+
+                        "请登录本系统提交，或者发作业到邮箱： " + hwEmail;
+                emailTexts.add(text);
+            }
+        }
+        //发送催缴邮件
+        String message = "完成任务";
+        try {
+            sendSimpleEmailsToMany(smptPost,systemEmail, systemEmailPass, studentEmails, "作业催缴" ,emailTexts);
+        } catch (Exception e) {
+            //jsonResult.put("errorMessage","部分邮件发送出错");
+            message = message + ",但部分邮件发送出错";
+            e.printStackTrace();
+        }
+        jsonResult.put("message",message);
+        return jsonResult;
     }
 }

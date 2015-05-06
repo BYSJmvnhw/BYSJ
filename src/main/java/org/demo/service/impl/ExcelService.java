@@ -1,4 +1,4 @@
-package org.demo.service.impl;
+﻿package org.demo.service.impl;
 
 import net.sf.json.JSONObject;
 import org.demo.dao.*;
@@ -15,7 +15,7 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.demo.service.IExportExcelService;
+import org.demo.service.IExcelService;
 import org.demo.tool.GetRealPath;
 import org.demo.tool.UserType;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
  * Created by peifeng on 2015/3/25.
  */
 @Service
-public class ExportExcelService implements IExportExcelService{
+public class ExcelService implements IExcelService {
 
     private ICourseTeachingDao courseTeachingDao;
     @Resource
@@ -43,6 +43,11 @@ public class ExportExcelService implements IExportExcelService{
     public void setCollegeDao(ICollegeDao collegeDao) {
         this.collegeDao = collegeDao;
     }
+    private IMajorDao majorDao;
+    @Resource
+    public void setMajorDao(IMajorDao majorDao) {
+        this.majorDao = majorDao;
+    }
     private IStudentDao studentDao;
     @Resource
     public void setStudentDao(IStudentDao studentDao) {
@@ -55,9 +60,9 @@ public class ExportExcelService implements IExportExcelService{
     }
 
     //获得某教师的某门课的所有学生
-    private List<HwStudent> getStudents(int teacherId,int courseId,int startYear,int schoolTerm) {
-        String hql = "from HwCourseTeaching ct where ct.hwTeacher.id=? and ct.hwCourse.id=? and ct.startYear=? and ct.schoolTerm=?";
-        Integer[] param = {teacherId,courseId,startYear,schoolTerm};
+    private List<HwStudent> getStudents(int ctid) {
+        String hql = "from HwCourseTeaching ct where ct.id=?";
+        Integer[] param = {ctid};
         HwCourseTeaching hct = courseTeachingDao.findObject(hql,param);
         if(hct == null) {
             return null;
@@ -167,9 +172,9 @@ public class ExportExcelService implements IExportExcelService{
             ex.printStackTrace();
         }
     }
-    public JSONObject getStudentExcel(int teacherId,int courseId,int startYear,int schoolTerm) {
+    public JSONObject getStudentExcel(int ctid) {
         JSONObject jsonresult = new JSONObject();jsonresult.clear();
-        List<HwStudent> students = getStudents(teacherId,courseId,startYear,schoolTerm);
+        List<HwStudent> students = getStudents(ctid);
         if(students == null || students.size() == 0) {
             jsonresult.put("status","fail");jsonresult.put("message","学生数为空");jsonresult.put("url",null);
             return jsonresult;
@@ -247,7 +252,7 @@ public class ExportExcelService implements IExportExcelService{
 //        }
 //    }
     //保存到数据库
-    private void saveStudent(String sno,String name,String sex,String campusN,String collegeN,String grade,String cla,String email,HwUser createUser){
+    private void saveStudent(String sno,String name,String sex,String campusN,String collegeN,String majorN,String grade,String cla,String email,HwUser createUser){
         //学生已经存在直接跳过
         HwStudent st = studentDao.findDeleteStudnet(sno);
         if(st != null){return;}
@@ -260,6 +265,7 @@ public class ExportExcelService implements IExportExcelService{
         student.setHwCampus(campus);
         HwCollege college = collegeDao.findObject("from HwCollege c where c.collegeName=?",collegeN);
         student.setHwCollege(college);
+        student.setHwMajor(majorDao.findObject("from HwMajor m where m.name=?",majorN));
         student.setGrade(grade);
         student.setClass_(cla);
         student.setEmail(email);
@@ -311,6 +317,8 @@ public class ExportExcelService implements IExportExcelService{
                     HSSFCell xq = hssfRow.getCell(3);String campus = getValue(xq);
                     //学院
                     HSSFCell xy = hssfRow.getCell(4);String college = getValue(xy);
+                    //专业
+                    HSSFCell zy = hssfRow.getCell(4);String major = getValue(zy);
                     //年级
                     HSSFCell nj = hssfRow.getCell(5);String grade = getValue(nj);
                     //班级
@@ -318,7 +326,7 @@ public class ExportExcelService implements IExportExcelService{
                     //邮箱
                     HSSFCell yx = hssfRow.getCell(7);String email = getValue(yx);
 
-                    saveStudent(sno,name,sex,campus,college,grade,cla,email,createUser);
+                    saveStudent(sno,name,sex,campus,college,major,grade,cla,email,createUser);
                 }
             }
             jsonresult.put("status","success");return jsonresult;

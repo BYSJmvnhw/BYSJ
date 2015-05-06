@@ -67,12 +67,12 @@ public class CheckEmailService implements ICheckEmailService {
         HwCheckEmail checkEmail = checkEmailDao.findObject("from HwCheckEmail ce where ce.email=?",email);
         if(checkEmail == null) {
             String timestamp = getTimestamp();
+
             HwCheckEmail newCheckEmail = new HwCheckEmail(email,timestamp,0);
             save(newCheckEmail);
             //
             //发送验证码到邮箱
             try {
-                System.out.println(email);
                 emailService.sendSimpleEmailToOne(smptPost,systemEmail,systemEmailPass,email,"邮箱验证","验证码："+timestamp);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -87,7 +87,6 @@ public class CheckEmailService implements ICheckEmailService {
                 //
                 //发送验证码到邮箱
                 try {
-                    System.out.println(email);
                     emailService.sendSimpleEmailToOne(smptPost,systemEmail,systemEmailPass,email,"邮箱验证","验证码："+timestamp);
                 } catch (Exception e) {
                     e.printStackTrace();

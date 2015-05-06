@@ -3,9 +3,11 @@ package org.demo.controller;
 import net.sf.json.JSONObject;
 import org.demo.dao.IHomeworkDao;
 import org.demo.model.HwHomework;
+import org.demo.model.HwThreadTime;
 import org.demo.service.ICheckEmailService;
 import org.demo.service.IEmailService;
 import org.demo.service.IHomeworkService;
+import org.demo.service.IThreadTimeService;
 import org.demo.service.impl.EmailService;
 import org.demo.tool.GetRealPath;
 import org.springframework.stereotype.Controller;
@@ -37,6 +39,12 @@ public class EmailController {
         this.checkEmailService = checkEmailService;
     }
 
+    private IThreadTimeService threadTimeService;
+    @Resource
+    public void setThreadTimeService(IThreadTimeService threadTimeService) {
+        this.threadTimeService = threadTimeService;
+    }
+
     //验证邮箱获取验证码接口
     @RequestMapping(value = "/getCheckNmuber",method = RequestMethod.GET)
     @ResponseBody
@@ -54,5 +62,24 @@ public class EmailController {
     @ResponseBody
     public JSONObject saveHomeworkNow(int infoId) {
         return emailService.saveHomeworkNow(infoId,GetRealPath.getRealPath());
+    }
+    //指定作业信息立即催缴作业
+    @RequestMapping(value = "/callToDoNow",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject callToDoNow(int infoId) {
+        return emailService.callToDoNow(infoId);
+    }
+
+    //修改线程启动时间
+    @RequestMapping(value = "/modifyThreadTime",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject modifyThreadTime(int id, String name,int hour,int minute,int second) {
+        return threadTimeService.updateDate(id,hour, minute, second,name);
+    }
+    //获取线程启动时间
+    @RequestMapping(value = "/getThreadTime",method = RequestMethod.GET)
+    @ResponseBody
+    public List<HwThreadTime> getThreadTime() {
+        return threadTimeService.getData();
     }
 }
