@@ -1214,6 +1214,10 @@ span.dailog-clear:after {
     margin-right: 20px;
 }
 
+.only-clear {
+    margin-right: 0;
+}
+
 .dailog-clear:hover, .student-list-btn>.student-list-delete-btn:hover,
 .delete-sure-btn>.delete-sure-btn1:hover, .auth-code-sure-btn>.auth-code-sure-btn1:hover {
     background-color: #D43F3A;

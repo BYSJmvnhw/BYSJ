@@ -814,11 +814,15 @@
         <input id="work-file" name="hw" type="file"/>
         <label></label>
     </div>
-    {{/if}}
     <div class="work-submit">
         <button class="dailog-clear">取消</button>
         <button class="work-submit-sure" data-hwinfoId="{{workdata.id}}">提交作业</button>
     </div>
+    {{else}}
+    <div class="work-submit">
+        <button class="dailog-clear only-clear">取消</button>
+    </div>
+    {{/if}}
     <!--</div>-->
 </script>
 <script type="text/template" id="work-feedback-html">
